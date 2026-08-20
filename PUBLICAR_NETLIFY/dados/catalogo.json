@@ -1,0 +1,82 @@
+[
+    {
+        "id": "avatar",
+        "titulo": "Avatar",
+        "ano": 2009,
+        "nota": 7.8,
+        "generos": "Ficção científica, Ação, Aventura",
+        "categoria": ["alta", "ficcao", "acao"],
+        "poster": "",
+        "sinopse": "Um ex-fuzileiro naval é enviado para Pandora e acaba se envolvendo com os habitantes do planeta."
+    },
+    {
+        "id": "interestelar",
+        "titulo": "Interestelar",
+        "ano": 2014,
+        "nota": 8.7,
+        "generos": "Ficção científica, Drama, Aventura",
+        "categoria": ["alta", "ficcao", "avaliados"],
+        "poster": "",
+        "sinopse": "Uma equipe de exploradores viaja através de um buraco de minhoca em busca de um novo lar para a humanidade."
+    },
+    {
+        "id": "batman",
+        "titulo": "Batman",
+        "ano": 2022,
+        "nota": 7.8,
+        "generos": "Ação, Crime, Drama",
+        "categoria": ["alta", "acao", "avaliados"],
+        "poster": "",
+        "sinopse": "Batman investiga uma série de crimes misteriosos que revelam uma conspiração em Gotham."
+    },
+    {
+        "id": "vingadores",
+        "titulo": "Os Vingadores",
+        "ano": 2012,
+        "nota": 8.0,
+        "generos": "Ação, Aventura, Ficção científica",
+        "categoria": ["alta", "acao", "ficcao"],
+        "poster": "",
+        "sinopse": "Heróis extraordinários se unem para enfrentar uma ameaça que coloca o mundo inteiro em perigo."
+    },
+    {
+        "id": "homem-aranha",
+        "titulo": "Homem-Aranha",
+        "ano": 2002,
+        "nota": 7.4,
+        "generos": "Ação, Aventura",
+        "categoria": ["acao"],
+        "poster": "",
+        "sinopse": "Após ser picado por uma aranha geneticamente modificada, Peter Parker ganha habilidades extraordinárias."
+    },
+    {
+        "id": "todo-mundo-em-panico",
+        "titulo": "Todo Mundo em Pânico",
+        "ano": 2000,
+        "nota": 6.4,
+        "generos": "Comédia",
+        "categoria": ["comedia"],
+        "poster": "",
+        "sinopse": "Uma comédia que brinca com vários filmes famosos de terror e suspense."
+    },
+    {
+        "id": "it",
+        "titulo": "It: A Coisa",
+        "ano": 2017,
+        "nota": 7.3,
+        "generos": "Terror, Drama",
+        "categoria": ["terror"],
+        "poster": "",
+        "sinopse": "Um grupo de crianças enfrenta uma entidade assustadora que assume a forma de seus maiores medos."
+    },
+    {
+        "id": "diario-de-uma-paixao",
+        "titulo": "Diário de uma Paixão",
+        "ano": 2004,
+        "nota": 7.8,
+        "generos": "Romance, Drama",
+        "categoria": ["romance"],
+        "poster": "",
+        "sinopse": "Uma história de amor que atravessa os anos e enfrenta grandes obstáculos."
+    }
+]

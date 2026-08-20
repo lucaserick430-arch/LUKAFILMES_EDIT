@@ -1,0 +1,56 @@
+[
+    {
+        "id": "avatar",
+        "titulo": "Avatar",
+        "ano": 2009,
+        "generos": ["Ficção científica", "Aventura"],
+        "categoria": "Ficção científica",
+        "nota": 7.8,
+        "capa": "https://image.tmdb.org/t/p/w500/kyeqWdyUXW608qlYkRqosgbbJyK.jpg"
+    },
+    {
+        "id": "avatar-2",
+        "titulo": "Avatar: O Caminho da Água",
+        "ano": 2022,
+        "generos": ["Ficção científica", "Aventura"],
+        "categoria": "Ficção científica",
+        "nota": 7.6,
+        "capa": "https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg"
+    },
+    {
+        "id": "interestelar",
+        "titulo": "Interestelar",
+        "ano": 2014,
+        "generos": ["Ficção científica", "Drama"],
+        "categoria": "Ficção científica",
+        "nota": 8.7,
+        "capa": "https://image.tmdb.org/t/p/w500/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg"
+    },
+    {
+        "id": "batman",
+        "titulo": "Batman",
+        "ano": 2022,
+        "generos": ["Ação", "Crime", "Drama"],
+        "categoria": "Ação",
+        "nota": 7.8,
+        "capa": "https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg"
+    },
+    {
+        "id": "vingadores",
+        "titulo": "Os Vingadores",
+        "ano": 2012,
+        "generos": ["Ação", "Aventura", "Super-heróis"],
+        "categoria": "Super-heróis",
+        "nota": 8.0,
+        "capa": "https://image.tmdb.org/t/p/w500/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg"
+    },
+    {
+        "id": "homem-aranha",
+        "titulo": "Homem-Aranha",
+        "ano": 2002,
+        "generos": ["Ação", "Aventura", "Super-heróis"],
+        "categoria": "Super-heróis",
+        "nota": 7.4,
+        "capa": "https://image.tmdb.org/t/p/w500/gh4L2cC0kL9WfG9f3J1JvM7M2wW.jpg"
+    }
+]

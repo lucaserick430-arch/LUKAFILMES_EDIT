@@ -1,0 +1,922 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Painel Revendedor - LUKAFILMES</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(229,9,20,.16), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(120,0,255,.10), transparent 35%),
+        #070707;
+    color: #fff;
+}
+
+.container {
+    width: min(1250px, 100%);
+    margin: auto;
+}
+
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.logo {
+    color: #fff;
+    text-decoration: none;
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.logo span {
+    color: #e50914;
+}
+
+.subtitulo {
+    color: #888;
+    margin-top: 6px;
+    font-size: 14px;
+}
+
+button {
+    font-family: inherit;
+}
+
+.btn-sair {
+    border: 1px solid #333;
+    background: #151515;
+    color: #fff;
+    padding: 11px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-sair:hover {
+    background: #e50914;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: rgba(18,18,18,.92);
+    border: 1px solid #292929;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 22px;
+}
+
+.numero {
+    font-size: 30px;
+    font-weight: 900;
+    margin-top: 8px;
+}
+
+.label {
+    color: #888;
+    font-size: 12px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 140px auto;
+    gap: 10px;
+    align-items: end;
+}
+
+.campo label {
+    display: block;
+    color: #aaa;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    background: #101010;
+    color: white;
+}
+
+.btn {
+    border: 0;
+    background: linear-gradient(135deg,#9333ea,#6d28d9);
+    color: white;
+    padding: 13px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.tabela-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 700px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 13px 10px;
+    text-align: left;
+    border-bottom: 1px solid #222;
+}
+
+th {
+    color: #777;
+    font-size: 12px;
+}
+
+.badge {
+    display: inline-flex;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.ativo {
+    background: rgba(0,210,106,.12);
+    color: #00d26a;
+}
+
+.suspenso {
+    background: rgba(229,9,20,.12);
+    color: #ff555f;
+}
+
+.acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.acao-btn {
+    border: 0;
+    padding: 7px 9px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.acao-btn.editar {
+    background: #2563eb;
+}
+
+.acao-btn.suspender {
+    background: #b45309;
+}
+
+.acao-btn.ativar {
+    background: #059669;
+}
+
+.acao-btn.renovar {
+    background: #7c3aed;
+}
+
+.acao-btn.excluir {
+    background: #dc2626;
+}
+
+.acao-btn:hover {
+    opacity: .82;
+}
+
+.mensagem {
+    display: none;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+@media(max-width:900px) {
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .topo {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-sair {
+        width: 100%;
+    }
+}
+
+</style>
+
+
+<style id="luka-trailer-bg">
+body{background:transparent!important}
+#lukaTrailerBg{
+position:fixed;
+inset:0;
+z-index:-3;
+overflow:hidden;
+background:#000;
+pointer-events:none;
+}
+#lukaTrailerBg iframe{
+position:absolute;
+top:50%;
+left:50%;
+width:177.78vh;
+height:100vh;
+min-width:100vw;
+min-height:56.25vw;
+transform:translate(-50%,-50%);
+border:0;
+filter:brightness(.42) saturate(.9);
+}
+#lukaTrailerOverlay{
+position:fixed;
+inset:0;
+z-index:-2;
+pointer-events:none;
+background:
+linear-gradient(rgba(0,0,0,.82),rgba(0,0,0,.88)),
+radial-gradient(circle at top,rgba(180,0,20,.18),transparent 45%);
+backdrop-filter:blur(1px);
+}
+main,header,.container,.content,section{
+position:relative;
+z-index:5;
+}
+</style>
+
+
+<style id="luka-cinema-background">
+#lukaCinemaBackground{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    z-index:0;
+    pointer-events:none;
+    background:transparent;
+}
+#lukaCinemaBackground video{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transform:translate(-50%,-50%) scale(1.06);
+    filter:brightness(1) saturate(1.12) contrast(1.02);
+    animation:lukaCinemaZoom 18s ease-in-out infinite alternate;
+}
+#lukaCinemaOverlay{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,.08) 0%,
+            rgba(0,0,0,.03) 45%,
+            rgba(0,0,0,.12) 100%
+        ),
+        linear-gradient(
+            115deg,
+            rgba(255,0,0,.12),
+            transparent 42%,
+            rgba(120,0,255,.12)
+        );
+}
+@keyframes lukaCinemaZoom{
+    from{transform:translate(-50%,-50%) scale(1.06)}
+    to{transform:translate(-50%,-50%) scale(1.13)}
+}
+body{
+    background:transparent!important;
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="lukaCinemaBackground">
+    <video autoplay muted loop playsinline preload="auto">
+        <source src="/assets/painel-bg.mp4" type="video/mp4">
+    </video>
+</div>
+<div id="lukaCinemaOverlay"></div>
+
+
+
+
+
+
+<div class="container">
+
+    <div class="topo">
+
+        <div>
+            <a href="/" class="logo">
+                LUKA<span>FILMES</span>
+            </a>
+
+            <div class="subtitulo">
+                Painel do revendedor
+            </div>
+        </div>
+
+        <button
+            class="btn-sair"
+            onclick="sair()"
+        >
+            SAIR
+        </button>
+
+    </div>
+
+    <div class="dashboard">
+
+        <div class="card">
+            <div class="label">CLIENTES</div>
+            <div class="numero" id="clientesNumero">0 / 0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">CLIENTES ATIVOS</div>
+            <div class="numero" id="clientesAtivos">0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">CLIENTES SUSPENSOS</div>
+            <div class="numero" id="clientesSuspensos">0</div>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Criar novo cliente</h2>
+
+        <div id="mensagem" class="mensagem"></div>
+
+        <form id="formCliente">
+
+            <div class="form-grid">
+
+                <div class="campo">
+                    <label>Usuário</label>
+                    <input id="clienteUsuario" required>
+                </div>
+
+                <div class="campo">
+                    <label>Senha</label>
+                    <input id="clienteSenha" type="password" required>
+                </div>
+
+                <div class="campo">
+                    <label>Dias</label>
+                    <input id="clienteDias" type="number" min="1" value="30" required>
+                </div>
+
+                <button class="btn" type="submit">
+                    CRIAR CLIENTE
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Meus clientes</h2>
+
+        <div class="tabela-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>USUÁRIO</th>
+                        <th>STATUS</th>
+                        <th>VALIDADE</th>
+                        <th>AÇÕES</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="clientes">
+                    <tr>
+                        <td colspan="4">
+                            Carregando...
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+async function carregar() {
+
+    try {
+
+        const resposta =
+            await fetch(
+                "/api/revendedor/clientes",
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+        if (resposta.status === 403) {
+            window.location.href = "/login";
+            return;
+        }
+
+        const dados = await resposta.json();
+
+        if (!dados.sucesso) {
+            throw new Error(dados.mensagem || "Erro");
+        }
+
+        document.getElementById("clientesNumero")
+            .textContent =
+            dados.utilizados +
+            " / " +
+            dados.limite;
+
+        const ativos =
+            dados.clientes.filter(
+                u => u.status === "ativo"
+            ).length;
+
+        const suspensos =
+            dados.clientes.filter(
+                u => u.status !== "ativo"
+            ).length;
+
+        document.getElementById("clientesAtivos")
+            .textContent = ativos;
+
+        document.getElementById("clientesSuspensos")
+            .textContent = suspensos;
+
+        const tbody =
+            document.getElementById("clientes");
+
+        if (!dados.clientes.length) {
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        Nenhum cliente cadastrado.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        tbody.innerHTML =
+            dados.clientes.map(cliente => {
+
+                const status =
+                    cliente.status === "ativo"
+                        ? "ativo"
+                        : "suspenso";
+
+                const botaoStatus =
+                    cliente.status === "ativo"
+                        ? `<button class="acao-btn suspender"
+                                onclick="alterarStatus(${cliente.id}, 'suspenso')">
+                                SUSPENDER
+                           </button>`
+                        : `<button class="acao-btn ativar"
+                                onclick="alterarStatus(${cliente.id}, 'ativo')">
+                                ATIVAR
+                           </button>`;
+
+                return `
+                    <tr>
+                        <td>${cliente.id}</td>
+
+                        <td>
+                            ${escapeHtml(cliente.usuario)}
+                        </td>
+
+                        <td>
+                            <span class="badge ${status}">
+                                ${cliente.status === "ativo"
+                                    ? "ATIVO"
+                                    : "SUSPENSO"}
+                            </span>
+                        </td>
+
+                        <td>
+                            ${cliente.validade
+                                ? new Date(cliente.validade).toLocaleString("pt-BR")
+                                : "—"}
+                        </td>
+
+                        <td>
+                            <div class="acoes">
+
+                                <button
+                                    class="acao-btn editar"
+                                    onclick="editarCliente(${cliente.id}, '${escapeJs(cliente.usuario)}')">
+                                    EDITAR
+                                </button>
+
+                                ${botaoStatus}
+
+                                <button
+                                    class="acao-btn renovar"
+                                    onclick="renovarCliente(${cliente.id})">
+                                    RENOVAR
+                                </button>
+
+                                <button
+                                    class="acao-btn excluir"
+                                    onclick="excluirCliente(${cliente.id}, '${escapeJs(cliente.usuario)}')">
+                                    EXCLUIR
+                                </button>
+
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+            }).join("");
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        document.getElementById("clientes")
+            .innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        Erro ao carregar clientes.
+                    </td>
+                </tr>
+            `;
+    }
+}
+
+
+document
+.getElementById("formCliente")
+.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const usuario =
+        document.getElementById("clienteUsuario")
+            .value.trim();
+
+    const senha =
+        document.getElementById("clienteSenha")
+            .value;
+
+    const dias =
+        Number(
+            document.getElementById("clienteDias")
+                .value
+        );
+
+    try {
+
+        const resposta =
+            await fetch(
+                "/api/revendedor/clientes",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify({
+                        usuario,
+                        senha,
+                        dias
+                    })
+                }
+            );
+
+        const dados =
+            await resposta.json();
+
+        mostrarMensagem(
+            dados.mensagem,
+            dados.sucesso
+        );
+
+        if (dados.sucesso) {
+
+            document.getElementById("clienteUsuario").value = "";
+            document.getElementById("clienteSenha").value = "";
+            document.getElementById("clienteDias").value = "30";
+
+            carregar();
+        }
+
+    } catch (erro) {
+
+        mostrarMensagem(
+            "Erro de comunicação com o servidor.",
+            false
+        );
+    }
+
+});
+
+
+function mostrarMensagem(texto, sucesso) {
+
+    const el =
+        document.getElementById("mensagem");
+
+    el.textContent = texto;
+    el.style.display = "block";
+
+    el.style.background =
+        sucesso
+            ? "rgba(0,210,106,.15)"
+            : "rgba(229,9,20,.15)";
+
+    el.style.color =
+        sucesso
+            ? "#00d26a"
+            : "#ff5b64";
+}
+
+
+async function sair() {
+
+    await fetch(
+        "/logout",
+        {
+            credentials: "same-origin"
+        }
+    );
+
+    window.location.href = "/login";
+}
+
+
+function escapeJs(valor) {
+
+    return String(valor || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
+        .replace(/\r?\n/g, "\\n");
+
+}
+
+
+async function editarCliente(id, usuarioAtual) {
+
+    const usuario =
+        prompt("Novo usuário:", usuarioAtual);
+
+    if (usuario === null) return;
+
+    const novoUsuario = usuario.trim();
+
+    if (!novoUsuario) {
+        alert("Informe um usuário válido.");
+        return;
+    }
+
+    const senha =
+        prompt("Nova senha (deixe vazio para manter a atual):");
+
+    if (senha === null) return;
+
+    const resposta =
+        await fetch(
+            "/api/revendedor/clientes/editar",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    id,
+                    usuario: novoUsuario,
+                    senha
+                })
+            }
+        );
+
+    const dados = await resposta.json();
+
+    mostrarMensagem(
+        dados.mensagem,
+        dados.sucesso
+    );
+
+    if (dados.sucesso) {
+        carregar();
+    }
+
+}
+
+
+async function alterarStatus(id, status) {
+
+    const acao =
+        status === "ativo"
+            ? "ativar"
+            : "suspender";
+
+    if (!confirm(`Deseja ${acao} este cliente?`)) {
+        return;
+    }
+
+    const resposta =
+        await fetch(
+            "/api/revendedor/clientes/status",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    id,
+                    status
+                })
+            }
+        );
+
+    const dados = await resposta.json();
+
+    mostrarMensagem(
+        dados.mensagem,
+        dados.sucesso
+    );
+
+    if (dados.sucesso) {
+        carregar();
+    }
+
+}
+
+
+async function renovarCliente(id) {
+
+    const valor =
+        prompt(
+            "Quantos dias deseja adicionar?",
+            "30"
+        );
+
+    if (valor === null) return;
+
+    const dias = Number(valor);
+
+    if (
+        !Number.isInteger(dias) ||
+        dias < 1
+    ) {
+        alert("Informe uma quantidade válida de dias.");
+        return;
+    }
+
+    const resposta =
+        await fetch(
+            "/api/revendedor/clientes/renovar",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    id,
+                    dias
+                })
+            }
+        );
+
+    const dados = await resposta.json();
+
+    mostrarMensagem(
+        dados.mensagem,
+        dados.sucesso
+    );
+
+    if (dados.sucesso) {
+        carregar();
+    }
+
+}
+
+
+async function excluirCliente(id, usuario) {
+
+    if (
+        !confirm(
+            `Tem certeza que deseja excluir o cliente "${usuario}"?`
+        )
+    ) {
+        return;
+    }
+
+    const resposta =
+        await fetch(
+            "/api/revendedor/clientes/excluir",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    id
+                })
+            }
+        );
+
+    const dados = await resposta.json();
+
+    mostrarMensagem(
+        dados.mensagem,
+        dados.sucesso
+    );
+
+    if (dados.sucesso) {
+        carregar();
+    }
+
+}
+
+function escapeHtml(valor) {
+
+    return String(valor || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+carregar();
+
+</script>
+
+<script src="../js/navegacao.js"></script>
+</body>
+</html>
+
+
+

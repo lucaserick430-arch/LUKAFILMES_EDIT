@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "usuario": "Lukaadmin",
+    "senha": "$2b$12$2gyUCeVLt0cgpWG4dyoga.JzbzalyEe9quSY8532zxRNzbCigllXW",
+    "status": "ativo",
+    "tipo": "admin",
+    "validade": null,
+    "criado_em": "2026-08-10 15:25:23"
+  },
+  {
+    "id": 2,
+    "usuario": "lucas",
+    "senha": "$2b$12$HjdLEg/xB1HywI85f7vLTuyG7NUCeUG1jlZPI6fD9//p0zg9GKtKW",
+    "status": "ativo",
+    "tipo": "usuario",
+    "validade": "2026-09-10T10:56:28.845Z",
+    "criado_em": "2026-08-11 10:56:28"
+  },
+  {
+    "id": 3,
+    "usuario": "00000",
+    "senha": "$2b$12$QjYX1wXxdz8zluINpclyY.YI6eJ0t/dhpfMcgM3OzFZHigiXDhv0C",
+    "status": "ativo",
+    "tipo": "usuario",
+    "validade": "2026-09-12T12:40:24.320Z",
+    "criado_em": "2026-08-13 12:40:24"
+  }
+]

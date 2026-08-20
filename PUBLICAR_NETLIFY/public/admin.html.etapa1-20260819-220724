@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07070a">
+<title>LUKA FILMES — Administração</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Inter,Arial,sans-serif;
+ background:#07070a;
+ color:#f5f5f5
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.top{
+ position:sticky;
+ top:0;
+ z-index:20;
+ padding:18px 20px;
+ background:rgba(10,10,14,.94);
+ backdrop-filter:blur(18px);
+ border-bottom:1px solid #25252d
+}
+.topin{
+ max-width:1400px;
+ margin:auto;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:15px
+}
+.logo{font-size:22px;font-weight:900}
+.logo b{color:#ef4444}
+.online{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ color:#22c55e;
+ font-size:13px
+}
+.dot{
+ width:9px;height:9px;border-radius:50%;
+ background:#22c55e;
+ box-shadow:0 0 12px #22c55e
+}
+.wrap{max-width:1400px;margin:auto;padding:25px 18px}
+.cards{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:15px;
+ margin-bottom:22px
+}
+.card{
+ background:linear-gradient(145deg,#15151c,#0d0d12);
+ border:1px solid #272731;
+ border-radius:18px;
+ padding:20px;
+ box-shadow:0 15px 40px #0005
+}
+.label{color:#92929e;font-size:13px}
+.num{font-size:32px;font-weight:900;margin-top:8px}
+.red{color:#ef4444}.green{color:#22c55e}.blue{color:#60a5fa}.yellow{color:#facc15}
+.panel{
+ background:#0d0d12;
+ border:1px solid #272731;
+ border-radius:20px;
+ padding:20px;
+ margin-bottom:20px
+}
+.panelhead{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ margin-bottom:18px
+}
+h2{font-size:18px;margin:0}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+ border:0;
+ border-radius:11px;
+ padding:11px 15px;
+ font-weight:800
+}
+.primary{background:#ef4444;color:white}
+.secondary{background:#24242d;color:white}
+.greenbtn{background:#16a34a;color:white}
+table{width:100%;border-collapse:collapse}
+th,td{
+ padding:14px 10px;
+ border-bottom:1px solid #23232b;
+ text-align:left;
+ font-size:14px
+}
+th{color:#8f8f9b;font-size:12px;text-transform:uppercase}
+.badge{
+ display:inline-flex;
+ padding:5px 9px;
+ border-radius:999px;
+ font-size:11px;
+ font-weight:900
+}
+.b-usuario{background:#172554;color:#93c5fd}
+.b-teste{background:#422006;color:#fbbf24}
+.b-revendedor{background:#3b0764;color:#d8b4fe}
+.b-admin{background:#450a0a;color:#fca5a5}
+.b-ativo{background:#052e16;color:#86efac}
+.b-suspenso{background:#3f0d0d;color:#fca5a5}
+.muted{color:#777783}
+.empty{
+ text-align:center;
+ padding:45px 10px;
+ color:#777783
+}
+.modal{
+ position:fixed;
+ inset:0;
+ background:#000b;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ z-index:50;
+ padding:20px
+}
+.modal.show{display:flex}
+.box{
+ width:min(480px,100%);
+ background:#111118;
+ border:1px solid #30303a;
+ border-radius:20px;
+ padding:22px
+}
+.field{margin:13px 0}
+.field label{
+ display:block;
+ margin-bottom:7px;
+ color:#aaaab5;
+ font-size:13px
+}
+.field input,.field select{
+ width:100%;
+ background:#09090d;
+ border:1px solid #30303a;
+ color:white;
+ border-radius:10px;
+ padding:12px
+}
+.msg{
+ margin-top:12px;
+ padding:10px;
+ border-radius:10px;
+ display:none
+}
+.ok{display:block;background:#052e16;color:#86efac}
+.err{display:block;background:#450a0a;color:#fca5a5}
+@media(max-width:850px){
+ .cards{grid-template-columns:repeat(2,1fr)}
+ table{min-width:800px}
+ .tablewrap{overflow:auto}
+}
+@media(max-width:500px){
+ .cards{grid-template-columns:1fr 1fr}
+ .num{font-size:26px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="top">
+ <div class="topin">
+  <div class="logo">LUKA <b>FILMES</b></div>
+  <div class="online"><span class="dot"></span> PAINEL ONLINE</div>
+ </div>
+</header>
+
+<main class="wrap">
+
+ <section class="cards">
+  <div class="card">
+   <div class="label">TOTAL DE CONTAS</div>
+   <div class="num blue" id="total">0</div>
+  </div>
+
+  <div class="card">
+   <div class="label">USUÁRIOS</div>
+   <div class="num green" id="usuarios">0</div>
+  </div>
+
+  <div class="card">
+   <div class="label">TESTES</div>
+   <div class="num yellow" id="testes">0</div>
+  </div>
+
+  <div class="card">
+   <div class="label">REVENDEDORES</div>
+   <div class="num red" id="revendedores">0</div>
+  </div>
+ </section>
+
+ <section class="panel">
+  <div class="panelhead">
+   <h2>Gerenciamento de contas</h2>
+
+   <div class="actions">
+    <button class="btn secondary" onclick="carregar()">↻ Atualizar</button>
+    <button class="btn primary" onclick="abrirModal()">+ Criar conta</button>
+   </div>
+  </div>
+
+  <div class="tablewrap">
+   <table>
+    <thead>
+     <tr>
+      <th>ID</th>
+      <th>Usuário</th>
+      <th>Tipo</th>
+      <th>Status</th>
+      <th>Validade</th>
+      <th>Conexões</th>
+     </tr>
+    </thead>
+    <tbody id="lista">
+     <tr><td colspan="6" class="empty">Carregando usuários...</td></tr>
+    </tbody>
+   </table>
+  </div>
+ </section>
+
+</main>
+
+<div class="modal" id="modal">
+ <div class="box">
+  <div class="panelhead">
+   <h2>Criar nova conta</h2>
+   <button class="btn secondary" onclick="fecharModal()">✕</button>
+  </div>
+
+  <form onsubmit="criar(event)">
+
+   <div class="field">
+    <label>Usuário</label>
+    <input id="usuario" required autocomplete="off">
+   </div>
+
+   <div class="field">
+    <label>Senha</label>
+    <input id="senha" required type="text" autocomplete="off">
+   </div>
+
+   <div class="field">
+    <label>Tipo</label>
+    <select id="tipo">
+     <option value="usuario">Usuário</option>
+     <option value="teste">Teste</option>
+     <option value="revendedor">Revendedor</option>
+    </select>
+   </div>
+
+   <div class="field">
+    <label>Validade em dias</label>
+    <input id="dias" type="number" value="30" min="1" required>
+   </div>
+
+   <div class="field">
+    <label>Limite de conexões</label>
+    <input id="limite" type="number" value="1" min="1" required>
+   </div>
+
+   <button class="btn primary" style="width:100%">CRIAR CONTA</button>
+
+   <div id="msg" class="msg"></div>
+  </form>
+ </div>
+</div>
+
+
+<script>
+/* =========================================================
+   LUKA FILMES — PAINEL ADMINISTRATIVO REAL
+   FONTE DOS DADOS: API DO SERVIDOR / BANCO REAL
+   ========================================================= */
+
+let usuarios = [];
+let carregando = false;
+
+const $ = id => document.getElementById(id);
+
+async function api(url, options = {}) {
+    const resposta = await fetch(url, {
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {})
+        },
+        ...options
+    });
+
+    let dados = {};
+    try {
+        dados = await resposta.json();
+    } catch (_) {}
+
+    if (!resposta.ok) {
+        throw new Error(dados.mensagem || `Erro HTTP ${resposta.status}`);
+    }
+
+    return dados;
+}
+
+/* =========================================================
+   CARREGAR USUÁRIOS REAIS
+   ========================================================= */
+
+async function carregarUsuarios() {
+    if (carregando) return;
+
+    carregando = true;
+
+    try {
+        /*
+         * O servidor atual já possui /api/admin/presenca.
+         * Essa rota devolve os usuários carregados por
+         * carregarUsuarios(), portanto é a fonte real.
+         */
+        const dados = await api("/api/admin/presenca");
+
+        if (!dados || !Array.isArray(dados.usuarios)) {
+            throw new Error("A API não retornou a lista de usuários.");
+        }
+
+        usuarios = dados.usuarios;
+
+        renderizarPainel();
+        renderizarTabela();
+
+        console.log("[ADMIN] Usuários reais carregados:", usuarios);
+
+    } catch (erro) {
+        console.error("[ADMIN] Erro ao carregar usuários:", erro);
+
+        const tbody = $("usersTable");
+
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="10" style="padding:30px;text-align:center;color:#f87171">
+                        ❌ Não foi possível carregar os usuários do servidor.
+                        <br>
+                        <small>${escapeHtml(erro.message)}</small>
+                    </td>
+                </tr>
+            `;
+        }
+    } finally {
+        carregando = false;
+    }
+}
+
+/* =========================================================
+   PAINEL / INDICADORES
+   ========================================================= */
+
+function renderizarPainel() {
+    const total = usuarios.length;
+
+    const online = usuarios.filter(u => u.online).length;
+
+    const testes = usuarios.filter(
+        u => String(u.tipo).toLowerCase() === "teste"
+    ).length;
+
+    const revendedores = usuarios.filter(
+        u => String(u.tipo).toLowerCase() === "revendedor"
+    ).length;
+
+    const comuns = usuarios.filter(
+        u => {
+            const tipo = String(u.tipo).toLowerCase();
+            return tipo === "usuario" || tipo === "usuário";
+        }
+    ).length;
+
+    if ($("totalUsers")) $("totalUsers").textContent = total;
+    if ($("onlineUsers")) $("onlineUsers").textContent = online;
+    if ($("totalTests")) $("totalTests").textContent = testes;
+    if ($("totalResellers")) $("totalResellers").textContent = revendedores;
+
+    /* Compatibilidade com nomes antigos */
+    if ($("testes")) $("testes").textContent = testes;
+    if ($("revendedores")) $("revendedores").textContent = revendedores;
+    if ($("usuarios")) $("usuarios").textContent = comuns;
+}
+
+/* =========================================================
+   TABELA
+   ========================================================= */
+
+function renderizarTabela() {
+    const tbody = $("usersTable");
+
+    if (!tbody) {
+        console.warn("[ADMIN] usersTable não encontrada.");
+        return;
+    }
+
+    if (!usuarios.length) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" style="padding:35px;text-align:center;color:#aaa">
+                    Nenhum usuário cadastrado.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = usuarios
+        .slice()
+        .sort((a,b) => Number(a.id) - Number(b.id))
+        .map(u => {
+
+            const tipo = String(u.tipo || "usuario").toLowerCase();
+
+            let tipoTexto = "Usuário";
+            if (tipo === "admin") tipoTexto = "Administrador";
+            if (tipo === "teste") tipoTexto = "Teste";
+            if (tipo === "revendedor") tipoTexto = "Revendedor";
+
+            const status = String(u.status || "").toLowerCase();
+
+            const online = Boolean(u.online);
+
+            const validade = u.validade
+                ? formatarData(u.validade)
+                : "—";
+
+            const criado = u.criado_em
+                ? formatarData(u.criado_em)
+                : "—";
+
+            return `
+                <tr data-id="${Number(u.id)}">
+
+                    <td>${Number(u.id)}</td>
+
+                    <td>
+                        <strong>${escapeHtml(u.usuario || "—")}</strong>
+                    </td>
+
+                    <td>
+                        <span class="badge tipo-${tipo}">
+                            ${tipoTexto}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="status-pill ${status === "ativo" ? "ativo" : "suspenso"}">
+                            ${status === "ativo" ? "Ativo" : "Suspenso"}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="${online ? "online-dot" : "offline-dot"}">
+                            ${online ? "● Online" : "● Offline"}
+                        </span>
+                    </td>
+
+                    <td>${validade}</td>
+
+                    <td>${criado}</td>
+
+                    <td>
+                        ${Number(u.limite_conexoes || 0)}
+                    </td>
+
+                    <td>
+                        ${Number(u.conexoes_utilizadas || 0)}
+                    </td>
+
+                    <td>
+                        ${
+                            tipo === "admin"
+                            ? `<span style="opacity:.55">Protegido</span>`
+                            : `
+                            <button onclick="editarUsuario(${Number(u.id)})">
+                                Editar
+                            </button>
+
+                            <button onclick="alternarStatus(${Number(u.id)})">
+                                ${status === "ativo" ? "Suspender" : "Ativar"}
+                            </button>
+
+                            <button onclick="renovarUsuario(${Number(u.id)})">
+                                Renovar
+                            </button>
+
+                            <button onclick="excluirUsuario(${Number(u.id)})">
+                                Excluir
+                            </button>
+                            `
+                        }
+                    </td>
+
+                </tr>
+            `;
+        })
+        .join("");
+}
+
+/* =========================================================
+   CRIAR USUÁRIO
+   ========================================================= */
+
+async function criarUsuario(dados) {
+    try {
+        const resposta = await api("/api/admin/usuarios/criar", {
+            method: "POST",
+            body: JSON.stringify(dados)
+        });
+
+        alert(resposta.mensagem || "Usuário criado.");
+
+        await carregarUsuarios();
+
+        return resposta;
+
+    } catch (erro) {
+        alert(erro.message);
+        throw erro;
+    }
+}
+
+/* =========================================================
+   EDITAR
+   ========================================================= */
+
+async function editarUsuario(id) {
+    const u = usuarios.find(x => Number(x.id) === Number(id));
+
+    if (!u) {
+        alert("Usuário não encontrado.");
+        return;
+    }
+
+    const novoUsuario = prompt("Usuário:", u.usuario || "");
+    if (novoUsuario === null) return;
+
+    const novaSenha = prompt(
+        "Nova senha (deixe vazio para manter):",
+        ""
+    );
+
+    if (novaSenha === null) return;
+
+    const tipo = prompt(
+        "Tipo: usuario, teste ou revendedor",
+        u.tipo || "usuario"
+    );
+
+    if (tipo === null) return;
+
+    try {
+        const resposta = await api("/api/admin/usuarios/editar", {
+            method: "POST",
+            body: JSON.stringify({
+                id: Number(id),
+                usuario: novoUsuario.trim(),
+                senha: novaSenha,
+                tipo: tipo.trim().toLowerCase()
+            })
+        });
+
+        alert(resposta.mensagem || "Usuário atualizado.");
+
+        await carregarUsuarios();
+
+    } catch (erro) {
+        alert(erro.message);
+    }
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+async function alternarStatus(id) {
+    const u = usuarios.find(x => Number(x.id) === Number(id));
+
+    if (!u) return;
+
+    const novoStatus =
+        String(u.status).toLowerCase() === "ativo"
+            ? "suspenso"
+            : "ativo";
+
+    if (!confirm(
+        `${novoStatus === "ativo" ? "Ativar" : "Suspender"} ${u.usuario}?`
+    )) {
+        return;
+    }
+
+    try {
+        const resposta = await api("/api/admin/usuarios/status", {
+            method: "POST",
+            body: JSON.stringify({
+                id: Number(id),
+                status: novoStatus
+            })
+        });
+
+        alert(resposta.mensagem || "Status atualizado.");
+
+        await carregarUsuarios();
+
+    } catch (erro) {
+        alert(erro.message);
+    }
+}
+
+/* =========================================================
+   RENOVAR
+   ========================================================= */
+
+async function renovarUsuario(id) {
+    const dias = prompt("Quantos dias deseja adicionar?", "30");
+
+    if (dias === null) return;
+
+    const numero = Number(dias);
+
+    if (!Number.isInteger(numero) || numero <= 0) {
+        alert("Informe uma quantidade de dias válida.");
+        return;
+    }
+
+    try {
+        const resposta = await api("/api/admin/usuarios/renovar", {
+            method: "POST",
+            body: JSON.stringify({
+                id: Number(id),
+                dias: numero
+            })
+        });
+
+        alert(resposta.mensagem || "Usuário renovado.");
+
+        await carregarUsuarios();
+
+    } catch (erro) {
+        alert(erro.message);
+    }
+}
+
+/* =========================================================
+   EXCLUIR
+   ========================================================= */
+
+async function excluirUsuario(id) {
+    const u = usuarios.find(x => Number(x.id) === Number(id));
+
+    if (!u) return;
+
+    if (!confirm(
+        `Excluir definitivamente o usuário "${u.usuario}"?`
+    )) {
+        return;
+    }
+
+    try {
+        const resposta = await api("/api/admin/usuarios/excluir", {
+            method: "POST",
+            body: JSON.stringify({
+                id: Number(id)
+            })
+        });
+
+        alert(resposta.mensagem || "Usuário excluído.");
+
+        await carregarUsuarios();
+
+    } catch (erro) {
+        alert(erro.message);
+    }
+}
+
+/* =========================================================
+   UTILITÁRIOS
+   ========================================================= */
+
+function formatarData(valor) {
+    if (!valor) return "—";
+
+    const data = new Date(valor);
+
+    if (Number.isNaN(data.getTime())) {
+        return String(valor);
+    }
+
+    return data.toLocaleString("pt-BR");
+}
+
+function escapeHtml(valor) {
+    return String(valor ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+/* =========================================================
+   ATUALIZAÇÃO AUTOMÁTICA
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    console.log("🔥 LUKA FILMES ADMIN — PAINEL REAL");
+
+    carregarUsuarios();
+
+    /*
+     * Atualiza a lista a cada 10 segundos.
+     * Assim novos usuários/revendedores aparecem sem
+     * precisar apagar cache ou usar localStorage.
+     */
+    setInterval(carregarUsuarios, 10000);
+});
+</script>
+
+
+</body>
+</html>

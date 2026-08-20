@@ -1,0 +1,1686 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+
+body {
+background: #080808;
+color: white;
+font-family: Arial, sans-serif;
+}
+
+header {
+height: 70px;
+background: #050505;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 5%;
+}
+
+.logo {
+font-size: 26px;
+font-weight: bold;
+}
+
+.logo span {
+color: #e50914;
+}
+
+nav {
+display: flex;
+gap: 25px;
+}
+
+nav a {
+color: white;
+text-decoration: none;
+}
+
+header button {
+background: none;
+border: none;
+color: white;
+font-size: 20px;
+cursor: pointer;
+}
+
+.hero {
+min-height: 500px;
+display: flex;
+align-items: center;
+padding: 60px 8%;
+
+```
+background:
+    linear-gradient(90deg, #080808 20%, transparent),
+    linear-gradient(0deg, #080808, transparent);
+```
+
+}
+
+.hero h1 {
+font-size: 55px;
+margin: 15px 0;
+}
+
+.hero p {
+color: #ccc;
+font-size: 18px;
+}
+
+.hero-label {
+color: #e50914;
+font-weight: bold;
+}
+
+/* ================================
+PESQUISA
+================================ */
+
+  .pesquisa { display:flex; justify-content:center; align-items:center; width:100%; max-width:650px; margin:30px auto 0; position:relative; } .pesquisa input {
+width: 400px;
+padding: 16px;
+border: none;
+outline: none;
+font-size: 16px;
+}
+
+.pesquisa button {
+padding: 16px 25px;
+border: none;
+background: #e50914;
+color: white;
+font-weight: bold;
+cursor: pointer;
+}
+
+.pesquisa button:hover {
+background: #b20710;
+}
+
+/* ================================
+RESULTADOS DA PESQUISA
+================================ */
+
+#resultadosBusca {
+width: 100%;
+max-width: 1400px;
+margin: 25px auto 40px;
+padding: 0 5%;
+box-sizing: border-box;
+}
+
+.titulo-resultados {
+margin: 0 0 20px;
+font-size: 24px;
+}
+
+.resultados-filmes {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+gap: 20px;
+}
+
+.resultados-filmes .filme {
+min-width: 0;
+cursor: pointer;
+}
+
+.resultados-filmes .capa {
+width: 100%;
+height: 260px;
+overflow: hidden;
+border-radius: 6px;
+background: #222;
+}
+
+.resultados-filmes .capa img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+}
+
+.resultados-filmes .filme h3 {
+margin-top: 10px;
+font-size: 16px;
+}
+
+.resultados-filmes .filme p {
+margin-top: 6px;
+color: #aaa;
+font-size: 14px;
+}
+
+.busca-status {
+padding: 25px;
+text-align: center;
+font-size: 18px;
+color: #ccc;
+}
+
+/* ================================
+CATEGORIAS
+================================ */
+
+.categoria {
+padding: 30px 5%;
+}
+
+.categoria-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.controles {
+display: flex;
+gap: 8px;
+}
+
+.seta {
+background: #222;
+border: none;
+color: white;
+padding: 12px;
+cursor: pointer;
+}
+
+.seta:hover {
+background: #e50914;
+}
+
+.filmes {
+display: flex;
+gap: 18px;
+overflow-x: auto;
+scrollbar-width: none;
+}
+
+.filmes::-webkit-scrollbar {
+display: none;
+}
+
+.filme {
+min-width: 180px;
+cursor: pointer;
+}
+
+.capa {
+height: 260px;
+background: #222;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 50px;
+border-radius: 6px;
+overflow: hidden;
+}
+
+.capa img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+}
+
+.filme h3 {
+margin-top: 10px;
+}
+
+.filme p {
+color: #aaa;
+margin-top: 6px;
+}
+
+/* ================================
+RODAPÉ
+================================ */
+
+footer {
+margin-top: 50px;
+padding: 40px 5%;
+background: #050505;
+text-align: center;
+}
+
+footer p {
+color: #888;
+margin-top: 10px;
+}
+
+/* ================================
+CELULAR
+================================ */
+
+@media (max-width: 700px) {
+
+```
+nav {
+    display: none;
+}
+
+.hero {
+    min-height: 450px;
+    padding: 40px 5%;
+}
+
+.hero h1 {
+    font-size: 38px;
+}
+
+  .pesquisa { display:flex; justify-content:center; align-items:center; width:100%; max-width:650px; margin:30px auto 0; position:relative; } .pesquisa input {
+    width: 100%;
+}
+
+.pesquisa button {
+    width: 100%;
+}
+
+.filme {
+    min-width: 140px;
+}
+
+.capa {
+    height: 210px;
+}
+
+#resultadosBusca {
+    padding: 0 5%;
+}
+
+.resultados-filmes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.resultados-filmes .capa {
+    height: 220px;
+}
+```
+
+}
+
+/* MODAL FILME */ .modal-filme{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:30px;box-sizing:border-box}.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(8px)}.modal-conteudo{position:relative;z-index:2;width:min(1100px,95vw);max-height:90vh;overflow-y:auto;background:#101010;border-radius:18px;box-shadow:0 25px 80px rgba(0,0,0,.8);overflow-x:hidden}.modal-fundo{position:absolute;top:0;left:0;width:100%;height:430px;background-size:cover;background-position:center;opacity:.9}.modal-corpo{position:relative;z-index:2;min-height:500px;display:flex;gap:35px;align-items:flex-end;padding:300px 40px 40px;box-sizing:border-box;background:linear-gradient(to bottom,transparent 0%,rgba(16,16,16,.8) 55%,#101010 75%)}.modal-poster{width:220px;min-width:220px}.modal-poster img{width:100%;display:block;border-radius:12px;box-shadow:0 15px 40px rgba(0,0,0,.7)}.modal-informacoes{flex:1;color:#fff}.modal-tag{display:inline-block;margin-bottom:10px;padding:6px 12px;border-radius:20px;background:#e50914;color:#fff;font-size:12px;font-weight:bold}.modal-informacoes h1{margin:0 0 15px;font-size:clamp(28px,4vw,48px);line-height:1.1}.modal-meta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:25px;color:#ccc;font-size:14px}.modal-informacoes h2{margin:0 0 10px;font-size:22px}.modal-sinopse{color:#ddd;line-height:1.7;font-size:16px;margin:0 0 20px}.titulo-original{color:#aaa;font-size:14px}.modal-fechar{position:absolute;top:18px;right:18px;z-index:10;width:42px;height:42px;border:0;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:22px;cursor:pointer;transition:.2s}.modal-fechar:hover{background:#e50914;transform:scale(1.08)}.modal-conteudo::-webkit-scrollbar{width:7px}.modal-conteudo::-webkit-scrollbar-thumb{background:#555;border-radius:10px}@media(max-width:700px){.modal-filme{padding:10px}.modal-conteudo{width:100%;max-height:94vh;border-radius:14px}.modal-fundo{height:300px}.modal-corpo{flex-direction:column;align-items:center;text-align:center;padding:210px 20px 30px;gap:20px}.modal-poster{width:160px;min-width:160px}.modal-meta{justify-content:center}.modal-sinopse{text-align:left}}
+/* SUGESTOES DE PESQUISA */ .pesquisa{ display:flex; justify-content:center; align-items:center; width:100%; max-width:650px; margin:30px auto 0; display:flex; justify-content:center; align-items:center; width:100%; max-width:650px; margin:30px auto 0; display:flex; justify-content:center; align-items:center; width:100%; max-width:650px; margin:30px auto 0; display:flex; justify-content:center; align-items:center; width:100%; max-width:650px; margin:30px auto 0;position:relative}.pesquisa #sugestoesBusca{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:99999;background:#151515;border:1px solid rgba(255,255,255,.12);border-radius:12px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,.7)}.sugestao-filme{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.07);transition:.18s}.sugestao-filme:hover{background:#292929}.sugestao-capa{width:42px;height:58px;min-width:42px;border-radius:5px;overflow:hidden;background:#222;display:flex;align-items:center;justify-content:center;color:#fff}.sugestao-capa img{width:100%;height:100%;object-fit:cover}.sugestao-info{display:flex;flex-direction:column;gap:5px;min-width:0}.sugestao-info strong{color:#fff;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sugestao-info span{color:#aaa;font-size:12px}
+
+/* CORRECAO CAPAS DOS FILMES */
+.filme {
+    width: 180px;
+    min-width: 180px;
+    flex: 0 0 180px;
+    cursor: pointer;
+}
+
+.filme-capa {
+    width: 180px;
+    height: 270px;
+    aspect-ratio: 2 / 3;
+    background: #222;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filme-capa img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+}
+
+.sem-capa {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    background: #222;
+}
+
+.filme-info {
+    width: 180px;
+    overflow: hidden;
+}
+
+.filme-info h3 {
+    margin-top: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.filme-nota {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0,0,0,.8);
+    padding: 4px 7px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #fff;
+}
+
+@media (max-width: 700px) {
+    .filme {
+        width: 140px;
+        min-width: 140px;
+        flex-basis: 140px;
+    }
+    .filme-capa {
+        width: 140px;
+        height: 210px;
+    }
+    .filme-info {
+        width: 140px;
+    }
+}
+
+
+
+
+
+
+/* ===== AJUSTE FINAL DA PESQUISA ===== */
+.hero-conteudo {
+    width: 100%;
+    max-width: 100%;
+}
+
+.hero .pesquisa {
+    width: min(650px, 100%);
+    margin: 30px auto 0 !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.hero .pesquisa input {
+    flex: 1;
+    width: auto !important;
+}
+
+.hero .pesquisa button {
+    flex-shrink: 0;
+}
+/* ===== HERO CENTRALIZADO ===== */
+
+.hero-conteudo {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.hero-label {
+    display: none !important;
+}
+
+.hero h1 {
+    text-align: center;
+}
+
+.hero p {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero .pesquisa {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+/* ==========================================
+   LUKAFILMES 2026 — HERO PREMIUM
+   ========================================== */
+
+.hero {
+    position: relative;
+    min-height: 600px;
+    padding: 90px 6%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* brilho cinematográfico */
+.hero::before {
+    content: "";
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: rgba(229, 9, 20, .12);
+    filter: blur(100px);
+    animation: heroBrilho 7s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes heroBrilho {
+    0% {
+        transform: translate(-180px, -40px) scale(.8);
+        opacity: .35;
+    }
+
+    100% {
+        transform: translate(180px, 40px) scale(1.25);
+        opacity: .7;
+    }
+}
+
+/* conteúdo */
+.hero-conteudo {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+
+    animation: heroEntrada 1s ease-out;
+}
+
+@keyframes heroEntrada {
+    from {
+        opacity: 0;
+        transform: translateY(35px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* título */
+.hero h1 {
+    font-size: clamp(42px, 6vw, 72px);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -2px;
+    margin: 0 auto 22px;
+
+    text-shadow:
+        0 5px 25px rgba(0,0,0,.9),
+        0 0 45px rgba(229,9,20,.12);
+
+    animation: tituloHero 1s ease-out .15s both;
+}
+
+@keyframes tituloHero {
+    from {
+        opacity: 0;
+        transform: scale(.94);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* texto */
+.hero p {
+    max-width: 650px;
+    margin: 0 auto 32px;
+
+    color: #d0d0d0;
+    font-size: 19px;
+    line-height: 1.6;
+
+    text-shadow:
+        0 3px 15px rgba(0,0,0,.9);
+
+    animation: textoHero 1s ease-out .3s both;
+}
+
+@keyframes textoHero {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* pesquisa */
+.hero .pesquisa {
+    position: relative;
+    z-index: 10;
+
+    width: min(700px, 100%);
+    margin: 0 auto !important;
+
+    display: flex;
+    align-items: center;
+
+    padding: 6px;
+
+    background: rgba(10,10,10,.72);
+
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.55),
+        0 0 30px rgba(229,9,20,.08);
+
+    animation: pesquisaHero 1s ease-out .45s both;
+}
+
+@keyframes pesquisaHero {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.hero .pesquisa input {
+    flex: 1;
+    width: auto !important;
+    min-width: 0;
+
+    height: 58px;
+    padding: 0 20px;
+
+    border: 0;
+    outline: 0;
+    border-radius: 9px;
+
+    background: rgba(255,255,255,.96);
+    color: #111;
+
+    font-size: 16px;
+}
+
+.hero .pesquisa input::placeholder {
+    color: #777;
+}
+
+.hero .pesquisa button {
+    height: 58px;
+    padding: 0 28px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: #e50914;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
+}
+
+.hero .pesquisa button:hover {
+    background: #ff1622;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 30px rgba(229,9,20,.4);
+}
+
+/* linha decorativa */
+.hero-conteudo::after {
+    content: "";
+    display: block;
+
+    width: 70px;
+    height: 3px;
+
+    margin: 45px auto 0;
+
+    border-radius: 10px;
+
+    background: #e50914;
+
+    box-shadow:
+        0 0 20px rgba(229,9,20,.65);
+
+    animation: linhaHero 3s ease-in-out infinite;
+}
+
+@keyframes linhaHero {
+    0%, 100% {
+        width: 55px;
+        opacity: .6;
+    }
+
+    50% {
+        width: 100px;
+        opacity: 1;
+    }
+}
+
+/* ==========================================
+   CELULAR
+   ========================================== */
+
+@media (max-width: 700px) {
+
+    .hero {
+        min-height: 560px;
+        padding: 60px 5%;
+    }
+
+    .hero h1 {
+        font-size: 40px;
+        letter-spacing: -1px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+
+    .hero .pesquisa {
+        flex-direction: column;
+        padding: 7px;
+    }
+
+    .hero .pesquisa input,
+    .hero .pesquisa button {
+        width: 100% !important;
+    }
+
+    .hero .pesquisa button {
+        margin-top: 6px;
+    }
+}
+
+
+/* =====================================================
+   LUKAFILMES - MOBILE APP
+   ===================================================== */
+@media (max-width: 600px) {
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden !important;
+        touch-action: pan-y;
+    }
+
+    body {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        -webkit-text-size-adjust: 100%;
+        background: #070707;
+    }
+
+    /* ==========================================
+       TOPO DO APLICATIVO
+       ========================================== */
+
+    header {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        height: auto !important;
+        min-height: 64px !important;
+
+        display: grid !important;
+        grid-template-columns: auto 1fr auto !important;
+        align-items: center !important;
+
+        gap: 8px !important;
+        padding: 10px 12px !important;
+        margin: 0 !important;
+
+        box-sizing: border-box !important;
+        overflow: visible !important;
+
+        position: relative;
+        z-index: 100;
+    }
+
+    /* LOGO */
+    .logo {
+        min-width: 0 !important;
+        white-space: nowrap !important;
+        font-size: 21px !important;
+        line-height: 1 !important;
+        margin: 0 !important;
+    }
+
+    /* ==========================================
+       MENU PRINCIPAL
+       ========================================== */
+
+    nav {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+
+        align-items: center !important;
+        justify-content: stretch !important;
+
+        gap: 4px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: visible !important;
+    }
+
+    nav a {
+        display: flex !important;
+
+        min-width: 0 !important;
+        width: 100% !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        padding: 9px 4px !important;
+        margin: 0 !important;
+
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+
+        text-align: center !important;
+        white-space: nowrap !important;
+
+        border-radius: 9px !important;
+    }
+
+    /* REMOVE INICIO */
+    nav a[href="/"] {
+        display: none !important;
+    }
+
+    /* ==========================================
+       BOTÕES DO USUÁRIO
+       ========================================== */
+
+    .acoes-usuario {
+        min-width: 0 !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+
+        gap: 4px !important;
+        margin: 0 !important;
+    }
+
+    .acoes-usuario button {
+        min-width: 42px !important;
+        min-height: 38px !important;
+
+        padding: 7px 8px !important;
+
+        font-size: 11px !important;
+        line-height: 1 !important;
+
+        white-space: nowrap !important;
+        border-radius: 9px !important;
+    }
+
+    /* ==========================================
+       HERO
+       ========================================== */
+
+    .hero {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        margin: 0 !important;
+        padding: 28px 14px 24px !important;
+
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+
+        border-radius: 0 !important;
+    }
+
+    .hero-conteudo {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 auto !important;
+    }
+
+    .hero h1 {
+        max-width: 100% !important;
+        font-size: clamp(25px, 8vw, 36px) !important;
+        line-height: 1.08 !important;
+        margin-bottom: 10px !important;
+    }
+
+    .hero p {
+        max-width: 100% !important;
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+    }
+
+    /* PESQUISA */
+    .hero .pesquisa {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        display: flex !important;
+        gap: 7px !important;
+
+        margin-top: 18px !important;
+    }
+
+    .hero .pesquisa input {
+        min-width: 0 !important;
+        width: 100% !important;
+        height: 46px !important;
+        font-size: 14px !important;
+    }
+
+    .hero .pesquisa button {
+        flex-shrink: 0 !important;
+        min-width: 46px !important;
+        height: 46px !important;
+        padding: 0 12px !important;
+    }
+
+    /* ==========================================
+       TITULOS DAS CATEGORIAS
+       ========================================== */
+
+    .categoria-header {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+
+        padding: 0 14px !important;
+        margin: 24px 0 12px !important;
+
+        box-sizing: border-box !important;
+    }
+
+    .categoria-header h2,
+    .categoria-header h3 {
+        min-width: 0 !important;
+        font-size: 19px !important;
+        margin: 0 !important;
+    }
+
+    /* ==========================================
+       CATÁLOGO MOBILE
+       ========================================== */
+
+    .filmes {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+
+        gap: 12px !important;
+
+        padding: 0 12px !important;
+        margin: 0 !important;
+
+        box-sizing: border-box !important;
+
+        overflow: visible !important;
+    }
+
+    .filmes::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    .filmes > * {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .filmes img {
+        display: block !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+
+        aspect-ratio: 2 / 3 !important;
+        object-fit: cover !important;
+
+        border-radius: 11px !important;
+    }
+
+    /* ==========================================
+       EVITA ESTOURO DE ELEMENTOS
+       ========================================== */
+
+    img,
+    video,
+    iframe,
+    table {
+        max-width: 100% !important;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+        max-width: 100% !important;
+    }
+
+    /* ==========================================
+       RODAPÉ
+       ========================================== */
+
+    footer {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        padding: 25px 14px !important;
+
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+}
+
+/* =====================================================
+   LUKAFILMES - CARROSSEL MOBILE ESTILO APLICATIVO
+   SOMENTE CELULAR
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    /* Cada categoria fica como um bloco de aplicativo */
+    .categoria {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        margin-bottom: 28px !important;
+    }
+
+    /* Título + setas */
+    .categoria-header {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 8px !important;
+        padding: 0 12px !important;
+        margin-bottom: 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    .categoria-header h2 {
+        flex: 1 !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        font-size: 20px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    /* Área das setas */
+    .controles {
+        flex-shrink: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+    }
+
+    /* Botões de navegação */
+    .seta {
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 16px !important;
+        cursor: pointer !important;
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+
+    /* CARROSSEL */
+    .filmes {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        display: grid !important;
+
+        /* EXATAMENTE 2 FILMES VISÍVEIS */
+        grid-auto-flow: column !important;
+        grid-template-columns: repeat(2, calc((100% - 10px) / 2)) !important;
+
+        grid-auto-columns: calc((100% - 10px) / 2) !important;
+
+        gap: 10px !important;
+
+        padding: 0 12px 8px !important;
+        margin: 0 !important;
+
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+
+        scroll-behavior: smooth !important;
+        scroll-snap-type: x mandatory !important;
+
+        -webkit-overflow-scrolling: touch !important;
+
+        scrollbar-width: none !important;
+
+        box-sizing: border-box !important;
+
+        touch-action: pan-x pan-y !important;
+    }
+
+    .filmes::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
+
+    /* Cada filme ocupa exatamente 1 posição */
+    .filmes > .filme {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+
+        scroll-snap-align: start !important;
+        scroll-snap-stop: always !important;
+
+        box-sizing: border-box !important;
+    }
+
+    /* Capa */
+    .filmes > .filme .filme-capa {
+        width: 100% !important;
+        overflow: hidden !important;
+        border-radius: 10px !important;
+    }
+
+    .filmes > .filme img {
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 2 / 3 !important;
+        object-fit: cover !important;
+        display: block !important;
+        border-radius: 10px !important;
+    }
+
+    /* Informações do filme */
+    .filmes > .filme .filme-info {
+        width: 100% !important;
+        min-width: 0 !important;
+        padding: 7px 2px 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .filmes > .filme .filme-info h3 {
+        margin: 0 !important;
+        font-size: 13px !important;
+        line-height: 1.3 !important;
+
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .filmes > .filme .filme-info p {
+        margin: 3px 0 0 !important;
+        font-size: 11px !important;
+    }
+
+    /* Nota sobre a capa */
+    .filme-nota {
+        font-size: 11px !important;
+    }
+
+    /* Resultado da pesquisa também fica organizado */
+    #listaResultados.filmes {
+        grid-auto-flow: column !important;
+        grid-template-columns: repeat(2, calc((100% - 10px) / 2)) !important;
+        grid-auto-columns: calc((100% - 10px) / 2) !important;
+        overflow-x: auto !important;
+    }
+
+}
+
+@media (min-width: 601px) {
+    #lupaPesquisaMobile {
+        display: none !important;
+    }
+}
+
+/* =====================================================
+   LUKAFILMES - BARRA DE PESQUISA MOBILE DEFINITIVA
+   ===================================================== */
+@media (max-width: 600px) {
+
+    .hero .pesquisa {
+        position: relative !important;
+
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        top: auto !important;
+
+        width: calc(100% - 28px) !important;
+        max-width: 430px !important;
+
+        margin: 24px auto 0 !important;
+
+        padding: 7px !important;
+
+        display: flex !important;
+        align-items: center !important;
+
+        gap: 7px !important;
+
+        box-sizing: border-box !important;
+
+        border-radius: 20px !important;
+
+        background: rgba(255,255,255,.065) !important;
+
+        border: 1px solid rgba(255,255,255,.16) !important;
+
+        box-shadow:
+            0 12px 35px rgba(0,0,0,.38),
+            inset 0 1px 0 rgba(255,255,255,.08) !important;
+
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+
+        transform: translateY(0) !important;
+
+        animation: barraPesquisaFlutuante 4s ease-in-out infinite !important;
+    }
+
+    .hero .pesquisa input {
+        flex: 1 1 auto !important;
+
+        width: auto !important;
+        min-width: 0 !important;
+
+        height: 46px !important;
+
+        padding: 0 15px !important;
+
+        box-sizing: border-box !important;
+
+        border: 0 !important;
+        outline: none !important;
+
+        border-radius: 14px !important;
+
+        background: rgba(0,0,0,.25) !important;
+
+        color: #fff !important;
+
+        font-size: 15px !important;
+    }
+
+    .hero .pesquisa input::placeholder {
+        color: rgba(255,255,255,.65) !important;
+    }
+
+    .hero .pesquisa button {
+        flex: 0 0 auto !important;
+
+        width: auto !important;
+        min-width: 88px !important;
+
+        height: 46px !important;
+
+        padding: 0 14px !important;
+
+        border: 0 !important;
+
+        border-radius: 14px !important;
+
+        font-size: 13px !important;
+        font-weight: 700 !important;
+
+        white-space: nowrap !important;
+    }
+
+}
+
+/* =====================================================
+   ANIMAÇÃO LEVE
+   ===================================================== */
+@keyframes barraPesquisaFlutuante {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+
+}
+
+/* =====================================================
+   NOTEBOOK / PC
+   NÃO ALTERA A BARRA EXISTENTE
+   ===================================================== */
+@media (min-width: 601px) {
+
+    .hero .pesquisa {
+        animation: none !important;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .hero .pesquisa input {
+        text-align: center !important;
+    }
+
+    .hero .pesquisa input::placeholder {
+        text-align: center !important;
+    }
+
+}
+
+
+
+ /* =====================================================
+    LUKAFILMES - MENU MOBILE ESTILO NETFLIX
+    CORRECAO FINAL
+    ===================================================== */
+
+@media (max-width: 600px) {
+
+    header {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 10px 10px !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+    }
+
+    .logo {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: 0 !important;
+        font-size: 19px !important;
+        white-space: nowrap !important;
+    }
+
+    nav {
+        flex: 1 1 auto !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+
+        align-items: center !important;
+        justify-content: flex-end !important;
+
+        gap: 3px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+
+        scrollbar-width: none !important;
+        -webkit-overflow-scrolling: touch !important;
+
+        white-space: nowrap !important;
+    }
+
+    nav::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
+
+    nav a {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: max-content !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        padding: 8px 7px !important;
+        margin: 0 !important;
+
+        font-size: 11px !important;
+        line-height: 1 !important;
+
+        white-space: nowrap !important;
+        text-align: center !important;
+
+        border-radius: 8px !important;
+
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+
+    nav a[href="/"] {
+        display: none !important;
+    }
+
+    .acoes-usuario {
+        flex: 0 0 auto !important;
+        min-width: auto !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+
+        gap: 3px !important;
+        margin: 0 !important;
+    }
+
+    .acoes-usuario button {
+        min-width: 38px !important;
+        min-height: 36px !important;
+
+        padding: 6px !important;
+        font-size: 11px !important;
+
+        white-space: nowrap !important;
+    }
+}
+
+
+/* =========================================================
+   LUKAFILMES — RESPONSIVIDADE MOBILE
+   Não altera o conteúdo ou visual original
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    html,
+    body {
+        width: 100% !important;
+        max-width: 100vw !important;
+        min-width: 0 !important;
+
+        overflow-x: hidden !important;
+
+        -webkit-text-size-adjust: 100% !important;
+    }
+
+    body {
+        margin: 0 !important;
+    }
+
+    img,
+    video,
+    iframe {
+        max-width: 100%;
+    }
+
+    .hero,
+    .hero-conteudo {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .hero-conteudo {
+        width: 100% !important;
+        max-width: 100% !important;
+        text-align: center !important;
+        margin: 0 auto !important;
+    }
+
+    .hero-conteudo .logo,
+    .hero-conteudo .hero-logo {
+        display: block !important;
+        width: fit-content !important;
+        margin: 0 auto 14px auto !important;
+
+        text-align: center !important;
+
+        color: #fff !important;
+        font-weight: 800 !important;
+    }
+
+    .hero-conteudo .logo span,
+    .hero-conteudo .hero-logo span {
+        color: #e50914 !important;
+    }
+}
+
+
+/* =========================================================
+   LUKAFILMES — AJUSTE MOBILE UNIVERSAL
+   Não altera conteúdo • Não altera pesquisa • Não altera
+   categorias/filmes/séries
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    html,
+    body {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        overflow-x: hidden !important;
+
+        -webkit-text-size-adjust: 100% !important;
+    }
+
+    * {
+        box-sizing: border-box !important;
+    }
+
+    /* Área principal */
+    .hero {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        padding-left: clamp(12px, 4vw, 24px) !important;
+        padding-right: clamp(12px, 4vw, 24px) !important;
+
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .hero-conteudo {
+        width: 100% !important;
+        max-width: 560px !important;
+        min-width: 0 !important;
+
+        margin-left: auto !important;
+        margin-right: auto !important;
+
+        text-align: center !important;
+    }
+
+    /* LUKAFILMES */
+    .hero-conteudo .logo,
+    .hero-conteudo .hero-logo {
+        max-width: 100% !important;
+
+        margin-left: auto !important;
+        margin-right: auto !important;
+
+        font-size: clamp(20px, 7vw, 32px) !important;
+
+        white-space: nowrap !important;
+    }
+
+    /* Título */
+    .hero h1 {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin-left: auto !important;
+        margin-right: auto !important;
+
+        font-size: clamp(22px, 7vw, 34px) !important;
+
+        line-height: 1.12 !important;
+
+        overflow-wrap: break-word !important;
+    }
+
+    /* Descrição */
+    .hero p {
+        width: 100% !important;
+        max-width: 500px !important;
+
+        margin-left: auto !important;
+        margin-right: auto !important;
+
+        font-size: clamp(13px, 3.8vw, 16px) !important;
+
+        line-height: 1.5 !important;
+
+        overflow-wrap: break-word !important;
+    }
+
+    /* Pesquisa original — somente enquadramento */
+    .pesquisa {
+        width: 100% !important;
+        max-width: 500px !important;
+        min-width: 0 !important;
+
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .pesquisa input {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        font-size: clamp(14px, 4vw, 16px) !important;
+    }
+
+    /* Imagens e vídeos nunca ultrapassam a tela */
+    img,
+    video,
+    iframe {
+        max-width: 100% !important;
+    }
+}
+
+/* Celulares muito pequenos */
+@media (max-width: 360px) {
+
+    .hero {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    .hero-conteudo .logo,
+    .hero-conteudo .hero-logo {
+        font-size: 20px !important;
+    }
+
+    .hero h1 {
+        font-size: 21px !important;
+    }
+
+    .hero p {
+        font-size: 13px !important;
+    }
+
+    .pesquisa {
+        max-width: 100% !important;
+    }
+}
+
+/* =========================================================
+   LUKAFILMES — TOQUE E ROLAGEM MOBILE
+   Mantém o gesto natural de subir/descer
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    html,
+    body {
+        touch-action: pan-y !important;
+        overscroll-behavior-x: none !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+
+    body {
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* Elementos normais continuam recebendo toque */
+    a,
+    button,
+    input,
+    select,
+    textarea {
+        touch-action: manipulation !important;
+    }
+}

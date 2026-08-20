@@ -1,0 +1,54 @@
+⬥ Ignored general context env var: LANG (defined in process)
+⬥ Injected .env file env vars: TMDB_TOKEN
+⬥ No app server detected. Using simple static server
+⬥ Running static server from "LUKAFILMES_EDIT"
+⬥ Setting up local dev server
+
+⬥ Static server listening to 3999
+⬥ Loaded function api
+⬥ Loaded function api_backup
+⠋ Setting up the Edge Functions environment. This may take a couple of minutes.
+
+   ╭─────────────────────── ⬥  ────────────────────────╮
+   │                                                   │
+   │   Local dev server ready: http://localhost:8888   │
+   │                                                   │
+   ╰───────────────────────────────────────────────────╯
+
+✖ Setting up the Edge Functions environment. This may take a couple of minutes.
+ ›   Error: Netlify CLI has terminated unexpectedly.
+
+Please report this problem with reproduction steps at https://ntl.fyi/cli-error including the error details below.
+
+Error: Failed to set up Deno for Edge Functions.
+Error: Command failed with exit code 2: /data/data/com.termux/files/home/.config/netlify/deno-cli/deno --version
+/data/data/com.termux/files/home/.config/netlify/deno-cli/deno: 1: ELF: not found
+/data/data/com.termux/files/home/.config/netlify/deno-cli/deno: 2: Syntax error: Unterminated quoted string
+Downloaded to: /data/data/com.termux/files/home/.config/netlify/deno-cli/deno
+Platform: android/arm64
+
+This may be caused by permissions, antivirus software, or platform incompatibility.
+
+Try clearing the Deno cache directory and retrying:
+  /data/data/com.termux/files/home/.config/netlify/deno-cli
+
+Supported Deno versions: ^2.4.2
+
+To install Deno manually: https://ntl.fyi/install-deno
+    at toError (file:///data/data/com.termux/files/usr/lib/node_modules/netlify-cli/dist/utils/command-helpers.js:144:16)
+    at logAndThrowError (file:///data/data/com.termux/files/usr/lib/node_modules/netlify-cli/dist/utils/command-helpers.js:150:17)
+    at prepareServer (file:///data/data/com.termux/files/usr/lib/node_modules/netlify-cli/dist/lib/edge-functions/proxy.js:160:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 1)
+    at async file:///data/data/com.termux/files/usr/lib/node_modules/netlify-cli/dist/lib/edge-functions/proxy.js:75:41
+    at async onRequest (file:///data/data/com.termux/files/usr/lib/node_modules/netlify-cli/dist/utils/proxy.js:616:35)
+
+  System:
+    OS: android
+    CPU: Unknown
+  Binaries:
+    Node: 24.18.0 - /data/data/com.termux/files/usr/bin/node
+    npm: 11.18.0 - /data/data/com.termux/files/usr/bin/npm
+  npmGlobalPackages:
+    netlify-cli: 27.1.2
+

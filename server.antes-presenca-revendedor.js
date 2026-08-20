@@ -1,0 +1,2431 @@
+
+const express = require("express");
+const path = require("path");
+const Database = require("better-sqlite3");
+const bcrypt = require("bcrypt");
+const session = require("express-session");
+
+const app = express();
+const PORT = 3000;
+
+// ==========================================
+// BANCO
+// ==========================================
+
+const db = new Database(
+    path.join(__dirname, "banco.db")
+);
+
+app.use(express.json());
+
+
+// ==========================================
+// PRESENÇA ONLINE
+// ==========================================
+
+try {
+    db.exec(`
+        ALTER TABLE usuarios ADD COLUMN last_seen INTEGER DEFAULT 0
+    `);
+} catch (erro) {
+    // Coluna já existe.
+}
+
+// ==========================================
+// SESSÃO
+// ==========================================
+
+app.use(
+    session({
+        secret: "LUKAFILMES-SEGREDO-TROCAR-DEPOIS",
+        resave: false,
+        saveUninitialized: false,
+
+        cookie: {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 24
+        }
+    })
+);
+
+// ==========================================
+// LOGIN
+// ==========================================
+
+app.get("/login", (req, res) => {
+
+    if (req.session.usuario) {
+        return res.redirect("/");
+    }
+
+    res.sendFile(
+        path.join(__dirname, "public", "login.html")
+    );
+});
+
+// ==========================================
+// ADMIN
+// ==========================================
+
+app.get("/admin.html", (req, res) => {
+
+    if (!req.session.usuario) {
+        return res.redirect("/login");
+    }
+
+    if (req.session.usuario.tipo !== "admin") {
+        return res.status(403).send("Acesso negado.");
+    }
+
+    res.sendFile(
+        path.join(__dirname, "public", "admin.html")
+    );
+});
+
+// ==========================================
+// LOGIN POST
+// ==========================================
+
+app.post("/login", async (req, res) => {
+
+    try {
+
+        const usuario =
+            String(req.body.usuario || "").trim();
+
+        const senha =
+            String(req.body.senha || "");
+
+        if (!usuario || !senha) {
+
+            return res.json({
+                sucesso: false,
+                mensagem: "Digite usuário e senha."
+            });
+        }
+
+        const pessoa = db
+            .prepare(
+                "SELECT * FROM usuarios WHERE usuario = ?"
+            )
+            .get(usuario);
+
+        if (!pessoa) {
+
+            return res.json({
+                sucesso: false,
+                mensagem: "Usuário ou senha incorretos."
+            });
+        }
+
+        if (pessoa.status !== "ativo") {
+
+            return res.json({
+                sucesso: false,
+                mensagem: "Este usuário está suspenso."
+            });
+        }
+
+        if (
+            pessoa.tipo !== "admin" &&
+            pessoa.validade &&
+            new Date(pessoa.validade) <= new Date()
+        ) {
+
+            return res.json({
+                sucesso: false,
+                mensagem:
+                    "Seu acesso expirou. Entre em contato com o administrador."
+            });
+        }
+
+        const senhaCorreta =
+            await bcrypt.compare(
+                senha,
+                pessoa.senha
+            );
+
+        if (!senhaCorreta) {
+
+            return res.json({
+                sucesso: false,
+                mensagem: "Usuário ou senha incorretos."
+            });
+        }
+
+        req.session.usuario = {
+
+            id: pessoa.id,
+
+            usuario: pessoa.usuario,
+
+            tipo: pessoa.tipo
+
+        };
+
+        return res.json({
+            sucesso: true
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO LOGIN]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno no servidor."
+        });
+    }
+
+});
+
+// ==========================================
+// USUÁRIO LOGADO
+// ==========================================
+
+app.get("/api/eu", (req, res) => {
+
+    if (!req.session.usuario) {
+
+        return res.status(401).json({
+            logado: false
+        });
+    }
+
+    res.json({
+        logado: true,
+        usuario: req.session.usuario
+    });
+
+});
+
+
+// ==========================================
+// PRESENÇA ONLINE — HEARTBEAT
+// ==========================================
+
+app.post("/api/presenca", (req, res) => {
+
+    if (!req.session.usuario) {
+        return res.status(401).json({
+            sucesso: false
+        });
+    }
+
+    try {
+
+        db.prepare(`
+            UPDATE usuarios
+            SET last_seen = ?
+            WHERE id = ?
+        `).run(
+            Date.now(),
+            req.session.usuario.id
+        );
+
+        res.json({
+            sucesso: true
+        });
+
+    } catch (erro) {
+
+        console.error("[ERRO PRESENÇA]", erro);
+
+        res.status(500).json({
+            sucesso: false
+        });
+    }
+});
+
+// ==========================================
+// STATUS ONLINE DOS USUÁRIOS
+// ==========================================
+
+app.get("/api/admin/presenca", (req, res) => {
+
+    if (
+        !req.session.usuario ||
+        req.session.usuario.tipo !== "admin"
+    ) {
+        return res.status(403).json({
+            sucesso: false,
+            mensagem: "Acesso negado."
+        });
+    }
+
+    try {
+
+        const agora = Date.now();
+
+        const usuarios = db.prepare(`
+            SELECT
+                id,
+                usuario,
+                tipo,
+                status,
+                last_seen
+            FROM usuarios
+            ORDER BY usuario COLLATE NOCASE ASC
+        `).all();
+
+        const resultado = usuarios.map(u => {
+
+            const ultimaAtividade =
+                Number(u.last_seen || 0);
+
+            const online =
+                ultimaAtividade > 0 &&
+                (agora - ultimaAtividade) <= 45000;
+
+            return {
+                id: u.id,
+                usuario: u.usuario,
+                tipo: u.tipo,
+                status: u.status,
+                online,
+                last_seen: ultimaAtividade
+            };
+
+        });
+
+        res.json({
+            sucesso: true,
+            agora,
+            usuarios: resultado,
+            online: resultado.filter(u => u.online).length
+        });
+
+    } catch (erro) {
+
+        console.error("[ERRO STATUS PRESENÇA]", erro);
+
+        res.status(500).json({
+            sucesso: false,
+            usuarios: []
+        });
+    }
+});
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+app.post("/logout", (req, res) => {
+
+    req.session.destroy(() => {
+
+        res.json({
+            sucesso: true
+        });
+
+    });
+
+});
+
+// ==========================================
+// TMDB
+// ==========================================
+
+const TMDB_BASE =
+    "https://api.themoviedb.org/3";
+
+const TMDB_IMAGE =
+    "https://image.tmdb.org/t/p/w500";
+
+// ==========================================
+// BUSCAR FILMES DO TMDB
+// ==========================================
+
+async function tmdb(endpoint) {
+
+    const token =
+        process.env.TMDB_TOKEN;
+
+    if (!token) {
+
+        throw new Error(
+            "TMDB_TOKEN não configurado."
+        );
+    }
+
+    const resposta =
+        await fetch(
+            TMDB_BASE + endpoint,
+            {
+                method: "GET",
+
+                headers: {
+                    Authorization:
+                        "Bearer " + token,
+
+                    accept:
+                        "application/json"
+                }
+            }
+        );
+
+    const dados =
+        await resposta.json();
+
+    if (!resposta.ok) {
+
+        console.error(
+            "[TMDB ERRO]",
+            dados
+        );
+
+        throw new Error(
+            dados.status_message ||
+            "Erro no TMDB."
+        );
+    }
+
+    return dados;
+}
+
+// ==========================================
+// GÊNEROS
+// ==========================================
+
+const generosTMDB = {
+
+    28: "Ação",
+
+    12: "Aventura",
+
+    16: "Animação",
+
+    35: "Comédia",
+
+    80: "Crime",
+
+    99: "Documentário",
+
+    18: "Drama",
+
+    10751: "Família",
+
+    14: "Fantasia",
+
+    36: "História",
+
+    27: "Terror",
+
+    10402: "Música",
+
+    9648: "Mistério",
+
+    10749: "Romance",
+
+    878: "Ficção científica",
+
+    10770: "Cinema TV",
+
+    53: "Thriller",
+
+    10752: "Guerra",
+
+    37: "Faroeste"
+
+};
+
+// ==========================================
+// CONVERTER FILME
+// ==========================================
+
+function converterFilme(filme) {
+
+    const generos =
+        Array.isArray(filme.genre_ids)
+
+            ? filme.genre_ids
+                .map(
+                    id => generosTMDB[id]
+                )
+                .filter(Boolean)
+
+            : [];
+
+    const titulo =
+        filme.title ||
+        filme.original_title ||
+        "Sem título";
+
+    const ano =
+        filme.release_date
+            ? Number(
+                filme.release_date.substring(0, 4)
+            )
+            : "";
+
+    return {
+
+        id: filme.id,
+
+        titulo,
+
+        tituloOriginal:
+            filme.original_title || "",
+
+        ano,
+
+        generos,
+
+        categoria:
+            generos.join(", "),
+
+        nota:
+            Number(
+                filme.vote_average || 0
+            ),
+
+        votos:
+            Number(
+                filme.vote_count || 0
+            ),
+
+        capa:
+            filme.poster_path
+                ? TMDB_IMAGE +
+                  filme.poster_path
+                : "",
+
+        fundo:
+            filme.backdrop_path
+                ? "https://image.tmdb.org/t/p/w1280" +
+                  filme.backdrop_path
+                : "",
+
+        sinopse:
+            filme.overview ||
+            "Sinopse não disponível."
+
+    };
+
+}
+
+// ==========================================
+// CACHE DE PESQUISAS
+// ==========================================
+
+const pesquisaCache = new Map();
+
+// LINKS DE FILMES DO SITE DE ORIGEM
+const fs = require("fs");
+const caminhoLinksFilmes = require("path").join(__dirname, "links_filmes.json");
+
+let linksFilmes = {};
+
+try {
+    linksFilmes = JSON.parse(
+        fs.readFileSync(caminhoLinksFilmes, "utf8")
+    );
+
+    console.log(
+        "[LINKS FILMES] Carregados:",
+        Object.keys(linksFilmes).length
+    );
+
+} catch (erro) {
+
+    console.error(
+        "[LINKS FILMES] Erro ao carregar links_filmes.json:",
+        erro.message
+    );
+
+    linksFilmes = {};
+}
+
+const PESQUISA_CACHE_MS =
+    5 * 60 * 1000;
+
+const PESQUISA_CACHE_MAX =
+    100;
+// ==========================================
+// API DE PESQUISA
+// ==========================================
+
+app.get(
+    "/api/pesquisar",
+    async (req, res) => {
+
+        const busca =
+            String(req.query.q || "").trim();
+
+        if (!busca) {
+            return res.json({
+                resultados: []
+            });
+        }
+
+        const chavePesquisa =
+            busca.toLowerCase();
+
+        const cachePesquisa =
+            pesquisaCache.get(chavePesquisa);
+
+        if (
+            cachePesquisa &&
+            (Date.now() - cachePesquisa.tempo) < PESQUISA_CACHE_MS
+        ) {
+
+            console.log(
+                "[PESQUISA] Cache:",
+                busca
+            );
+
+            return res.json(cachePesquisa.dados);
+        }
+
+        try {
+
+            const dados =
+                await tmdb(
+                    "/search/movie" +
+                    "?query=" +
+                    encodeURIComponent(busca) +
+                    "&language=pt-BR" +
+                    "&page=1" +
+                    "&include_adult=false"
+                );
+
+            const resultados =
+                (dados.results || [])
+                    .map(converterFilme);
+
+            const resposta = {
+                pagina: dados.page || 1,
+                totalPaginas: dados.total_pages || 0,
+                totalResultados: dados.total_results || 0,
+                resultados
+            };
+
+            pesquisaCache.set(
+                chavePesquisa,
+                {
+                    tempo: Date.now(),
+                    dados: resposta
+                }
+            );
+
+            if (pesquisaCache.size > PESQUISA_CACHE_MAX) {
+
+                const primeira =
+                    pesquisaCache.keys().next().value;
+
+                pesquisaCache.delete(primeira);
+            }
+
+            console.log(
+                "[PESQUISA] TMDB:",
+                busca
+            );
+
+            return res.json(resposta);
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO PESQUISA]",
+                erro
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Não foi possível consultar o TMDB."
+            });
+        }
+    }
+);
+
+// ==========================================
+
+/* ==========================================
+   DETALHES COMPLETOS DA SÉRIE
+   ========================================== */
+
+app.get('/api/serie/:id', async (req, res) => {
+
+    try {
+
+        const id = req.params.id;
+
+        if (!id) {
+            return res.status(400).json({
+                sucesso: false,
+                erro: "ID da série não informado"
+            });
+        }
+
+        const dados = await tmdb(
+            '/tv/' +
+            encodeURIComponent(id) +
+            '?language=pt-BR'
+        );
+
+        return res.json({
+            sucesso: true,
+            serie: dados
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO DETALHES SERIE]',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            erro: "Não foi possível carregar os detalhes da série."
+        });
+    }
+
+});
+
+// SÉRIES — TMDB
+// ==========================================
+
+
+/* ==========================================================
+   CATÁLOGO INFINITO DE SÉRIES
+   20 POR VEZ — 2020 A 2026 — ATÉ 10.000
+   ========================================================== */
+
+app.get('/api/catalogo-series', async (req, res) => {
+    try {
+
+        const paginaSolicitada = Math.max(
+            1,
+            parseInt(req.query.pagina || '1', 10)
+        );
+
+        const SERIES_POR_PAGINA = 20;
+        const MAX_SERIES = 10000;
+
+        if (
+            paginaSolicitada >
+            Math.ceil(MAX_SERIES / SERIES_POR_PAGINA)
+        ) {
+            return res.json({
+                sucesso: true,
+                series: [],
+                resultados: [],
+                pagina: paginaSolicitada,
+                proximaPagina: false,
+                acabou: true,
+                totalMaximo: MAX_SERIES
+            });
+        }
+
+        /*
+         * Cada página do nosso catálogo começa
+         * na página correspondente do TMDB.
+         *
+         * Se uma série for inválida ou bloqueada,
+         * buscamos a próxima página para completar
+         * os 20 resultados.
+         */
+
+        const vistos = new Set();
+        const seriesValidas = [];
+
+        let paginaTMDB = paginaSolicitada;
+
+        while (
+            seriesValidas.length < SERIES_POR_PAGINA &&
+            paginaTMDB <= 500
+        ) {
+
+            console.log(
+                '[SERIES INFINITAS] TMDB página:',
+                paginaTMDB
+            );
+
+            const endpoint =
+                '/discover/tv' +
+                '?language=pt-BR' +
+                '&sort_by=popularity.desc' +
+                '&first_air_date.gte=2020-01-01' +
+                '&first_air_date.lte=2026-12-31' +
+                '&include_adult=false' +
+                '&vote_count.gte=5' +
+                '&page=' + paginaTMDB;
+
+            const dados =
+                await tmdb(endpoint);
+
+            const resultados =
+                Array.isArray(dados.results)
+                    ? dados.results
+                    : [];
+
+            for (const serie of resultados) {
+
+                if (!serie || !serie.id) {
+                    continue;
+                }
+
+                /*
+                 * Hockey Psychology:
+                 * ID 310518 — removido definitivamente
+                 * do catálogo principal.
+                 */
+                if (String(serie.id) === '310518') {
+                    continue;
+                }
+
+                /*
+                 * Não aceitar séries sem pôster.
+                 */
+                if (!serie.poster_path) {
+                    continue;
+                }
+
+                /*
+                 * Não repetir série.
+                 */
+                if (vistos.has(serie.id)) {
+                    continue;
+                }
+
+                vistos.add(serie.id);
+
+                seriesValidas.push({
+                    id: serie.id,
+
+                    titulo:
+                        serie.name ||
+                        serie.original_name ||
+                        'Sem título',
+
+                    capa:
+                        TMDB_IMAGE +
+                        serie.poster_path,
+
+                    fundo:
+                        serie.backdrop_path
+                            ? 'https://image.tmdb.org/t/p/w1280' +
+                              serie.backdrop_path
+                            : '',
+
+                    nota:
+                        Number(
+                            serie.vote_average || 0
+                        ),
+
+                    votos:
+                        Number(
+                            serie.vote_count || 0
+                        ),
+
+                    ano:
+                        serie.first_air_date
+                            ? serie.first_air_date.substring(0, 4)
+                            : '',
+
+                    sinopse:
+                        serie.overview || ''
+                });
+
+                if (
+                    seriesValidas.length >=
+                    SERIES_POR_PAGINA
+                ) {
+                    break;
+                }
+            }
+
+            if (
+                resultados.length === 0 ||
+                paginaTMDB >=
+                Number(dados.total_pages || paginaTMDB)
+            ) {
+                break;
+            }
+
+            paginaTMDB++;
+        }
+
+        const series =
+            seriesValidas.slice(
+                0,
+                SERIES_POR_PAGINA
+            );
+
+        const acabou =
+            series.length === 0 ||
+            paginaTMDB >= 500;
+
+        return res.json({
+            sucesso: true,
+            series: series,
+            resultados: series,
+            pagina: paginaSolicitada,
+            proximaPagina: !acabou,
+            acabou: acabou,
+            total: series.length,
+            totalMaximo: MAX_SERIES
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO CATALOGO SERIES]',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            series: [],
+            resultados: [],
+            pagina: 1,
+            proximaPagina: false,
+            acabou: true,
+            erro:
+                'Não foi possível carregar as séries.'
+        });
+    }
+});
+
+app.get('/api/series', async (req, res) => {
+    try {
+
+        const tipo = String(req.query.tipo || 'populares');
+
+        let endpoint = '';
+
+        if (tipo === 'avaliadas') {
+
+            endpoint =
+                '/tv/top_rated?language=pt-BR&page=1';
+
+        } else if (tipo === 'lancamentos') {
+
+            endpoint =
+                '/tv/on_the_air?language=pt-BR&page=1';
+
+        } else {
+
+            endpoint =
+                '/tv/popular?language=pt-BR&page=1';
+        }
+
+        const dados = await tmdb(endpoint);
+
+        const series = Array.isArray(dados.results) ? dados.results.map(serie => ({
+                id: serie.id,
+                titulo: serie.name || serie.original_name || 'Sem título',
+                capa: serie.poster_path
+                    ? TMDB_IMAGE + serie.poster_path
+                    : '',
+                fundo: serie.backdrop_path
+                    ? 'https://image.tmdb.org/t/p/w1280' + serie.backdrop_path
+                    : '',
+                nota: serie.vote_average || 0,
+                votos: serie.vote_count || 0,
+                ano: serie.first_air_date
+                    ? serie.first_air_date.substring(0, 4)
+                    : '',
+                sinopse: serie.overview || ''
+            }))
+            : [];
+
+        return res.json({
+            sucesso: true,
+            resultados: series
+        });
+
+    } catch (erro) {
+
+        console.error('[ERRO SERIES TMDB]', erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            resultados: [],
+            erro: 'Não foi possível consultar as séries.'
+        });
+    }
+});
+
+// ==========================================
+// PESQUISAR SÉRIES — TMDB
+// ==========================================
+
+app.get('/api/pesquisar-series', async (req, res) => {
+    try {
+
+        const busca = String(req.query.q || '').trim();
+
+        if (!busca) {
+            return res.json({
+                sucesso: true,
+                resultados: []
+            });
+        }
+
+        const dados = await tmdb(
+            '/search/tv' +
+            '?query=' + encodeURIComponent(busca) +
+            '&language=pt-BR' +
+            '&page=1' +
+            '&include_adult=false'
+        );
+
+        const series = Array.isArray(dados.results) ? dados.results.map(serie => ({
+                id: serie.id,
+                titulo: serie.name || serie.original_name || 'Sem título',
+                capa: serie.poster_path
+                    ? TMDB_IMAGE + serie.poster_path
+                    : '',
+                fundo: serie.backdrop_path
+                    ? 'https://image.tmdb.org/t/p/w1280' + serie.backdrop_path
+                    : '',
+                nota: serie.vote_average || 0,
+                votos: serie.vote_count || 0,
+                ano: serie.first_air_date
+                    ? serie.first_air_date.substring(0, 4)
+                    : '',
+                sinopse: serie.overview || ''
+            }))
+            : [];
+
+        return res.json({
+            sucesso: true,
+            resultados: series
+        });
+
+    } catch (erro) {
+
+        console.error('[ERRO PESQUISA SERIES]', erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            resultados: [],
+            erro: 'Não foi possível pesquisar séries.'
+        });
+    }
+});
+// CATÁLOGO COMPLETO
+// ==========================================
+
+// ==========================================
+// CATÁLOGO COMPLETO — CACHE + PARALELISMO
+// ==========================================
+
+let catalogoCache = null;
+let catalogoAtualizando = false;
+let catalogoUltimaAtualizacao = 0;
+const CATALOGO_CACHE_MS = 10 * 60 * 1000;
+
+async function atualizarCatalogo() {
+    if (catalogoAtualizando) return catalogoCache;
+    catalogoAtualizando = true;
+
+    try {
+        console.log('[CATÁLOGO] Atualizando catálogo 2020-2026...');
+
+        const requisicoes = [];
+
+        // ======================================================
+        // FILMES DE 2020 A 2026 — POPULARIDADE
+        // ======================================================
+
+        for (let ano = 2020; ano <= 2026; ano++) {
+            for (let pagina = 1; pagina <= 20; pagina++) {
+                requisicoes.push(
+                    tmdb(
+                        '/discover/movie?language=pt-BR' +
+                        '&sort_by=popularity.desc' +
+                        '&primary_release_year=' + ano +
+                        '&page=' + pagina +
+                        '&include_adult=false' +
+                        '&vote_count.gte=20'
+                    )
+                );
+            }
+        }
+
+        // ======================================================
+        // FILMES DE 2020 A 2026 — MELHOR AVALIADOS
+        // ======================================================
+
+        for (let ano = 2020; ano <= 2026; ano++) {
+            for (let pagina = 1; pagina <= 20; pagina++) {
+                requisicoes.push(
+                    tmdb(
+                        '/discover/movie?language=pt-BR' +
+                        '&sort_by=vote_average.desc' +
+                        '&primary_release_year=' + ano +
+                        '&page=' + pagina +
+                        '&include_adult=false' +
+                        '&vote_count.gte=50'
+                    )
+                );
+            }
+        }
+
+        // ======================================================
+        // FILMES POR GÊNERO — 2020 A 2026
+        // ======================================================
+
+        const generos = [
+            28,    // Ação
+            12,    // Aventura
+            16,    // Animação
+            35,    // Comédia
+            80,    // Crime
+            18,    // Drama
+            14,    // Fantasia
+            27,    // Terror
+            878,   // Ficção científica
+            10749, // Romance
+            53,    // Thriller
+            10751  // Família
+        ];
+
+        for (const genero of generos) {
+            for (let ano = 2020; ano <= 2026; ano++) {
+                for (let pagina = 1; pagina <= 5; pagina++) {
+                    requisicoes.push(
+                        tmdb(
+                            '/discover/movie?language=pt-BR' +
+                            '&sort_by=popularity.desc' +
+                            '&with_genres=' + genero +
+                            '&primary_release_year=' + ano +
+                            '&page=' + pagina +
+                            '&include_adult=false' +
+                            '&vote_count.gte=10'
+                        )
+                    );
+                }
+            }
+        }
+
+        console.log(
+            '[CATÁLOGO] Requisições preparadas:',
+            requisicoes.length
+        );
+
+        // ======================================================
+        // EXECUTAR EM LOTES
+        // Evita disparar centenas de requisições simultaneamente.
+        // ======================================================
+
+        const respostas = [];
+
+        const TAMANHO_LOTE = 10;
+
+        for (let i = 0; i < requisicoes.length; i += TAMANHO_LOTE) {
+            const lote = requisicoes.slice(i, i + TAMANHO_LOTE);
+
+            const resultado = await Promise.all(
+                lote.map(async (requisicao) => {
+                    try {
+                        return await requisicao;
+                    } catch (erro) {
+                        console.error(
+                            '[CATÁLOGO] Falha em uma requisição:',
+                            erro.message
+                        );
+                        return { results: [] };
+                    }
+                })
+            );
+
+            respostas.push(...resultado);
+
+            console.log(
+                '[CATÁLOGO] Lote concluído:',
+                Math.min(i + TAMANHO_LOTE, requisicoes.length),
+                '/',
+                requisicoes.length
+            );
+        }
+
+        // ======================================================
+        // ELIMINAR DUPLICADOS PELO ID DO TMDB
+        // ======================================================
+
+        const mapa = new Map();
+
+        for (const resposta of respostas) {
+            if (!resposta || !Array.isArray(resposta.results)) {
+                continue;
+            }
+
+            for (const filme of resposta.results) {
+                if (!filme || !filme.id) {
+                    continue;
+                }
+
+                if (!mapa.has(filme.id)) {
+                    mapa.set(filme.id, filme);
+                }
+            }
+        }
+
+        // ======================================================
+        // FILTRAR SOMENTE 2020-2026
+        // ======================================================
+
+        const filmesBrutos = Array.from(mapa.values()).filter(filme => {
+            const data =
+                filme.release_date ||
+                filme.first_air_date ||
+                '';
+
+            const ano = Number(String(data).slice(0, 4));
+
+            return ano >= 2020 && ano <= 2026;
+        });
+
+        // ======================================================
+        // CONVERTER PARA O FORMATO DO LUKAFILMES
+        // ======================================================
+
+        const filmes = filmesBrutos
+            .map(converterFilme)
+            .filter(Boolean);
+
+        // ======================================================
+        // ORDENAÇÃO:
+        // POPULARIDADE + AVALIAÇÃO
+        // ======================================================
+
+        filmes.sort((a, b) => {
+            const popularidadeA = Number(a.popularidade || a.popularity || 0);
+            const popularidadeB = Number(b.popularidade || b.popularity || 0);
+
+            const notaA = Number(a.nota || a.vote_average || 0);
+            const notaB = Number(b.nota || b.vote_average || 0);
+
+            const scoreA = (popularidadeA * 0.65) + (notaA * 10 * 0.35);
+            const scoreB = (popularidadeB * 0.65) + (notaB * 10 * 0.35);
+
+            return scoreB - scoreA;
+        });
+
+        // ======================================================
+        // REMOVER DUPLICADOS NOVAMENTE PELO ID FINAL
+        // ======================================================
+
+        const finais = new Map();
+
+        for (const filme of filmes) {
+            const id = String(
+                filme.id ||
+                filme.tmdb_id ||
+                filme.titulo ||
+                ''
+            ).trim();
+
+            if (id && !finais.has(id)) {
+                finais.set(id, filme);
+            }
+        }
+
+        const catalogoFinal = Array.from(finais.values());
+
+        catalogoCache = catalogoFinal;
+        catalogoUltimaAtualizacao = Date.now();
+
+        console.log(
+            '[CATÁLOGO] Cache atualizado:',
+            catalogoFinal.length,
+            'filmes únicos de 2020-2026'
+        );
+
+        return catalogoFinal;
+
+    } catch (erro) {
+        console.error('[ERRO ATUALIZAR CATALOGO]', erro);
+        return catalogoCache;
+
+    } finally {
+        catalogoAtualizando = false;
+    }
+}
+
+app.get('/api/catalogo-filmes', async (req, res) => {
+    try {
+        const paginaSolicitada = Math.max(
+            1,
+            Number(req.query.pagina || 1)
+        );
+
+        const ANO_INICIAL = 2000;
+        const ANO_FINAL = 2026;
+
+        const FILMES_POR_PAGINA = 20;
+        const MAX_FILMES = 10000;
+
+        /*
+         * Cada chamada da nossa API busca somente UMA página
+         * do TMDB.
+         *
+         * Quando a página do nosso site avança:
+         *
+         * 1 -> TMDB 2026 página 1
+         * 2 -> TMDB 2026 página 2
+         * ...
+         * depois passa para 2025,
+         * depois 2024...
+         *
+         * Assim não carregamos 10.000 filmes de uma vez.
+         */
+
+        const paginasPorAno = 500;
+
+        const indice = paginaSolicitada - 1;
+
+        const anoOffset = Math.floor(indice / paginasPorAno);
+        const paginaTMDB = (indice % paginasPorAno) + 1;
+
+        const ano = ANO_FINAL - anoOffset;
+
+        if (ano < ANO_INICIAL) {
+            return res.json({
+                sucesso: true,
+                filmes: [],
+                total: 0,
+                pagina: paginaSolicitada,
+                acabou: true
+            });
+        }
+
+        console.log(
+            '[FILMES] Carregando página:',
+            paginaSolicitada,
+            '| Ano:',
+            ano,
+            '| TMDB página:',
+            paginaTMDB
+        );
+
+        const resposta = await tmdb(
+            '/discover/movie?language=pt-BR' +
+            '&sort_by=popularity.desc' +
+            '&primary_release_year=' + ano +
+            '&page=' + paginaTMDB +
+            '&include_adult=false' +
+            '&vote_count.gte=5'
+        );
+
+        const mapa = new Map();
+
+        for (const filme of (resposta.results || [])) {
+
+            if (!filme || !filme.id) {
+                continue;
+            }
+
+            const convertido = converterFilme(filme);
+
+            if (!convertido) {
+                continue;
+            }
+
+            const id = String(
+                convertido.id ||
+                convertido.tmdb_id ||
+                filme.id
+            );
+
+            if (!mapa.has(id)) {
+                mapa.set(id, convertido);
+            }
+        }
+
+        let filmes = Array.from(mapa.values());
+
+        filmes = filmes.slice(0, FILMES_POR_PAGINA);
+
+        const quantidadeAntes =
+            ((paginaSolicitada - 1) * FILMES_POR_PAGINA);
+
+        const totalEstimado =
+            Math.min(
+                MAX_FILMES,
+                quantidadeAntes + filmes.length
+            );
+
+        const acabou =
+            filmes.length === 0 ||
+            totalEstimado >= MAX_FILMES;
+
+        return res.json({
+            sucesso: true,
+            filmes: filmes,
+            total: filmes.length,
+            totalCarregado: totalEstimado,
+            pagina: paginaSolicitada,
+            acabou: acabou,
+            ano: ano
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO CATALOGO FILMES]',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            filmes: [],
+            total: 0,
+            mensagem: 'Não foi possível carregar esta página de filmes.'
+        });
+    }
+});
+
+app.get('/api/catalogo', async (req, res) => {
+    try {
+        const agora = Date.now();
+
+        if (
+            catalogoCache &&
+            (agora - catalogoUltimaAtualizacao) < CATALOGO_CACHE_MS
+        ) {
+            return res.json({
+                sucesso: true,
+                total: catalogoCache.length,
+                filmes: catalogoCache,
+                cache: true
+            });
+        }
+
+        if (catalogoCache) {
+            res.json({
+                sucesso: true,
+                total: catalogoCache.length,
+                filmes: catalogoCache,
+                cache: true
+            });
+
+            atualizarCatalogo();
+            return;
+        }
+
+        const filmes = await atualizarCatalogo();
+
+        if (!filmes) {
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: 'Não foi possível carregar o catálogo.'
+            });
+        }
+
+        return res.json({
+            sucesso: true,
+            total: filmes.length,
+            filmes,
+            cache: false
+        });
+
+    } catch (erro) {
+        console.error('[ERRO CATALOGO]', erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: 'Não foi possível carregar o catálogo.'
+        });
+    }
+});
+
+// ==========================================
+// TRAILER DO FILME — TMDB
+// ==========================================
+
+app.get('/api/filme/:id/videos', async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        if (!id || !/^\d+$/.test(id)) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: 'ID do filme inválido.'
+            });
+        }
+
+        const resposta = await tmdb(
+            '/movie/' + id + '/videos?language=pt-BR'
+        );
+
+        const videos = Array.isArray(resposta.results)
+            ? resposta.results
+            : [];
+
+        const youtube = videos.filter(video =>
+            video &&
+            video.site === 'YouTube' &&
+            video.key
+        );
+
+        const trailers = youtube.filter(video =>
+            String(video.type || '').toLowerCase() === 'trailer'
+        );
+
+        const oficiais = trailers.filter(video =>
+            video.official === true
+        );
+
+        const pt = oficiais.filter(video =>
+            String(video.iso_639_1 || '').toLowerCase() === 'pt'
+        );
+
+        const en = oficiais.filter(video =>
+            String(video.iso_639_1 || '').toLowerCase() === 'en'
+        );
+
+        const escolhido =
+            pt[0] ||
+            en[0] ||
+            oficiais[0] ||
+            trailers[0] ||
+            youtube[0] ||
+            null;
+
+        if (!escolhido) {
+            return res.json({
+                sucesso: true,
+                encontrado: false,
+                trailer: null
+            });
+        }
+
+        return res.json({
+            sucesso: true,
+            encontrado: true,
+            trailer: {
+                id: escolhido.id,
+                nome: escolhido.name,
+                chave: escolhido.key,
+                site: escolhido.site,
+                tipo: escolhido.type,
+                oficial: escolhido.official === true,
+                idioma: escolhido.iso_639_1 || null,
+                url: 'https://www.youtube.com/watch?v=' + escolhido.key,
+                embed: 'https://www.youtube.com/embed/' + escolhido.key
+            }
+        });
+
+    } catch (erro) {
+        console.error('[ERRO TRAILER TMDB]', erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            encontrado: false,
+            trailer: null,
+            mensagem: 'Não foi possível buscar o trailer.'
+        });
+    }
+});
+
+// ==========================================
+// FILME PARA ASSISTIR — YOUTUBE
+// ==========================================
+
+app.get('/api/filme/:id/assistir', async (req, res) => {
+
+    try {
+
+        const id = req.params.id;
+
+        if (!id || !/^\d+$/.test(id)) {
+
+            return res.status(400).json({
+                sucesso: false,
+                encontrado: false,
+                mensagem: 'ID do filme inválido.'
+            });
+
+        }
+
+        /*
+         * Busca os dados do filme no TMDB.
+         * A partir deles poderemos procurar uma fonte
+         * autorizada para reprodução/incorporação.
+         */
+
+        const filme = await tmdb(
+            '/movie/' + id + '?language=pt-BR'
+        );
+
+        if (!filme || !filme.id) {
+
+            return res.json({
+                sucesso: true,
+                encontrado: false,
+                filme: null
+            });
+
+        }
+
+        return res.json({
+
+            sucesso: true,
+
+            encontrado: false,
+
+            mensagem:
+                'Nenhum filme completo autorizado foi encontrado automaticamente.',
+
+            filme: {
+                id: filme.id,
+                titulo: filme.title || '',
+                ano:
+                    filme.release_date
+                        ? filme.release_date.substring(0, 4)
+                        : '',
+                sinopse: filme.overview || ''
+            }
+
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO FILME ASSISTIR]',
+            erro
+        );
+
+        return res.status(500).json({
+
+            sucesso: false,
+
+            encontrado: false,
+
+            mensagem:
+                'Não foi possível buscar o filme.'
+
+        });
+
+    }
+
+});
+
+// ==========================================
+const linksPorIdTMDB = {
+    "157336": "https://www.megaseriehd.site/series/interestelar-2024/temporada-01/episodio-01",
+    "465086": "https://www.megaseriehd.site/series/o-grito-2020/temporada-01/episodio-01",
+    "27205": "https://www.megaseriehd.site/series/a-origem-2010/temporada-01/episodio-01",
+    "11238": "https://www.megaseriehd.site/series/aladdin-e-os-40-ladroes-1996/temporada-01/episodio-01",
+    "812": "https://www.megaseriehd.site/series/aladdin-1992/temporada-01/episodio-01",
+    "15969": "https://www.megaseriehd.site/series/aladdin-o-retorno-de-jafar-1994/temporada-01/episodio-01",
+    "24428": "https://www.megaseriehd.site/series/os-vingadores-the-avengers-2012/temporada-01/episodio-01",
+    "420817": "https://www.megaseriehd.site/series/aladdin-2019-l-/temporada-01/episodio-01",
+    "713704": "https://www.megaseriehd.site/series/a-morte-do-demonio-a-ascensao-2023/temporada-01/episodio-01",
+    "83533": "https://www.megaseriehd.site/series/avatar-fogo-e-cinzas-2025/temporada-01/episodio-01"
+};
+// LINK DE ORIGEM DO FILME
+// ==========================================
+
+app.get('/api/filme/:id/origem', async (req, res) => {
+
+    try {
+
+        const id = req.params.id;
+
+        if (!id || !/^\d+$/.test(id)) {
+            return res.json({
+                sucesso: false,
+                encontrado: false
+            });
+        }
+
+        const dados = await tmdb(
+            '/movie/' + id + '?language=pt-BR'
+        );
+
+        const titulo = String(
+            dados.title || ''
+        ).toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+
+        let link =
+        linksPorIdTMDB[id] ||
+        null;
+
+        if (!link) {
+
+        for (const chave of Object.keys(linksFilmes)) {
+
+            const chaveNormalizada = String(chave)
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+
+            if (
+                titulo === chaveNormalizada ||
+                titulo.includes(chaveNormalizada) ||
+                chaveNormalizada.includes(titulo)
+            ) {
+                link = linksFilmes[chave];
+                break;
+            }
+        }
+    }
+    if (!link) {
+
+            return res.json({
+                sucesso: true,
+                encontrado: false
+            });
+
+        }
+
+        return res.json({
+            sucesso: true,
+            encontrado: true,
+            titulo: dados.title,
+            link
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO LINK ORIGEM]',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            encontrado: false
+        });
+    }
+});
+// ADMIN — CRIAR USUÁRIO
+// ==========================================
+
+app.post(
+    "/api/admin/usuarios",
+    async (req, res) => {
+
+        try {
+
+            if (
+                !req.session.usuario ||
+                req.session.usuario.tipo !== "admin"
+            ) {
+
+                return res.status(403).json({
+
+                    sucesso: false,
+
+                    mensagem:
+                        "Acesso negado."
+
+                });
+
+            }
+
+            const usuario =
+                String(
+                    req.body.usuario || ""
+                ).trim();
+
+            const senha =
+                String(
+                    req.body.senha || ""
+                );
+
+            const dias =
+                Number(
+                    req.body.dias
+                );
+
+            if (
+                !usuario ||
+                !senha ||
+                !Number.isInteger(dias) ||
+                dias < 1
+            ) {
+
+                return res.json({
+
+                    sucesso: false,
+
+                    mensagem:
+                        "Preencha usuário, senha e dias corretamente."
+
+                });
+
+            }
+
+            const existente =
+                db
+                    .prepare(
+                        "SELECT id FROM usuarios WHERE usuario = ?"
+                    )
+                    .get(usuario);
+
+            if (existente) {
+
+                return res.json({
+
+                    sucesso: false,
+
+                    mensagem:
+                        "Esse usuário já existe."
+
+                });
+
+            }
+
+            const senhaHash =
+                await bcrypt.hash(
+                    senha,
+                    12
+                );
+
+            const validade =
+                new Date(
+                    Date.now() +
+                    dias *
+                    24 *
+                    60 *
+                    60 *
+                    1000
+                );
+
+            db.prepare(`
+                INSERT INTO usuarios
+                (
+                    usuario,
+                    senha,
+                    status,
+                    tipo,
+                    validade
+                )
+                VALUES
+                (
+                    ?,
+                    ?,
+                    'ativo',
+                    'usuario',
+                    ?
+                )
+            `).run(
+
+                usuario,
+
+                senhaHash,
+
+                validade.toISOString()
+
+            );
+
+            return res.json({
+
+                sucesso: true,
+
+                mensagem:
+                    "Usuário criado com sucesso."
+
+            });
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO CRIAR USUARIO]",
+                erro
+            );
+
+            return res.status(500).json({
+
+                sucesso: false,
+
+                mensagem:
+                    "Erro interno ao criar usuário."
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// ==========================================
+// ADMIN — EDITAR USUÁRIO
+// ==========================================
+
+app.post("/api/admin/usuarios/editar", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.body.id);
+
+        const usuario =
+            String(req.body.usuario ?? "").trim();
+
+        const senha =
+            String(req.body.senha ?? "");
+
+        const tipo =
+            String(req.body.tipo ?? "usuario")
+                .trim()
+                .toLowerCase();
+
+        if (
+            !Number.isInteger(id) ||
+            id < 1
+        ) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "ID do usuário inválido."
+            });
+        }
+
+        if (!usuario) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Informe um nome de usuário."
+            });
+        }
+
+        if (!["usuario", "admin"].includes(tipo)) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Tipo de usuário inválido."
+            });
+        }
+
+        const existente = db.prepare(`
+            SELECT id
+            FROM usuarios
+            WHERE LOWER(usuario) = LOWER(?)
+            AND id != ?
+        `).get(usuario, id);
+
+        if (existente) {
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse nome de usuário já está sendo usado."
+            });
+        }
+
+        const atual = db.prepare(`
+            SELECT id, usuario, tipo, status
+            FROM usuarios
+            WHERE id = ?
+        `).get(id);
+
+        if (!atual) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        /*
+         * SENHA:
+         * Se o campo estiver vazio, mantém a senha atual.
+         * Se tiver conteúdo, troca a senha.
+         */
+
+        if (senha.trim()) {
+
+            if (senha.length < 4) {
+                return res.status(400).json({
+                    sucesso: false,
+                    mensagem: "A senha precisa ter pelo menos 4 caracteres."
+                });
+            }
+
+            const senhaHash =
+                await bcrypt.hash(senha, 12);
+
+            db.prepare(`
+                UPDATE usuarios
+                SET
+                    usuario = ?,
+                    senha = ?,
+                    tipo = ?
+                WHERE id = ?
+            `).run(
+                usuario,
+                senhaHash,
+                tipo,
+                id
+            );
+
+        } else {
+
+            db.prepare(`
+                UPDATE usuarios
+                SET
+                    usuario = ?,
+                    tipo = ?
+                WHERE id = ?
+            `).run(
+                usuario,
+                tipo,
+                id
+            );
+
+        }
+
+        /*
+         * Se o administrador estiver editando
+         * a própria conta, atualiza também a sessão.
+         */
+
+        if (
+            Number(req.session.usuario.id) === id
+        ) {
+
+            req.session.usuario.usuario = usuario;
+            req.session.usuario.tipo = tipo;
+
+            req.session.save(() => {});
+        }
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Usuário atualizado com sucesso.",
+            usuario: {
+                id,
+                usuario,
+                tipo
+            }
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO EDITAR USUARIO]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao editar usuário."
+        });
+
+    }
+
+});
+
+// ==========================================
+// ADMIN — SUSPENDER / ATIVAR USUÁRIO
+// ==========================================
+// ==========================================
+
+app.post("/api/admin/usuarios/status", (req, res) => {
+    try {
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.body.id);
+        const status = String(req.body.status || "").trim();
+
+        if (
+            !Number.isInteger(id) ||
+            id < 1 ||
+            !["ativo", "suspenso"].includes(status)
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Dados inválidos."
+            });
+        }
+
+        db.prepare(`
+            UPDATE usuarios
+            SET status = ?
+            WHERE id = ?
+        `).run(status, id);
+
+        return res.json({
+            sucesso: true,
+            mensagem:
+                status === "ativo"
+                    ? "Usuário ativado com sucesso."
+                    : "Usuário suspenso com sucesso."
+        });
+
+    } catch (erro) {
+        console.error("[ERRO STATUS USUARIO]", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao alterar status."
+        });
+    }
+});
+
+// ==========================================
+// ADMIN — RENOVAR USUÁRIO
+// ==========================================
+
+app.post("/api/admin/usuarios/renovar", (req, res) => {
+    try {
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.body.id);
+        const dias = Number(req.body.dias);
+
+        if (
+            !Number.isInteger(id) ||
+            id < 1 ||
+            !Number.isInteger(dias) ||
+            dias < 1
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Informe uma quantidade válida de dias."
+            });
+        }
+
+        const usuario = db.prepare(`
+            SELECT validade
+            FROM usuarios
+            WHERE id = ?
+        `).get(id);
+
+        if (!usuario) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        let inicio = Date.now();
+
+        if (usuario.validade) {
+            const validadeAtual = new Date(usuario.validade).getTime();
+
+            if (
+                Number.isFinite(validadeAtual) &&
+                validadeAtual > Date.now()
+            ) {
+                inicio = validadeAtual;
+            }
+        }
+
+        const novaValidade = new Date(
+            inicio +
+            dias * 24 * 60 * 60 * 1000
+        ).toISOString();
+
+        db.prepare(`
+            UPDATE usuarios
+            SET validade = ?, status = 'ativo'
+            WHERE id = ?
+        `).run(novaValidade, id);
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Usuário renovado com sucesso.",
+            validade: novaValidade
+        });
+
+    } catch (erro) {
+        console.error("[ERRO RENOVAR USUARIO]", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao renovar usuário."
+        });
+    }
+});
+// ==========================================
+// ADMIN — LISTAR USUÁRIOS
+// ==========================================
+
+app.get(
+    "/api/admin/usuarios",
+    (req, res) => {
+
+        try {
+
+            if (
+                !req.session.usuario ||
+                req.session.usuario.tipo !== "admin"
+            ) {
+
+                return res.status(403).json({
+
+                    sucesso: false,
+
+                    mensagem:
+                        "Acesso negado."
+
+                });
+
+            }
+
+            const usuarios =
+                db.prepare(`
+                    SELECT
+                        id,
+                        usuario,
+                        status,
+                        tipo,
+                        criado_em,
+                        validade
+                    FROM usuarios
+                    ORDER BY id DESC
+                `).all();
+
+            return res.json({
+
+                sucesso: true,
+
+                usuarios
+
+            });
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO LISTAR USUARIOS]",
+                erro
+            );
+
+            return res.status(500).json({
+
+                sucesso: false,
+
+                mensagem:
+                    "Erro ao carregar usuários."
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// STATUS
+// ==========================================
+
+app.get(
+    "/status",
+    (req, res) => {
+
+        res.json({
+
+            online: true,
+
+            servidor:
+                "LUKAFILMES",
+
+            porta:
+                PORT
+
+        });
+
+    }
+);
+
+// ==========================================
+// PROTEÇÃO DAS PÁGINAS
+// ==========================================
+
+app.use(
+    (req, res, next) => {
+
+        if (
+
+            req.path === "/login" ||
+
+            req.path === "/admin.html" ||
+
+            req.path === "/status" ||
+
+            req.path === "/api/eu" ||
+
+            req.path === "/api/pesquisar" ||
+
+            req.path === '/api/catalogo' || req.path.startsWith('/api/serie/') || req.path === '/paginas/filmes.html' || req.path === '/paginas/filme.html' || req.path === '/paginas/filme'
+
+        ) {
+
+            return next();
+
+        }
+
+        if (!req.session.usuario) {
+
+            return res.redirect(
+                "/login"
+            );
+
+        }
+
+        next();
+
+    }
+);
+
+// ==========================================
+// ARQUIVOS DO SITE
+// ==========================================
+
+app.use(
+    express.static(__dirname)
+);
+
+// ==========================================
+// SERVIDOR
+// ==========================================
+
+app.listen(
+    PORT,
+    () => {
+
+        console.log("");
+
+        console.log(
+            "================================="
+        );
+
+        console.log(
+            "       LUKAFILMES ONLINE"
+        );
+
+        console.log(
+            "================================="
+        );
+
+        console.log("");
+
+        console.log(
+            "Local: http://localhost:" +
+            PORT
+        );
+
+        console.log("");
+
+    }
+);
+
+
+
+
+app.get("/paginas/filme",(req,res)=>{res.sendFile(require("path").join(__dirname,"paginas","filme.html"));});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.get('/api/serie/:id/temporada/:temporada', async (req, res) => {
+    try {
+
+        const id = req.params.id;
+        const temporada = req.params.temporada;
+
+        if (!id || !temporada) {
+            return res.status(400).json({
+                sucesso: false,
+                episodios: []
+            });
+        }
+
+        const dados = await tmdb(
+            '/tv/' +
+            id +
+            '/season/' +
+            temporada +
+            '?language=pt-BR'
+        );
+
+        const episodios =
+            Array.isArray(dados.episodes)
+                ? dados.episodes
+                : [];
+
+        console.log(
+            '[SERIE] Episódios:',
+            id,
+            'Temporada:',
+            temporada,
+            'Quantidade:',
+            episodios.length
+        );
+
+        return res.json({
+            sucesso: true,
+            episodios: episodios
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO EPISODIOS TMDB]',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            episodios: []
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+

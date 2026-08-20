@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LUKAFILMES • ADMIN</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#070b14;--card:#101827;--card2:#151f31;--line:#22304a;--text:#f5f7fb;--muted:#8d9ab0;--blue:#5b8cff;--green:#21d19f;--red:#ff5575;--yellow:#ffc857}
+body{font-family:Inter,system-ui,Arial;background:radial-gradient(circle at top right,#17294d 0,#070b14 45%);color:var(--text);min-height:100vh}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0}
+.app{display:flex;min-height:100vh}
+.sidebar{width:250px;background:rgba(8,13,24,.94);border-right:1px solid var(--line);padding:22px 15px;position:fixed;inset:0 auto 0 0;z-index:20}
+.logo{font-size:21px;font-weight:900;margin-bottom:28px}.logo span{color:var(--blue)}
+.nav button{width:100%;padding:13px 15px;margin:4px 0;border-radius:12px;background:transparent;color:#aeb9cc;text-align:left;transition:.2s}
+.nav button:hover,.nav button.active{background:#17233a;color:white;transform:translateX(3px)}
+.main{margin-left:250px;width:calc(100% - 250px);padding:25px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.title h1{font-size:28px}.title p{color:var(--muted);margin-top:5px}
+.online{background:#0d332b;color:#49e2b4;padding:9px 13px;border-radius:30px;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}
+.card{background:linear-gradient(145deg,#111c2d,#0d1523);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 15px 40px #0003;animation:up .45s ease both}
+.card small{color:var(--muted)}.num{font-size:30px;font-weight:900;margin-top:9px}
+.green{color:var(--green)}.blue{color:#78a0ff}.yellow{color:var(--yellow)}.red{color:var(--red)}
+.panel{background:rgba(14,22,36,.9);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:20px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;margin-bottom:16px}
+.search{background:#0a1220;border:1px solid var(--line);color:white;padding:11px 14px;border-radius:11px;min-width:240px;outline:0}
+.btn{padding:11px 15px;border-radius:11px;background:#1b2942;color:white;transition:.2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.15)}
+.primary{background:linear-gradient(135deg,#4f7fff,#795cff)}
+.danger{background:#3a1723;color:#ff7992}.success{background:#12382f;color:#4ee0b4}
+.table{width:100%;border-collapse:collapse}.table th{text-align:left;color:var(--muted);font-size:12px;padding:12px;border-bottom:1px solid var(--line)}.table td{padding:13px 12px;border-bottom:1px solid #1b2739;font-size:14px}
+.badge{display:inline-flex;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:700}.ativo{background:#10382f;color:#52e1b7}.suspenso{background:#3a1723;color:#ff718c}.onlineb{background:#113d2f;color:#55e3b9}.off{background:#252d3b;color:#9aa5b7}
+.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:7px 9px;border-radius:8px;font-size:11px}
+.section{display:none}.section.active{display:block;animation:fade .3s}
+.modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.show{display:flex}
+.modalbox{width:100%;max-width:480px;background:#101a2b;border:1px solid #2a3b5b;border-radius:20px;padding:23px;box-shadow:0 30px 100px #0008;animation:scale .25s}
+.modalbox h2{margin-bottom:18px}.field{margin-bottom:13px}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}.field input,.field select{width:100%;background:#091221;border:1px solid var(--line);color:white;padding:12px;border-radius:10px;outline:0}.modalactions{display:flex;gap:9px;margin-top:18px}.modalactions button{flex:1}
+.toast{position:fixed;right:20px;bottom:20px;background:#152238;border:1px solid #304565;padding:14px 18px;border-radius:12px;display:none;z-index:100;box-shadow:0 15px 50px #0007}.toast.show{display:block;animation:toast .3s}
+.empty{text-align:center;padding:35px;color:var(--muted)}
+@keyframes up{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes scale{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
+@keyframes toast{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+@media(max-width:850px){.sidebar{width:72px;padding:15px 8px}.logo{font-size:0;text-align:center}.logo span{font-size:22px}.nav button{font-size:0;text-align:center;padding:14px 5px}.nav button:first-letter{font-size:20px}.main{margin-left:72px;width:calc(100% - 72px);padding:15px}.cards{grid-template-columns:repeat(2,1fr)}.table{min-width:850px}.panel{overflow:auto}.top h1{font-size:22px}}
+@media(max-width:500px){.cards{grid-template-columns:1fr 1fr}.num{font-size:24px}.search{min-width:100%}}
+</style>
+</head>
+<body>
+
+<div class="app">
+<aside class="sidebar">
+<div class="logo" onclick="window.location.href='/'" style="cursor:pointer">LUKA<span>FILMES</span></div>
+<nav class="nav">
+<button class="active" onclick="aba('dashboard',this)">🏠 Dashboard</button>
+<button onclick="aba('usuarios',this)">👤 Usuários</button>
+<button onclick="aba('testes',this)">🧪 Testes</button>
+<button onclick="aba('revendedores',this)">🤝 Revendedores</button>
+</nav>
+</aside>
+
+<main class="main">
+
+<section id="dashboard" class="section active">
+<div class="top"><div class="title"><h1>Dashboard</h1><p>Central administrativa LUKAFILMES</p></div><div class="online">● SISTEMA ONLINE</div></div>
+<div class="cards">
+<div class="card"><small>USUÁRIOS</small><div class="num blue" id="cUsuarios">0</div></div>
+<div class="card"><small>TESTES</small><div class="num yellow" id="cTestes">0</div></div>
+<div class="card"><small>REVENDEDORES</small><div class="num green" id="cRevendedores">0</div></div>
+<div class="card"><small>ONLINE AGORA</small><div class="num green" id="cOnline">0</div></div>
+</div>
+<div class="panel">
+<h2>Visão geral</h2><br>
+<div id="resumo" style="color:var(--muted);line-height:2">Carregando dados...</div>
+</div>
+</section>
+
+<section id="usuarios" class="section">
+<div class="top"><div class="title"><h1>👤 Usuários</h1><p>Gerencie as contas dos seus clientes</p></div><button class="btn primary" onclick="abrirModal('usuario')">＋ Criar usuário</button></div>
+<div class="panel">
+<div class="toolbar"><input class="search" id="buscaUsuarios" placeholder="🔎 Buscar usuário..." oninput="render()"><button class="btn" onclick="carregar()">↻ Atualizar</button></div>
+<div style="overflow:auto"><table class="table"><thead><tr><th>USUÁRIO</th><th>TIPO</th><th>STATUS</th><th>VALIDADE</th><th>ONLINE</th><th>AÇÕES</th></tr></thead><tbody id="listaUsuarios"></tbody></table></div>
+</div>
+</section>
+
+<section id="testes" class="section">
+<div class="top"><div class="title"><h1>🧪 Testes</h1><p>Crie acessos de teste para novos clientes</p></div><button class="btn primary" onclick="abrirModal('teste')">＋ Criar teste</button></div>
+<div class="panel">
+<div class="toolbar"><input class="search" id="buscaTestes" placeholder="🔎 Buscar teste..." oninput="render()"></div>
+<div style="overflow:auto"><table class="table"><thead><tr><th>USUÁRIO</th><th>STATUS</th><th>VALIDADE</th><th>ONLINE</th><th>AÇÕES</th></tr></thead><tbody id="listaTestes"></tbody></table></div>
+</div>
+</section>
+
+<section id="revendedores" class="section">
+<div class="top"><div class="title"><h1>🤝 Revendedores</h1><p>Controle seus parceiros e limites de conexão</p></div><button class="btn primary" onclick="abrirModal('revendedor')">＋ Criar revendedor</button></div>
+<div class="panel">
+<div class="toolbar"><input class="search" id="buscaRev" placeholder="🔎 Buscar revendedor..." oninput="render()"></div>
+<div style="overflow:auto"><table class="table"><thead><tr><th>USUÁRIO</th><th>STATUS</th><th>VALIDADE</th><th>LIMITE</th><th>ONLINE</th><th>AÇÕES</th></tr></thead><tbody id="listaRev"></tbody></table></div>
+</div>
+</section>
+
+</main>
+</div>
+
+<div class="modal" id="modal">
+<div class="modalbox">
+<h2 id="modalTitulo">Criar usuário</h2>
+<form id="form">
+<div class="field"><label>USUÁRIO</label><input id="fUsuario" required autocomplete="off"></div>
+<div class="field"><label>SENHA</label><input id="fSenha" type="password" required></div>
+<div class="field"><label>DIAS DE ACESSO</label><input id="fDias" type="number" value="30" min="1" required></div>
+<div class="field" id="limiteField" style="display:none"><label>LIMITE DE CONEXÕES</label><input id="fLimite" type="number" value="1" min="1"></div>
+<div class="modalactions"><button type="button" class="btn" onclick="fecharModal()">Cancelar</button><button class="btn primary">Criar agora</button></div>
+</form>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let dados=[];
+let modo="usuario";
+
+function aba(id,btn){
+ document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+ btn.classList.add("active");
+ render();
+}
+
+function toast(msg){
+ const t=document.getElementById("toast");
+ t.textContent=msg;t.classList.add("show");
+ setTimeout(()=>t.classList.remove("show"),2800);
+}
+
+function abrirModal(tipo){
+ modo=tipo;
+ document.getElementById("modal").classList.add("show");
+ document.getElementById("modalTitulo").textContent=
+ tipo==="usuario"?"Criar usuário":tipo==="teste"?"Criar teste":"Criar revendedor";
+ document.getElementById("limiteField").style.display=tipo==="revendedor"?"block":"none";
+ document.getElementById("form").reset();
+ document.getElementById("fDias").value=tipo==="teste"?3:30;
+}
+function fecharModal(){document.getElementById("modal").classList.remove("show")}
+
+async function api(url,opt={}){
+ opt.credentials="include";
+ opt.headers={"Content-Type":"application/json",...(opt.headers||{})};
+ const r=await fetch(url,opt);
+ const d=await r.json().catch(()=>({sucesso:false,mensagem:"Resposta inválida"}));
+ if(!r.ok) throw new Error(d.mensagem||"Erro na operação");
+ return d;
+}
+
+async function carregar(){
+ try{
+   const r=await fetch("/api/admin/presenca",{credentials:"include"});
+   const d=await r.json();
+   if(d.usuarios) dados=d.usuarios;
+   render();
+   document.getElementById("cUsuarios").textContent=d.usuariosOnline??dados.filter(x=>x.tipo==="usuario"&&x.online).length;
+   document.getElementById("cTestes").textContent=d.testesOnline??dados.filter(x=>x.tipo==="teste").length;
+   document.getElementById("cRevendedores").textContent=d.revendedoresOnline??dados.filter(x=>x.tipo==="revendedor").length;
+   document.getElementById("cOnline").textContent=d.online??dados.filter(x=>x.online).length;
+   document.getElementById("resumo").innerHTML=
+   "👤 Usuários: <b>"+dados.filter(x=>x.tipo==="usuario").length+"</b><br>"+
+   "🧪 Testes: <b>"+dados.filter(x=>x.tipo==="teste").length+"</b><br>"+
+   "🤝 Revendedores: <b>"+dados.filter(x=>x.tipo==="revendedor").length+"</b><br>"+
+   "🟢 Conectados agora: <b>"+dados.filter(x=>x.online).length+"</b>";
+ }catch(e){
+   toast("Não foi possível carregar os dados");
+   console.error(e);
+ }
+}
+
+function filtro(arr,id){
+ const q=(document.getElementById(id)?.value||"").toLowerCase();
+ return arr.filter(x=>String(x.usuario||"").toLowerCase().includes(q));
+}
+
+function data(v){
+ if(!v)return "—";
+ const d=new Date(v);
+ return isNaN(d)?"—":d.toLocaleDateString("pt-BR");
+}
+
+function linha(u){
+ const online=u.online?'<span class="badge onlineb">● ONLINE</span>':'<span class="badge off">OFFLINE</span>';
+ const st='<span class="badge '+(u.status==="ativo"?"ativo":"suspenso")+'">'+(u.status||"—")+'</span>';
+ return `<tr>
+ <td><b>${esc(u.usuario)}</b></td>
+ <td>${esc(u.tipo||"usuario")}</td>
+ <td>${st}</td>
+ <td>${data(u.validade)}</td>
+ <td>${online}</td>
+ <td><div class="actions">
+ <button class="btn success" onclick="status(${u.id},'${u.status==="ativo"?"suspenso":"ativo"}')">${u.status==="ativo"?"Suspender":"Ativar"}</button>
+ <button class="btn" onclick="renovar(${u.id})">+ Dias</button>
+ <button class="btn danger" onclick="excluir(${u.id})">Excluir</button>
+ </div></td></tr>`;
+}
+
+function render(){
+ const us=filtro(dados.filter(x=>x.tipo==="usuario"),"buscaUsuarios");
+ const te=filtro(dados.filter(x=>x.tipo==="teste"),"buscaTestes");
+ const rv=filtro(dados.filter(x=>x.tipo==="revendedor"),"buscaRev");
+ document.getElementById("listaUsuarios").innerHTML=us.map(linha).join("")||'<tr><td colspan="6" class="empty">Nenhum usuário encontrado.</td></tr>';
+ document.getElementById("listaTestes").innerHTML=te.map(linha).join("")||'<tr><td colspan="5" class="empty">Nenhum teste encontrado.</td></tr>';
+ document.getElementById("listaRev").innerHTML=rv.map(linha).join("")||'<tr><td colspan="6" class="empty">Nenhum revendedor encontrado.</td></tr>';
+}
+
+async function status(id,status){
+ try{const d=await api("/api/admin/usuarios/status",{method:"POST",body:JSON.stringify({id,status})});toast(d.mensagem);carregar()}
+ catch(e){toast(e.message)}
+}
+
+async function renovar(id){
+ const dias=prompt("Quantos dias deseja adicionar?","30");
+ if(dias===null)return;
+ if(!Number.isInteger(Number(dias))||Number(dias)<1)return toast("Quantidade inválida");
+ try{const d=await api("/api/admin/usuarios/renovar",{method:"POST",body:JSON.stringify({id,dias:Number(dias)})});toast(d.mensagem);carregar()}
+ catch(e){toast(e.message)}
+}
+
+async function excluir(id){
+ const u=dados.find(x=>Number(x.id)===Number(id));
+ if(!u||!confirm('Excluir definitivamente "'+u.usuario+'"?'))return;
+ try{const d=await api("/api/admin/usuarios/excluir",{method:"POST",body:JSON.stringify({id:Number(id)})});toast(d.mensagem);carregar()}
+ catch(e){toast(e.message)}
+}
+
+document.getElementById("form").onsubmit=async e=>{
+ e.preventDefault();
+ const usuario=document.getElementById("fUsuario").value.trim();
+ const senha=document.getElementById("fSenha").value;
+ const dias=Number(document.getElementById("fDias").value);
+ try{
+   let url="/api/admin/usuarios";
+   let body={usuario,senha,dias};
+   if(modo==="teste")body.tipo="teste";
+   if(modo==="revendedor"){
+     url="/api/admin/revendedores";
+     body.limite_conexoes=Number(document.getElementById("fLimite").value);
+   }
+   const d=await api(url,{method:"POST",body:JSON.stringify(body)});
+   if(!d.sucesso)throw new Error(d.mensagem||"Não foi possível criar");
+   toast(d.mensagem||"Criado com sucesso!");
+   fecharModal();
+   carregar();
+ }catch(e){toast(e.message)}
+};
+
+function esc(v){
+ return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+
+carregar();
+setInterval(carregar,30000);
+</script>
+</body>
+</html>

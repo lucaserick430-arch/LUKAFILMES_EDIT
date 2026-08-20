@@ -1,0 +1,1027 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LUKAFILMES - Filme</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: #050505;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ==========================================
+   PÁGINA
+   ========================================== */
+
+.pagina-filme {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+
+    padding-bottom: 80px;
+
+    background: #050505;
+}
+
+/* ==========================================
+   FUNDO DO FILME
+   ========================================== */
+
+.pagina-filme::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 780px;
+
+    background-image:
+        linear-gradient(
+            to bottom,
+            rgba(5,5,5,.15) 0%,
+            rgba(5,5,5,.25) 30%,
+            rgba(5,5,5,.55) 55%,
+            rgba(5,5,5,.92) 82%,
+            #050505 100%
+        ),
+        var(--fundo-filme);
+
+    background-size: cover;
+    background-position: center top;
+
+    filter: blur(2px);
+
+    transform: scale(1.03);
+
+    opacity: .9;
+
+    z-index: 0;
+}
+
+/* ESCURECIMENTO EXTRA */
+.pagina-filme::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 25%,
+            rgba(5,5,5,.25) 45%,
+            #050505 78%
+        );
+
+    z-index: 0;
+
+    pointer-events: none;
+}
+
+/* ==========================================
+   BOTÃO VOLTAR
+   ========================================== */
+
+.voltar-area {
+    position: relative;
+    z-index: 5;
+
+    width: 100%;
+    max-width: 1200px;
+
+    margin: auto;
+
+    padding: 25px 25px 0;
+}
+
+.voltar {
+    display: inline-flex;
+
+    align-items: center;
+    gap: 8px;
+
+    padding: 11px 18px;
+
+    color: #fff;
+    text-decoration: none;
+
+    background: rgba(0,0,0,.55);
+
+    border: 1px solid rgba(255,255,255,.14);
+
+    border-radius: 30px;
+
+    backdrop-filter: blur(12px);
+
+    font-weight: bold;
+
+    transition: .25s;
+}
+
+.voltar:hover {
+    background: #e50914;
+
+    border-color: #e50914;
+
+    transform: translateX(-3px);
+}
+
+/* ==========================================
+   ÁREA PRINCIPAL
+   ========================================== */
+
+.detalhes {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    max-width: 1000px;
+
+    margin: 55px auto 0;
+
+    padding: 0 20px;
+
+    text-align: center;
+}
+
+/* ==========================================
+   CAPA CENTRAL
+   ========================================== */
+
+.poster {
+    width: 270px;
+
+    margin: 0 auto 25px;
+
+    animation: aparecerCapa .7s ease;
+}
+
+.poster img {
+    width: 100%;
+
+    display: block;
+
+    border-radius: 17px;
+
+    border: 1px solid rgba(255,255,255,.18);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.9),
+        0 0 50px rgba(0,0,0,.45);
+
+    transition: .35s ease;
+}
+
+.poster img:hover {
+    transform: scale(1.025);
+
+    box-shadow:
+        0 35px 90px rgba(0,0,0,.95),
+        0 0 45px rgba(229,9,20,.2);
+}
+
+@keyframes aparecerCapa {
+    from {
+        opacity: 0;
+        transform: translateY(35px) scale(.94);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ==========================================
+   INFORMAÇÕES
+   ========================================== */
+
+.informacoes {
+    width: 100%;
+
+    animation: aparecerInfo .7s ease;
+}
+
+@keyframes aparecerInfo {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.informacoes h1 {
+    margin: 0 0 15px;
+
+    font-size: clamp(34px, 5vw, 58px);
+
+    line-height: 1.05;
+
+    font-weight: 900;
+
+    letter-spacing: -1.5px;
+
+    text-shadow:
+        0 8px 35px rgba(0,0,0,.95);
+}
+
+/* ==========================================
+   DADOS
+   ========================================== */
+
+.dados {
+    color: #ddd;
+
+    font-size: 15px;
+
+    margin-bottom: 13px;
+}
+
+/* ==========================================
+   GÊNEROS
+   ========================================== */
+
+.generos {
+    display: inline-block;
+
+    padding: 8px 16px;
+
+    margin-bottom: 35px;
+
+    color: #fff;
+
+    font-size: 14px;
+
+    background: rgba(255,255,255,.07);
+
+    border: 1px solid rgba(255,255,255,.10);
+
+    border-radius: 30px;
+
+    backdrop-filter: blur(10px);
+}
+
+/* ==========================================
+   SINOPSE
+   ========================================== */
+
+.sinopse-box {
+    width: 100%;
+    max-width: 850px;
+
+    margin: 0 auto;
+
+    padding: 30px 35px;
+
+    text-align: left;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.075),
+            rgba(255,255,255,.025)
+        );
+
+    border: 1px solid rgba(255,255,255,.10);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.55);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.sinopse-titulo {
+    margin: 0 0 15px;
+
+    font-size: 22px;
+
+    font-weight: 800;
+}
+
+.sinopse-titulo::before {
+    content: "";
+
+    display: inline-block;
+
+    width: 4px;
+    height: 21px;
+
+    margin-right: 9px;
+
+    vertical-align: -3px;
+
+    background: #e50914;
+
+    border-radius: 5px;
+}
+
+.sinopse {
+    margin: 0;
+
+    color: #d1d1d1;
+
+    font-size: 16px;
+
+    line-height: 1.8;
+}
+
+/* ==========================================
+   BOTÃO ASSISTIR
+   ========================================== */
+
+.assistir {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 190px;
+
+    margin-top: 25px;
+
+    padding: 14px 28px;
+
+    color: #fff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff1b27,
+            #c9000b
+        );
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    font-weight: 800;
+
+    box-shadow:
+        0 15px 40px rgba(229,9,20,.3);
+
+    transition: .25s;
+}
+
+.assistir:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 20px 50px rgba(229,9,20,.45);
+}
+
+/* ==========================================
+   PLAYER DO FILME
+   ========================================== */
+
+.player-filme {
+    position: relative;
+    z-index: 3;
+    width: calc(100% - 40px);
+    max-width: 1000px;
+    margin: 55px auto 0;
+    padding: 30px;
+    text-align: center;
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,.075),
+        rgba(255,255,255,.025)
+    );
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 22px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.65);
+    backdrop-filter: blur(16px);
+}
+
+.player-filme h2 {
+    margin: 0 0 22px;
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.player-video {
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #000;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.8);
+}
+
+.player-video iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: 0;
+}
+
+/* ==========================================
+   TRAILER
+   ========================================== */
+
+.trailer {
+    position: relative;
+    z-index: 3;
+
+    width: calc(100% - 40px);
+
+    max-width: 1000px;
+
+    margin: 70px auto 0;
+
+    padding: 30px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.075),
+            rgba(255,255,255,.025)
+        );
+
+    border: 1px solid rgba(255,255,255,.10);
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.65);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    animation: aparecerTrailer .7s ease;
+}
+
+@keyframes aparecerTrailer {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.trailer h2 {
+    margin: 0 0 22px;
+
+    font-size: 26px;
+
+    font-weight: 800;
+}
+
+.trailer h2::first-letter {
+    color: #e50914;
+}
+
+.trailer-video {
+    width: 100%;
+
+    max-width: 900px;
+
+    margin: auto;
+
+    aspect-ratio: 16 / 9;
+
+    overflow: hidden;
+
+    background: #000;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.8);
+}
+
+.trailer-video iframe {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    border: 0;
+}
+
+/* ==========================================
+   CELULAR
+   ========================================== */
+
+@media (max-width: 700px) {
+
+    .pagina-filme {
+        padding-bottom: 45px;
+    }
+
+    .pagina-filme::before {
+        height: 650px;
+    }
+
+    .voltar-area {
+        padding: 18px 15px 0;
+    }
+
+    .detalhes {
+        margin-top: 40px;
+
+        padding: 0 15px;
+    }
+
+    .poster {
+        width: 205px;
+
+        margin-bottom: 22px;
+    }
+
+    .informacoes h1 {
+        font-size: 35px;
+    }
+
+    .dados {
+        font-size: 13px;
+    }
+
+    .generos {
+        font-size: 13px;
+
+        margin-bottom: 25px;
+    }
+
+    .sinopse-box {
+        padding: 22px 20px;
+
+        border-radius: 16px;
+    }
+
+    .sinopse {
+        font-size: 15px;
+
+        line-height: 1.7;
+    }
+
+    .assistir {
+        width: 100%;
+    }
+
+    .trailer {
+        width: calc(100% - 24px);
+
+        margin-top: 45px;
+
+        padding: 18px 14px;
+
+        border-radius: 17px;
+    }
+
+    .trailer h2 {
+        font-size: 21px;
+    }
+
+    .trailer-video {
+        border-radius: 11px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="pagina-filme">
+
+    <div class="voltar-area">
+        <a href="javascript:history.back()" class="voltar">
+            ← Voltar
+        </a>
+    </div>
+
+    <main class="detalhes">
+
+        <div class="poster">
+            <img id="poster" src="" alt="Capa do filme">
+        </div>
+
+        <div class="informacoes">
+
+            <h1 id="titulo">Carregando...</h1>
+
+            <div id="dados" class="dados"></div>
+
+            <div id="generos" class="generos"></div>
+
+            <div class="sinopse-box">
+
+                <h2 class="sinopse-titulo">
+                    Sinopse
+                </h2>
+
+                <p id="sinopse" class="sinopse">
+                    Carregando sinopse...
+                </p>
+
+            </div>
+
+            <a
+                href="#"
+                <div
+                    class="botoes-assistir"
+                    style="
+                        display:flex;
+                        flex-wrap:wrap;
+                        justify-content:center;
+                        align-items:center;
+                        gap:12px;
+                        margin:20px auto;
+                    ">
+
+                    <a
+                        class="assistir"
+                        id="botaoAssistir"
+                        href="#">
+                        ▶ ASSISTIR
+                    </a>
+
+                    <a
+                        class="assistir"
+                        id="botaoAssistirOrigem"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style="display:none;">
+                        🌐 SITE DE ORIGEM
+                    </a>
+
+                </div>        </div>
+
+    </main>
+
+    <section
+        class="player-filme"
+        id="playerFilme"
+        style="display:none;">
+
+        <h2>🎬 Assistir filme</h2>
+
+        <div class="player-video">
+            <iframe
+                id="filmeFrame"
+                src=""
+                title="Filme"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+    </section>
+    <section
+        class="trailer"
+        id="trailerContainer"
+        style="display:none;">
+
+        <h2>▶ Trailer</h2>
+
+        <div class="trailer-video">
+
+            <iframe
+                id="trailerFrame"
+                src=""
+                title="Trailer do filme"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+    </section>
+
+</div>
+
+<script>
+(function () {
+
+    const salvo =
+        localStorage.getItem("filmeSelecionado");
+
+    if (!salvo) {
+
+        document.getElementById("titulo")
+            .textContent =
+            "Filme não encontrado";
+
+        document.getElementById("sinopse")
+            .textContent =
+            "Nenhum filme foi selecionado.";
+
+        document.getElementById("poster")
+            .style.display = "none";
+
+        return;
+    }
+
+    try {
+
+        const filme = JSON.parse(salvo);
+
+        /* FUNDO */
+
+        if (filme.capa) {
+
+            document.documentElement.style.setProperty(
+                "--fundo-filme",
+                'url("' + filme.capa + '")'
+            );
+
+        }
+
+        /* TÍTULO */
+
+        document.getElementById("titulo")
+            .textContent =
+            filme.titulo ||
+            "Sem título";
+
+        /* CAPA */
+
+        const poster =
+            document.getElementById("poster");
+
+        poster.src =
+            filme.capa || "";
+
+        poster.alt =
+            filme.titulo ||
+            "Filme";
+
+        /* DADOS */
+
+        document.getElementById("dados")
+            .textContent =
+            "⭐ " +
+            Number(filme.nota || 0).toFixed(1) +
+            " • " +
+            (filme.ano || "Ano desconhecido") +
+            " • " +
+            (filme.votos || 0) +
+            " votos";
+
+        /* GÊNEROS */
+
+        const generos =
+            Array.isArray(filme.generos)
+                ? filme.generos.join(" • ")
+                : (filme.genero || "");
+
+        document.getElementById("generos")
+            .textContent =
+            generos;
+
+        /* SINOPSE */
+
+        document.getElementById("sinopse")
+            .textContent =
+            filme.sinopse ||
+            "Sinopse não disponível.";
+
+        /* ==========================================
+           ASSISTIR FILME — EMBEDMOVIES / TMDB
+           ========================================== */
+
+        const botao =
+            document.getElementById("botaoAssistir");
+
+        const playerFilme =
+            document.getElementById("playerFilme");
+
+        const filmeFrame =
+            document.getElementById("filmeFrame");
+
+        if (botao && playerFilme && filmeFrame && filme.id) {
+
+            botao.addEventListener("click", function (evento) {
+
+                evento.preventDefault();
+
+                const tmdbId =
+                    String(filme.id).trim();
+
+                if (!tmdbId) {
+
+                    alert(
+                        "ID TMDB do filme não encontrado."
+                    );
+
+                    return;
+                }
+
+                console.log(
+                    "[PLAYER TMDB]",
+                    filme.titulo,
+                    tmdbId
+                );
+
+                const embedUrl =
+                    "https://myembed.biz/filme/" +
+                    tmdbId;
+
+                filmeFrame.src =
+                    embedUrl;
+
+                playerFilme.style.display =
+                    "block";
+
+                botao.innerHTML =
+                    "▶ FILME CARREGADO";
+
+                playerFilme.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+            });
+
+        }
+        /* ASSISTIR NO SITE DE ORIGEM */
+
+        const botaoOrigem =
+            document.getElementById("botaoAssistirOrigem");
+
+        if (botaoOrigem && filme.id) {
+
+            botaoOrigem.style.display =
+                "none";
+
+            fetch(
+                "/api/filme/" +
+                filme.id +
+                "/origem"
+            )
+            .then(resposta =>
+                resposta.json()
+            )
+            .then(dados => {
+
+                if (
+                    dados &&
+                    dados.sucesso &&
+                    dados.encontrado &&
+                    dados.link
+                ) {
+
+                    botaoOrigem.href =
+                        dados.link;
+
+                    botaoOrigem.target =
+                        "_blank";
+
+                    botaoOrigem.rel =
+                        "noopener noreferrer";
+
+                    botaoOrigem.style.display =
+                        "inline-flex";
+
+                    console.log(
+                        "[LINK ORIGEM]",
+                        dados.titulo,
+                        dados.link
+                    );
+
+                } else {
+
+                    botaoOrigem.style.display =
+                        "none";
+                }
+
+            })
+            .catch(erro => {
+
+                console.error(
+                    "[ERRO LINK ORIGEM]",
+                    erro
+                );
+
+                botaoOrigem.style.display =
+                    "none";
+            });
+        }
+    /* TRAILER */
+
+        if (filme.id) {
+
+            fetch(
+                "/api/filme/" +
+                filme.id +
+                "/videos"
+            )
+
+            .then(resposta =>
+                resposta.json()
+            )
+
+            .then(dados => {
+
+                const container =
+                    document.getElementById(
+                        "trailerContainer"
+                    );
+
+                const frame =
+                    document.getElementById(
+                        "trailerFrame"
+                    );
+
+                if (
+                    container &&
+                    frame &&
+                    dados &&
+                    dados.sucesso &&
+                    dados.encontrado &&
+                    dados.trailer &&
+                    dados.trailer.embed
+                ) {
+
+                    frame.src =
+                        dados.trailer.embed;
+
+                    frame.title =
+                        dados.trailer.nome ||
+                        "Trailer do filme";
+
+                    container.style.display =
+                        "block";
+
+                }
+
+            })
+
+            .catch(erro => {
+
+                console.error(
+                    "[ERRO TRAILER]",
+                    erro
+                );
+
+            });
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO FILME]",
+            erro
+        );
+
+        document.getElementById("titulo")
+            .textContent =
+            "Erro ao carregar filme";
+
+        document.getElementById("sinopse")
+            .textContent =
+            "Não foi possível carregar os dados deste filme.";
+
+    }
+
+})();
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,870 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LUKAFILMES - Séries</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #050505;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.topo-series {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 20px 80px;
+}
+
+.voltar {
+    display: inline-flex;
+    align-items: center;
+    padding: 11px 18px;
+    color: #fff;
+    text-decoration: none;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 30px;
+    transition: .25s;
+}
+
+.voltar:hover {
+    background: #e50914;
+    transform: translateX(-3px);
+}
+
+.titulo-series {
+    margin: 35px 0 8px;
+    text-align: center;
+    font-size: clamp(36px, 6vw, 60px);
+    font-weight: 900;
+}
+
+.subtitulo-series {
+    margin: 0 auto 35px;
+    text-align: center;
+    color: #aaa;
+    font-size: 16px;
+}
+
+/* ==========================================
+   PESQUISA
+   ========================================== */
+
+.pesquisa-series {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto 50px;
+}
+
+.campo-pesquisa {
+    position: relative;
+    width: 100%;
+}
+
+.campo-pesquisa input {
+    width: 100%;
+    height: 58px;
+    padding: 0 60px 0 22px;
+
+    color: #fff;
+    background: rgba(255,255,255,.08);
+
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 30px;
+
+    outline: none;
+
+    font-size: 16px;
+
+    backdrop-filter: blur(15px);
+
+    transition: .25s;
+}
+
+.campo-pesquisa input:focus {
+    border-color: #e50914;
+    box-shadow: 0 0 25px rgba(229,9,20,.18);
+}
+
+.campo-pesquisa button {
+    position: absolute;
+
+    right: 7px;
+    top: 7px;
+
+    width: 44px;
+    height: 44px;
+
+    border: 0;
+    border-radius: 50%;
+
+    color: #fff;
+    background: #e50914;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    transition: .25s;
+}
+
+.campo-pesquisa button:hover {
+    transform: scale(1.08);
+}
+
+.resultado-pesquisa {
+    display: none;
+
+    margin-top: 35px;
+}
+
+.resultado-pesquisa h2 {
+    margin-bottom: 25px;
+    font-size: 25px;
+}
+
+/* ==========================================
+   CATEGORIAS
+   ========================================== */
+
+.categoria {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto 55px;
+}
+
+.categoria h2 {
+    margin: 0 0 22px;
+    font-size: 25px;
+}
+
+/* ==========================================
+   LISTA
+   ========================================== */
+
+.lista-series {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(170px, 1fr));
+
+    gap: 22px;
+}
+
+/* ==========================================
+   CARD
+   ========================================== */
+
+.card-serie {
+    overflow: hidden;
+
+    background: #101010;
+
+    border-radius: 13px;
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    cursor: pointer;
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+
+    animation: aparecer .45s ease;
+}
+
+.card-serie:hover {
+    transform: translateY(-8px) scale(1.02);
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.7),
+        0 0 25px rgba(229,9,20,.12);
+}
+
+.card-serie img {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+
+    display: block;
+
+    object-fit: cover;
+
+    background: #181818;
+}
+
+.card-serie-info {
+    padding: 12px;
+}
+
+.card-serie-info h3 {
+    margin: 0 0 7px;
+
+    font-size: 15px;
+    line-height: 1.3;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-serie-info p {
+    margin: 0;
+
+    color: #f5c518;
+
+    font-size: 13px;
+}
+
+/* ==========================================
+   CARREGANDO
+   ========================================== */
+
+.carregando {
+    grid-column: 1 / -1;
+
+    padding: 40px;
+
+    text-align: center;
+
+    color: #999;
+}
+
+.sem-resultados {
+    padding: 45px 20px;
+
+    text-align: center;
+
+    color: #aaa;
+
+    font-size: 16px;
+}
+
+@keyframes aparecer {
+
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+/* ==========================================
+   CELULAR
+   ========================================== */
+
+@media (max-width: 700px) {
+
+    .topo-series {
+        padding: 20px 12px 60px;
+    }
+
+    .titulo-series {
+        margin-top: 28px;
+    }
+
+    .lista-series {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
+    }
+
+    .categoria h2 {
+        font-size: 21px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<main class="topo-series">
+
+    <a href="../index.html" class="voltar">
+        ← Voltar
+    </a>
+
+    <h1 class="titulo-series">
+        📺 Séries
+    </h1>
+
+    <p class="subtitulo-series">
+        Descubra séries populares, novidades e muito mais.
+    </p>
+
+    <!-- ======================================
+         PESQUISA EXCLUSIVA DE SÉRIES
+         ====================================== -->
+
+    <div class="pesquisa-series">
+
+        <div class="campo-pesquisa">
+
+            <input
+                type="search"
+                id="pesquisaSeries"
+                placeholder="Pesquisar séries..."
+                autocomplete="off">
+
+            <button
+                id="botaoPesquisa"
+                type="button"
+                aria-label="Pesquisar séries">
+                🔎
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ======================================
+         RESULTADOS DA PESQUISA
+         ====================================== -->
+
+    <section
+        class="resultado-pesquisa"
+        id="resultadoPesquisa">
+
+        <h2>🔎 Resultados da pesquisa</h2>
+
+        <div
+            class="lista-series"
+            id="listaResultados">
+        </div>
+
+    </section>
+
+    <!-- ======================================
+         POPULARES
+         ====================================== -->
+
+    <div id="conteudoCategorias">
+
+        <section class="categoria">
+
+            <h2>🔥 Séries Populares</h2>
+
+            <div
+                class="lista-series"
+                id="populares">
+
+                <div class="carregando">
+                    Carregando séries...
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ======================================
+             AVALIADAS
+             ====================================== -->
+
+        <section class="categoria">
+
+            <h2>⭐ Mais Bem Avaliadas</h2>
+
+            <div
+                class="lista-series"
+                id="avaliadas">
+
+                <div class="carregando">
+                    Carregando séries...
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ======================================
+             LANÇAMENTOS
+             ====================================== -->
+
+        <section class="categoria">
+
+            <h2>🆕 Lançamentos</h2>
+
+            <div
+                class="lista-series"
+                id="lancamentos">
+
+                <div class="carregando">
+                    Carregando séries...
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<script>
+
+(function () {
+
+    const TMDB_IMAGE =
+        "https://image.tmdb.org/t/p/w500";
+
+
+    /* ==========================================
+       ESCAPAR HTML
+       ========================================== */
+
+    function escaparHTML(texto) {
+
+        const div = document.createElement("div");
+
+        div.textContent = texto || "";
+
+        return div.innerHTML;
+
+    }
+
+
+    /* ==========================================
+       CRIAR CARD
+       ========================================== */
+
+    function criarCard(serie) {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "card-serie";
+
+
+        const imagem =
+            serie.capa ||
+            (
+                serie.poster_path
+                    ? TMDB_IMAGE + serie.poster_path
+                    : ""
+            );
+
+
+        const titulo =
+            serie.titulo ||
+            serie.name ||
+            serie.original_name ||
+            "Sem título";
+
+
+        const nota =
+            Number(
+                serie.nota ??
+                serie.vote_average ??
+                0
+            ).toFixed(1);
+
+
+        const ano =
+            serie.ano ||
+            (
+                serie.first_air_date
+                    ? serie.first_air_date.substring(0, 4)
+                    : ""
+            );
+
+
+        card.innerHTML = `
+
+            <img
+                src="${imagem}"
+                alt="${escaparHTML(titulo)}"
+                loading="lazy">
+
+            <div class="card-serie-info">
+
+                <h3>
+                    ${escaparHTML(titulo)}
+                </h3>
+
+                <p>
+                    ⭐ ${nota}
+                    ${ano ? " • " + ano : ""}
+                </p>
+
+            </div>
+
+        `;
+
+
+        /* ======================================
+           CLIQUE NA SÉRIE
+           ====================================== */
+
+        card.addEventListener(
+            "click",
+            function () {
+
+                localStorage.setItem(
+                    "serieSelecionada",
+                    JSON.stringify(serie)
+                );
+
+                /*
+                 * Por enquanto abrimos uma página
+                 * própria da série.
+                 *
+                 * Vamos criar serie.html
+                 * no próximo passo.
+                 */
+
+                window.location.href =
+                    "serie.html";
+
+            }
+        );
+
+
+        return card;
+
+    }
+
+
+    /* ==========================================
+       MOSTRAR CARDS
+       ========================================== */
+
+    function mostrarSeries(
+        container,
+        series
+    ) {
+
+        container.innerHTML = "";
+
+
+        if (
+            !Array.isArray(series) ||
+            series.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div class="sem-resultados">
+                    Nenhuma série encontrada.
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        series.forEach(function (serie) {
+
+            container.appendChild(
+                criarCard(serie)
+            );
+
+        });
+
+    }
+
+
+    /* ==========================================
+       CARREGAR CATEGORIA
+       ========================================== */
+
+    async function carregarCategoria(
+        tipo,
+        elemento
+    ) {
+
+        try {
+
+            const resposta =
+                await fetch(
+                    "/api/series?tipo=" +
+                    encodeURIComponent(tipo)
+                );
+
+
+            const dados =
+                await resposta.json();
+
+
+            if (
+                dados &&
+                dados.sucesso &&
+                Array.isArray(dados.resultados)
+            ) {
+
+                mostrarSeries(
+                    elemento,
+                    dados.resultados
+                );
+
+            } else {
+
+                elemento.innerHTML = `
+
+                    <div class="sem-resultados">
+                        Não foi possível carregar as séries.
+                    </div>
+
+                `;
+
+            }
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO SERIES]",
+                erro
+            );
+
+            elemento.innerHTML = `
+
+                <div class="sem-resultados">
+                    Erro ao carregar séries.
+                </div>
+
+            `;
+
+        }
+
+    }
+
+
+    /* ==========================================
+       CARREGAR AS 3 CATEGORIAS
+       ========================================== */
+
+    carregarCategoria(
+        "populares",
+        document.getElementById("populares")
+    );
+
+
+    carregarCategoria(
+        "avaliadas",
+        document.getElementById("avaliadas")
+    );
+
+
+    carregarCategoria(
+        "lancamentos",
+        document.getElementById("lancamentos")
+    );
+
+
+    /* ==========================================
+       PESQUISA
+       ========================================== */
+
+    const campo =
+        document.getElementById(
+            "pesquisaSeries"
+        );
+
+    const botao =
+        document.getElementById(
+            "botaoPesquisa"
+        );
+
+    const resultado =
+        document.getElementById(
+            "resultadoPesquisa"
+        );
+
+    const lista =
+        document.getElementById(
+            "listaResultados"
+        );
+
+    const categorias =
+        document.getElementById(
+            "conteudoCategorias"
+        );
+
+
+    let temporizador = null;
+
+
+    async function pesquisarSeries() {
+
+        const busca =
+            campo.value.trim();
+
+
+        if (!busca) {
+
+            resultado.style.display =
+                "none";
+
+            categorias.style.display =
+                "block";
+
+            return;
+
+        }
+
+
+        resultado.style.display =
+            "block";
+
+        categorias.style.display =
+            "none";
+
+
+        lista.innerHTML = `
+
+            <div class="carregando">
+                🔎 Procurando séries...
+            </div>
+
+        `;
+
+
+        try {
+
+            const resposta =
+                await fetch(
+                    "/api/pesquisar-series?q=" +
+                    encodeURIComponent(busca)
+                );
+
+
+            const dados =
+                await resposta.json();
+
+
+            if (
+                dados &&
+                dados.sucesso &&
+                Array.isArray(dados.resultados)
+            ) {
+
+                mostrarSeries(
+                    lista,
+                    dados.resultados
+                );
+
+            } else {
+
+                lista.innerHTML = `
+
+                    <div class="sem-resultados">
+                        Nenhuma série encontrada.
+                    </div>
+
+                `;
+
+            }
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO PESQUISA SERIES]",
+                erro
+            );
+
+            lista.innerHTML = `
+
+                <div class="sem-resultados">
+                    Erro ao pesquisar séries.
+                </div>
+
+            `;
+
+        }
+
+    }
+
+
+    botao.addEventListener(
+        "click",
+        pesquisarSeries
+    );
+
+
+    campo.addEventListener(
+        "keydown",
+        function (evento) {
+
+            if (
+                evento.key === "Enter"
+            ) {
+
+                pesquisarSeries();
+
+            }
+
+        }
+    );
+
+
+    /* ==========================================
+       PESQUISA AUTOMÁTICA
+       ========================================== */
+
+    campo.addEventListener(
+        "input",
+        function () {
+
+            clearTimeout(
+                temporizador
+            );
+
+
+            const valor =
+                campo.value.trim();
+
+
+            if (!valor) {
+
+                resultado.style.display =
+                    "none";
+
+                categorias.style.display =
+                    "block";
+
+                return;
+
+            }
+
+
+            temporizador =
+                setTimeout(
+                    pesquisarSeries,
+                    500
+                );
+
+        }
+    );
+
+})();
+
+</script>
+
+</body>
+
+</html>

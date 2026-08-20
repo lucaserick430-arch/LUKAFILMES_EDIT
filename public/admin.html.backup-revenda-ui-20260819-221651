@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07070d">
+<title>LUKA FILMES — Admin</title>
+<style>
+*{box-sizing:border-box}
+:root{
+ --bg:#07070d;--panel:#101018;--panel2:#151521;
+ --border:rgba(255,255,255,.08);--text:#f7f7fb;
+ --muted:#858594;--red:#ff3158;--purple:#8b5cf6;
+ --green:#22c55e;--blue:#38bdf8;--yellow:#facc15
+}
+body{
+ margin:0;background:
+ radial-gradient(circle at 15% 0%,#28102a 0,transparent 32%),
+ radial-gradient(circle at 90% 10%,#101d3b 0,transparent 30%),var(--bg);
+ color:var(--text);font-family:Inter,Arial,sans-serif
+}
+button{font:inherit;cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{
+ width:250px;position:fixed;inset:0 auto 0 0;padding:22px 15px;
+ background:rgba(10,10,17,.82);backdrop-filter:blur(24px);
+ border-right:1px solid var(--border);z-index:20
+}
+.brand{font-size:22px;font-weight:900;padding:10px 12px 28px}
+.brand b{color:var(--red)}
+.nav{display:grid;gap:7px}
+.nav button{
+ border:0;background:transparent;color:#a7a7b5;text-align:left;
+ padding:13px 14px;border-radius:12px;font-weight:700
+}
+.nav button:hover,.nav .active{background:rgba(255,49,88,.12);color:white}
+.main{margin-left:250px;width:calc(100% - 250px);padding:25px}
+.topbar{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:15px;margin-bottom:25px
+}
+.title h1{margin:0;font-size:28px}
+.title p{margin:6px 0 0;color:var(--muted)}
+.live{
+ display:flex;align-items:center;gap:8px;padding:9px 13px;
+ border:1px solid rgba(34,197,94,.2);border-radius:999px;
+ color:#86efac;background:rgba(34,197,94,.07);font-size:13px
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.card{
+ padding:20px;border:1px solid var(--border);border-radius:18px;
+ background:linear-gradient(145deg,rgba(25,25,37,.92),rgba(12,12,19,.88));
+ box-shadow:0 20px 50px rgba(0,0,0,.2)
+}
+.label{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase}
+.value{font-size:30px;font-weight:900;margin-top:9px}
+.icon{
+ width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+ margin-bottom:16px;background:rgba(139,92,246,.15);color:#c4b5fd
+}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:18px}
+.panel{
+ border:1px solid var(--border);border-radius:20px;
+ background:rgba(15,15,23,.88);padding:20px
+}
+.panel h2{font-size:17px;margin:0 0 18px}
+.chart{
+ height:240px;border-radius:14px;
+ background:linear-gradient(180deg,rgba(139,92,246,.10),transparent);
+ display:flex;align-items:flex-end;gap:10px;padding:20px
+}
+.bar{flex:1;border-radius:8px 8px 2px 2px;background:linear-gradient(#ff3158,#8b5cf6);min-height:30px}
+.quick{display:grid;gap:10px}
+.quick button{
+ border:1px solid var(--border);background:#181823;color:white;
+ padding:14px;border-radius:12px;text-align:left;font-weight:800
+}
+.quick button:hover{border-color:rgba(255,49,88,.4);transform:translateY(-1px)}
+@media(max-width:900px){
+ .sidebar{width:75px;padding:15px 9px}
+ .brand{font-size:0;text-align:center}
+ .brand b{font-size:20px}
+ .nav button{font-size:0;text-align:center}
+ .nav button:first-letter{font-size:20px}
+ .main{margin-left:75px;width:calc(100% - 75px)}
+ .cards{grid-template-columns:repeat(2,1fr)}
+ .grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+ .main{padding:15px}
+ .topbar{align-items:flex-start}
+ .title h1{font-size:22px}
+ .cards{gap:10px}
+ .card{padding:15px}
+ .value{font-size:24px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="brand">LUKA <b>FILMES</b></div>
+ <nav class="nav">
+  <button class="active">▣ Dashboard</button>
+  <button>♙ Usuários</button>
+  <button>♧ Revendedores</button>
+  <button>◷ Testes</button>
+  <button>◉ Monitor</button>
+  <button>⚙ Configurações</button>
+ </nav>
+</aside>
+
+<main class="main">
+ <header class="topbar">
+  <div class="title">
+   <h1>Dashboard</h1>
+   <p>Visão geral da plataforma</p>
+  </div>
+  <div class="live"><span class="dot"></span>Sistema online</div>
+ </header>
+
+ <section class="cards">
+  <div class="card"><div class="icon">R$</div><div class="label">Receita total</div><div class="value">R$ 0,00</div></div>
+  <div class="card"><div class="icon">●</div><div class="label">Contas ativas</div><div class="value" id="usuarios">0</div></div>
+  <div class="card"><div class="icon">♧</div><div class="label">Revendedores</div><div class="value" id="revendedores">0</div></div>
+  <div class="card"><div class="icon">◉</div><div class="label">Conexões online</div><div class="value" id="onlineUsers">0</div></div>
+ </section>
+
+ 
+<section class="panel" id="usuariosPanel" style="margin-top:18px">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px">
+  <div>
+   <h2 style="margin:0">Gestão de usuários</h2>
+   <p style="margin:6px 0 0;color:#858594">Contas reais da plataforma</p>
+  </div>
+
+  <input
+   id="buscaUsuarios"
+   placeholder="🔎 Buscar usuário..."
+   style="background:#09090f;border:1px solid rgba(255,255,255,.1);color:white;border-radius:11px;padding:11px 13px;min-width:220px;outline:none"
+  >
+ </div>
+
+ <div style="overflow:auto">
+  <table style="width:100%;border-collapse:collapse;min-width:850px">
+   <thead>
+    <tr>
+     <th style="text-align:left;padding:12px;color:#858594">ID</th>
+     <th style="text-align:left;padding:12px;color:#858594">USUÁRIO</th>
+     <th style="text-align:left;padding:12px;color:#858594">TIPO</th>
+     <th style="text-align:left;padding:12px;color:#858594">STATUS</th>
+     <th style="text-align:left;padding:12px;color:#858594">CONEXÃO</th>
+     <th style="text-align:left;padding:12px;color:#858594">VALIDADE</th>
+     <th style="text-align:left;padding:12px;color:#858594">AÇÕES</th>
+    </tr>
+   </thead>
+   <tbody id="usersTable">
+    <tr>
+     <td colspan="7" style="padding:35px;text-align:center;color:#858594">
+      Carregando usuários...
+     </td>
+    </tr>
+   </tbody>
+  </table>
+ </div>
+</section>
+
+
+<section class="panel" id="revendedoresPanel" style="margin-top:18px">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px">
+  <div>
+   <h2 style="margin:0">Gestão de revendedores</h2>
+   <p style="margin:6px 0 0;color:#858594">Distribuidores da plataforma</p>
+  </div>
+  <button id="btnNovoRevendedor"
+    style="border:0;border-radius:11px;padding:11px 15px;background:#ff3158;color:white;font-weight:800">
+    ＋ Novo revendedor
+  </button>
+ </div>
+
+ <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
+  <div class="card">
+   <div class="label">Revendedores</div>
+   <div class="value" id="revTotal">0</div>
+  </div>
+  <div class="card">
+   <div class="label">Ativos</div>
+   <div class="value" id="revAtivos">0</div>
+  </div>
+  <div class="card">
+   <div class="label">Clientes vinculados</div>
+   <div class="value" id="revClientes">0</div>
+  </div>
+ </div>
+
+ <div style="overflow:auto">
+  <table style="width:100%;border-collapse:collapse;min-width:700px">
+   <thead>
+    <tr>
+     <th style="text-align:left;padding:12px;color:#858594">ID</th>
+     <th style="text-align:left;padding:12px;color:#858594">REVENDEDOR</th>
+     <th style="text-align:left;padding:12px;color:#858594">STATUS</th>
+     <th style="text-align:left;padding:12px;color:#858594">LIMITE</th>
+     <th style="text-align:left;padding:12px;color:#858594">CLIENTES</th>
+    </tr>
+   </thead>
+   <tbody id="revendedoresTable">
+    <tr>
+     <td colspan="5" style="padding:35px;text-align:center;color:#858594">
+      Carregando revendedores...
+     </td>
+    </tr>
+   </tbody>
+  </table>
+ </div>
+</section>
+
+
+<section class="panel" id="revendedoresPanel" style="margin-top:18px">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px">
+  <div>
+   <h2 style="margin:0">Gestão de revendedores</h2>
+   <p style="margin:6px 0 0;color:#858594">Distribuidores da plataforma</p>
+  </div>
+  <button id="btnNovoRevendedor"
+    style="border:0;border-radius:11px;padding:11px 15px;background:#ff3158;color:white;font-weight:800">
+    ＋ Novo revendedor
+  </button>
+ </div>
+
+ <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
+  <div class="card">
+   <div class="label">Revendedores</div>
+   <div class="value" id="revTotal">0</div>
+  </div>
+  <div class="card">
+   <div class="label">Ativos</div>
+   <div class="value" id="revAtivos">0</div>
+  </div>
+  <div class="card">
+   <div class="label">Clientes vinculados</div>
+   <div class="value" id="revClientes">0</div>
+  </div>
+ </div>
+
+ <div style="overflow:auto">
+  <table style="width:100%;border-collapse:collapse;min-width:700px">
+   <thead>
+    <tr>
+     <th style="text-align:left;padding:12px;color:#858594">ID</th>
+     <th style="text-align:left;padding:12px;color:#858594">REVENDEDOR</th>
+     <th style="text-align:left;padding:12px;color:#858594">STATUS</th>
+     <th style="text-align:left;padding:12px;color:#858594">LIMITE</th>
+     <th style="text-align:left;padding:12px;color:#858594">CLIENTES</th>
+    </tr>
+   </thead>
+   <tbody id="revendedoresTable">
+    <tr>
+     <td colspan="5" style="padding:35px;text-align:center;color:#858594">
+      Carregando revendedores...
+     </td>
+    </tr>
+   </tbody>
+  </table>
+ </div>
+</section>
+
+<section class="grid">
+  <div class="panel">
+   <h2>Atividade da plataforma</h2>
+   <div class="chart">
+    <span class="bar" style="height:35%"></span>
+    <span class="bar" style="height:52%"></span>
+    <span class="bar" style="height:43%"></span>
+    <span class="bar" style="height:70%"></span>
+    <span class="bar" style="height:58%"></span>
+    <span class="bar" style="height:84%"></span>
+    <span class="bar" style="height:66%"></span>
+   </div>
+  </div>
+
+  <div class="panel">
+   <h2>Ações rápidas</h2>
+   <div class="quick">
+    <button>＋ Criar usuário</button>
+    <button>♧ Criar revendedor</button>
+    <button>◷ Gerar teste</button>
+    <button>↻ Atualizar dados</button>
+   </div>
+  </div>
+ </section>
+</main>
+</div>
+
+<script>
+async function carregarDashboard() {
+    try {
+        const resposta = await fetch("/api/admin/presenca", {
+            credentials: "include"
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok || !Array.isArray(dados.usuarios)) {
+            throw new Error("API inválida");
+        }
+
+        const usuarios = dados.usuarios;
+
+        const comuns = usuarios.filter(u =>
+            ["usuario", "usuário"].includes(
+                String(u.tipo || "").toLowerCase()
+            )
+        );
+
+        const revendedores = usuarios.filter(u =>
+            String(u.tipo || "").toLowerCase() === "revendedor"
+        );
+
+        const online = usuarios.filter(u => Boolean(u.online));
+
+        const elUsuarios = document.getElementById("usuarios");
+        const elRevendedores = document.getElementById("revendedores");
+        const elOnline = document.getElementById("onlineUsers");
+
+        if (elUsuarios) elUsuarios.textContent = comuns.length;
+        if (elRevendedores) elRevendedores.textContent = revendedores.length;
+        if (elOnline) elOnline.textContent = online.length;
+
+        console.log("[ADMIN] Dashboard atualizado:", {
+            usuarios: comuns.length,
+            revendedores: revendedores.length,
+            online: online.length
+        });
+
+    } catch (erro) {
+        console.error("[ADMIN] Erro ao carregar dashboard:", erro);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    carregarDashboard();
+    setInterval(carregarDashboard, 10000);
+});
+</script>
+
+
+<script>
+let listaUsuarios = [];
+
+function escapar(v) {
+    return String(v ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+function dataBR(v) {
+    if (!v) return "—";
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? escapar(v) : d.toLocaleDateString("pt-BR");
+}
+
+function renderizarUsuarios() {
+    const tabela = document.getElementById("usersTable");
+    if (!tabela) return;
+
+    const busca = String(document.getElementById("buscaUsuarios")?.value || "").toLowerCase();
+
+    const lista = listaUsuarios.filter(u =>
+        String(u.usuario || "").toLowerCase().includes(busca)
+    );
+
+    if (!lista.length) {
+        tabela.innerHTML = `
+        <tr>
+          <td colspan="7" style="padding:35px;text-align:center;color:#858594">
+            Nenhum usuário encontrado.
+          </td>
+        </tr>`;
+        return;
+    }
+
+    tabela.innerHTML = lista.map(u => {
+        const tipo = String(u.tipo || "usuario").toLowerCase();
+        const status = String(u.status || "").toLowerCase();
+        const online = Boolean(u.online);
+
+        const tipoNome =
+            tipo === "revendedor" ? "Revendedor" :
+            tipo === "teste" ? "Teste" :
+            tipo === "admin" ? "Administrador" :
+            "Usuário";
+
+        return `
+        <tr style="border-top:1px solid rgba(255,255,255,.06)">
+          <td style="padding:12px">${Number(u.id)}</td>
+
+          <td style="padding:12px">
+            <strong>${escapar(u.usuario)}</strong>
+          </td>
+
+          <td style="padding:12px">${tipoNome}</td>
+
+          <td style="padding:12px">
+            <span style="
+              display:inline-block;
+              padding:5px 9px;
+              border-radius:999px;
+              background:${status === "ativo" ? "rgba(34,197,94,.12)" : "rgba(239,68,68,.12)"};
+              color:${status === "ativo" ? "#86efac" : "#fca5a5"};
+              font-size:12px;font-weight:800">
+              ${status === "ativo" ? "Ativo" : "Suspenso"}
+            </span>
+          </td>
+
+          <td style="padding:12px;color:${online ? "#86efac" : "#777783"}">
+            ${online ? "● Online" : "● Offline"}
+          </td>
+
+          <td style="padding:12px">${dataBR(u.validade)}</td>
+
+          <td style="padding:12px;white-space:nowrap">
+            ${tipo === "admin" ? "Protegido" : `
+              <button onclick="editarUsuarioNovo(${Number(u.id)})">Editar</button>
+              <button onclick="statusUsuarioNovo(${Number(u.id)})">${status === "ativo" ? "Suspender" : "Ativar"}</button>
+              <button onclick="renovarUsuarioNovo(${Number(u.id)})">Renovar</button>
+              <button onclick="excluirUsuarioNovo(${Number(u.id)})">Excluir</button>
+            `}
+          </td>
+        </tr>`;
+    }).join("");
+}
+
+async function carregarUsuariosNovo() {
+    try {
+        const r = await fetch("/api/admin/presenca", {
+            credentials:"include"
+        });
+
+        const dados = await r.json();
+
+        if (!r.ok || !Array.isArray(dados.usuarios)) {
+            throw new Error(dados.mensagem || "Falha ao carregar usuários.");
+        }
+
+        listaUsuarios = dados.usuarios;
+        renderizarUsuarios();
+
+    } catch (e) {
+        console.error("[ADMIN USUÁRIOS]", e);
+
+        const tabela = document.getElementById("usersTable");
+        if (tabela) {
+            tabela.innerHTML = `
+            <tr>
+              <td colspan="7" style="padding:35px;text-align:center;color:#fca5a5">
+                Não foi possível carregar os usuários.
+              </td>
+            </tr>`;
+        }
+    }
+}
+
+async function acaoUsuario(url, corpo, mensagem) {
+    const r = await fetch(url, {
+        method:"POST",
+        credentials:"include",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(corpo)
+    });
+
+    const dados = await r.json();
+
+    if (!r.ok || dados.sucesso === false) {
+        throw new Error(dados.mensagem || "Operação não realizada.");
+    }
+
+    alert(dados.mensagem || mensagem);
+    await carregarUsuariosNovo();
+    if (typeof carregarDashboard === "function") carregarDashboard();
+}
+
+async function editarUsuarioNovo(id) {
+    const u = listaUsuarios.find(x => Number(x.id) === Number(id));
+    if (!u) return;
+
+    const usuario = prompt("Usuário:", u.usuario || "");
+    if (usuario === null) return;
+
+    const senha = prompt("Nova senha (vazio = manter):", "");
+    if (senha === null) return;
+
+    const tipo = prompt("Tipo: usuario, teste ou revendedor", u.tipo || "usuario");
+    if (tipo === null) return;
+
+    try {
+        await acaoUsuario(
+            "/api/admin/usuarios/editar",
+            {id:Number(id), usuario:usuario.trim(), senha, tipo:tipo.trim().toLowerCase()},
+            "Usuário atualizado."
+        );
+    } catch(e) {
+        alert(e.message);
+    }
+}
+
+async function statusUsuarioNovo(id) {
+    const u = listaUsuarios.find(x => Number(x.id) === Number(id));
+    if (!u) return;
+
+    const atual = String(u.status || "").toLowerCase();
+    const novo = atual === "ativo" ? "suspenso" : "ativo";
+
+    if (!confirm(`${novo === "ativo" ? "Ativar" : "Suspender"} ${u.usuario}?`)) return;
+
+    try {
+        await acaoUsuario(
+            "/api/admin/usuarios/status",
+            {id:Number(id), status:novo},
+            "Status atualizado."
+        );
+    } catch(e) {
+        alert(e.message);
+    }
+}
+
+async function renovarUsuarioNovo(id) {
+    const dias = prompt("Quantos dias adicionar?", "30");
+    if (dias === null) return;
+
+    const n = Number(dias);
+    if (!Number.isInteger(n) || n <= 0) {
+        alert("Quantidade de dias inválida.");
+        return;
+    }
+
+    try {
+        await acaoUsuario(
+            "/api/admin/usuarios/renovar",
+            {id:Number(id), dias:n},
+            "Usuário renovado."
+        );
+    } catch(e) {
+        alert(e.message);
+    }
+}
+
+async function excluirUsuarioNovo(id) {
+    const u = listaUsuarios.find(x => Number(x.id) === Number(id));
+    if (!u) return;
+
+    if (!confirm(`Excluir definitivamente "${u.usuario}"?`)) return;
+
+    try {
+        await acaoUsuario(
+            "/api/admin/usuarios/excluir",
+            {id:Number(id)},
+            "Usuário excluído."
+        );
+    } catch(e) {
+        alert(e.message);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("buscaUsuarios")
+        ?.addEventListener("input", renderizarUsuarios);
+
+    carregarUsuariosNovo();
+    setInterval(carregarUsuariosNovo, 10000);
+});
+</script>
+
+
+<div id="modalRevendedor" class="modal" style="display:none">
+ <div class="box">
+  <div class="panelhead">
+   <h2>Novo revendedor</h2>
+   <button class="btn secondary" onclick="fecharRevendedor()">✕</button>
+  </div>
+
+  <form id="formRevendedor">
+   <div class="field">
+    <label>Usuário</label>
+    <input id="revUsuario" required autocomplete="off">
+   </div>
+
+   <div class="field">
+    <label>Senha</label>
+    <input id="revSenha" required type="text" autocomplete="off">
+   </div>
+
+   <div class="field">
+    <label>Validade em dias</label>
+    <input id="revDias" type="number" value="30" min="1" required>
+   </div>
+
+   <div class="field">
+    <label>Limite de clientes</label>
+    <input id="revLimite" type="number" value="10" min="1" required>
+   </div>
+
+   <button class="btn primary" style="width:100%">
+    CRIAR REVENDEDOR
+   </button>
+
+   <div id="revMsg" class="msg"></div>
+  </form>
+ </div>
+</div>
+
+
+<script>
+function abrirRevendedor() {
+    const m = document.getElementById("modalRevendedor");
+    if (m) m.style.display = "flex";
+}
+
+function fecharRevendedor() {
+    const m = document.getElementById("modalRevendedor");
+    if (m) m.style.display = "none";
+}
+
+async function criarRevendedor(event) {
+    event.preventDefault();
+
+    const msg = document.getElementById("revMsg");
+
+    const dados = {
+        usuario: document.getElementById("revUsuario").value.trim(),
+        senha: document.getElementById("revSenha").value,
+        dias: Number(document.getElementById("revDias").value),
+        limite_conexoes: Number(document.getElementById("revLimite").value)
+    };
+
+    try {
+        const resposta = await fetch("/api/admin/revendedores", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(dados)
+        });
+
+        const resultado = await resposta.json();
+
+        if (!resposta.ok || resultado.sucesso === false) {
+            throw new Error(
+                resultado.mensagem || "Não foi possível criar o revendedor."
+            );
+        }
+
+        if (msg) {
+            msg.className = "msg ok";
+            msg.textContent =
+                resultado.mensagem || "Revendedor criado com sucesso.";
+        }
+
+        document.getElementById("formRevendedor").reset();
+
+        setTimeout(() => {
+            fecharRevendedor();
+            carregarRevendedoresAdmin();
+            carregarDashboard();
+        }, 800);
+
+    } catch (erro) {
+        if (msg) {
+            msg.className = "msg err";
+            msg.textContent = erro.message;
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const botao = document.getElementById("btnNovoRevendedor");
+    if (botao) botao.onclick = abrirRevendedor;
+
+    const form = document.getElementById("formRevendedor");
+    if (form) form.onsubmit = criarRevendedor;
+});
+</script>
+
+</body>
+</html>

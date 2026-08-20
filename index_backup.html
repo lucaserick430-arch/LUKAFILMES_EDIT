@@ -1,0 +1,598 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>LUKAFILMES</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+
+    <header>
+
+        <div class="logo">
+            LUKA<span>FILMES</span>
+        </div>
+
+        <nav>
+
+            <a href="/">
+                Início
+            </a>
+
+            <a href='/paginas/filmes.html'>
+                Filmes
+            </a>
+
+            <a href="#categorias">
+                Categorias
+            </a>
+
+        </nav>
+
+        <div class="acoes-usuario">
+
+            <!--
+                Este botão começa escondido.
+                Ele só aparece se o servidor informar
+                que o usuário logado é ADMIN.
+            -->
+
+            <button
+                id="botaoAdmin"
+                class="botao-admin"
+                style="display: none;"
+                onclick="abrirPainelAdmin()"
+            >
+                👑 Admin
+            </button>
+
+            <button
+                class="botao-login"
+                onclick="logout()"
+            >
+                Sair
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- DESTAQUE -->
+
+    <section class="hero">
+
+        <div class="hero-conteudo">
+
+            <span class="hero-label">
+                🎬 LUKAFILMES
+            </span>
+
+            <h1>
+                Seus filmes favoritos
+                em um só lugar.
+            </h1>
+
+            <p>
+                Pesquise filmes, descubra novidades
+                e encontre o que você quer assistir.
+            </p>
+
+            <div class="pesquisa">
+
+                <input
+                    id="campoBusca"
+                    type="text"
+                    placeholder="Pesquisar filme..."
+                    autocomplete="off"
+                >
+
+                <button onclick="pesquisarFilmes()">
+                    Pesquisar
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- RESULTADOS DA PESQUISA -->
+
+    <section
+        id="resultadosPesquisa"
+        class="categoria"
+        style="display: none;"
+    >
+
+        <div class="categoria-header">
+
+            <h2>
+                🔎 Resultados
+            </h2>
+
+        </div>
+
+        <div
+            id="listaResultados"
+            class="filmes"
+        ></div>
+
+    </section>
+
+
+    <!-- CATEGORIAS -->
+
+    <div id="categorias">
+
+
+        <!-- EM ALTA -->
+
+        <section class="categoria">
+
+            <div class="categoria-header">
+
+                <h2>
+                    🔥 Em alta
+                </h2>
+
+                <div class="controles">
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, -1)"
+                    >
+                        ◀
+                    </button>
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, 1)"
+                    >
+                        ▶
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                class="filmes"
+                data-categoria="alta"
+            ></div>
+
+        </section>
+
+
+        <!-- LANÇAMENTOS -->
+
+        <section class="categoria">
+
+            <div class="categoria-header">
+
+                <h2>
+                    🆕 Lançamentos
+                </h2>
+
+                <div class="controles">
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, -1)"
+                    >
+                        ◀
+                    </button>
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, 1)"
+                    >
+                        ▶
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                class="filmes"
+                data-categoria="lancamentos"
+            ></div>
+
+        </section>
+
+
+        <!-- AÇÃO -->
+
+        <section class="categoria">
+
+            <div class="categoria-header">
+
+                <h2>
+                    🎬 Ação
+                </h2>
+
+                <div class="controles">
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, -1)"
+                    >
+                        ◀
+                    </button>
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, 1)"
+                    >
+                        ▶
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                class="filmes"
+                data-categoria="acao"
+            ></div>
+
+        </section>
+
+
+        <!-- COMÉDIA -->
+
+        <section class="categoria">
+
+            <div class="categoria-header">
+
+                <h2>
+                    😂 Comédia
+                </h2>
+
+                <div class="controles">
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, -1)"
+                    >
+                        ◀
+                    </button>
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, 1)"
+                    >
+                        ▶
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                class="filmes"
+                data-categoria="comedia"
+            ></div>
+
+        </section>
+
+
+        <!-- TERROR -->
+
+        <section class="categoria">
+
+            <div class="categoria-header">
+
+                <h2>
+                    👻 Terror
+                </h2>
+
+                <div class="controles">
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, -1)"
+                    >
+                        ◀
+                    </button>
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, 1)"
+                    >
+                        ▶
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                class="filmes"
+                data-categoria="terror"
+            ></div>
+
+        </section>
+
+
+        <!-- FICÇÃO -->
+
+        <section class="categoria">
+
+            <div class="categoria-header">
+
+                <h2>
+                    🚀 Ficção científica
+                </h2>
+
+                <div class="controles">
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, -1)"
+                    >
+                        ◀
+                    </button>
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, 1)"
+                    >
+                        ▶
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                class="filmes"
+                data-categoria="ficcao"
+            ></div>
+
+        </section>
+
+
+        <!-- ROMANCE -->
+
+        <section class="categoria">
+
+            <div class="categoria-header">
+
+                <h2>
+                    ❤️ Romance
+                </h2>
+
+                <div class="controles">
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, -1)"
+                    >
+                        ◀
+                    </button>
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, 1)"
+                    >
+                        ▶
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                class="filmes"
+                data-categoria="romance"
+            ></div>
+
+        </section>
+
+
+        <!-- MAIS BEM AVALIADOS -->
+
+        <section class="categoria">
+
+            <div class="categoria-header">
+
+                <h2>
+                    ⭐ Mais bem avaliados
+                </h2>
+
+                <div class="controles">
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, -1)"
+                    >
+                        ◀
+                    </button>
+
+                    <button
+                        class="seta"
+                        onclick="rolar(this, 1)"
+                    >
+                        ▶
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                class="filmes"
+                data-categoria="avaliados"
+            ></div>
+
+        </section>
+
+
+    </div>
+
+
+    <!-- RODAPÉ -->
+
+    <footer>
+
+        <div class="logo">
+            LUKA<span>FILMES</span>
+        </div>
+
+        <p>
+            © 2026 LUKAFILMES
+        </p>
+
+    </footer>
+
+
+    <!--
+        ==================================================
+        SISTEMA DE USUÁRIO / ADMIN
+        ==================================================
+    -->
+
+    <script>
+
+        /*
+         * Verifica quem está logado.
+         *
+         * Se for usuário comum:
+         *     botão Admin permanece escondido.
+         *
+         * Se for admin:
+         *     botão Admin aparece.
+         */
+
+        async function verificarUsuario() {
+
+            try {
+
+                const resposta = await fetch("/api/eu");
+
+                if (!resposta.ok) {
+
+                    window.location.href = "/login";
+
+                    return;
+                }
+
+                const dados = await resposta.json();
+
+                if (
+                    dados.logado &&
+                    dados.usuario &&
+                    dados.usuario.tipo === "admin"
+                ) {
+
+                    const botaoAdmin =
+                        document.getElementById("botaoAdmin");
+
+                    if (botaoAdmin) {
+
+                        botaoAdmin.style.display =
+                            "inline-block";
+
+                    }
+
+                }
+
+            } catch (erro) {
+
+                console.error(
+                    "[ERRO USUARIO]",
+                    erro
+                );
+
+            }
+
+        }
+
+
+        /*
+         * Abre o painel administrativo.
+         */
+
+        function abrirPainelAdmin() {
+
+            window.location.href =
+                "/admin.html";
+
+        }
+
+
+        /*
+         * Sai da conta.
+         */
+
+        async function logout() {
+
+            try {
+
+                await fetch(
+                    "/logout",
+                    {
+                        method: "POST"
+                    }
+                );
+
+            } catch (erro) {
+
+                console.error(
+                    "[ERRO LOGOUT]",
+                    erro
+                );
+
+            }
+
+            window.location.href =
+                "/login";
+
+        }
+
+
+        /*
+         * Executa a verificação
+         * assim que o site carregar.
+         */
+
+        verificarUsuario();
+
+    </script>
+
+
+    <!--
+        Seu JavaScript existente pode continuar
+        sendo carregado normalmente.
+    -->
+
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>
+
+
+
+
+
+

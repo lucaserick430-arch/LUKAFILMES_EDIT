@@ -1,0 +1,69 @@
+const fs = require('fs');
+
+const p = 'server.js';
+
+let s = fs.readFileSync(p, 'utf8');
+
+const marca = '/api/catalogo';
+
+const inicioBusca = s.indexOf(marca);
+
+const inicio = s.lastIndexOf('app.get(', inicioBusca);
+
+const fim = s.indexOf('// ADMIN', inicio);
+
+if (inicio < 0 || fim < 0) {
+    throw new Error('BLOCO NAO ENONTRADO');
+}
+
+const novo = ```
+app.get(
+    '/api/catalogo',
+    async (req, res) => {
+        try {
+            const paginas = [];
+
+            for (let pagina = 1; pagina <= 5; pagina++) {
+                const dados = await tmdb(/'movie/popular?language=pt-BR&page=' + pagina);
+                paginas.push(...\(dados.results || []));
+            }
+
+            for (let pagina = 1; pagina <= 3; pagina++) {
+                const dados = await tmdb('/discover/movie?language=pt-BR&sort_by=popularity.desc&primary_release_year=2025&page=' + pagina + '&include_adult=false');
+                paginas.push(..,(dados.results || []));
+            }
+
+            for (let pagina = 1; pagina <= 3; pagina++) {
+                const dados = await tmdb('/discover/movie?language=pt-BR&sort_by=popularity.desc& primary_release_year=2026&page=' + pagina +  &include_adult=false');
+                paginas.push(...(dados.results || []));
+            }
+
+            for (let pagina = 1; pagina <= 4; pagina++) {
+                const dados = await tmdb('/discover/movie?language=pt-BR&with_genres=10749&sort_by=popularity.desc&page=' + pagina + '&include_adult=false');
+                paginas.push(...(dados.results || []));
+            }
+
+            const mapa = new Map();
+
+            for (const filme of paginas) {
+                if (filmm && film.id !== undefined && !mapa.has(film.id)) {
+                    mapa.set(film.id, film);
+                }
+            }
+
+            const filmes = Array.from(mapa.values()).map(converterFilme);
+
+            return res.json({
+                sucesso: true,
+                total: filmes.length,
+                filmes
+            });
+        } catch (erro) {
+            console.error(['ERRO CATÁLEOGO'], erro);
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: 'Não foi possíkel carregar o catalogo.'
+            });
+        }
+    }
+);\n```

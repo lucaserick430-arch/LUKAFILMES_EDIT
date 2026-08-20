@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#09090b">
+<title>LUKA FILMES — Administrador</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#09090b;
+  color:#fff;
+  min-height:100vh;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+
+.header{
+  padding:22px;
+  background:linear-gradient(135deg,#111827,#09090b);
+  border-bottom:1px solid #27272a;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.header-content{
+  max-width:1200px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.logo{
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:.5px;
+}
+
+.logo span{color:#ef4444}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#22c55e;
+  font-size:13px;
+}
+
+.dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 12px #22c55e;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:22px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:22px;
+}
+
+.card{
+  background:#111113;
+  border:1px solid #27272a;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 10px 35px rgba(0,0,0,.18);
+}
+
+.card h3{
+  color:#a1a1aa;
+  font-size:13px;
+  margin-bottom:10px;
+}
+
+.number{
+  font-size:32px;
+  font-weight:900;
+}
+
+.red{color:#ef4444}
+.green{color:#22c55e}
+.blue{color:#3b82f6}
+.yellow{color:#eab308}
+
+.luka-grid-2{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:18px;
+  margin-bottom:22px;
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:16px;
+}
+
+.chart{
+  height:230px;
+  display:flex;
+  align-items:end;
+  gap:10px;
+  padding-top:20px;
+}
+
+.bar{
+  flex:1;
+  min-width:12px;
+  border-radius:7px 7px 0 0;
+  background:linear-gradient(to top,#ef4444,#f97316);
+  box-shadow:0 0 15px rgba(239,68,68,.15);
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.btn{
+  border:0;
+  border-radius:12px;
+  padding:13px 14px;
+  color:#fff;
+  font-weight:800;
+  background:#27272a;
+}
+
+.btn:hover{filter:brightness(1.15)}
+
+.btn-red{background:#dc2626}
+.btn-green{background:#16a34a}
+.btn-blue{background:#2563eb}
+.btn-yellow{background:#ca8a04}
+
+.form{
+  display:grid;
+  gap:12px;
+}
+
+.input{
+  width:100%;
+  padding:13px;
+  border-radius:11px;
+  border:1px solid #3f3f46;
+  background:#18181b;
+  color:#fff;
+  outline:none;
+}
+
+.input:focus{border-color:#ef4444}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+}
+
+th,td{
+  text-align:left;
+  padding:13px 10px;
+  border-bottom:1px solid #27272a;
+  font-size:13px;
+}
+
+th{color:#a1a1aa}
+
+.online{
+  color:#22c55e;
+  font-weight:800;
+}
+
+.offline{
+  color:#71717a;
+  font-weight:800;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  background:#27272a;
+  font-size:11px;
+  font-weight:800;
+}
+
+.footer{
+  text-align:center;
+  color:#71717a;
+  padding:30px 10px;
+  font-size:12px;
+}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .luka-grid-2{grid-template-columns:1fr}
+}
+
+@media(max-width:550px){
+  .container{padding:14px}
+  .header{padding:16px}
+  .grid{gap:10px}
+  .card{padding:15px}
+  .number{font-size:25px}
+  .actions{grid-template-columns:1fr}
+}
+</style>
+
+<style id="luka-update-button-final">
+#lukaAtualizarBtn{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+
+    width:auto;
+    min-width:118px;
+    height:42px;
+
+    padding:0 16px;
+
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:11px;
+
+    background:linear-gradient(135deg,#ef233c,#c91832);
+    color:#fff;
+
+    font-family:inherit;
+    font-size:13px;
+    font-weight:800;
+
+    cursor:pointer;
+
+    box-shadow:0 7px 22px rgba(239,35,60,.20);
+
+    transition:
+        transform .16s ease,
+        filter .16s ease,
+        box-shadow .16s ease;
+}
+
+#lukaAtualizarBtn:hover{
+    filter:brightness(1.08);
+    transform:translateY(-1px);
+}
+
+#lukaAtualizarBtn:active{
+    transform:scale(.97);
+}
+
+#lukaAtualizarBtn .luka-update-icon{
+    display:inline-block;
+    font-size:18px;
+    line-height:1;
+    font-weight:900;
+}
+
+@media(max-width:700px){
+    #lukaAtualizarBtn{
+        min-width:112px;
+        height:40px;
+        padding:0 13px;
+    }
+}
+</style>
+
+
+<style id="luka-premium-v3">
+
+/* ===============================
+   LUKA FILMES — PREMIUM DASHBOARD
+   =============================== */
+
+:root{
+ --lk-bg:#070709;
+ --lk-panel:rgba(18,18,23,.72);
+ --lk-panel2:rgba(255,255,255,.045);
+ --lk-border:rgba(255,255,255,.09);
+ --lk-red:#ef1d2f;
+ --lk-red2:#ff4050;
+ --lk-purple:#9b5cff;
+ --lk-text:#fff;
+ --lk-muted:#92929d;
+}
+
+/* FUNDO */
+body{
+ background:
+ radial-gradient(circle at 10% 0%,rgba(239,29,47,.12),transparent 28%),
+ radial-gradient(circle at 90% 10%,rgba(155,92,255,.13),transparent 28%),
+ #070709 !important;
+ color:var(--lk-text) !important;
+}
+
+/* CONTEÚDO */
+main{
+ max-width:1180px !important;
+ margin:auto !important;
+ padding:25px 18px 70px !important;
+}
+
+/* HEADER */
+header{
+ background:rgba(7,7,9,.72) !important;
+ border-bottom:1px solid rgba(255,255,255,.07) !important;
+ backdrop-filter:blur(22px) !important;
+ -webkit-backdrop-filter:blur(22px) !important;
+}
+
+/* LOGO */
+.logo{
+ font-weight:950 !important;
+ letter-spacing:-1px !important;
+ transition:.25s ease !important;
+}
+
+.logo:hover{
+ transform:translateY(-1px) !important;
+ text-shadow:
+ 0 0 20px rgba(239,29,47,.45),
+ 0 0 35px rgba(155,92,255,.25) !important;
+}
+
+/* STATUS */
+.sub{
+ color:#a7a7b2 !important;
+}
+
+.dot{
+ animation:lukaPulse 1.5s ease-in-out infinite !important;
+ box-shadow:
+ 0 0 8px var(--lk-red),
+ 0 0 18px rgba(239,29,47,.65) !important;
+}
+
+@keyframes lukaPulse{
+ 0%,100%{
+  opacity:.35;
+  transform:scale(.78);
+ }
+ 50%{
+  opacity:1;
+  transform:scale(1.15);
+ }
+}
+
+/* SEÇÕES */
+section{
+ background:rgba(12,12,16,.55) !important;
+ border:1px solid rgba(255,255,255,.065) !important;
+ border-radius:24px !important;
+ padding:24px !important;
+ box-shadow:
+ 0 20px 70px rgba(0,0,0,.24),
+ inset 0 1px rgba(255,255,255,.025) !important;
+ backdrop-filter:blur(18px) !important;
+}
+
+/* TÍTULOS */
+section h2{
+ font-size:20px !important;
+ font-weight:900 !important;
+ letter-spacing:-.4px !important;
+}
+
+/* CARDS */
+.stats{
+ gap:14px !important;
+}
+
+.stat-card{
+ min-height:135px !important;
+ padding:22px !important;
+ border-radius:20px !important;
+ background:
+ linear-gradient(
+ 145deg,
+ rgba(255,255,255,.075),
+ rgba(255,255,255,.025)
+ ) !important;
+ border:1px solid rgba(255,255,255,.085) !important;
+ box-shadow:
+ 0 12px 40px rgba(0,0,0,.22),
+ inset 0 1px rgba(255,255,255,.035) !important;
+ overflow:hidden !important;
+}
+
+.stat-card::before{
+ content:"" !important;
+ position:absolute !important;
+ width:130px !important;
+ height:130px !important;
+ right:-55px !important;
+ top:-65px !important;
+ background:var(--lk-red) !important;
+ opacity:.08 !important;
+ border-radius:50% !important;
+ filter:blur(5px) !important;
+}
+
+.stat-card:hover{
+ transform:translateY(-5px) scale(1.01) !important;
+ border-color:rgba(239,29,47,.28) !important;
+ box-shadow:
+ 0 18px 55px rgba(0,0,0,.35),
+ 0 0 25px rgba(239,29,47,.07) !important;
+}
+
+/* NÚMEROS */
+.stat-value{
+ font-size:38px !important;
+ font-weight:950 !important;
+ letter-spacing:-2px !important;
+}
+
+/* LABEL */
+.stat-label{
+ font-size:11px !important;
+ letter-spacing:1.2px !important;
+ font-weight:850 !important;
+ color:#a1a1aa !important;
+}
+
+/* BOTÕES */
+button{
+ font-family:inherit !important;
+}
+
+.actions button,
+.action-buttons button,
+.toolbar button,
+.filters button{
+ border-radius:13px !important;
+ border:1px solid rgba(255,255,255,.08) !important;
+ background:rgba(255,255,255,.045) !important;
+ color:white !important;
+ min-height:44px !important;
+ padding:10px 16px !important;
+ font-weight:850 !important;
+ box-shadow:none !important;
+ transition:
+ transform .18s ease,
+ background .18s ease,
+ border-color .18s ease,
+ box-shadow .18s ease !important;
+}
+
+.actions button:hover,
+.action-buttons button:hover,
+.toolbar button:hover,
+.filters button:hover{
+ transform:translateY(-2px) !important;
+ background:rgba(255,255,255,.09) !important;
+ border-color:rgba(255,255,255,.16) !important;
+ box-shadow:0 10px 30px rgba(0,0,0,.22) !important;
+}
+
+/* PRINCIPAL */
+.btn-red,
+.btn-primary,
+.btn-blue{
+ background:
+ linear-gradient(
+ 135deg,
+ var(--lk-red),
+ var(--lk-purple)
+ ) !important;
+ border:0 !important;
+ color:#fff !important;
+ box-shadow:
+ 0 8px 28px rgba(239,29,47,.18) !important;
+}
+
+/* FILTROS */
+.filters{
+ display:flex !important;
+ gap:6px !important;
+ padding:5px !important;
+ border-radius:14px !important;
+ background:rgba(0,0,0,.24) !important;
+ border:1px solid rgba(255,255,255,.06) !important;
+}
+
+.filters button{
+ min-height:36px !important;
+ padding:7px 14px !important;
+ background:transparent !important;
+ border-color:transparent !important;
+ font-size:12px !important;
+}
+
+.filters button:hover,
+.filters button:focus{
+ background:
+ linear-gradient(
+ 135deg,
+ rgba(239,29,47,.9),
+ rgba(155,92,255,.8)
+ ) !important;
+}
+
+/* TABELA */
+.table-wrap{
+ border-radius:20px !important;
+ border:1px solid rgba(255,255,255,.06) !important;
+ background:rgba(0,0,0,.18) !important;
+ overflow:hidden !important;
+}
+
+table{
+ border-spacing:0 4px !important;
+}
+
+thead th{
+ color:#777782 !important;
+ font-size:10px !important;
+ letter-spacing:1px !important;
+ text-transform:uppercase !important;
+}
+
+tbody tr{
+ transition:.18s ease !important;
+}
+
+tbody tr:hover{
+ background:rgba(239,29,47,.045) !important;
+ transform:translateX(2px) !important;
+}
+
+tbody td{
+ padding:15px 13px !important;
+}
+
+/* ONLINE */
+.online{
+ color:#ff4050 !important;
+ font-weight:900 !important;
+ text-shadow:0 0 12px rgba(239,29,47,.35) !important;
+}
+
+/* MODAL */
+.modal-box{
+ background:
+ linear-gradient(
+ 145deg,
+ rgba(25,25,31,.97),
+ rgba(10,10,14,.97)
+ ) !important;
+ border:1px solid rgba(255,255,255,.09) !important;
+ border-radius:24px !important;
+ box-shadow:
+ 0 30px 100px rgba(0,0,0,.65),
+ 0 0 50px rgba(155,92,255,.08) !important;
+ backdrop-filter:blur(25px) !important;
+}
+
+/* INPUTS */
+input,
+select{
+ border-radius:12px !important;
+ border:1px solid rgba(255,255,255,.08) !important;
+ background:rgba(255,255,255,.045) !important;
+ color:white !important;
+ transition:.18s ease !important;
+}
+
+input:focus,
+select:focus{
+ border-color:rgba(239,29,47,.55) !important;
+ box-shadow:
+ 0 0 0 3px rgba(239,29,47,.09) !important;
+ outline:none !important;
+}
+
+/* ATUALIZAR */
+#lukaAtualizarBtn{
+ border-radius:13px !important;
+ background:rgba(255,255,255,.045) !important;
+ border:1px solid rgba(255,255,255,.09) !important;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+
+ main{
+  padding:14px 11px 55px !important;
+ }
+
+ section{
+  padding:16px !important;
+  border-radius:19px !important;
+ }
+
+ .stats{
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:10px !important;
+ }
+
+ .stat-card{
+  min-height:112px !important;
+  padding:16px !important;
+  border-radius:17px !important;
+ }
+
+ .stat-value{
+  font-size:30px !important;
+ }
+
+ .actions,
+ .action-buttons,
+ .toolbar{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:8px !important;
+ }
+
+ .actions button,
+ .action-buttons button,
+ .toolbar button{
+  width:100% !important;
+  padding:9px 7px !important;
+  font-size:12px !important;
+ }
+
+ .filters{
+  width:100% !important;
+  display:grid !important;
+  grid-template-columns:repeat(2,1fr) !important;
+ }
+
+ .filters button{
+  width:100% !important;
+ }
+
+ .table-wrap{
+  overflow-x:auto !important;
+ }
+
+ table{
+  min-width:680px !important;
+ }
+}
+
+/* ENTRADA SUAVE */
+main > section{
+ animation:lukaSection .45s ease both;
+}
+
+@keyframes lukaSection{
+ from{
+  opacity:0;
+  transform:translateY(8px);
+ }
+ to{
+  opacity:1;
+  transform:none;
+ }
+}
+
+</style>
+
+
+<style id="luka-modern-controls">
+/* =====================================================
+   LUKA FILMES — CONTROLES MODERNOS
+   vermelho + branco + roxo
+   ===================================================== */
+
+:root{
+    --luka-red:#ef1d2f;
+    --luka-red2:#ff4050;
+    --luka-purple:#9b5cff;
+    --luka-white:#ffffff;
+    --luka-glass:rgba(255,255,255,.055);
+    --luka-border:rgba(255,255,255,.10);
+}
+
+/* ÁREA DOS BOTÕES */
+.actions,
+.action-buttons,
+.toolbar{
+    display:flex !important;
+    align-items:center !important;
+    flex-wrap:wrap !important;
+    gap:12px !important;
+    margin:0 0 25px !important;
+}
+
+/* TODOS OS BOTÕES PRINCIPAIS */
+.actions button,
+.action-buttons button,
+.toolbar button,
+.filters button{
+    position:relative !important;
+    border:1px solid var(--luka-border) !important;
+    border-radius:13px !important;
+    min-height:44px !important;
+    padding:10px 17px !important;
+    font-size:13px !important;
+    font-weight:800 !important;
+    letter-spacing:.15px !important;
+    color:rgba(255,255,255,.92) !important;
+    background:rgba(255,255,255,.045) !important;
+    box-shadow:0 5px 18px rgba(0,0,0,.16) !important;
+    transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease !important;
+    overflow:hidden !important;
+}
+
+/* brilho discreto */
+.actions button::before,
+.action-buttons button::before,
+.toolbar button::before,
+.filters button::before{
+    content:"" !important;
+    position:absolute !important;
+    inset:0 !important;
+    background:linear-gradient(
+        110deg,
+        transparent 20%,
+        rgba(255,255,255,.08) 50%,
+        transparent 80%
+    ) !important;
+    transform:translateX(-120%) !important;
+    transition:transform .45s ease !important;
+    pointer-events:none !important;
+}
+
+.actions button:hover::before,
+.action-buttons button:hover::before,
+.toolbar button:hover::before,
+.filters button:hover::before{
+    transform:translateX(120%) !important;
+}
+
+/* HOVER */
+.actions button:hover,
+.action-buttons button:hover,
+.toolbar button:hover,
+.filters button:hover{
+    transform:translateY(-2px) !important;
+    background:rgba(255,255,255,.09) !important;
+    border-color:rgba(255,255,255,.20) !important;
+    box-shadow:0 9px 26px rgba(0,0,0,.28) !important;
+}
+
+/* CLIQUE */
+.actions button:active,
+.action-buttons button:active,
+.toolbar button:active,
+.filters button:active{
+    transform:scale(.97) !important;
+}
+
+/* BOTÃO VERMELHO */
+.btn-red,
+.btn-danger{
+    background:linear-gradient(
+        135deg,
+        var(--luka-red),
+        #c81025
+    ) !important;
+    border-color:rgba(255,80,95,.45) !important;
+    color:#fff !important;
+    box-shadow:
+        0 7px 24px rgba(239,29,47,.20) !important;
+}
+
+/* CRIAR */
+.btn-primary,
+.btn-blue{
+    background:linear-gradient(
+        135deg,
+        var(--luka-red),
+        var(--luka-purple)
+    ) !important;
+    border-color:rgba(255,255,255,.15) !important;
+    color:#fff !important;
+    box-shadow:
+        0 8px 26px rgba(155,92,255,.20) !important;
+}
+
+/* NÃO DEIXAR VERDE/LARANJA/AZUL DOMINAREM */
+.btn-green,
+.btn-orange{
+    background:rgba(255,255,255,.055) !important;
+    color:#fff !important;
+    border-color:var(--luka-border) !important;
+}
+
+/* FILTROS */
+.filters{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    align-items:center !important;
+    gap:8px !important;
+    padding:6px !important;
+    margin:0 0 22px !important;
+    border:1px solid rgba(255,255,255,.07) !important;
+    border-radius:16px !important;
+    background:rgba(0,0,0,.16) !important;
+    width:max-content !important;
+    max-width:100% !important;
+}
+
+.filters button{
+    min-height:38px !important;
+    padding:8px 14px !important;
+    border-radius:10px !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    border-color:transparent !important;
+    font-size:12px !important;
+}
+
+/* filtro ativo */
+.filters button.active,
+.filters button:focus{
+    background:linear-gradient(
+        135deg,
+        rgba(239,29,47,.95),
+        rgba(155,92,255,.88)
+    ) !important;
+    border-color:rgba(255,255,255,.14) !important;
+    box-shadow:0 5px 18px rgba(239,29,47,.18) !important;
+}
+
+/* ATUALIZAR */
+#lukaAtualizarBtn{
+    min-height:44px !important;
+    padding:10px 16px !important;
+    border-radius:13px !important;
+    background:rgba(255,255,255,.055) !important;
+    border:1px solid rgba(255,255,255,.11) !important;
+    color:#fff !important;
+    box-shadow:0 5px 18px rgba(0,0,0,.18) !important;
+}
+
+#lukaAtualizarBtn:hover{
+    background:rgba(239,29,47,.12) !important;
+    border-color:rgba(239,29,47,.38) !important;
+}
+
+/* MODAL */
+.modal-box button{
+    min-height:44px !important;
+    border-radius:12px !important;
+    padding:10px 17px !important;
+}
+
+/* AÇÕES DA TABELA */
+table button{
+    border-radius:10px !important;
+    min-height:36px !important;
+    padding:8px 11px !important;
+    border:1px solid rgba(255,255,255,.09) !important;
+    background:rgba(255,255,255,.045) !important;
+    color:#fff !important;
+    font-weight:800 !important;
+    transition:.18s ease !important;
+}
+
+table button:hover{
+    transform:translateY(-1px) !important;
+    background:rgba(239,29,47,.13) !important;
+    border-color:rgba(239,29,47,.35) !important;
+}
+
+/* CELULAR */
+@media(max-width:700px){
+
+    .actions,
+    .action-buttons,
+    .toolbar{
+        display:grid !important;
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:9px !important;
+    }
+
+    .actions button,
+    .action-buttons button,
+    .toolbar button{
+        width:100% !important;
+        min-width:0 !important;
+        padding:10px 9px !important;
+    }
+
+    .filters{
+        width:100% !important;
+        display:grid !important;
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:6px !important;
+        padding:6px !important;
+    }
+
+    .filters button{
+        width:100% !important;
+        min-width:0 !important;
+    }
+
+    table button{
+        padding:7px 9px !important;
+        font-size:11px !important;
+    }
+}
+</style>
+
+
+<style id="luka-refresh-single">
+#lukaAtualizarBtn{
+    position:relative !important;
+    overflow:hidden !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:8px !important;
+}
+
+#lukaAtualizarBtn::before,
+#lukaAtualizarBtn::after{
+    content:none !important;
+    display:none !important;
+}
+
+#lukaAtualizarBtn .luka-refresh-icon{
+    width:18px !important;
+    height:18px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+}
+
+#lukaAtualizarBtn .luka-refresh-text{
+    position:relative !important;
+    z-index:2 !important;
+}
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+  <div class="header-content">
+    <div class="logo">LUKA <span>FILMES</span></div>
+    <div class="status">
+      <span class="dot"></span>
+      SISTEMA ONLINE
+    </div>
+  </div>
+</header>
+
+
+<button id="lukaAtualizarBtn"
+        type="button"
+        onclick="atualizarPainelLuka()"
+        aria-label="Atualizar painel">
+    <span class="luka-update-icon">↻</span>
+    <span>Atualizar</span>
+</button>
+<main class="container">
+
+  <section class="grid">
+
+    <div class="card">
+      <h3>USUÁRIOS</h3>
+      <div class="number blue" id="totalUsers">0</div>
+    </div>
+
+    <div class="card">
+      <h3>ONLINE AGORA</h3>
+      <div class="number green" id="onlineUsers">0</div>
+    </div>
+
+    <div class="card">
+      <h3>TESTES ATIVOS</h3>
+      <div class="number yellow" id="activeTests">0</div>
+    </div>
+
+    <div class="card">
+      <h3>REVENDEDORES</h3>
+      <div class="number red" id="resellers">0</div>
+    </div>
+
+  </section>
+
+  <section class="luka-grid-2">
+
+    <div class="card">
+      <div class="section-title">Atividade do sistema</div>
+      <div class="chart" id="chart"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Ações rápidas</div>
+
+      <div class="actions">
+        <button class="btn btn-blue" onclick="createUser()">+ Usuário</button>
+        <button class="btn btn-yellow" onclick="createTest()">+ Teste</button>
+        <button class="btn btn-green" onclick="createReseller()">+ Revendedor</button>
+        <button class="btn btn-red" onclick="clearCache()">🧹 Limpar cache</button>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="luka-grid-2">
+
+    <div class="card">
+      <div class="section-title">Criar acesso</div>
+
+      <div class="form">
+        <input class="input" id="username" placeholder="Nome do usuário">
+        <input class="input" id="password" placeholder="Senha">
+        <select class="input" id="type">
+          <option value="usuario">Usuário</option>
+          <option value="teste">Teste</option>
+          <option value="revendedor">Revendedor</option>
+        </select>
+
+        <button class="btn btn-red" onclick="saveAccess()">
+          Criar acesso
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Status</div>
+
+      <p style="color:#a1a1aa;line-height:1.7">
+        Painel administrativo carregado.<br>
+        Banco local funcionando.<br>
+        Monitoramento ativo.
+      </p>
+    </div>
+
+  </section>
+
+  <section class="card">
+
+    <div class="section-title">Últimos acessos</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuário</th>
+            <th>Tipo</th>
+            <th>Status</th>
+            <th>Criado</th>
+          </tr>
+        </thead>
+
+        <tbody id="usersTable"></tbody>
+      </table>
+    </div>
+
+  </section>
+
+</main>
+
+<div class="footer">
+  LUKA FILMES • Painel Administrativo
+</div>
+
+<script>
+const STORAGE_KEY = "luka_admin_users_v2";
+
+function loadUsers(){
+  try{
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  }catch(e){
+    return [];
+  }
+}
+
+function saveUsers(users){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+}
+
+function render(){
+  const users = loadUsers();
+
+  const total = users.length;
+  const online = users.filter(u => u.online).length;
+  const tests = users.filter(u => u.type === "teste").length;
+  const resellers = users.filter(u => u.type === "revendedor").length;
+
+  document.getElementById("totalUsers").textContent = total;
+  document.getElementById("onlineUsers").textContent = online;
+  document.getElementById("activeTests").textContent = tests;
+  document.getElementById("resellers").textContent = resellers;
+
+  const tbody = document.getElementById("usersTable");
+
+  tbody.innerHTML = users.length
+    ? users.slice().reverse().map(u => `
+      <tr>
+        <td>${escapeHtml(u.username)}</td>
+        <td><span class="badge">${escapeHtml(u.type)}</span></td>
+        <td class="${u.online ? "online" : "offline"}">
+          ${u.online ? "ONLINE" : "OFFLINE"}
+        </td>
+        <td>${escapeHtml(u.created)}</td>
+      </tr>
+    `).join("")
+    : `
+      <tr>
+        <td colspan="4" style="text-align:center;color:#71717a">
+          Nenhum acesso cadastrado.
+        </td>
+      </tr>
+    `;
+
+  drawChart();
+}
+
+function drawChart(){
+  const chart = document.getElementById("chart");
+  chart.innerHTML = "";
+
+  for(let i = 0; i < 14; i++){
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    bar.style.height = (20 + Math.random() * 80) + "%";
+    chart.appendChild(bar);
+  }
+}
+
+function escapeHtml(value){
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function saveAccess(){
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const type = document.getElementById("type").value;
+
+  if(!username || !password){
+    alert("Preencha usuário e senha.");
+    return;
+  }
+
+  const users = loadUsers();
+
+  if(users.some(u => u.username.toLowerCase() === username.toLowerCase())){
+    alert("Esse usuário já existe.");
+    return;
+  }
+
+  users.push({
+    username,
+    password,
+    type,
+    online:false,
+    created:new Date().toLocaleDateString("pt-BR")
+  });
+
+  saveUsers(users);
+
+  document.getElementById("username").value = "";
+  document.getElementById("password").value = "";
+
+  render();
+  alert("Acesso criado com sucesso.");
+}
+
+function createUser(){
+  document.getElementById("type").value = "usuario";
+  document.getElementById("username").focus();
+}
+
+function createTest(){
+  document.getElementById("type").value = "teste";
+  document.getElementById("username").focus();
+}
+
+function createReseller(){
+  document.getElementById("type").value = "revendedor";
+  document.getElementById("username").focus();
+}
+
+function clearCache(){
+  if(!confirm("Limpar o cache deste painel?")){
+    return;
+  }
+
+  try{
+    sessionStorage.clear();
+  }catch(e){}
+
+  try{
+    if("caches" in window){
+      caches.keys().then(keys => {
+        return Promise.all(keys.map(key => caches.delete(key)));
+      }).catch(() => {});
+    }
+  }catch(e){}
+
+  alert("Cache limpo. A página será atualizada.");
+  setTimeout(() => location.reload(), 300);
+}
+
+render();
+</script>
+
+
+<script id="luka-update-function-final">
+function atualizarPainelLuka(){
+    const btn = document.getElementById("lukaAtualizarBtn");
+
+    if(btn){
+        btn.disabled = true;
+
+        const icone = btn.querySelector(".luka-update-icon");
+
+        if(icone){
+            icone.style.transition = "transform .45s ease";
+            icone.style.transform = "rotate(360deg)";
+        }
+    }
+
+    /*
+      Usa a função render/carregamento existente quando disponível.
+      Não cria outro sistema de atualização.
+    */
+    if(typeof carregar === "function"){
+        Promise.resolve(carregar()).finally(() => {
+            if(btn){
+                btn.disabled = false;
+                const icone = btn.querySelector(".luka-update-icon");
+                if(icone) icone.style.transform = "";
+            }
+        });
+        return;
+    }
+
+    if(typeof render === "function"){
+        render();
+        if(btn) btn.disabled = false;
+        return;
+    }
+
+    location.reload();
+}
+</script>
+
+</body>
+</html>

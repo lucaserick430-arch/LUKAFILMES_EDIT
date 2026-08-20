@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUKAFILMES - Filme</title>
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #080808;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+.pagina-filme {
+    min-height: 100vh;
+    padding: 30px 6%;
+    background: #080808;
+}
+
+.voltar {
+    display: inline-block;
+    margin-bottom: 30px;
+    background: #222;
+    color: #fff;
+    text-decoration: none;
+    padding: 11px 18px;
+    border-radius: 6px;
+}
+
+.voltar:hover {
+    background: #e50914;
+}
+
+.detalhes {
+    display: flex;
+    gap: 40px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.poster {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.poster img {
+    width: 100%;
+    display: block;
+    border-radius: 10px;
+}
+
+.informacoes {
+    max-width: 700px;
+}
+
+.informacoes h1 {
+    font-size: 42px;
+    margin: 0 0 15px;
+}
+
+.dados {
+    color: #ccc;
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.generos {
+    color: #e50914;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+.sinopse {
+    color: #ccc;
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+.assistir {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 14px 28px;
+    background: #e50914;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+@media (max-width: 700px) {
+
+    .detalhes {
+        flex-direction: column;
+    }
+
+    .poster {
+        width: 200px;
+    }
+
+    .informacoes h1 {
+        font-size: 30px;
+    }
+
+}
+</style><style>.pagina-filme{position:relative;overflow:hidden;background:#080808}.pagina-filme::before{content:"";position:absolute;inset:0;background-image:linear-gradient(to right,rgba(8,8,8,.96),rgba(8,8,8,.65),rgba(8,8,8,.9)),var(--fundo-filme);background-size:cover;background-position:center;filter:blur(10px);transform:scale(1.05);z-index:0}.pagina-filme>*{position:relative;z-index:1}</style>
+</head>
+
+<body>
+
+<div class="pagina-filme">
+
+<a href="javascript:history.back()" class="voltar">← Voltar</a>
+
+<div class="detalhes">
+
+<div class="poster">
+<img id="poster" src="" alt="">
+</div>
+
+<div class="informacoes">
+
+<h1 id="titulo">Carregando...</h1>
+
+<div id="dados" class="dados"></div>
+
+<div id="generos" class="generos"></div>
+
+<p id="sinopse" class="sinopse">
+Carregando sinopse...
+</p>
+
+<a href="#" class="assistir" id="botaoAssistir">
+▶ ASSISTIR
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+(function () {
+
+    const salvo =
+        localStorage.getItem("filmeSelecionado");
+
+    console.log(
+        "[FILME SALVO]",
+        salvo
+    );
+
+    if (!salvo) {
+
+        document.getElementById("titulo")
+            .textContent =
+            "Filme não encontrado";
+
+        document.documentElement.style.setProperty("--fundo-filme", "url(" + filme.capa + ")");document.getElementById("sinopse")
+            .textContent =
+            "Nenhum filme foi selecionado.";
+
+        return;
+    }
+
+    try {
+
+        const filme =
+            JSON.parse(salvo);
+
+        console.log(
+            "[FILME]",
+            filme
+        );
+
+        document.getElementById("titulo")
+            .textContent =
+            filme.titulo ||
+            "Sem título";
+
+        document.getElementById("poster")
+            .src =
+            filme.capa || "";
+
+        document.getElementById("poster")
+            .alt =
+            filme.titulo ||
+            "Filme";
+
+        document.getElementById("dados")
+            .textContent =
+            "⭐ " +
+            (filme.nota || 0) +
+            "  •  " +
+            (filme.ano || "Ano desconhecido") +
+            "  •  " +
+            (filme.votos || 0) +
+            " votos";
+
+        const generos =
+            Array.isArray(filme.generos)
+            ? filme.generos.join(" • ")
+            : (filme.genero || "");
+
+        document.getElementById("generos")
+            .textContent =
+            generos;
+
+        document.getElementById("sinopse")
+            .textContent =
+            filme.sinopse ||
+            "Sinopse não disponível.";
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO FILME]",
+            erro
+        );
+
+        document.getElementById("titulo")
+            .textContent =
+            "Erro ao carregar filme";
+
+        document.getElementById("sinopse")
+            .textContent =
+            "Não foi possível carregar os dados deste filme.";
+
+    }
+
+})();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+
+<title>Painel Revendedor - LUKAFILMES</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(229,9,20,.16), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(120,0,255,.10), transparent 35%),
+        #070707;
+    color: #fff;
+}
+
+.container {
+    width: min(1250px, 100%);
+    margin: auto;
+}
+
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.logo {
+    color: #fff;
+    text-decoration: none;
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.logo span {
+    color: #e50914;
+}
+
+.subtitulo {
+    color: #888;
+    margin-top: 6px;
+    font-size: 14px;
+}
+
+button {
+    font-family: inherit;
+}
+
+.btn-sair {
+    border: 1px solid #333;
+    background: #151515;
+    color: #fff;
+    padding: 11px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-sair:hover {
+    background: #e50914;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: rgba(18,18,18,.92);
+    border: 1px solid #292929;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 22px;
+}
+
+.numero {
+    font-size: 30px;
+    font-weight: 900;
+    margin-top: 8px;
+}
+
+.label {
+    color: #888;
+    font-size: 12px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 140px auto;
+    gap: 10px;
+    align-items: end;
+}
+
+.campo label {
+    display: block;
+    color: #aaa;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    background: #101010;
+    color: white;
+}
+
+.btn {
+    border: 0;
+    background: linear-gradient(135deg,#9333ea,#6d28d9);
+    color: white;
+    padding: 13px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.tabela-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 700px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 13px 10px;
+    text-align: left;
+    border-bottom: 1px solid #222;
+}
+
+th {
+    color: #777;
+    font-size: 12px;
+}
+
+.badge {
+    display: inline-flex;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.ativo {
+    background: rgba(0,210,106,.12);
+    color: #00d26a;
+}
+
+.suspenso {
+    background: rgba(229,9,20,.12);
+    color: #ff555f;
+}
+
+.acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.acao-btn {
+    border: 0;
+    padding: 7px 9px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.acao-btn.editar {
+    background: #2563eb;
+}
+
+.acao-btn.suspender {
+    background: #b45309;
+}
+
+.acao-btn.ativar {
+    background: #059669;
+}
+
+.acao-btn.renovar {
+    background: #7c3aed;
+}
+
+.acao-btn.excluir {
+    background: #dc2626;
+}
+
+.acao-btn:hover {
+    opacity: .82;
+}
+
+.mensagem {
+    display: none;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+@media(max-width:900px) {
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .topo {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-sair {
+        width: 100%;
+    }
+}
+
+
+.badge.online {
+    color: #00ff88;
+    background: rgba(0,255,136,.10);
+    border: 1px solid rgba(0,255,136,.30);
+}
+
+.badge.offline {
+    color: #9ca3af;
+    background: rgba(156,163,175,.10);
+    border: 1px solid rgba(156,163,175,.20);
+}
+
+</style>
+
+
+<style id="luka-trailer-bg">
+body{background:#050505!important}
+#lukaTrailerBg{
+position:fixed;
+inset:0;
+z-index:-3;
+overflow:hidden;
+background:#000;
+pointer-events:none;
+}
+#lukaTrailerBg iframe{
+position:absolute;
+top:50%;
+left:50%;
+width:177.78vh;
+height:100vh;
+min-width:100vw;
+min-height:56.25vw;
+transform:translate(-50%,-50%);
+border:0;
+filter:brightness(.42) saturate(.9);
+}
+#lukaTrailerOverlay{
+position:fixed;
+inset:0;
+z-index:-2;
+pointer-events:none;
+background:
+linear-gradient(rgba(0,0,0,.82),rgba(0,0,0,.88)),
+radial-gradient(circle at top,rgba(180,0,20,.18),transparent 45%);
+backdrop-filter:blur(1px);
+}
+main,header,.container,.content,section{
+position:relative;
+z-index:1;
+}
+</style>
+
+
+<style id="no-zoom-panel">
+html,body{
+    touch-action:pan-x pan-y;
+    overscroll-behavior-x:none;
+}
+*{
+    -webkit-tap-highlight-color:transparent;
+}
+input,select,textarea{
+    font-size:16px!important;
+}
+</style>
+
+
+<style id="lukafilmes-revendedor-upgrade">
+
+*{
+ box-sizing:border-box;
+ -webkit-tap-highlight-color:transparent;
+}
+
+html{
+ width:100%;
+ min-height:100%;
+}
+
+body{
+ margin:0!important;
+ background:
+ radial-gradient(circle at 85% 0%,rgba(229,9,20,.16),transparent 28%),
+ radial-gradient(circle at 0% 100%,rgba(229,9,20,.08),transparent 30%),
+ #050505!important;
+ color:#fff!important;
+ font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif!important;
+ overflow-x:hidden!important;
+ touch-action:manipulation;
+}
+
+button,
+input,
+select,
+textarea{
+ font-size:16px!important;
+}
+
+button{
+ cursor:pointer;
+}
+
+.lf-topbar{
+ position:sticky;
+ top:0;
+ z-index:999;
+ width:100%;
+ min-height:70px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:15px;
+ padding:12px 18px;
+ background:rgba(5,5,5,.94);
+ border-bottom:1px solid #242424;
+ backdrop-filter:blur(18px);
+ box-shadow:0 8px 35px rgba(0,0,0,.35);
+}
+
+.lf-brand{
+ display:flex;
+ align-items:center;
+ gap:12px;
+ min-width:0;
+}
+
+.lf-brand-logo{
+ width:44px;
+ height:44px;
+ border-radius:14px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:linear-gradient(135deg,#e50914,#8f0008);
+ color:#fff;
+ font-weight:1000;
+ font-size:22px;
+ box-shadow:0 0 25px rgba(229,9,20,.35);
+ overflow:hidden;
+}
+
+.lf-brand-logo img{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+ display:none;
+}
+
+.lf-brand-name{
+ font-size:20px;
+ font-weight:1000;
+ letter-spacing:-.8px;
+ white-space:nowrap;
+}
+
+.lf-brand-name span{
+ color:#e50914;
+}
+
+.lf-profile{
+ display:flex;
+ align-items:center;
+ gap:10px;
+}
+
+.lf-avatar{
+ width:44px;
+ height:44px;
+ border-radius:50%;
+ background:#171717;
+ border:2px solid #e50914;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ overflow:hidden;
+ font-weight:900;
+ color:#fff;
+ box-shadow:0 0 20px rgba(229,9,20,.25);
+}
+
+.lf-avatar img{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+ display:none;
+}
+
+.lf-profile-info{
+ display:flex;
+ flex-direction:column;
+ line-height:1.15;
+}
+
+.lf-profile-info strong{
+ font-size:13px;
+}
+
+.lf-profile-info small{
+ color:#888;
+ font-size:11px;
+ margin-top:4px;
+}
+
+.lf-photo-btn{
+ border:1px solid #343434;
+ background:#111;
+ color:#fff;
+ border-radius:10px;
+ padding:9px 11px;
+ font-weight:800;
+ transition:.2s;
+}
+
+.lf-photo-btn:hover{
+ border-color:#e50914;
+ transform:translateY(-1px);
+}
+
+.lf-layout{
+ width:100%;
+ max-width:1450px;
+ margin:0 auto;
+ padding:22px;
+}
+
+.lf-welcome{
+ display:flex;
+ align-items:flex-end;
+ justify-content:space-between;
+ gap:15px;
+ margin-bottom:22px;
+}
+
+.lf-welcome h1{
+ margin:0;
+ font-size:clamp(25px,4vw,38px);
+ letter-spacing:-1.5px;
+}
+
+.lf-welcome p{
+ margin:7px 0 0;
+ color:#8c8c8c;
+}
+
+.lf-online{
+ display:inline-flex;
+ align-items:center;
+ gap:8px;
+ border:1px solid rgba(229,9,20,.3);
+ background:rgba(229,9,20,.08);
+ color:#fff;
+ border-radius:999px;
+ padding:9px 13px;
+ font-size:12px;
+ font-weight:900;
+}
+
+.lf-online-dot{
+ width:8px;
+ height:8px;
+ border-radius:50%;
+ background:#e50914;
+ box-shadow:0 0 12px #e50914;
+ animation:lfPulse 1.4s infinite;
+}
+
+@keyframes lfPulse{
+ 0%,100%{opacity:1;transform:scale(1)}
+ 50%{opacity:.35;transform:scale(.72)}
+}
+
+.lf-grid{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:14px;
+ margin-bottom:18px;
+}
+
+.lf-card{
+ position:relative;
+ min-height:125px;
+ padding:20px;
+ border-radius:20px;
+ background:linear-gradient(145deg,#111,#080808);
+ border:1px solid #252525;
+ box-shadow:0 12px 35px rgba(0,0,0,.28);
+ overflow:hidden;
+ transition:.25s;
+}
+
+.lf-card:hover{
+ transform:translateY(-4px);
+ border-color:#e50914;
+ box-shadow:0 15px 40px rgba(229,9,20,.13);
+}
+
+.lf-card::after{
+ content:"";
+ position:absolute;
+ width:100px;
+ height:100px;
+ right:-35px;
+ bottom:-45px;
+ border-radius:50%;
+ background:rgba(229,9,20,.08);
+}
+
+.lf-card small{
+ color:#8b8b8b;
+ font-size:11px;
+ font-weight:900;
+ letter-spacing:.7px;
+}
+
+.lf-number{
+ margin-top:12px;
+ font-size:35px;
+ line-height:1;
+ font-weight:1000;
+ color:#fff;
+}
+
+.lf-number.red{
+ color:#e50914;
+}
+
+.lf-section{
+ margin-top:18px;
+ padding:20px;
+ border:1px solid #242424;
+ border-radius:22px;
+ background:rgba(12,12,12,.92);
+ box-shadow:0 15px 45px rgba(0,0,0,.25);
+}
+
+.lf-section-head{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:12px;
+ margin-bottom:16px;
+}
+
+.lf-section-head h2{
+ margin:0;
+ font-size:18px;
+}
+
+.lf-section-head span{
+ color:#777;
+ font-size:12px;
+}
+
+.lf-actions{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:10px;
+}
+
+.lf-action{
+ border:1px solid #2b2b2b;
+ border-radius:14px;
+ padding:16px;
+ background:#101010;
+ color:#fff;
+ text-align:left;
+ font-weight:900;
+ transition:.2s;
+}
+
+.lf-action:hover{
+ border-color:#e50914;
+ background:#151515;
+ transform:translateY(-2px);
+}
+
+.lf-action strong{
+ display:block;
+ margin-bottom:5px;
+}
+
+.lf-action small{
+ color:#777;
+ font-weight:500;
+}
+
+.lf-photo-modal{
+ position:fixed;
+ inset:0;
+ z-index:5000;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ background:rgba(0,0,0,.78);
+ backdrop-filter:blur(10px);
+}
+
+.lf-photo-modal.show{
+ display:flex;
+}
+
+.lf-photo-box{
+ width:min(430px,100%);
+ padding:24px;
+ border:1px solid #292929;
+ border-radius:22px;
+ background:#0b0b0b;
+ box-shadow:0 25px 80px rgba(0,0,0,.55);
+}
+
+.lf-photo-box h2{
+ margin:0 0 8px;
+}
+
+.lf-photo-box p{
+ color:#777;
+ margin:0 0 18px;
+ font-size:13px;
+}
+
+.lf-photo-preview{
+ width:110px;
+ height:110px;
+ margin:0 auto 18px;
+ border-radius:50%;
+ border:3px solid #e50914;
+ background:#171717;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ overflow:hidden;
+ font-size:42px;
+ font-weight:1000;
+}
+
+.lf-photo-preview img{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+ display:none;
+}
+
+.lf-photo-buttons{
+ display:flex;
+ gap:10px;
+}
+
+.lf-photo-buttons button{
+ flex:1;
+ border:0;
+ border-radius:12px;
+ padding:13px;
+ font-weight:900;
+}
+
+.lf-save-photo{
+ background:#e50914;
+ color:#fff;
+}
+
+.lf-cancel-photo{
+ background:#222;
+ color:#fff;
+}
+
+@media(max-width:900px){
+ .lf-grid{
+  grid-template-columns:repeat(2,1fr);
+ }
+
+ .lf-actions{
+  grid-template-columns:1fr;
+ }
+
+ .lf-layout{
+  padding:16px;
+ }
+}
+
+@media(max-width:600px){
+ .lf-topbar{
+  padding:10px 12px;
+ }
+
+ .lf-profile-info,
+ .lf-photo-btn{
+  display:none;
+ }
+
+ .lf-brand-name{
+  font-size:18px;
+ }
+
+ .lf-brand-logo,
+ .lf-avatar{
+  width:40px;
+  height:40px;
+ }
+
+ .lf-welcome{
+  align-items:flex-start;
+  flex-direction:column;
+ }
+
+ .lf-card{
+  min-height:105px;
+  padding:15px;
+ }
+
+ .lf-number{
+  font-size:29px;
+ }
+
+ .lf-section{
+  padding:15px;
+  border-radius:18px;
+ }
+}
+
+</style>
+
+
+<style id="lukafilmes-modern-revendedor">
+:root{
+ --lf-red:#e50914;
+ --lf-red2:#b20710;
+ --lf-black:#050505;
+ --lf-card:#0d0d0f;
+ --lf-card2:#141416;
+ --lf-line:#292929;
+ --lf-text:#fff;
+ --lf-muted:#929292;
+}
+
+*{
+ box-sizing:border-box;
+ -webkit-tap-highlight-color:transparent;
+}
+
+html{
+ scroll-behavior:smooth;
+}
+
+body{
+ background:
+ radial-gradient(circle at 85% -10%,rgba(229,9,20,.18),transparent 30%),
+ radial-gradient(circle at -10% 100%,rgba(229,9,20,.10),transparent 32%),
+ #050505!important;
+ color:#fff!important;
+ font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif!important;
+ overflow-x:hidden!important;
+}
+
+body:before{
+ content:"";
+ position:fixed;
+ inset:0;
+ pointer-events:none;
+ background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.015) 50%,transparent 100%);
+ z-index:-1;
+}
+
+button,input,select,textarea{
+ font-family:inherit!important;
+}
+
+button{
+ cursor:pointer;
+}
+
+.lf-modern-header{
+ position:sticky;
+ top:0;
+ z-index:999;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:15px;
+ padding:12px 20px;
+ min-height:70px;
+ background:rgba(5,5,5,.94);
+ border-bottom:1px solid #242424;
+ backdrop-filter:blur(18px);
+ box-shadow:0 10px 35px rgba(0,0,0,.35);
+}
+
+.lf-brand{
+ display:flex;
+ align-items:center;
+ gap:12px;
+}
+
+.lf-logo{
+ width:45px;
+ height:45px;
+ border-radius:14px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:linear-gradient(135deg,var(--lf-red),var(--lf-red2));
+ box-shadow:0 0 25px rgba(229,9,20,.35);
+ font-size:22px;
+ font-weight:1000;
+}
+
+.lf-brand-title{
+ font-size:20px;
+ font-weight:1000;
+ letter-spacing:-.8px;
+}
+
+.lf-brand-title span{
+ color:var(--lf-red);
+}
+
+.lf-user{
+ display:flex;
+ align-items:center;
+ gap:11px;
+}
+
+.lf-avatar{
+ width:43px;
+ height:43px;
+ border-radius:50%;
+ background:#171717;
+ border:2px solid var(--lf-red);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ overflow:hidden;
+ font-weight:1000;
+ box-shadow:0 0 20px rgba(229,9,20,.25);
+}
+
+.lf-avatar img{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+}
+
+.lf-user-name{
+ font-size:13px;
+ font-weight:900;
+}
+
+.lf-user-role{
+ display:block;
+ margin-top:3px;
+ color:#777;
+ font-size:10px;
+ font-weight:700;
+}
+
+.lf-page{
+ max-width:1450px;
+ margin:auto;
+ padding:24px;
+}
+
+.lf-hero{
+ display:flex;
+ align-items:flex-end;
+ justify-content:space-between;
+ gap:20px;
+ margin-bottom:22px;
+}
+
+.lf-hero h1{
+ margin:0;
+ font-size:clamp(27px,4vw,40px);
+ font-weight:1000;
+ letter-spacing:-1.8px;
+}
+
+.lf-hero p{
+ margin:7px 0 0;
+ color:var(--lf-muted);
+}
+
+.lf-status{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ padding:9px 14px;
+ border:1px solid rgba(229,9,20,.3);
+ border-radius:999px;
+ background:rgba(229,9,20,.07);
+ font-size:11px;
+ font-weight:900;
+ white-space:nowrap;
+}
+
+.lf-status-dot{
+ width:8px;
+ height:8px;
+ border-radius:50%;
+ background:var(--lf-red);
+ box-shadow:0 0 14px var(--lf-red);
+ animation:lfPulse 1.5s infinite;
+}
+
+@keyframes lfPulse{
+ 0%,100%{opacity:1;transform:scale(1)}
+ 50%{opacity:.35;transform:scale(.72)}
+}
+
+.lf-stats{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:14px;
+ margin-bottom:18px;
+}
+
+.lf-stat{
+ position:relative;
+ overflow:hidden;
+ min-height:125px;
+ padding:20px;
+ border:1px solid var(--lf-line);
+ border-radius:20px;
+ background:linear-gradient(145deg,#121214,#090909);
+ box-shadow:0 15px 40px rgba(0,0,0,.28);
+ transition:.25s;
+}
+
+.lf-stat:hover{
+ transform:translateY(-4px);
+ border-color:var(--lf-red);
+ box-shadow:0 18px 45px rgba(229,9,20,.13);
+}
+
+.lf-stat:after{
+ content:"";
+ position:absolute;
+ width:120px;
+ height:120px;
+ right:-55px;
+ bottom:-65px;
+ border-radius:50%;
+ background:rgba(229,9,20,.09);
+}
+
+.lf-stat-label{
+ color:#858585;
+ font-size:10px;
+ font-weight:900;
+ letter-spacing:.8px;
+}
+
+.lf-stat-number{
+ margin-top:12px;
+ font-size:35px;
+ font-weight:1000;
+ line-height:1;
+}
+
+.lf-stat-number.red{
+ color:var(--lf-red);
+}
+
+.lf-panel{
+ margin-top:18px;
+ border:1px solid var(--lf-line);
+ border-radius:22px;
+ background:rgba(11,11,11,.94);
+ overflow:hidden;
+ box-shadow:0 15px 45px rgba(0,0,0,.28);
+}
+
+.lf-panel-head{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:12px;
+ padding:19px 20px;
+ border-bottom:1px solid #242424;
+}
+
+.lf-panel-head h2{
+ margin:0;
+ font-size:18px;
+ font-weight:950;
+}
+
+.lf-panel-head small{
+ color:#777;
+}
+
+.lf-quick{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:12px;
+ padding:18px;
+}
+
+.lf-quick button{
+ border:1px solid #292929;
+ border-radius:16px;
+ padding:18px;
+ background:#111;
+ color:#fff;
+ text-align:left;
+ transition:.2s;
+}
+
+.lf-quick button:hover{
+ transform:translateY(-3px);
+ border-color:var(--lf-red);
+ background:#151515;
+}
+
+.lf-quick strong{
+ display:block;
+ font-size:14px;
+ margin-bottom:6px;
+}
+
+.lf-quick span{
+ color:#777;
+ font-size:11px;
+}
+
+.lf-modern-search{
+ display:flex;
+ gap:10px;
+ padding:15px 18px;
+ border-bottom:1px solid #242424;
+}
+
+.lf-modern-search input{
+ flex:1;
+ min-width:0;
+ background:#080808!important;
+ border:1px solid #2b2b2b!important;
+ color:#fff!important;
+ border-radius:13px!important;
+ padding:12px 14px!important;
+ outline:none;
+}
+
+.lf-modern-search input:focus{
+ border-color:var(--lf-red)!important;
+ box-shadow:0 0 0 3px rgba(229,9,20,.08);
+}
+
+.lf-red-btn{
+ border:0!important;
+ border-radius:13px!important;
+ background:linear-gradient(135deg,#e50914,#a7070e)!important;
+ color:#fff!important;
+ font-weight:900!important;
+ padding:12px 17px!important;
+ box-shadow:0 8px 20px rgba(229,9,20,.18);
+ transition:.2s;
+}
+
+.lf-red-btn:hover{
+ transform:translateY(-2px);
+ box-shadow:0 12px 28px rgba(229,9,20,.25);
+}
+
+.lf-back{
+ display:inline-flex;
+ align-items:center;
+ gap:8px;
+ margin-bottom:15px;
+ padding:10px 14px;
+ border:1px solid #292929;
+ border-radius:12px;
+ background:#111;
+ color:#fff;
+ font-weight:800;
+ transition:.2s;
+}
+
+.lf-back:hover{
+ border-color:var(--lf-red);
+ transform:translateX(-3px);
+}
+
+@media(max-width:900px){
+ .lf-stats{
+  grid-template-columns:repeat(2,1fr);
+ }
+ .lf-quick{
+  grid-template-columns:1fr;
+ }
+ .lf-page{
+  padding:16px;
+ }
+}
+
+@media(max-width:600px){
+ .lf-modern-header{
+  padding:10px 12px;
+ }
+ .lf-user-name,
+ .lf-user-role{
+  display:none;
+ }
+ .lf-logo,
+ .lf-avatar{
+  width:40px;
+  height:40px;
+ }
+ .lf-brand-title{
+  font-size:18px;
+ }
+ .lf-hero{
+  flex-direction:column;
+  align-items:flex-start;
+ }
+ .lf-stat{
+  min-height:105px;
+  padding:15px;
+ }
+ .lf-stat-number{
+  font-size:28px;
+ }
+ .lf-panel{
+  border-radius:18px;
+ }
+}
+</style>
+</head>
+
+<body>
+<div class="lf-modern-header">
+ <div class="lf-brand">
+  <div class="lf-logo">L</div>
+  <div class="lf-brand-title">LUKA<span>FILMES</span></div>
+ </div>
+
+ <div class="lf-user">
+  <div>
+   <div class="lf-user-name" id="lfRevNome">Revendedor</div>
+   <span class="lf-user-role">PAINEL DO REVENDEDOR</span>
+  </div>
+
+  <div class="lf-avatar" id="lfRevAvatar">R</div>
+ </div>
+</div>
+
+
+<div class="lf-topbar">
+ <div class="lf-brand">
+  <div class="lf-brand-logo" id="lfBrandLogo">
+   <img id="lfBrandLogoImg" alt="">
+   <span id="lfBrandLetter">L</span>
+  </div>
+  <div class="lf-brand-name">LUKA<span>FILMES</span></div>
+ </div>
+
+ <div class="lf-profile">
+  <div class="lf-profile-info">
+   <strong id="lfNomeRevendedor">Revendedor</strong>
+   <small>PAINEL DO REVENDEDOR</small>
+  </div>
+
+  <button class="lf-photo-btn" type="button" onclick="lfAbrirFoto()">
+   📷 Foto
+  </button>
+
+  <div class="lf-avatar" id="lfAvatar">
+   <img id="lfAvatarImg" alt="">
+   <span id="lfAvatarLetter">R</span>
+  </div>
+ </div>
+</div>
+
+
+<div id="lukaTrailerBg">
+<iframe
+src="https://www.youtube.com/embed/2woCZg5QdVE?autoplay=1&mute=1&controls=0&loop=1&playlist=2woCZg5QdVE&modestbranding=1&rel=0&playsinline=1"
+allow="autoplay; encrypted-media"
+allowfullscreen>
+</iframe>
+</div>
+<div id="lukaTrailerOverlay"></div>
+
+
+<div class="container">
+
+    <div class="topo">
+
+        <div>
+            <a href="/" class="logo">
+                LUKA<span>FILMES</span>
+            </a>
+
+            <div class="subtitulo">
+                Painel do revendedor
+            </div>
+        </div>
+
+        <button
+            class="btn-sair"
+            onclick="sair()"
+        >
+            SAIR
+        </button>
+
+    </div>
+
+    <div class="dashboard">
+
+        <div class="card">
+            <div class="label">CLIENTES</div>
+            <div class="numero" id="clientesNumero">0 / 0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">CLIENTES ATIVOS</div>
+            <div class="numero" id="clientesAtivos">0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">CLIENTES SUSPENSOS</div>
+            <div class="numero" id="clientesSuspensos">0</div>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Criar novo cliente</h2>
+
+        <div id="mensagem" class="mensagem"></div>
+
+        <form id="formCliente">
+
+            <div class="form-grid">
+
+                <div class="campo">
+                    <label>Usuário</label>
+                    <input id="clienteUsuario" required>
+                </div>
+
+                <div class="campo">
+                    <label>Senha</label>
+                    <input id="clienteSenha" type="password" required>
+                </div>
+
+                <div class="campo">
+                    <label>Dias</label>
+                    <input id="clienteDias" type="number" min="1" value="30" required>
+                </div>
+
+                <button class="btn" type="submit">
+                    CRIAR CLIENTE
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Meus clientes</h2>
+
+        <div class="tabela-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>USUÁRIO</th>
+                        <th>STATUS</th>
+<th>ONLINE</th>
+                        <th>VALIDADE</th>
+                        <th>AÇÕES</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="clientes">
+                    <tr>
+                        <td colspan="5">
+                            Carregando...
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+async function carregar() {
+
+    try {
+
+        const resposta =
+            await fetch(
+                "/api/revendedor/clientes",
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+        if (resposta.status === 403) {
+            window.location.href = "/login";
+            return;
+        }
+
+        const dados = await resposta.json();
+
+        if (!dados.sucesso) {
+            throw new Error(dados.mensagem || "Erro");
+        }
+
+        document.getElementById("clientesNumero")
+            .textContent =
+            dados.utilizados +
+            " / " +
+            dados.limite;
+
+        const ativos =
+            dados.clientes.filter(
+                u => u.status === "ativo"
+            ).length;
+
+        const suspensos =
+            dados.clientes.filter(
+                u => u.status !== "ativo"
+            ).length;
+
+        document.getElementById("clientesAtivos")
+            .textContent = ativos;
+
+        document.getElementById("clientesSuspensos")
+            .textContent = suspensos;
+
+        const tbody =
+            document.getElementById("clientes");
+
+        if (!dados.clientes.length) {
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5">
+                        Nenhum cliente cadastrado.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        tbody.innerHTML =
+            dados.clientes.map(cliente => {
+
+                const status =
+                    cliente.status === "ativo"
+                        ? "ativo"
+                        : "suspenso";
+
+                const botaoStatus =
+                    cliente.status === "ativo"
+                        ? `<button class="acao-btn suspender"
+                                onclick="alterarStatus(${cliente.id}, 'suspenso')">
+                                SUSPENDER
+                           </button>`
+                        : `<button class="acao-btn ativar"
+                                onclick="alterarStatus(${cliente.id}, 'ativo')">
+                                ATIVAR
+                           </button>`;
+
+                return `
+                    <tr>
+                        <td>${cliente.id}</td>
+
+                        <td>
+                            ${escapeHtml(cliente.usuario)}
+                        </td>
+
+                        <td>
+                            <span class="badge ${cliente.online ? "online" : "offline"}">
+                                ${cliente.online ? "● ONLINE" : "● OFFLINE"}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge ${status}">
+                                ${cliente.status === "ativo"
+                                    ? "ATIVO"
+                                    : "SUSPENSO"}
+                            </span>
+                        </td>
+
+                        <td>
+                            ${cliente.validade
+                                ? new Date(cliente.validade).toLocaleString("pt-BR")
+                                : "—"}
+                        </td>
+
+                        <td>
+                            <div class="acoes">
+
+                                <button
+                                    class="acao-btn editar"
+                                    onclick="editarCliente(${cliente.id}, '${escapeJs(cliente.usuario)}')">
+                                    EDITAR
+                                </button>
+
+                                ${botaoStatus}
+
+                                <button
+                                    class="acao-btn renovar"
+                                    onclick="renovarCliente(${cliente.id})">
+                                    RENOVAR
+                                </button>
+
+                                <button
+                                    class="acao-btn excluir"
+                                    onclick="excluirCliente(${cliente.id}, '${escapeJs(cliente.usuario)}')">
+                                    EXCLUIR
+                                </button>
+
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+            }).join("");
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        document.getElementById("clientes")
+            .innerHTML = `
+                <tr>
+                    <td colspan="5">
+                        Erro ao carregar clientes.
+                    </td>
+                </tr>
+            `;
+    }
+}
+
+
+// Atualiza clientes e presença automaticamente
+setInterval(carregar, 15000);
+
+carregar();
+
+
+document
+.getElementById("formCliente")
+.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const usuario =
+        document.getElementById("clienteUsuario")
+            .value.trim();
+
+    const senha =
+        document.getElementById("clienteSenha")
+            .value;
+
+    const dias =
+        Number(
+            document.getElementById("clienteDias")
+                .value
+        );
+
+    try {
+
+        const resposta =
+            await fetch(
+                "/api/revendedor/clientes",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify({
+                        usuario,
+                        senha,
+                        dias
+                    })
+                }
+            );
+
+        const dados =
+            await resposta.json();
+
+        mostrarMensagem(
+            dados.mensagem,
+            dados.sucesso
+        );
+
+        if (dados.sucesso) {
+
+            document.getElementById("clienteUsuario").value = "";
+            document.getElementById("clienteSenha").value = "";
+            document.getElementById("clienteDias").value = "30";
+
+            carregar();
+        }
+
+    } catch (erro) {
+
+        mostrarMensagem(
+            "Erro de comunicação com o servidor.",
+            false
+        );
+    }
+
+});
+
+
+function mostrarMensagem(texto, sucesso) {
+
+    const el =
+        document.getElementById("mensagem");
+
+    el.textContent = texto;
+    el.style.display = "block";
+
+    el.style.background =
+        sucesso
+            ? "rgba(0,210,106,.15)"
+            : "rgba(229,9,20,.15)";
+
+    el.style.color =
+        sucesso
+            ? "#00d26a"
+            : "#ff5b64";
+}
+
+
+async function sair() {
+
+    await fetch(
+        "/logout",
+        {
+            credentials: "same-origin"
+        }
+    );
+
+    window.location.href = "/login";
+}
+
+
+function escapeJs(valor) {
+
+    return String(valor || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
+        .replace(/\r?\n/g, "\\n");
+
+}
+
+
+async function editarCliente(id, usuarioAtual) {
+
+    const usuario =
+        prompt("Novo usuário:", usuarioAtual);
+
+    if (usuario === null) return;
+
+    const novoUsuario = usuario.trim();
+
+    if (!novoUsuario) {
+        alert("Informe um usuário válido.");
+        return;
+    }
+
+    const senha =
+        prompt("Nova senha (deixe vazio para manter a atual):");
+
+    if (senha === null) return;
+
+    const resposta =
+        await fetch(
+            "/api/revendedor/clientes/editar",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    id,
+                    usuario: novoUsuario,
+                    senha
+                })
+            }
+        );
+
+    const dados = await resposta.json();
+
+    mostrarMensagem(
+        dados.mensagem,
+        dados.sucesso
+    );
+
+    if (dados.sucesso) {
+        carregar();
+    }
+
+}
+
+
+async function alterarStatus(id, status) {
+
+    const acao =
+        status === "ativo"
+            ? "ativar"
+            : "suspender";
+
+    if (!confirm(`Deseja ${acao} este cliente?`)) {
+        return;
+    }
+
+    const resposta =
+        await fetch(
+            "/api/revendedor/clientes/status",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    id,
+                    status
+                })
+            }
+        );
+
+    const dados = await resposta.json();
+
+    mostrarMensagem(
+        dados.mensagem,
+        dados.sucesso
+    );
+
+    if (dados.sucesso) {
+        carregar();
+    }
+
+}
+
+
+async function renovarCliente(id) {
+
+    const valor =
+        prompt(
+            "Quantos dias deseja adicionar?",
+            "30"
+        );
+
+    if (valor === null) return;
+
+    const dias = Number(valor);
+
+    if (
+        !Number.isInteger(dias) ||
+        dias < 1
+    ) {
+        alert("Informe uma quantidade válida de dias.");
+        return;
+    }
+
+    const resposta =
+        await fetch(
+            "/api/revendedor/clientes/renovar",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    id,
+                    dias
+                })
+            }
+        );
+
+    const dados = await resposta.json();
+
+    mostrarMensagem(
+        dados.mensagem,
+        dados.sucesso
+    );
+
+    if (dados.sucesso) {
+        carregar();
+    }
+
+}
+
+
+async function excluirCliente(id, usuario) {
+
+    if (
+        !confirm(
+            `Tem certeza que deseja excluir o cliente "${usuario}"?`
+        )
+    ) {
+        return;
+    }
+
+    const resposta =
+        await fetch(
+            "/api/revendedor/clientes/excluir",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    id
+                })
+            }
+        );
+
+    const dados = await resposta.json();
+
+    mostrarMensagem(
+        dados.mensagem,
+        dados.sucesso
+    );
+
+    if (dados.sucesso) {
+        carregar();
+    }
+
+}
+
+function escapeHtml(valor) {
+
+    return String(valor || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+carregar();
+
+</script>
+
+<script src="../js/navegacao.js"></script>
+
+<script id="lukafilmes-presenca">
+(function () {
+
+    let timer = null;
+
+    async function enviarPresenca() {
+
+        try {
+
+            await fetch("/api/presenca", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: "{}",
+                cache: "no-store"
+            });
+
+        } catch (erro) {
+            console.warn("[PRESENÇA]", erro);
+        }
+    }
+
+    enviarPresenca();
+
+    timer = setInterval(
+        enviarPresenca,
+        20000
+    );
+
+    document.addEventListener(
+        "visibilitychange",
+        function () {
+
+            if (!document.hidden) {
+                enviarPresenca();
+            }
+
+        }
+    );
+
+    window.addEventListener(
+        "pageshow",
+        enviarPresenca
+    );
+
+})();
+</script>
+
+
+<script id="LUKA-REVENDEDOR-HEARTBEAT-2026">
+(function(){
+
+    async function lukaRevendedorHeartbeat(){
+        try{
+            await fetch(
+                "/api/presenca",
+                {
+                    method:"POST",
+                    credentials:"same-origin",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:"{}",
+                    cache:"no-store"
+                }
+            );
+        }catch(e){}
+    }
+
+    lukaRevendedorHeartbeat();
+
+    setInterval(
+        lukaRevendedorHeartbeat,
+        15000
+    );
+
+})();
+</script>
+
+
+<div class="lf-photo-modal" id="lfPhotoModal">
+ <div class="lf-photo-box">
+  <h2>Foto de perfil</h2>
+  <p>Escolha uma imagem para aparecer no seu painel.</p>
+
+  <div class="lf-photo-preview" id="lfPhotoPreview">
+   <img id="lfPhotoPreviewImg" alt="">
+   <span id="lfPhotoPreviewLetter">R</span>
+  </div>
+
+  <input
+   id="lfPhotoInput"
+   type="file"
+   accept="image/*"
+   style="width:100%;margin-bottom:15px"
+  >
+
+  <div class="lf-photo-buttons">
+   <button class="lf-cancel-photo" type="button" onclick="lfFecharFoto()">Cancelar</button>
+   <button class="lf-save-photo" type="button" onclick="lfSalvarFoto()">Salvar</button>
+  </div>
+ </div>
+</div>
+
+
+<script id="lukafilmes-revendedor-upgrade-js">
+(function(){
+
+ const $=id=>document.getElementById(id);
+
+ window.lfNovoUsuario=function(){
+   const el=$("clienteUsuario");
+   if(el){
+     el.scrollIntoView({behavior:"smooth",block:"center"});
+     setTimeout(()=>el.focus(),350);
+   }
+ };
+
+ window.lfAbrirUsuarios=function(){
+   const alvo=document.querySelector("table") ||
+               document.querySelector("#listaClientes") ||
+               document.querySelector("#clientes");
+   if(alvo) alvo.scrollIntoView({behavior:"smooth",block:"start"});
+   else window.scrollTo({top:500,behavior:"smooth"});
+ };
+
+ window.lfAtualizar=function(){
+   try{
+     if(typeof carregarClientes==="function") carregarClientes();
+   }catch(e){}
+   try{
+     if(typeof carregar==="function") carregar();
+   }catch(e){}
+   setTimeout(lfAtualizarCards,500);
+ };
+
+ function lfAtualizarCards(){
+
+   let total=0;
+   let online=0;
+   let ativos=0;
+   let expirando=0;
+
+   const rows=[...document.querySelectorAll("table tbody tr")];
+
+   rows.forEach(row=>{
+     const txt=(row.innerText||"").toLowerCase();
+
+     if(!txt.includes("nenhum")) total++;
+
+     if(
+       txt.includes("online") ||
+       txt.includes("conectado")
+     ) online++;
+
+     if(
+       txt.includes("ativo") ||
+       txt.includes("ativa")
+     ) ativos++;
+
+     if(
+       txt.includes("expir") ||
+       txt.includes("vence hoje")
+     ) expirando++;
+   });
+
+   if($("lfTotalUsuarios")) $("lfTotalUsuarios").textContent=total;
+   if($("lfTotalOnline")) $("lfTotalOnline").textContent=online;
+   if($("lfTotalAtivos")) $("lfTotalAtivos").textContent=ativos;
+   if($("lfTotalExpirando")) $("lfTotalExpirando").textContent=expirando;
+ }
+
+ window.lfAbrirFoto=function(){
+   const modal=$("lfPhotoModal");
+   if(modal) modal.classList.add("show");
+ };
+
+ window.lfFecharFoto=function(){
+   const modal=$("lfPhotoModal");
+   if(modal) modal.classList.remove("show");
+ };
+
+ window.lfSalvarFoto=function(){
+
+   const input=$("lfPhotoInput");
+   if(!input || !input.files || !input.files[0]){
+     alert("Escolha uma foto primeiro.");
+     return;
+   }
+
+   const file=input.files[0];
+
+   if(!file.type.startsWith("image/")){
+     alert("Escolha uma imagem válida.");
+     return;
+   }
+
+   if(file.size>5*1024*1024){
+     alert("A foto deve ter no máximo 5 MB.");
+     return;
+   }
+
+   const reader=new FileReader();
+
+   reader.onload=function(){
+     try{
+       localStorage.setItem("lukafilmes_revendedor_foto",reader.result);
+     }catch(e){
+       alert("Não foi possível salvar essa foto no navegador.");
+       return;
+     }
+
+     lfAplicarFoto(reader.result);
+     lfFecharFoto();
+   };
+
+   reader.readAsDataURL(file);
+ };
+
+ function lfAplicarFoto(src){
+
+   const imgs=[
+     $("lfAvatarImg"),
+     $("lfBrandLogoImg"),
+     $("lfPhotoPreviewImg")
+   ];
+
+   imgs.forEach(img=>{
+     if(img){
+       img.src=src;
+       img.style.display="block";
+     }
+   });
+
+   ["lfAvatarLetter","lfBrandLetter","lfPhotoPreviewLetter"].forEach(id=>{
+     const el=$(id);
+     if(el) el.style.display="none";
+   });
+ }
+
+ function lfCarregarFoto(){
+   try{
+     const src=localStorage.getItem("lukafilmes_revendedor_foto");
+     if(src) lfAplicarFoto(src);
+   }catch(e){}
+ }
+
+ function lfNome(){
+   const fontes=[
+     $("nomeRevendedor"),
+     $("revendedorNome"),
+     $("usuarioNome"),
+     $("nomeUsuario")
+   ];
+
+   for(const el of fontes){
+     if(el && el.textContent.trim()){
+       return el.textContent.trim();
+     }
+   }
+
+   return "Revendedor";
+ }
+
+ function lfAplicarNome(){
+   const nome=lfNome();
+
+   if($("lfNomeRevendedor")) $("lfNomeRevendedor").textContent=nome;
+   if($("lfSaudacaoNome")) $("lfSaudacaoNome").textContent=nome;
+
+   const letra=(nome[0]||"R").toUpperCase();
+
+   if($("lfAvatarLetter")) $("lfAvatarLetter").textContent=letra;
+   if($("lfBrandLetter")) $("lfBrandLetter").textContent=letra;
+   if($("lfPhotoPreviewLetter")) $("lfPhotoPreviewLetter").textContent=letra;
+ }
+
+ document.addEventListener("DOMContentLoaded",function(){
+
+   lfCarregarFoto();
+   lfAplicarNome();
+
+   setTimeout(lfAtualizarCards,700);
+
+   setInterval(lfAtualizarCards,3000);
+
+   document.addEventListener("click",function(e){
+     if(e.target===$("lfPhotoModal")){
+       lfFecharFoto();
+     }
+   });
+
+ });
+
+})();
+</script>
+
+
+<script id="lukafilmes-revendedor-modern-js">
+(function(){
+
+ function el(id){
+  return document.getElementById(id);
+ }
+
+ window.lfNovoCliente=function(){
+  const alvo=
+   el("clienteUsuario") ||
+   document.querySelector("#formCliente input");
+
+  if(alvo){
+   alvo.scrollIntoView({behavior:"smooth",block:"center"});
+   setTimeout(()=>alvo.focus(),300);
+  }else{
+   window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+  }
+ };
+
+ window.lfIrClientes=function(){
+  const alvo=
+   document.querySelector("table") ||
+   document.querySelector("#listaClientes");
+
+  if(alvo){
+   alvo.scrollIntoView({behavior:"smooth",block:"start"});
+  }else{
+   window.scrollTo({top:500,behavior:"smooth"});
+  }
+ };
+
+ window.lfAtualizarPainel=function(){
+
+  try{
+   if(typeof carregarClientes==="function") carregarClientes();
+  }catch(e){}
+
+  try{
+   if(typeof carregar==="function") carregar();
+  }catch(e){}
+
+  setTimeout(lfContar,700);
+ };
+
+ function lfContar(){
+
+  const linhas=[...document.querySelectorAll("tbody tr")]
+   .filter(x=>!(x.innerText||"").toLowerCase().includes("nenhum"));
+
+  let total=linhas.length;
+  let online=0;
+  let ativos=0;
+  let expirando=0;
+
+  linhas.forEach(l=>{
+   const t=(l.innerText||"").toLowerCase();
+
+   if(
+    t.includes("online") ||
+    t.includes("conectado")
+   ) online++;
+
+   if(
+    t.includes("ativo") ||
+    t.includes("ativa")
+   ) ativos++;
+
+   if(
+    t.includes("expir") ||
+    t.includes("vence hoje")
+   ) expirando++;
+  });
+
+  if(el("lfUsuariosTotal"))
+   el("lfUsuariosTotal").textContent=total;
+
+  if(el("lfUsuariosOnline"))
+   el("lfUsuariosOnline").textContent=online;
+
+  if(el("lfUsuariosAtivos"))
+   el("lfUsuariosAtivos").textContent=ativos;
+
+  if(el("lfUsuariosExpirando"))
+   el("lfUsuariosExpirando").textContent=expirando;
+ }
+
+ function lfNome(){
+
+  const candidatos=[
+   "#nomeRevendedor",
+   "#revendedorNome",
+   "#usuarioNome",
+   "#nomeUsuario"
+  ];
+
+  for(const seletor of candidatos){
+   const x=document.querySelector(seletor);
+   if(x && x.textContent.trim())
+    return x.textContent.trim();
+  }
+
+  return "Revendedor";
+ }
+
+ function iniciar(){
+
+  const nome=lfNome();
+
+  if(el("lfRevNome"))
+   el("lfRevNome").textContent=nome;
+
+  if(el("lfRevAvatar"))
+   el("lfRevAvatar").textContent=(nome[0]||"R").toUpperCase();
+
+  lfContar();
+
+  setTimeout(lfContar,1000);
+  setInterval(lfContar,4000);
+ }
+
+ if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",iniciar);
+ }else{
+  iniciar();
+ }
+
+})();
+</script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>LUKAFILMES - Login</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #080808;
+            color: white;
+            font-family: Arial, sans-serif;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login {
+            width: 90%;
+            max-width: 400px;
+            background: #151515;
+            padding: 35px;
+            border-radius: 10px;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .logo span {
+            color: #e50914;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            background: #e50914;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #b20710;
+        }
+
+        #mensagem {
+            margin-top: 15px;
+            text-align: center;
+            color: #ff5555;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="login">
+
+        <div class="logo">
+            LUKA<span>FILMES</span>
+        </div>
+
+        <form id="loginForm">
+
+            <input
+                id="usuario"
+                type="text"
+                placeholder="Usuário"
+                required
+            >
+
+            <input
+                id="senha"
+                type="password"
+                placeholder="Senha"
+                required
+            >
+
+            <button type="submit">
+                ENTRAR
+            </button>
+
+        </form>
+
+        <div id="mensagem"></div>
+
+    </div>
+
+
+    <script>
+
+        document
+            .getElementById("loginForm")
+            .addEventListener("submit", async function(event) {
+
+                event.preventDefault();
+
+                const usuario =
+                    document.getElementById("usuario").value;
+
+                const senha =
+                    document.getElementById("senha").value;
+
+                const resposta = await fetch(
+                    "/api/login",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            usuario,
+                            senha
+                        })
+                    }
+                );
+
+                const dados = await resposta.json();
+
+                if (dados.sucesso) {
+
+                    window.location.href = "/";
+
+                } else {
+
+                    document
+                        .getElementById("mensagem")
+                        .textContent = dados.mensagem;
+
+                }
+
+            });
+
+    </script>
+
+</body>
+
+</html>

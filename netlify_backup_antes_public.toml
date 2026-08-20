@@ -1,0 +1,38 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from = "/status"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from = "/admin.html"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from = "/logout"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from = "/paginas/filme"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from = "/paginas/filme/*"
+  to = "/.netlify/functions/api"
+  status = 200

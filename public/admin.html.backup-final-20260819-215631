@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07070a">
+<title>LUKA FILMES — Administração</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Inter,Arial,sans-serif;
+ background:#07070a;
+ color:#f5f5f5
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.top{
+ position:sticky;
+ top:0;
+ z-index:20;
+ padding:18px 20px;
+ background:rgba(10,10,14,.94);
+ backdrop-filter:blur(18px);
+ border-bottom:1px solid #25252d
+}
+.topin{
+ max-width:1400px;
+ margin:auto;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:15px
+}
+.logo{font-size:22px;font-weight:900}
+.logo b{color:#ef4444}
+.online{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ color:#22c55e;
+ font-size:13px
+}
+.dot{
+ width:9px;height:9px;border-radius:50%;
+ background:#22c55e;
+ box-shadow:0 0 12px #22c55e
+}
+.wrap{max-width:1400px;margin:auto;padding:25px 18px}
+.cards{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:15px;
+ margin-bottom:22px
+}
+.card{
+ background:linear-gradient(145deg,#15151c,#0d0d12);
+ border:1px solid #272731;
+ border-radius:18px;
+ padding:20px;
+ box-shadow:0 15px 40px #0005
+}
+.label{color:#92929e;font-size:13px}
+.num{font-size:32px;font-weight:900;margin-top:8px}
+.red{color:#ef4444}.green{color:#22c55e}.blue{color:#60a5fa}.yellow{color:#facc15}
+.panel{
+ background:#0d0d12;
+ border:1px solid #272731;
+ border-radius:20px;
+ padding:20px;
+ margin-bottom:20px
+}
+.panelhead{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ margin-bottom:18px
+}
+h2{font-size:18px;margin:0}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+ border:0;
+ border-radius:11px;
+ padding:11px 15px;
+ font-weight:800
+}
+.primary{background:#ef4444;color:white}
+.secondary{background:#24242d;color:white}
+.greenbtn{background:#16a34a;color:white}
+table{width:100%;border-collapse:collapse}
+th,td{
+ padding:14px 10px;
+ border-bottom:1px solid #23232b;
+ text-align:left;
+ font-size:14px
+}
+th{color:#8f8f9b;font-size:12px;text-transform:uppercase}
+.badge{
+ display:inline-flex;
+ padding:5px 9px;
+ border-radius:999px;
+ font-size:11px;
+ font-weight:900
+}
+.b-usuario{background:#172554;color:#93c5fd}
+.b-teste{background:#422006;color:#fbbf24}
+.b-revendedor{background:#3b0764;color:#d8b4fe}
+.b-admin{background:#450a0a;color:#fca5a5}
+.b-ativo{background:#052e16;color:#86efac}
+.b-suspenso{background:#3f0d0d;color:#fca5a5}
+.muted{color:#777783}
+.empty{
+ text-align:center;
+ padding:45px 10px;
+ color:#777783
+}
+.modal{
+ position:fixed;
+ inset:0;
+ background:#000b;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ z-index:50;
+ padding:20px
+}
+.modal.show{display:flex}
+.box{
+ width:min(480px,100%);
+ background:#111118;
+ border:1px solid #30303a;
+ border-radius:20px;
+ padding:22px
+}
+.field{margin:13px 0}
+.field label{
+ display:block;
+ margin-bottom:7px;
+ color:#aaaab5;
+ font-size:13px
+}
+.field input,.field select{
+ width:100%;
+ background:#09090d;
+ border:1px solid #30303a;
+ color:white;
+ border-radius:10px;
+ padding:12px
+}
+.msg{
+ margin-top:12px;
+ padding:10px;
+ border-radius:10px;
+ display:none
+}
+.ok{display:block;background:#052e16;color:#86efac}
+.err{display:block;background:#450a0a;color:#fca5a5}
+@media(max-width:850px){
+ .cards{grid-template-columns:repeat(2,1fr)}
+ table{min-width:800px}
+ .tablewrap{overflow:auto}
+}
+@media(max-width:500px){
+ .cards{grid-template-columns:1fr 1fr}
+ .num{font-size:26px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="top">
+ <div class="topin">
+  <div class="logo">LUKA <b>FILMES</b></div>
+  <div class="online"><span class="dot"></span> PAINEL ONLINE</div>
+ </div>
+</header>
+
+<main class="wrap">
+
+ <section class="cards">
+  <div class="card">
+   <div class="label">TOTAL DE CONTAS</div>
+   <div class="num blue" id="total">0</div>
+  </div>
+
+  <div class="card">
+   <div class="label">USUÁRIOS</div>
+   <div class="num green" id="usuarios">0</div>
+  </div>
+
+  <div class="card">
+   <div class="label">TESTES</div>
+   <div class="num yellow" id="testes">0</div>
+  </div>
+
+  <div class="card">
+   <div class="label">REVENDEDORES</div>
+   <div class="num red" id="revendedores">0</div>
+  </div>
+ </section>
+
+ <section class="panel">
+  <div class="panelhead">
+   <h2>Gerenciamento de contas</h2>
+
+   <div class="actions">
+    <button class="btn secondary" onclick="carregar()">↻ Atualizar</button>
+    <button class="btn primary" onclick="abrirModal()">+ Criar conta</button>
+   </div>
+  </div>
+
+  <div class="tablewrap">
+   <table>
+    <thead>
+     <tr>
+      <th>ID</th>
+      <th>Usuário</th>
+      <th>Tipo</th>
+      <th>Status</th>
+      <th>Validade</th>
+      <th>Conexões</th>
+     </tr>
+    </thead>
+    <tbody id="lista">
+     <tr><td colspan="6" class="empty">Carregando usuários...</td></tr>
+    </tbody>
+   </table>
+  </div>
+ </section>
+
+</main>
+
+<div class="modal" id="modal">
+ <div class="box">
+  <div class="panelhead">
+   <h2>Criar nova conta</h2>
+   <button class="btn secondary" onclick="fecharModal()">✕</button>
+  </div>
+
+  <form onsubmit="criar(event)">
+
+   <div class="field">
+    <label>Usuário</label>
+    <input id="usuario" required autocomplete="off">
+   </div>
+
+   <div class="field">
+    <label>Senha</label>
+    <input id="senha" required type="text" autocomplete="off">
+   </div>
+
+   <div class="field">
+    <label>Tipo</label>
+    <select id="tipo">
+     <option value="usuario">Usuário</option>
+     <option value="teste">Teste</option>
+     <option value="revendedor">Revendedor</option>
+    </select>
+   </div>
+
+   <div class="field">
+    <label>Validade em dias</label>
+    <input id="dias" type="number" value="30" min="1" required>
+   </div>
+
+   <div class="field">
+    <label>Limite de conexões</label>
+    <input id="limite" type="number" value="1" min="1" required>
+   </div>
+
+   <button class="btn primary" style="width:100%">CRIAR CONTA</button>
+
+   <div id="msg" class="msg"></div>
+  </form>
+ </div>
+</div>
+
+<script>
+let carregando=false;
+
+function esc(v){
+ return String(v ?? "")
+  .replaceAll("&","&amp;")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;")
+  .replaceAll('"',"&quot;");
+}
+
+function badgeTipo(tipo){
+ const t=tipo||"usuario";
+ return `<span class="badge b-${esc(t)}">${esc(t.toUpperCase())}</span>`;
+}
+
+function badgeStatus(status){
+ const s=status||"ativo";
+ return `<span class="badge b-${esc(s)}">${esc(s.toUpperCase())}</span>`;
+}
+
+function validade(v){
+ if(!v) return "—";
+ const d=new Date(v);
+ if(Number.isNaN(d.getTime())) return esc(v);
+ return d.toLocaleDateString("pt-BR");
+}
+
+async function carregar(){
+ if(carregando)return;
+ carregando=true;
+
+ const lista=document.getElementById("lista");
+ lista.innerHTML='<tr><td colspan="6" class="empty">Atualizando...</td></tr>';
+
+ try{
+  const r=await fetch("/api/admin/usuarios/listar",{
+   credentials:"same-origin",
+   cache:"no-store"
+  });
+
+  const data=await r.json();
+
+  if(!r.ok || !data.sucesso){
+   throw new Error(data.mensagem || "Não foi possível carregar.");
+  }
+
+  const users=Array.isArray(data.usuarios)?data.usuarios:[];
+
+  document.getElementById("total").textContent=users.length;
+  document.getElementById("usuarios").textContent=
+   users.filter(u=>u.tipo==="usuario").length;
+  document.getElementById("testes").textContent=
+   users.filter(u=>u.tipo==="teste").length;
+  document.getElementById("revendedores").textContent=
+   users.filter(u=>u.tipo==="revendedor").length;
+
+  if(!users.length){
+   lista.innerHTML='<tr><td colspan="6" class="empty">Nenhuma conta encontrada no banco.</td></tr>';
+   return;
+  }
+
+  lista.innerHTML=users.map(u=>`
+   <tr>
+    <td>#${esc(u.id)}</td>
+    <td><strong>${esc(u.usuario)}</strong></td>
+    <td>${badgeTipo(u.tipo)}</td>
+    <td>${badgeStatus(u.status)}</td>
+    <td>${validade(u.validade)}</td>
+    <td>${Number(u.conexoes_utilizadas||0)} / ${Number(u.limite_conexoes||0)}</td>
+   </tr>
+  `).join("");
+
+ }catch(e){
+  console.error(e);
+
+  lista.innerHTML=`
+   <tr>
+    <td colspan="6" class="empty">
+     ❌ ${esc(e.message)}
+    </td>
+   </tr>
+  `;
+
+ }finally{
+  carregando=false;
+ }
+}
+
+function abrirModal(){
+ document.getElementById("modal").classList.add("show");
+ document.getElementById("usuario").focus();
+}
+
+function fecharModal(){
+ document.getElementById("modal").classList.remove("show");
+ document.getElementById("msg").className="msg";
+ document.getElementById("msg").textContent="";
+}
+
+async function criar(e){
+ e.preventDefault();
+
+ const msg=document.getElementById("msg");
+ msg.className="msg";
+ msg.textContent="Criando...";
+
+ try{
+  const r=await fetch("/api/admin/usuarios/criar-painel",{
+   method:"POST",
+   credentials:"same-origin",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    usuario:document.getElementById("usuario").value.trim(),
+    senha:document.getElementById("senha").value,
+    tipo:document.getElementById("tipo").value,
+    dias:Number(document.getElementById("dias").value),
+    limite_conexoes:Number(document.getElementById("limite").value)
+   })
+  });
+
+  const data=await r.json();
+
+  if(!r.ok || !data.sucesso){
+   throw new Error(data.mensagem || "Erro ao criar conta.");
+  }
+
+  msg.className="msg ok";
+  msg.textContent="✅ Conta criada com sucesso!";
+
+  document.querySelector("form").reset();
+  document.getElementById("dias").value=30;
+  document.getElementById("limite").value=1;
+
+  await carregar();
+
+  setTimeout(fecharModal,700);
+
+ }catch(e){
+  msg.className="msg err";
+  msg.textContent="❌ "+e.message;
+ }
+}
+
+document.getElementById("modal").addEventListener("click",e=>{
+ if(e.target.id==="modal")fecharModal();
+});
+
+carregar();
+setInterval(carregar,15000);
+</script>
+
+</body>
+</html>

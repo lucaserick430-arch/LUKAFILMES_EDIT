@@ -1,0 +1,315 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+
+body {
+background: #080808;
+color: white;
+font-family: Arial, sans-serif;
+}
+
+header {
+height: 70px;
+background: #050505;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 5%;
+}
+
+.logo {
+font-size: 26px;
+font-weight: bold;
+}
+
+.logo span {
+color: #e50914;
+}
+
+nav {
+display: flex;
+gap: 25px;
+}
+
+nav a {
+color: white;
+text-decoration: none;
+}
+
+header button {
+background: none;
+border: none;
+color: white;
+font-size: 20px;
+cursor: pointer;
+}
+
+.hero {
+min-height: 500px;
+display: flex;
+align-items: center;
+padding: 60px 8%;
+
+```
+background:
+    linear-gradient(90deg, #080808 20%, transparent),
+    linear-gradient(0deg, #080808, transparent);
+```
+
+}
+
+.hero h1 {
+font-size: 55px;
+margin: 15px 0;
+}
+
+.hero p {
+color: #ccc;
+font-size: 18px;
+}
+
+.hero-label {
+color: #e50914;
+font-weight: bold;
+}
+
+/* ================================
+PESQUISA
+================================ */
+
+.pesquisa {
+display: flex;
+margin-top: 30px;
+}
+
+.pesquisa input {
+width: 400px;
+padding: 16px;
+border: none;
+outline: none;
+font-size: 16px;
+}
+
+.pesquisa button {
+padding: 16px 25px;
+border: none;
+background: #e50914;
+color: white;
+font-weight: bold;
+cursor: pointer;
+}
+
+.pesquisa button:hover {
+background: #b20710;
+}
+
+/* ================================
+RESULTADOS DA PESQUISA
+================================ */
+
+#resultadosBusca {
+width: 100%;
+max-width: 1400px;
+margin: 25px auto 40px;
+padding: 0 5%;
+box-sizing: border-box;
+}
+
+.titulo-resultados {
+margin: 0 0 20px;
+font-size: 24px;
+}
+
+.resultados-filmes {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+gap: 20px;
+}
+
+.resultados-filmes .filme {
+min-width: 0;
+cursor: pointer;
+}
+
+.resultados-filmes .capa {
+width: 100%;
+height: 260px;
+overflow: hidden;
+border-radius: 6px;
+background: #222;
+}
+
+.resultados-filmes .capa img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+}
+
+.resultados-filmes .filme h3 {
+margin-top: 10px;
+font-size: 16px;
+}
+
+.resultados-filmes .filme p {
+margin-top: 6px;
+color: #aaa;
+font-size: 14px;
+}
+
+.busca-status {
+padding: 25px;
+text-align: center;
+font-size: 18px;
+color: #ccc;
+}
+
+/* ================================
+CATEGORIAS
+================================ */
+
+.categoria {
+padding: 30px 5%;
+}
+
+.categoria-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.controles {
+display: flex;
+gap: 8px;
+}
+
+.seta {
+background: #222;
+border: none;
+color: white;
+padding: 12px;
+cursor: pointer;
+}
+
+.seta:hover {
+background: #e50914;
+}
+
+.filmes {
+display: flex;
+gap: 18px;
+overflow-x: auto;
+scrollbar-width: none;
+}
+
+.filmes::-webkit-scrollbar {
+display: none;
+}
+
+.filme {
+min-width: 180px;
+cursor: pointer;
+}
+
+.capa {
+height: 260px;
+background: #222;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 50px;
+border-radius: 6px;
+overflow: hidden;
+}
+
+.capa img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+}
+
+.filme h3 {
+margin-top: 10px;
+}
+
+.filme p {
+color: #aaa;
+margin-top: 6px;
+}
+
+/* ================================
+RODAPÉ
+================================ */
+
+footer {
+margin-top: 50px;
+padding: 40px 5%;
+background: #050505;
+text-align: center;
+}
+
+footer p {
+color: #888;
+margin-top: 10px;
+}
+
+/* ================================
+CELULAR
+================================ */
+
+@media (max-width: 700px) {
+
+```
+nav {
+    display: none;
+}
+
+.hero {
+    min-height: 450px;
+    padding: 40px 5%;
+}
+
+.hero h1 {
+    font-size: 38px;
+}
+
+.pesquisa {
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pesquisa input {
+    width: 100%;
+}
+
+.pesquisa button {
+    width: 100%;
+}
+
+.filme {
+    min-width: 140px;
+}
+
+.capa {
+    height: 210px;
+}
+
+#resultadosBusca {
+    padding: 0 5%;
+}
+
+.resultados-filmes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.resultados-filmes .capa {
+    height: 220px;
+}
+```
+
+}

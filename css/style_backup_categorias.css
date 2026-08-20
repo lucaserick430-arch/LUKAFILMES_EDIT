@@ -1,0 +1,318 @@
+﻿* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+
+body {
+background: #080808;
+color: white;
+font-family: Arial, sans-serif;
+}
+
+header {
+height: 70px;
+background: #050505;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 5%;
+}
+
+.logo {
+font-size: 26px;
+font-weight: bold;
+}
+
+.logo span {
+color: #e50914;
+}
+
+nav {
+display: flex;
+gap: 25px;
+}
+
+nav a {
+color: white;
+text-decoration: none;
+}
+
+header button {
+background: none;
+border: none;
+color: white;
+font-size: 20px;
+cursor: pointer;
+}
+
+.hero {
+min-height: 500px;
+display: flex;
+align-items: center;
+padding: 60px 8%;
+
+```
+background:
+    linear-gradient(90deg, #080808 20%, transparent),
+    linear-gradient(0deg, #080808, transparent);
+```
+
+}
+
+.hero h1 {
+font-size: 55px;
+margin: 15px 0;
+}
+
+.hero p {
+color: #ccc;
+font-size: 18px;
+}
+
+.hero-label {
+color: #e50914;
+font-weight: bold;
+}
+
+/* ================================
+PESQUISA
+================================ */
+
+.pesquisa {
+display: flex;
+margin-top: 30px;
+}
+
+.pesquisa input {
+width: 400px;
+padding: 16px;
+border: none;
+outline: none;
+font-size: 16px;
+}
+
+.pesquisa button {
+padding: 16px 25px;
+border: none;
+background: #e50914;
+color: white;
+font-weight: bold;
+cursor: pointer;
+}
+
+.pesquisa button:hover {
+background: #b20710;
+}
+
+/* ================================
+RESULTADOS DA PESQUISA
+================================ */
+
+#resultadosBusca {
+width: 100%;
+max-width: 1400px;
+margin: 25px auto 40px;
+padding: 0 5%;
+box-sizing: border-box;
+}
+
+.titulo-resultados {
+margin: 0 0 20px;
+font-size: 24px;
+}
+
+.resultados-filmes {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+gap: 20px;
+}
+
+.resultados-filmes .filme {
+min-width: 0;
+cursor: pointer;
+}
+
+.resultados-filmes .capa {
+width: 100%;
+height: 260px;
+overflow: hidden;
+border-radius: 6px;
+background: #222;
+}
+
+.resultados-filmes .capa img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+}
+
+.resultados-filmes .filme h3 {
+margin-top: 10px;
+font-size: 16px;
+}
+
+.resultados-filmes .filme p {
+margin-top: 6px;
+color: #aaa;
+font-size: 14px;
+}
+
+.busca-status {
+padding: 25px;
+text-align: center;
+font-size: 18px;
+color: #ccc;
+}
+
+/* ================================
+CATEGORIAS
+================================ */
+
+.categoria {
+padding: 30px 5%;
+}
+
+.categoria-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.controles {
+display: flex;
+gap: 8px;
+}
+
+.seta {
+background: #222;
+border: none;
+color: white;
+padding: 12px;
+cursor: pointer;
+}
+
+.seta:hover {
+background: #e50914;
+}
+
+.filmes {
+display: flex;
+gap: 18px;
+overflow-x: auto;
+scrollbar-width: none;
+}
+
+.filmes::-webkit-scrollbar {
+display: none;
+}
+
+.filme {
+min-width: 180px;
+cursor: pointer;
+}
+
+.capa {
+height: 260px;
+background: #222;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 50px;
+border-radius: 6px;
+overflow: hidden;
+}
+
+.capa img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+}
+
+.filme h3 {
+margin-top: 10px;
+}
+
+.filme p {
+color: #aaa;
+margin-top: 6px;
+}
+
+/* ================================
+RODAPÉ
+================================ */
+
+footer {
+margin-top: 50px;
+padding: 40px 5%;
+background: #050505;
+text-align: center;
+}
+
+footer p {
+color: #888;
+margin-top: 10px;
+}
+
+/* ================================
+CELULAR
+================================ */
+
+@media (max-width: 700px) {
+
+```
+nav {
+    display: none;
+}
+
+.hero {
+    min-height: 450px;
+    padding: 40px 5%;
+}
+
+.hero h1 {
+    font-size: 38px;
+}
+
+.pesquisa {
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pesquisa input {
+    width: 100%;
+}
+
+.pesquisa button {
+    width: 100%;
+}
+
+.filme {
+    min-width: 140px;
+}
+
+.capa {
+    height: 210px;
+}
+
+#resultadosBusca {
+    padding: 0 5%;
+}
+
+.resultados-filmes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.resultados-filmes .capa {
+    height: 220px;
+}
+```
+
+}
+
+/* MODAL FILME */ .modal-filme{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:30px;box-sizing:border-box}.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(8px)}.modal-conteudo{position:relative;z-index:2;width:min(1100px,95vw);max-height:90vh;overflow-y:auto;background:#101010;border-radius:18px;box-shadow:0 25px 80px rgba(0,0,0,.8);overflow-x:hidden}.modal-fundo{position:absolute;top:0;left:0;width:100%;height:430px;background-size:cover;background-position:center;opacity:.9}.modal-corpo{position:relative;z-index:2;min-height:500px;display:flex;gap:35px;align-items:flex-end;padding:300px 40px 40px;box-sizing:border-box;background:linear-gradient(to bottom,transparent 0%,rgba(16,16,16,.8) 55%,#101010 75%)}.modal-poster{width:220px;min-width:220px}.modal-poster img{width:100%;display:block;border-radius:12px;box-shadow:0 15px 40px rgba(0,0,0,.7)}.modal-informacoes{flex:1;color:#fff}.modal-tag{display:inline-block;margin-bottom:10px;padding:6px 12px;border-radius:20px;background:#e50914;color:#fff;font-size:12px;font-weight:bold}.modal-informacoes h1{margin:0 0 15px;font-size:clamp(28px,4vw,48px);line-height:1.1}.modal-meta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:25px;color:#ccc;font-size:14px}.modal-informacoes h2{margin:0 0 10px;font-size:22px}.modal-sinopse{color:#ddd;line-height:1.7;font-size:16px;margin:0 0 20px}.titulo-original{color:#aaa;font-size:14px}.modal-fechar{position:absolute;top:18px;right:18px;z-index:10;width:42px;height:42px;border:0;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:22px;cursor:pointer;transition:.2s}.modal-fechar:hover{background:#e50914;transform:scale(1.08)}.modal-conteudo::-webkit-scrollbar{width:7px}.modal-conteudo::-webkit-scrollbar-thumb{background:#555;border-radius:10px}@media(max-width:700px){.modal-filme{padding:10px}.modal-conteudo{width:100%;max-height:94vh;border-radius:14px}.modal-fundo{height:300px}.modal-corpo{flex-direction:column;align-items:center;text-align:center;padding:210px 20px 30px;gap:20px}.modal-poster{width:160px;min-width:160px}.modal-meta{justify-content:center}.modal-sinopse{text-align:left}}
+/* SUGESTOES DE PESQUISA */ .pesquisa{position:relative}.pesquisa #sugestoesBusca{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:99999;background:#151515;border:1px solid rgba(255,255,255,.12);border-radius:12px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,.7)}.sugestao-filme{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.07);transition:.18s}.sugestao-filme:hover{background:#292929}.sugestao-capa{width:42px;height:58px;min-width:42px;border-radius:5px;overflow:hidden;background:#222;display:flex;align-items:center;justify-content:center;color:#fff}.sugestao-capa img{width:100%;height:100%;object-fit:cover}.sugestao-info{display:flex;flex-direction:column;gap:5px;min-width:0}.sugestao-info strong{color:#fff;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sugestao-info span{color:#aaa;font-size:12px}

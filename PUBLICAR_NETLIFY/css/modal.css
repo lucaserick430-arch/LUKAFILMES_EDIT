@@ -1,0 +1,159 @@
+.modal-filme {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.90);
+    backdrop-filter: blur(8px);
+}
+
+.modal-conteudo {
+    position: relative;
+    z-index: 2;
+    width: min(1100px, 94%);
+    min-height: 500px;
+    margin: 40px auto;
+    background: #111;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8);
+}
+
+.modal-fundo {
+    position: absolute;
+    inset: 0;
+    min-height: 600px;
+    background-size: cover;
+    background-position: center;
+}
+
+.modal-corpo {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    gap: 35px;
+    padding: 70px 45px 45px;
+    min-height: 600px;
+    align-items: flex-end;
+}
+
+.modal-poster {
+    width: 240px;
+    min-width: 240px;
+}
+
+.modal-poster img {
+    display: block;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.7);
+}
+
+.modal-informacoes {
+    max-width: 650px;
+}
+
+.modal-tag {
+    display: inline-block;
+    background: #e50914;
+    padding: 7px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.modal-informacoes h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    margin: 0 0 15px;
+    line-height: 1.1;
+}
+
+.modal-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 25px;
+    color: #ddd;
+}
+
+.modal-meta span {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 7px 10px;
+    border-radius: 5px;
+}
+
+.modal-informacoes h2 {
+    margin: 0 0 10px;
+    font-size: 22px;
+}
+
+.modal-sinopse {
+    color: #ddd;
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+.titulo-original {
+    color: #aaa;
+    margin-top: 20px;
+}
+
+.modal-fechar {
+    position: absolute;
+    z-index: 10;
+    top: 15px;
+    right: 15px;
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.modal-fechar:hover {
+    background: #e50914;
+}
+
+@media (max-width: 700px) {
+
+    .modal-conteudo {
+        width: 96%;
+        margin: 15px auto;
+    }
+
+    .modal-corpo {
+        flex-direction: column;
+        align-items: center;
+        padding: 65px 22px 30px;
+    }
+
+    .modal-poster {
+        width: 190px;
+        min-width: 190px;
+    }
+
+    .modal-informacoes {
+        width: 100%;
+    }
+
+    .modal-informacoes h1 {
+        text-align: center;
+    }
+
+    .modal-meta {
+        justify-content: center;
+    }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "lukafilmes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@netlify/blobs": "^10.7.12",
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^13.0.3",
+    "cheerio": "^1.2.0",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "serverless-http": "^4.0.0"
+  }
+}

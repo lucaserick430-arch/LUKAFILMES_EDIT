@@ -1,0 +1,1101 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LUKAFILMES - Série</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: #050505;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.pagina-serie {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 80px;
+    background: #050505;
+}
+
+/* ==========================================
+   FUNDO
+   ========================================== */
+
+.pagina-serie::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 780px;
+
+    background-image:
+        linear-gradient(
+            to bottom,
+            rgba(5,5,5,.15),
+            rgba(5,5,5,.30) 35%,
+            rgba(5,5,5,.65) 65%,
+            #050505 100%
+        ),
+        var(--fundo-serie);
+
+    background-size: cover;
+    background-position: center top;
+
+    filter: blur(2px);
+
+    transform: scale(1.03);
+
+    opacity: .9;
+
+    z-index: 0;
+}
+
+.pagina-serie::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 25%,
+            rgba(5,5,5,.25) 45%,
+            #050505 78%
+        );
+
+    z-index: 0;
+
+    pointer-events: none;
+}
+
+/* ==========================================
+   VOLTAR
+   ========================================== */
+
+.voltar-area {
+
+    position: relative;
+
+    z-index: 5;
+
+    max-width: 1200px;
+
+    margin: auto;
+
+    padding: 25px;
+}
+
+.voltar {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 11px 18px;
+
+    color: #fff;
+
+    text-decoration: none;
+
+    background: rgba(0,0,0,.55);
+
+    border: 1px solid rgba(255,255,255,.14);
+
+    border-radius: 30px;
+
+    backdrop-filter: blur(12px);
+
+    font-weight: bold;
+
+    transition: .25s;
+}
+
+.voltar:hover {
+
+    background: #e50914;
+
+    border-color: #e50914;
+
+    transform: translateX(-3px);
+}
+
+/* ==========================================
+   DETALHES
+   ========================================== */
+
+.detalhes-serie {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    max-width: 1000px;
+
+    margin: 40px auto 0;
+
+    padding: 0 20px;
+
+    text-align: center;
+}
+
+/* ==========================================
+   CAPA
+   ========================================== */
+
+.poster-serie {
+
+    width: 270px;
+
+    margin: 0 auto 25px;
+
+}
+
+.poster-serie img {
+
+    width: 100%;
+
+    display: block;
+
+    border-radius: 17px;
+
+    border: 1px solid rgba(255,255,255,.18);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.9);
+
+}
+
+/* ==========================================
+   TITULO
+   ========================================== */
+
+#tituloSerie {
+
+    margin: 0 0 15px;
+
+    font-size: clamp(34px,5vw,58px);
+
+    line-height: 1.05;
+
+    font-weight: 900;
+
+    text-shadow:
+        0 8px 35px rgba(0,0,0,.95);
+}
+
+.dados-serie {
+
+    color: #ddd;
+
+    font-size: 15px;
+
+    margin-bottom: 18px;
+}
+
+/* ==========================================
+   SINOPSE
+   ========================================== */
+
+.sinopse-box {
+
+    width: 100%;
+
+    max-width: 850px;
+
+    margin: 25px auto 0;
+
+    padding: 30px 35px;
+
+    text-align: left;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.075),
+            rgba(255,255,255,.025)
+        );
+
+    border: 1px solid rgba(255,255,255,.10);
+
+    border-radius: 20px;
+
+    backdrop-filter: blur(16px);
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.55);
+}
+
+.sinopse-box h2 {
+
+    margin: 0 0 15px;
+
+    font-size: 22px;
+}
+
+.sinopse {
+
+    margin: 0;
+
+    color: #d1d1d1;
+
+    font-size: 16px;
+
+    line-height: 1.8;
+}
+
+/* ==========================================
+   TEMPORADAS
+   ========================================== */
+
+.temporadas {
+
+    position: relative;
+
+    z-index: 3;
+
+    width: calc(100% - 40px);
+
+    max-width: 1000px;
+
+    margin: 55px auto 0;
+
+    padding: 30px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.075),
+            rgba(255,255,255,.025)
+        );
+
+    border: 1px solid rgba(255,255,255,.10);
+
+    border-radius: 22px;
+
+    backdrop-filter: blur(16px);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.65);
+}
+
+.temporadas h2 {
+
+    margin: 0 0 20px;
+
+    font-size: 26px;
+}
+
+#selectTemporada {
+
+    width: 100%;
+
+    padding: 14px 16px;
+
+    color: #fff;
+
+    background: #151515;
+
+    border: 1px solid rgba(255,255,255,.15);
+
+    border-radius: 10px;
+
+    outline: none;
+
+    font-size: 16px;
+
+    cursor: pointer;
+}
+
+/* ==========================================
+   EPISODIOS
+   ========================================== */
+
+.episodios {
+
+    margin-top: 25px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(180px,1fr));
+
+    gap: 14px;
+}
+
+.episodio {
+
+    padding: 17px;
+
+    text-align: left;
+
+    color: #fff;
+
+    background:
+        rgba(255,255,255,.06);
+
+    border: 1px solid rgba(255,255,255,.10);
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    transition: .25s;
+}
+
+.episodio:hover {
+
+    background: #e50914;
+
+    transform: translateY(-3px);
+
+    border-color: #e50914;
+}
+
+.episodio strong {
+
+    display: block;
+
+    margin-bottom: 6px;
+}
+
+.episodio small {
+
+    color: #aaa;
+}
+
+.episodio:hover small {
+
+    color: #fff;
+}
+
+/* ==========================================
+   PLAYER
+   ========================================== */
+
+.player-serie {
+
+    position: relative;
+
+    z-index: 3;
+
+    width: calc(100% - 40px);
+
+    max-width: 1000px;
+
+    margin: 55px auto 0;
+
+    padding: 30px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.075),
+            rgba(255,255,255,.025)
+        );
+
+    border: 1px solid rgba(255,255,255,.10);
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.65);
+
+    backdrop-filter: blur(16px);
+}
+
+.player-serie h2 {
+
+    margin: 0 0 22px;
+
+    font-size: 26px;
+}
+
+.player-video {
+
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    overflow: hidden;
+
+    background: #000;
+
+    border-radius: 15px;
+}
+
+.player-video iframe {
+
+    width: 100%;
+
+    height: 100%;
+
+    border: 0;
+
+    display: block;
+}
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media(max-width:700px) {
+
+    .voltar-area {
+
+        padding: 18px 15px 0;
+
+    }
+
+    .detalhes-serie {
+
+        margin-top: 35px;
+
+        padding: 0 15px;
+
+    }
+
+    .poster-serie {
+
+        width: 205px;
+
+    }
+
+    .sinopse-box {
+
+        padding: 22px 20px;
+
+    }
+
+    .temporadas,
+    .player-serie {
+
+        width: calc(100% - 24px);
+
+        padding: 18px 14px;
+
+        border-radius: 17px;
+
+    }
+
+    .episodios {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="pagina-serie">
+
+    <div class="voltar-area">
+
+        <a href="series.html" class="voltar">
+            ← Voltar para séries
+        </a>
+
+    </div>
+
+
+    <main class="detalhes-serie">
+
+        <div class="poster-serie">
+
+            <img
+                id="posterSerie"
+                src=""
+                alt="Capa da série">
+
+        </div>
+
+
+        <h1 id="tituloSerie">
+            Carregando...
+        </h1>
+
+
+        <div
+            id="dadosSerie"
+            class="dados-serie">
+        </div>
+
+
+        <div class="sinopse-box">
+
+            <h2>
+                📝 Sinopse
+            </h2>
+
+            <p
+                id="sinopseSerie"
+                class="sinopse">
+                Carregando sinopse...
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <!-- ======================================
+         TEMPORADAS
+         ====================================== -->
+
+    <section class="temporadas">
+
+        <h2>
+            📚 Temporadas e episódios
+        </h2>
+
+        <select id="selectTemporada">
+        </select>
+
+        <div
+            id="episodios"
+            class="episodios">
+
+            <div class="episodio">
+                Carregando episódios...
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================
+         PLAYER
+         ====================================== -->
+
+    <section
+        id="playerSerie"
+        class="player-serie"
+        style="display:none;">
+
+        <h2 id="tituloPlayer">
+            🎬 Assistindo
+        </h2>
+
+        <div class="player-video">
+
+            <iframe
+                id="serieFrame"
+                src=""
+                title="Player da série"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+(function () {
+
+    const salvo =
+        localStorage.getItem(
+            "serieSelecionada"
+        );
+
+
+    if (!salvo) {
+
+        document.getElementById(
+            "tituloSerie"
+        ).textContent =
+            "Série não encontrada";
+
+        return;
+
+    }
+
+
+    let serie;
+
+    try {
+
+        serie =
+            JSON.parse(salvo);
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        return;
+
+    }
+
+
+    /* ======================================
+       DADOS DA SÉRIE
+       ====================================== */
+
+    const titulo =
+        serie.titulo ||
+        serie.name ||
+        serie.original_name ||
+        "Sem título";
+
+
+    document.title =
+        "LUKAFILMES - " + titulo;
+
+
+    document.getElementById(
+        "tituloSerie"
+    ).textContent =
+        titulo;
+
+
+    document.getElementById(
+        "posterSerie"
+    ).src =
+        serie.capa ||
+        (
+            serie.poster_path
+                ? "https://image.tmdb.org/t/p/w500" +
+                  serie.poster_path
+                : ""
+        );
+
+
+    document.getElementById(
+        "sinopseSerie"
+    ).textContent =
+        serie.sinopse ||
+        serie.overview ||
+        "Sinopse não disponível.";
+
+
+    const ano =
+        serie.ano ||
+        (
+            serie.first_air_date
+                ? serie.first_air_date.substring(0,4)
+                : ""
+        );
+
+
+    const nota =
+        Number(
+            serie.nota ??
+            serie.vote_average ??
+            0
+        ).toFixed(1);
+
+
+    document.getElementById(
+        "dadosSerie"
+    ).textContent =
+        "⭐ " + nota +
+        (ano ? " • " + ano : "");
+
+
+    /* ======================================
+       FUNDO
+       ====================================== */
+
+    const fundo =
+        serie.fundo ||
+        (
+            serie.backdrop_path
+                ? "https://image.tmdb.org/t/p/w1280" +
+                  serie.backdrop_path
+                : ""
+        );
+
+
+    if (fundo) {
+
+        document.documentElement.style.setProperty(
+            "--fundo-serie",
+            'url("' + fundo + '")'
+        );
+
+    }
+
+
+    /* ======================================
+       BUSCAR DETALHES DA SÉRIE
+       ====================================== */
+
+    async function carregarDetalhes() {
+
+        if (!serie.id) return;
+
+
+        try {
+
+            const resposta =
+                await fetch(
+                    "/api/serie/" +
+                    serie.id
+                );
+
+
+            if (!resposta.ok) {
+
+                console.warn(
+                    "API de detalhes ainda não disponível."
+                );
+
+                return;
+
+            }
+
+
+            const dados =
+                await resposta.json();
+
+
+            if (
+                dados &&
+                dados.sucesso &&
+                dados.serie
+            ) {
+
+                const dadosSerie =
+                    dados.serie;
+
+
+                preencherTemporadas(
+                    dadosSerie.temporadas ||
+                    []
+                );
+
+            }
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO DETALHES SÉRIE]",
+                erro
+            );
+
+        }
+
+    }
+
+
+    /* ======================================
+       TEMPORADAS
+       ====================================== */
+
+    const select =
+        document.getElementById(
+            "selectTemporada"
+        );
+
+
+    const listaEpisodios =
+        document.getElementById(
+            "episodios"
+        );
+
+
+    let temporadas = [];
+
+
+    function preencherTemporadas(lista) {
+
+        temporadas =
+            Array.isArray(lista)
+                ? lista.filter(
+                    temporada =>
+                        temporada.season_number > 0
+                )
+                : [];
+
+
+        select.innerHTML = "";
+
+
+        if (!temporadas.length) {
+
+            listaEpisodios.innerHTML = `
+
+                <div class="episodio">
+                    Temporadas não disponíveis.
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        temporadas.forEach(
+            function (temporada) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    temporada.season_number;
+
+                option.textContent =
+                    temporada.name ||
+                    "Temporada " +
+                    temporada.season_number;
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        mostrarEpisodios(
+            temporadas[0].season_number
+        );
+
+    }
+
+
+    async function mostrarEpisodios(temporada) {
+
+    const lista = document.getElementById("episodios");
+
+    if (!lista) {
+        console.error("[SERIES] Div episodios não encontrada.");
+        return;
+    }
+
+    lista.innerHTML = `
+        <div class="episodio">
+            ⏳ Carregando episódios...
+        </div>
+    `;
+
+    try {
+
+        const url =
+            "/api/serie/" +
+            serie.id +
+            "/temporada/" +
+            temporada;
+
+        console.log("[SERIES] Buscando:", url);
+
+        const resposta = await fetch(url);
+
+        if (!resposta.ok) {
+            throw new Error(
+                "Erro HTTP " +
+                resposta.status
+            );
+        }
+
+        const dados = await resposta.json();
+
+        console.log("[SERIES] Dados recebidos:", dados);
+
+        if (
+            !dados ||
+            !dados.sucesso ||
+            !Array.isArray(dados.episodios)
+        ) {
+            throw new Error("API não retornou episódios.");
+        }
+
+        if (dados.episodios.length === 0) {
+
+            lista.innerHTML = `
+                <div class="episodio">
+                    Nenhum episódio encontrado.
+                </div>
+            `;
+
+            return;
+        }
+
+        lista.innerHTML = "";
+
+        dados.episodios.forEach(function(episodio) {
+
+            const item =
+                document.createElement("div");
+
+            item.className = "episodio";
+
+            item.innerHTML = `
+                <strong>
+                    ▶ Episódio ${episodio.episode_number}
+                </strong>
+
+                <small>
+                    ${episodio.name || "Sem título"}
+                </small>
+            `;
+
+            item.addEventListener(
+                "click",
+                function() {
+
+                    assistirEpisodio(
+                        temporada,
+                        episodio.episode_number,
+                        episodio.name
+                    );
+
+                }
+            );
+
+            lista.appendChild(item);
+
+        });
+
+        console.log(
+            "[SERIES] " +
+            dados.episodios.length +
+            " episódios carregados."
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO EPISODIOS]",
+            erro
+        );
+
+        lista.innerHTML = `
+            <div class="episodio">
+                ❌ Não foi possível carregar os episódios.
+                <br>
+                <small>
+                    Verifique o console do navegador.
+                </small>
+            </div>
+        `;
+    }
+}
+select.addEventListener(
+        "change",
+        function () {
+
+            mostrarEpisodios(
+                Number(
+                    select.value
+                )
+            );
+
+        }
+    );
+
+
+    /* ======================================
+       PLAYER EMBEDMOVIES
+       ====================================== */
+
+    function assistirEpisodio(
+        temporada,
+        episodio,
+        nome
+    ) {
+
+        if (!serie.id) return;
+
+
+        const player =
+            document.getElementById(
+                "playerSerie"
+            );
+
+
+        const frame =
+            document.getElementById(
+                "serieFrame"
+            );
+
+
+        const titulo =
+            document.getElementById(
+                "tituloPlayer"
+            );
+
+
+        frame.src =
+            "https://myembed.biz/serie/" +
+            serie.id +
+            "/" +
+            temporada +
+            "/" +
+            episodio;
+
+
+        titulo.textContent =
+            "🎬 " +
+            (nome || "Episódio");
+
+
+        player.style.display =
+            "block";
+
+
+        player.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+    }
+
+
+    carregarDetalhes();
+
+})();
+
+</script>
+
+</body>
+
+</html>
+
+

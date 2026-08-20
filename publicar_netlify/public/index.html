@@ -1,0 +1,14 @@
+<div id="catalogo"></div>
+
+<script>
+  fetch('./catalogo.json')
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById('catalogo');
+      data.forEach(filme => {
+        const item = document.createElement('div');
+        item.textContent = filme.titulo;
+        container.appendChild(item);
+      });
+    });
+</script>
