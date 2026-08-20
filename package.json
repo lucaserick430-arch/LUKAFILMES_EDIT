@@ -18,7 +18,8 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
-    "serverless-http": "^4.0.0"
+    "serverless-http": "^4.0.0",
+    "@libsql/client": "^0.15.15"
   },
   "engines": {
     "node": "22.x"

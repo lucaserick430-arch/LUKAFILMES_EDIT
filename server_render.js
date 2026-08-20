@@ -112,6 +112,7 @@ class NetlifyBlobSessionStore extends session.Store {
 }
 
 const Database = require("better-sqlite3");
+const { createClient } = require("@libsql/client");
 
 const USUARIOS_STORE = "lukafilmes-usuarios";
 const USUARIOS_KEY = "usuarios";
@@ -127,6 +128,28 @@ const ambienteLocal =
     );
 let bancoLocal = null;
 
+const turso = process.env.TURSO_DATABASE_URL
+  ? createClient({
+      url: process.env.TURSO_DATABASE_URL,
+      authToken: process.env.TURSO_AUTH_TOKEN
+    })
+  : null;
+
+let tursoUsuariosPreparado = false;
+
+async function prepararTursoUsuarios() {
+  if (!turso || tursoUsuariosPreparado) return;
+
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS lukafilmes_usuarios (
+      id INTEGER PRIMARY KEY,
+      dados TEXT NOT NULL
+    )
+  `);
+
+  tursoUsuariosPreparado = true;
+}
+
 function obterBancoLocal() {
 
     if (!bancoLocal) {
@@ -140,91 +163,131 @@ function obterBancoLocal() {
 }
 
 async function carregarUsuarios() {
+  if (turso) {
+    await prepararTursoUsuarios();
 
-    if (ambienteLocal) {
+    const resultado = await turso.execute(
+      "SELECT dados FROM lukafilmes_usuarios WHERE id = 1"
+    );
 
-        const db = obterBancoLocal();
-
-        const usuarios = db
-            .prepare("SELECT * FROM usuarios")
-            .all();
-
-        return Array.isArray(usuarios)
-            ? usuarios
-            : [];
+    if (resultado.rows.length > 0) {
+      try {
+        const dados = JSON.parse(resultado.rows[0].dados);
+        return Array.isArray(dados) ? dados : [];
+      } catch (erro) {
+        console.error("[TURSO] Erro ao ler usuários:", erro);
+        return [];
+      }
     }
 
-    const store = getStore({
+    // Primeira execução: tenta migrar os usuários existentes do banco local.
+    try {
+      const db = obterBancoLocal();
+      const usuarios = db.prepare("SELECT * FROM usuarios").all();
+
+      if (Array.isArray(usuarios) && usuarios.length > 0) {
+        await salvarUsuarios(usuarios);
+        console.log("[TURSO] Usuários locais migrados:", usuarios.length);
+        return usuarios;
+      }
+    } catch (erro) {
+      console.error("[TURSO] Não foi possível migrar banco local:", erro);
+    }
+
+    return [];
+  }
+
+  if (ambienteLocal) {
+    const db = obterBancoLocal();
+    const usuarios = db
+      .prepare("SELECT * FROM usuarios")
+      .all();
+
+    return Array.isArray(usuarios) ? usuarios : [];
+  }
+
+  const store = getStore({
     name: USUARIOS_STORE,
     siteID: process.env.NETLIFY_SITE_ID,
     token: process.env.NETLIFY_AUTH_TOKEN
-});
+  });
 
-    const dados = await store.get(
-        USUARIOS_KEY,
-        {
-            type: "json"
-        }
-    );
-
-    if (!Array.isArray(dados)) {
-        return [];
+  const dados = await store.get(
+    USUARIOS_KEY,
+    {
+      type: "json"
     }
+  );
 
-    return dados;
+  if (!Array.isArray(dados)) {
+    return [];
+  }
+
+  return dados;
 }
 
 async function salvarUsuarios(usuarios) {
+  if (turso) {
+    await prepararTursoUsuarios();
 
-    if (ambienteLocal) {
+    await turso.execute({
+      sql: `
+        INSERT INTO lukafilmes_usuarios (id, dados)
+        VALUES (1, ?)
+        ON CONFLICT(id) DO UPDATE SET dados = excluded.dados
+      `,
+      args: [JSON.stringify(Array.isArray(usuarios) ? usuarios : [])]
+    });
 
-        const db = obterBancoLocal();
+    return true;
+  }
 
-        db.prepare("DELETE FROM usuarios").run();
+  if (ambienteLocal) {
+    const db = obterBancoLocal();
 
-        const inserir = db.prepare(`
-            INSERT INTO usuarios
-            (id, usuario, senha, status, tipo, validade, criado_em, limite_conexoes, conexoes_utilizadas, revendedor_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `);
+    db.prepare("DELETE FROM usuarios").run();
 
-        const inserirTodos = db.transaction((lista) => {
+    const inserir = db.prepare(`
+      INSERT INTO usuarios
+      (id, usuario, senha, status, tipo, validade, criado_em, limite_conexoes, conexoes_utilizadas, revendedor_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
 
-            for (const u of lista) {
+    const inserirTodos = db.transaction((lista) => {
+      for (const u of lista) {
+        inserir.run(
+          u.id,
+          u.usuario,
+          u.senha,
+          u.status || "ativo",
+          u.tipo || "usuario",
+          u.validade || null,
+          u.criado_em || new Date().toISOString(),
+          Number(u.limite_conexoes) || 0,
+          Number(u.conexoes_utilizadas) || 0,
+          u.revendedor_id || null
+        );
+      }
+    });
 
-                inserir.run(
-                    u.id,
-                    u.usuario,
-                    u.senha,
-                    u.status || "ativo",
-                    u.tipo || "usuario",
-                    u.validade || null,
-                    u.criado_em || new Date().toISOString(),
-                    Number(u.limite_conexoes) || 0,
-                    Number(u.conexoes_utilizadas) || 0,
-                    u.revendedor_id || null
-                );
-            }
-        });
+    inserirTodos(usuarios);
+    return true;
+  }
 
-        inserirTodos(usuarios);
-
-        return true;
-    }
-
-    const store = getStore({
+  const store = getStore({
     name: USUARIOS_STORE,
     siteID: process.env.NETLIFY_SITE_ID,
     token: process.env.NETLIFY_AUTH_TOKEN
-});
+  });
 
-    await store.setJSON(
-        USUARIOS_KEY,
-        usuarios
-    );
+  await store.setJSON(
+    USUARIOS_KEY,
+    usuarios
+  );
 
-    return true;
+  return true;
 }
+
 function proximoId(usuarios) {
 
     if (!Array.isArray(usuarios) || usuarios.length === 0) {
