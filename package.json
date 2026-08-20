@@ -12,7 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "@netlify/blobs": "^10.7.12",
-    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
     "better-sqlite3": "^13.0.3",
     "cheerio": "^1.2.0",
     "dotenv": "^17.4.2",
@@ -20,11 +20,11 @@
     "express-session": "^1.19.0",
     "serverless-http": "^4.0.0"
   },
-  "allowScripts": {
-    "bcrypt@6.0.0": true,
-    "better-sqlite3@13.0.3": true
-  },
   "engines": {
     "node": "22.x"
+  },
+  "overrides": {},
+  "allowScripts": {
+    "better-sqlite3@13.0.3": true
   }
 }
