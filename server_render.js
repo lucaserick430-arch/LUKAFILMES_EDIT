@@ -111,7 +111,7 @@ class NetlifyBlobSessionStore extends session.Store {
 
 }
 
-const { createClient } = require("@libsql/client");
+const Database = require("better-sqlite3");
 
 const USUARIOS_STORE = "lukafilmes-usuarios";
 const USUARIOS_KEY = "usuarios";
