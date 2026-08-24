@@ -793,6 +793,28 @@ input,select,textarea{
 
 <form class="form" onsubmit="salvar(event)">
 
+
+<div class="form-group">
+    <label for="fValor">💰 Valor</label>
+    <input
+        id="fValor"
+        type="number"
+        min="0"
+        step="0.01"
+        placeholder="Ex.: 20.00"
+    >
+</div>
+
+<div class="form-group">
+    <label for="fTelefone">📱 Telefone</label>
+    <input
+        id="fTelefone"
+        type="tel"
+        placeholder="Ex.: (11) 99999-9999"
+        autocomplete="tel"
+    >
+</div>
+
 <input type="hidden" id="tipoCriacao">
 
 <label>Usuário</label>
@@ -855,6 +877,14 @@ function abrirModal(tipo){
  document.getElementById("fSenha").value="";
  document.getElementById("fDias").value=tipo==="teste"?7:30;
 
+ if(document.getElementById("fValor")){
+  document.getElementById("fValor").value="";
+ }
+
+ if(document.getElementById("fTelefone")){
+  document.getElementById("fTelefone").value="";
+ }
+
  const limite=document.getElementById("limiteBox");
 
  limite.style.display=tipo==="revendedor"?"block":"none";
@@ -869,6 +899,222 @@ function fecharModal(){
  document.getElementById("modal").classList.remove("show");
 }
 
+
+function escaparTextoMensagem(v){
+ return String(v ?? "");
+}
+
+function formatarDataMensagem(v){
+
+ const d=new Date(v);
+
+ if(Number.isNaN(d.getTime())){
+  return String(v || "");
+ }
+
+ return d.toLocaleString("pt-BR",{
+  dateStyle:"short",
+  timeStyle:"short"
+ });
+}
+
+function mostrarMensagemCriacao(d, dados){
+
+ const existente=document.getElementById("mensagemCriacao");
+
+ if(existente){
+  existente.remove();
+ }
+
+ const usuario=
+  d.usuario ||
+  dados.usuario ||
+  "";
+
+ const senha=
+  d.senha ||
+  dados.senha ||
+  "";
+
+ const valorNumerico=
+  Number(
+   d.valor ??
+   dados.valor ??
+   0
+  );
+
+ const valor=
+  valorNumerico.toLocaleString(
+   "pt-BR",
+   {
+    style:"currency",
+    currency:"BRL"
+   }
+  );
+
+ const telefone=
+  d.telefone ||
+  dados.telefone ||
+  "Não informado";
+
+ const criado=
+  d.criado_em ||
+  new Date().toISOString();
+
+ const validade=
+  d.validade ||
+  "";
+
+ const mensagem=
+`🎬 SEJA BEM-VINDO AO LUKAFILMES!
+
+Seu acesso foi criado com sucesso.
+
+🍿 Aproveite o catálogo de filmes e séries do LUKAFILMES.
+
+👤 Usuário: ${usuario}
+🔑 Senha: ${senha}
+💰 Valor: ${valor}
+📱 Telefone: ${telefone}
+
+📅 Criado em: ${formatarDataMensagem(criado)}
+⏰ Expira em: ${formatarDataMensagem(validade)}
+
+Obrigado por fazer parte do LUKAFILMES!`;
+
+ const box=document.createElement("div");
+
+ box.id="mensagemCriacao";
+
+ box.style.cssText=`
+ position:fixed;
+ inset:0;
+ z-index:999999;
+ background:rgba(0,0,0,.78);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ box-sizing:border-box;
+ `;
+
+ box.innerHTML=`
+ <div style="
+  width:min(520px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#151515;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:16px;
+  padding:22px;
+  box-sizing:border-box;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+ ">
+  <h2 style="
+   margin:0 0 15px;
+   font-size:20px;
+  ">✅ Usuário criado</h2>
+
+  <textarea
+   id="mensagemCriadaTexto"
+   readonly
+   style="
+    width:100%;
+    min-height:300px;
+    resize:vertical;
+    box-sizing:border-box;
+    background:#0b0b0b;
+    color:#fff;
+    border:1px solid #333;
+    border-radius:10px;
+    padding:14px;
+    font-size:14px;
+    line-height:1.5;
+   ">${mensagem}</textarea>
+
+  <div style="
+   display:flex;
+   gap:10px;
+   margin-top:14px;
+   flex-wrap:wrap;
+  ">
+   <button
+    type="button"
+    id="btnCopiarMensagem"
+    style="
+     flex:1;
+     min-width:150px;
+     padding:13px;
+     border:0;
+     border-radius:9px;
+     cursor:pointer;
+     font-weight:700;
+    "
+   >📋 Copiar mensagem</button>
+
+   <button
+    type="button"
+    id="btnFecharMensagem"
+    style="
+     flex:1;
+     min-width:150px;
+     padding:13px;
+     border:1px solid #444;
+     border-radius:9px;
+     background:#222;
+     color:#fff;
+     cursor:pointer;
+     font-weight:700;
+    "
+   >Fechar</button>
+  </div>
+ </div>
+ `;
+
+ document.body.appendChild(box);
+
+ document
+  .getElementById("btnFecharMensagem")
+  .onclick=function(){
+   box.remove();
+  };
+
+ document
+  .getElementById("btnCopiarMensagem")
+  .onclick=async function(){
+
+   const texto=
+    document
+     .getElementById("mensagemCriadaTexto")
+     .value;
+
+   try{
+
+    await navigator.clipboard.writeText(texto);
+
+    this.textContent="✅ Copiado!";
+
+    setTimeout(()=>{
+     this.textContent="📋 Copiar mensagem";
+    },1800);
+
+   }catch(e){
+
+    const area=
+     document.getElementById("mensagemCriadaTexto");
+
+    area.focus();
+    area.select();
+
+    document.execCommand("copy");
+
+    this.textContent="✅ Copiado!";
+   }
+
+ };
+}
+
 async function salvar(e){
 
  e.preventDefault();
@@ -878,7 +1124,25 @@ async function salvar(e){
  const senha=document.getElementById("fSenha").value;
  const dias=Number(document.getElementById("fDias").value);
 
- if(!usuario||!senha||!Number.isInteger(dias)||dias<1){
+ const valorInput=document.getElementById("fValor");
+ const telefoneInput=document.getElementById("fTelefone");
+
+ const valor=valorInput
+  ? Number(valorInput.value || 0)
+  : 0;
+
+ const telefone=telefoneInput
+  ? telefoneInput.value.trim()
+  : "";
+
+ if(
+  !usuario ||
+  !senha ||
+  !Number.isInteger(dias) ||
+  dias<1 ||
+  !Number.isFinite(valor) ||
+  valor<0
+ ){
   toast("Preencha os dados corretamente.");
   return;
  }
@@ -890,7 +1154,7 @@ async function salvar(e){
  try{
 
   let url="/api/admin/usuarios";
-  let body={usuario,senha,dias};
+  let body={usuario,senha,dias,valor,telefone};
 
   if(tipo==="revendedor"){
    url="/api/admin/revendedores";
@@ -919,8 +1183,18 @@ async function salvar(e){
    throw new Error(d.mensagem||"Não foi possível criar.");
   }
 
-  toast(d.mensagem||"Criado com sucesso.");
   fecharModal();
+
+  mostrarMensagemCriacao(
+   d,
+   {
+    usuario,
+    senha,
+    valor,
+    telefone
+   }
+  );
+
   await carregar();
 
  }catch(err){

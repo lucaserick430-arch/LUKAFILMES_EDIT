@@ -112,7 +112,7 @@ class NetlifyBlobSessionStore extends session.Store {
 }
 
 const Database = require("better-sqlite3");
-const { createClient } = require("@libsql/client");
+const { createClient } = require("@libsql/client/http");
 
 const USUARIOS_STORE = "lukafilmes-usuarios";
 const USUARIOS_KEY = "usuarios";
@@ -3489,7 +3489,7 @@ app.use(
 
             req.path === "/api/pesquisar" ||
 
-            req.path === '/api/catalogo' || req.path.startsWith('/api/serie/') || req.path === '/paginas/filmes.html' || req.path === '/paginas/filme.html' || req.path === '/paginas/filme'
+            req.path === '/api/catalogo' || req.path.startsWith('/api/serie/') || req.path === '/paginas/filmes.html' || req.path === '/paginas/filme.html' || req.path === '/paginas/filme' || req.path === '/paginas/series.html' || req.path === '/paginas/serie.html' || req.path === '/paginas/series_nova.html' || req.path === '/paginas/minha-lista'
 
         ) {
 
@@ -3517,6 +3517,13 @@ app.use(
 app.get("/revendedor.html", (req, res) => {
     res.sendFile(
         require("path").join(__dirname, "public", "revendedor.html")
+    );
+});
+
+
+app.get("/paginas/minha-lista", (req, res) => {
+    res.sendFile(
+        require("path").join(__dirname, "paginas", "minha-lista.html")
     );
 });
 

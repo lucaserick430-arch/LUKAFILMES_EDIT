@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUKAFILMES - Minha Lista</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#141414;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.topo{
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 5%;
+    background:#080808;
+}
+
+.logo{
+    color:#e50914;
+    text-decoration:none;
+    font-size:24px;
+    font-weight:900;
+}
+
+.logo span{
+    color:#fff;
+}
+
+.inicio{
+    color:#fff;
+    text-decoration:none;
+    font-size:16px;
+}
+
+h1{
+    margin:35px 5% 20px;
+    font-size:28px;
+}
+
+#lista{
+    padding:0 5% 50px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:20px;
+}
+
+.card{
+    cursor:pointer;
+    transition:transform .2s;
+}
+
+.card:hover{
+    transform:scale(1.04);
+}
+
+.card img{
+    width:100%;
+    aspect-ratio:2/3;
+    object-fit:cover;
+    display:block;
+    border-radius:4px;
+    background:#222;
+}
+
+.info{
+    padding-top:8px;
+}
+
+.info h3{
+    margin:0 0 5px;
+    font-size:15px;
+}
+
+.info p{
+    margin:0;
+    color:#aaa;
+    font-size:13px;
+}
+
+.vazio{
+    grid-column:1/-1;
+    color:#aaa;
+    font-size:17px;
+    padding:40px 0;
+}
+
+@media(max-width:600px){
+    #lista{
+        grid-template-columns:repeat(2,1fr);
+        gap:12px;
+    }
+
+    h1{
+        font-size:24px;
+    }
+}
+
+.btn-remover-lista{
+    width:100%;
+    margin-top:8px;
+    padding:9px 12px;
+    border:0;
+    border-radius:6px;
+    background:#333;
+    color:#fff;
+    cursor:pointer;
+    font-weight:700;
+}
+.btn-remover-lista:hover{
+    background:#555;
+}
+</style>
+
+<style id="estilo-selecao-minha-lista">
+.lista-acoes{
+    width:100%;
+    max-width:1400px;
+    margin:0 auto 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:0 4%;
+    box-sizing:border-box;
+}
+
+#btnRemoverSelecionados{
+    display:none;
+    border:0;
+    border-radius:6px;
+    padding:10px 16px;
+    background:#333;
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+}
+
+#btnRemoverSelecionados:hover{
+    background:#555;
+}
+
+.card-lista{
+    position:relative;
+}
+
+.selecionar-lista{
+    position:absolute;
+    top:10px;
+    left:10px;
+    width:22px;
+    height:22px;
+    z-index:20;
+    cursor:pointer;
+    accent-color:#e50914;
+}
+
+.btn-remover-lista{
+    width:100%;
+    margin-top:8px;
+    padding:9px 12px;
+    border:0;
+    border-radius:6px;
+    background:#333;
+    color:#fff;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.btn-remover-lista:hover{
+    background:#555;
+}
+
+.card-lista.selecionado{
+    outline:3px solid #e50914;
+    outline-offset:2px;
+}
+</style>
+
+</head>
+
+<body>
+
+<header class="topo">
+    <a class="logo" href="../index.html">
+        LUKA<span>FILMES</span>
+    </a>
+
+    <a class="inicio" href="../index.html">
+        Início
+    </a>
+</header>
+
+<h1>Minha Lista</h1>
+
+
+<div class="lista-acoes">
+    <div></div>
+    <button id="btnRemoverSelecionados" type="button">
+        🗑 Remover selecionados
+    </button>
+</div>
+
+<main id="lista"></main>
+
+<script>
+
+
+function atualizarAcaoRemocao(){
+
+    const botao = document.getElementById("btnRemoverSelecionados");
+
+    if(!botao)
+        return;
+
+    const selecionados =
+        document.querySelectorAll(".selecionar-lista:checked");
+
+    botao.style.display =
+        selecionados.length
+        ? "inline-flex"
+        : "none";
+
+    botao.textContent =
+        selecionados.length
+        ? "🗑 Remover selecionados (" + selecionados.length + ")"
+        : "🗑 Remover selecionados";
+}
+
+function carregarMinhaLista(){
+
+    const area = document.getElementById("lista");
+
+    if(!area){
+        console.error("[MEUS FAVORITOS] Elemento #lista não encontrado.");
+        return;
+    }
+
+    let lista = [];
+
+    try{
+
+        const salvo =
+            localStorage.getItem("lukafilmes_minhalista");
+
+        console.log(
+            "[MEUS FAVORITOS] Dados encontrados:",
+            salvo
+        );
+
+        lista = JSON.parse(salvo || "[]");
+
+    }catch(erro){
+
+        console.error(
+            "[MEUS FAVORITOS] Erro ao ler localStorage:",
+            erro
+        );
+
+        lista = [];
+    }
+
+    if(!Array.isArray(lista)){
+        lista = [];
+    }
+
+    console.log(
+        "[MEUS FAVORITOS] Total de itens:",
+        lista.length
+    );
+
+    area.innerHTML = "";
+
+    if(!lista.length){
+
+        area.innerHTML =
+            '<div class="vazio">Sua lista está vazia.</div>';
+
+        return;
+    }
+
+    lista.forEach(function(item, indice){
+
+        if(!item || typeof item !== "object"){
+            return;
+        }
+
+        const tipo = String(
+            item.tipo ||
+            item.media_type ||
+            ""
+        ).toLowerCase();
+
+        const ehSerie =
+            tipo === "serie" ||
+            tipo === "tv" ||
+            Boolean(item.name) ||
+            Boolean(item.first_air_date);
+
+        const titulo =
+            item.titulo ||
+            item.title ||
+            item.name ||
+            item.nome ||
+            "Sem título";
+
+        const capa =
+            item.capa ||
+            item.poster_path ||
+            item.poster ||
+            "";
+
+        const ano =
+            item.ano ||
+            (
+                item.first_air_date
+                    ? String(item.first_air_date).substring(0,4)
+                    : ""
+            ) ||
+            (
+                item.release_date
+                    ? String(item.release_date).substring(0,4)
+                    : ""
+            );
+
+        const nota =
+            item.nota !== undefined && item.nota !== null
+                ? item.nota
+                : (
+                    item.vote_average !== undefined
+                        ? item.vote_average
+                        : ""
+                );
+
+        const card = document.createElement("div");
+
+        card.className =
+            "card card-lista";
+
+        card.dataset.indice =
+            String(indice);
+
+        const imagem =
+            capa
+                ? '<img src="' +
+                  String(capa)
+                    .replace(/&/g,"&amp;")
+                    .replace(/"/g,"&quot;")
+                    .replace(/</g,"&lt;") +
+                  '" alt="' +
+                  String(titulo)
+                    .replace(/&/g,"&amp;")
+                    .replace(/"/g,"&quot;")
+                    .replace(/</g,"&lt;") +
+                  '">'
+                : '<div style="aspect-ratio:2/3;background:#222;display:flex;align-items:center;justify-content:center;">🎬</div>';
+
+        card.innerHTML = `
+            ${imagem}
+
+            <div class="info">
+
+                <h3>
+                    ${String(titulo)
+                        .replace(/&/g,"&amp;")
+                        .replace(/</g,"&lt;")
+                        .replace(/>/g,"&gt;")}
+                </h3>
+
+                <p>
+                    ${ehSerie ? "📺 Série" : "🎬 Filme"}
+                    ${nota ? " • ⭐ " + Number(nota).toFixed(1) : ""}
+                    ${ano ? " • " + String(ano) : ""}
+                </p>
+
+            </div>
+        `;
+
+        const controleSelecao =
+            document.createElement("input");
+
+        controleSelecao.type =
+            "checkbox";
+
+        controleSelecao.className =
+            "selecionar-lista";
+
+        controleSelecao.title =
+            "Selecionar para remover";
+
+        controleSelecao.addEventListener(
+            "click",
+            function(e){
+
+                e.stopPropagation();
+
+                card.classList.toggle(
+                    "selecionado",
+                    controleSelecao.checked
+                );
+
+                atualizarAcaoRemocao();
+            }
+        );
+
+        const botaoRemover =
+            document.createElement("button");
+
+        botaoRemover.type =
+            "button";
+
+        botaoRemover.className =
+            "btn-remover-lista";
+
+        botaoRemover.textContent =
+            "🗑 Remover da lista";
+
+        botaoRemover.addEventListener(
+            "click",
+            function(e){
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                let listaAtual = [];
+
+                try{
+
+                    listaAtual =
+                        JSON.parse(
+                            localStorage.getItem(
+                                "lukafilmes_minhalista"
+                            ) || "[]"
+                        );
+
+                }catch(erro){
+
+                    listaAtual = [];
+                }
+
+                listaAtual.splice(indice,1);
+
+                localStorage.setItem(
+                    "lukafilmes_minhalista",
+                    JSON.stringify(listaAtual)
+                );
+
+                carregarMinhaLista();
+            }
+        );
+
+        card.appendChild(
+            controleSelecao
+        );
+
+        card.appendChild(
+            botaoRemover
+        );
+
+        card.addEventListener(
+            "click",
+            function(e){
+
+                if(
+                    e.target &&
+                    e.target.closest(
+                        ".btn-remover-lista"
+                    )
+                ){
+                    return;
+                }
+
+                if(
+                    e.target &&
+                    e.target.closest(
+                        ".selecionar-lista"
+                    )
+                ){
+                    return;
+                }
+
+                console.log(
+                    "[MEUS FAVORITOS] Abrindo:",
+                    ehSerie ? "SÉRIE" : "FILME",
+                    item
+                );
+
+                if(ehSerie){
+
+                    localStorage.setItem(
+                        "serieSelecionada",
+                        JSON.stringify(item)
+                    );
+
+                    window.location.href =
+                        "/paginas/serie.html";
+
+                }else{
+
+                    localStorage.setItem(
+                        "filmeSelecionado",
+                        JSON.stringify(item)
+                    );
+
+                    window.location.href =
+                        "/paginas/filme.html";
+                }
+            }
+        );
+
+        area.appendChild(card);
+    });
+
+    atualizarAcaoRemocao();
+
+    console.log(
+        "[MEUS FAVORITOS] Renderização concluída:",
+        lista.length,
+        "itens"
+    );
+}
+
+
+
+const botaoRemoverSelecionados =
+    document.getElementById("btnRemoverSelecionados");
+
+if(botaoRemoverSelecionados){
+
+    botaoRemoverSelecionados.addEventListener("click", function(){
+
+        const selecionados =
+            Array.from(
+                document.querySelectorAll(".selecionar-lista:checked")
+            );
+
+        if(!selecionados.length)
+            return;
+
+        let listaAtual = [];
+
+        try{
+            listaAtual = JSON.parse(
+                localStorage.getItem("lukafilmes_minhalista") || "[]"
+            );
+        }catch(e){
+            listaAtual = [];
+        }
+
+        const itensRemover = selecionados.map(function(check){
+            const card = check.closest(".card-lista");
+
+            if(!card)
+                return null;
+
+            const index =
+                Array.from(
+                    document.querySelectorAll(".card-lista")
+                ).indexOf(card);
+
+            return index;
+        }).filter(function(index){
+            return index !== null && index >= 0;
+        });
+
+        itensRemover
+            .sort(function(a,b){ return b-a; })
+            .forEach(function(index){
+                listaAtual.splice(index, 1);
+            });
+
+        localStorage.setItem(
+            "lukafilmes_minhalista",
+            JSON.stringify(listaAtual)
+        );
+
+        carregarMinhaLista();
+    });
+}
+
+
+carregarMinhaLista();
+
+</script>
+
+</body>
+</html>

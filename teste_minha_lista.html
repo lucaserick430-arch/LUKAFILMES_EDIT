@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUKAFILMES - Minha Lista</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#141414;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.topo{
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 5%;
+    background:#080808;
+}
+
+.logo{
+    color:#e50914;
+    text-decoration:none;
+    font-size:24px;
+    font-weight:900;
+}
+
+.logo span{
+    color:#fff;
+}
+
+.inicio{
+    color:#fff;
+    text-decoration:none;
+    font-size:16px;
+}
+
+h1{
+    margin:35px 5% 20px;
+    font-size:28px;
+}
+
+#lista{
+    padding:0 5% 50px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:20px;
+}
+
+.card{
+    cursor:pointer;
+    transition:transform .2s;
+}
+
+.card:hover{
+    transform:scale(1.04);
+}
+
+.card img{
+    width:100%;
+    aspect-ratio:2/3;
+    object-fit:cover;
+    display:block;
+    border-radius:4px;
+    background:#222;
+}
+
+.info{
+    padding-top:8px;
+}
+
+.info h3{
+    margin:0 0 5px;
+    font-size:15px;
+}
+
+.info p{
+    margin:0;
+    color:#aaa;
+    font-size:13px;
+}
+
+.vazio{
+    grid-column:1/-1;
+    color:#aaa;
+    font-size:17px;
+    padding:40px 0;
+}
+
+@media(max-width:600px){
+    #lista{
+        grid-template-columns:repeat(2,1fr);
+        gap:12px;
+    }
+
+    h1{
+        font-size:24px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topo">
+    <a class="logo" href="../index.html">
+        LUKA<span>FILMES</span>
+    </a>
+
+    <a class="inicio" href="../index.html">
+        Início
+    </a>
+</header>
+
+<h1>Minha Lista</h1>
+
+<main id="lista"></main>
+
+<script>
+
+function carregarMinhaLista(){
+
+    const area=document.getElementById("lista");
+
+    let lista=[];
+
+    try{
+        lista=JSON.parse(
+            localStorage.getItem("lukafilmes_minhalista")||"[]"
+        );
+    }catch(e){
+        lista=[];
+    }
+
+    if(!Array.isArray(lista)){
+        lista=[];
+    }
+
+    if(!lista.length){
+        area.innerHTML=
+            '<div class="vazio">Sua lista está vazia.</div>';
+        return;
+    }
+
+    lista.forEach(function(item){
+
+        const card=document.createElement("div");
+        card.className="card";
+
+        const titulo=
+            item.titulo||
+            item.name||
+            item.nome||
+            "Sem título";
+
+        const capa=
+            item.capa||
+            item.poster_path||
+            "";
+
+        const ano=
+            item.ano||
+            "";
+
+        const nota=
+            item.nota||
+            item.vote_average||
+            "";
+
+        card.innerHTML=`
+            ${capa
+                ? `<img src="${String(capa).replace(/"/g,"&quot;")}" alt="">`
+                : `<div style="aspect-ratio:2/3;background:#222"></div>`
+            }
+
+            <div class="info">
+                <h3>${String(titulo).replace(/</g,"&lt;")}</h3>
+                <p>
+                    ${nota ? "⭐ "+Number(nota).toFixed(1) : ""}
+                    ${ano ? " • "+String(ano) : ""}
+                </p>
+            </div>
+        `;
+
+        card.onclick=function(){
+
+            const tipo=
+                item.tipo||
+                item.media_type||
+                "";
+
+            if(
+                tipo==="serie"||
+                tipo==="tv"||
+                item.name||
+                item.first_air_date
+            ){
+
+                localStorage.setItem(
+                    "serieSelecionada",
+                    JSON.stringify(item)
+                );
+
+                window.location.href="serie.html";
+
+            }else{
+
+                localStorage.setItem(
+                    "filmeSelecionado",
+                    JSON.stringify(item)
+                );
+
+                window.location.href="filme.html";
+            }
+        };
+
+        area.appendChild(card);
+
+    });
+}
+
+carregarMinhaLista();
+
+</script>
+
+</body>
+</html>

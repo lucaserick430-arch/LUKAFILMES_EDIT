@@ -941,36 +941,12 @@ body {
     overflow-x: hidden;
 }
 
-/* Fundo da série */
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(5,5,5,.35) 0%,
-            rgba(5,5,5,.72) 42%,
-            #050505 78%,
-            #050505 100%
-        ),
-        var(--fundo-serie);
-    background-size: cover;
-    background-position: center top;
-    filter: blur(0px);
-    transform: scale(1.02);
-}
-
-body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background: rgba(0,0,0,.28);
-    pointer-events: none;
-}
-
+/* Fundo da série
+   O backdrop principal é controlado por:
+   .pagina-serie::before
+   .pagina-serie::after
+   Não duplicar o fundo no body.
+*/
 /* Área principal */
 main {
     position: relative;
@@ -2563,6 +2539,199 @@ document.addEventListener(
 </script>
 
 <script src="../js/navegacao.js"></script>
+
+<style id="serie-favoritos-topo">
+#serieFavoritosTopo{
+    position:fixed;
+    top:18px;
+    right:18px;
+    left:auto;
+    z-index:99999;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+#serieFavoritosTopo button,
+#serieFavoritosTopo a{
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(10,10,10,.82);
+    color:#fff;
+    padding:10px 14px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:600;
+    text-decoration:none;
+    cursor:pointer;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    transition:.2s;
+}
+
+#serieFavoritosTopo button:hover,
+#serieFavoritosTopo a:hover{
+    transform:translateY(-1px);
+    background:rgba(220,20,20,.9);
+}
+
+#serieFavoritosTopo .favorito-ativo{
+    background:rgba(220,20,20,.9);
+}
+
+@media(max-width:600px){
+    #serieFavoritosTopo{
+        top:10px;
+        right:10px;
+        left:auto;
+        gap:5px;
+    }
+
+    #serieFavoritosTopo button,
+    #serieFavoritosTopo a{
+        padding:8px 10px;
+        font-size:12px;
+    }
+}
+</style>
+
+<div id="serieFavoritosTopo">
+    <button type="button" id="serieAdicionarFavorito">
+        ＋ Adicionar aos favoritos
+    </button>
+
+    <a href="/paginas/minha-lista" id="serieVerFavoritos">
+        ♥ Meus Favoritos
+    </a>
+</div>
+
+<script id="serie-favoritos-topo-script">
+(function(){
+
+    function obterSerie(){
+
+        try{
+            return JSON.parse(
+                localStorage.getItem("serieSelecionada") || "null"
+            );
+        }catch(e){
+            return null;
+        }
+    }
+
+    function obterLista(){
+
+        try{
+            const lista = JSON.parse(
+                localStorage.getItem("lukafilmes_minhalista") || "[]"
+            );
+
+            return Array.isArray(lista) ? lista : [];
+
+        }catch(e){
+            return [];
+        }
+    }
+
+    function salvarLista(lista){
+        localStorage.setItem(
+            "lukafilmes_minhalista",
+            JSON.stringify(lista)
+        );
+    }
+
+    function idDaSerie(serie){
+
+        return String(
+            serie &&
+            (
+                serie.id ||
+                serie.tmdb_id ||
+                serie.titulo
+            )
+            || ""
+        );
+    }
+
+    function atualizarBotao(){
+
+        const botao =
+            document.getElementById("serieAdicionarFavorito");
+
+        if(!botao) return;
+
+        const serie = obterSerie();
+        const id = idDaSerie(serie);
+
+        if(!id){
+            botao.style.display = "none";
+            return;
+        }
+
+        botao.style.display = "inline-flex";
+
+        const lista = obterLista();
+
+        const existe = lista.some(function(item){
+            return idDaSerie(item) === id;
+        });
+
+        if(existe){
+            botao.textContent = "♥ Remover dos favoritos";
+            botao.classList.add("favorito-ativo");
+        }else{
+            botao.textContent = "＋ Adicionar aos favoritos";
+            botao.classList.remove("favorito-ativo");
+        }
+    }
+
+    const botao =
+        document.getElementById("serieAdicionarFavorito");
+
+    if(botao){
+
+        botao.addEventListener("click", function(){
+
+            const serie = obterSerie();
+
+            if(!serie){
+                return;
+            }
+
+            const id = idDaSerie(serie);
+
+            if(!id){
+                return;
+            }
+
+            let lista = obterLista();
+
+            const indice = lista.findIndex(function(item){
+                return idDaSerie(item) === id;
+            });
+
+            if(indice >= 0){
+
+                lista.splice(indice, 1);
+
+            }else{
+
+                lista.push({
+                    ...serie,
+                    tipo: "serie"
+                });
+
+            }
+
+            salvarLista(lista);
+            atualizarBotao();
+        });
+    }
+
+    atualizarBotao();
+
+})();
+</script>
+
 </body>
 
 </html>

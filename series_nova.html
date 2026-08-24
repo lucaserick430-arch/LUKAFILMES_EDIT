@@ -13,76 +13,11 @@ body{overflow-x:hidden}
 .logo span{color:#e50914}
 .inicio{color:#fff;text-decoration:none;font-weight:bold}
 </style>
-
-<style id="lukafilmes-favoritos-series">
-/* =====================================================
-   LUKAFILMES — FAVORITOS / MINHA LISTA — SÉRIES
-   ===================================================== */
-
-#botaoMinhaListaSerie,
-#botaoAbrirMinhaListaSerie {
-    position: relative;
-    z-index: 50;
-}
-
-/* Área dos dois botões */
-.favoritos-series-topo {
-    position: absolute !important;
-    top: 85px !important;
-    left: 20px !important;
-    z-index: 999 !important;
-
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    flex-wrap: wrap !important;
-
-    gap: 10px !important;
-    width: auto !important;
-    max-width: calc(100% - 40px) !important;
-
-    margin: 0 !important;
-}
-
-/* Evita que os botões sejam cobertos pelo conteúdo */
-.favoritos-series-topo button,
-.favoritos-series-topo a {
-    position: relative !important;
-    z-index: 1000 !important;
-    white-space: nowrap !important;
-}
-
-/* Celular */
-@media (max-width: 768px) {
-
-    .favoritos-series-topo {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-
-        width: calc(100% - 30px) !important;
-        max-width: none !important;
-
-        margin: 12px auto !important;
-
-        justify-content: flex-start !important;
-    }
-
-    .favoritos-series-topo button,
-    .favoritos-series-topo a {
-        font-size: 14px !important;
-        padding: 10px 14px !important;
-    }
-}
-</style>
-
 </head>
 <body>
 <header class="topo">
 <a class="logo" href="../index.html">LUKA<span>FILMES</span></a>
 <a class="inicio" href="../index.html">Início</a>
-
-
 </header>
 <section id="heroSeries"></section>
 <main id="conteudo"></main>
@@ -222,15 +157,9 @@ async function carregarHeroSeries(){
                         ▶ Assistir
                     </button>
 
-                    <button class="hero-btn hero-lista" id="heroListaSeries">
-                        ＋ Adicionar aos favoritos
+                    <button class="hero-btn hero-lista">
+                        ＋ Minha lista
                     </button>
-                    <a
-                        href="/paginas/minha-lista"
-                        id="heroMinhaListaSeries"
-                        class="hero-btn hero-lista"
-                        style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;margin-left:8px;"
-                    >♥ Meus Favoritos</a>
                 </div>
             </div>
         `;
@@ -242,120 +171,6 @@ async function carregarHeroSeries(){
             );
             location.href="serie.html";
         };
-
-        const botaoListaSeries =
-            document.getElementById("heroListaSeries");
-
-        if (botaoListaSeries) {
-
-            function atualizarBotaoListaSeries(){
-
-                let lista = [];
-
-                try {
-                    lista = JSON.parse(
-                        localStorage.getItem("lukafilmes_minhalista") || "[]"
-                    );
-                } catch(e) {
-                    lista = [];
-                }
-
-                const id = String(
-                    serie.id ||
-                    serie.tmdb_id ||
-                    serie.titulo ||
-                    serie.nome ||
-                    ""
-                );
-
-                const existe = lista.some(function(item){
-
-                    return String(
-                        item.id ||
-                        item.tmdb_id ||
-                        item.titulo ||
-                        item.nome ||
-                        ""
-                    ) === id;
-
-                });
-
-                botaoListaSeries.textContent =
-                    existe
-                    ? "✓ Na minha lista"
-                    : "＋ Adicionar aos favoritos";
-            }
-
-            botaoListaSeries.onclick = function(){
-
-                let lista = [];
-
-                try {
-                    lista = JSON.parse(
-                        localStorage.getItem("lukafilmes_minhalista") || "[]"
-                    );
-                } catch(e) {
-                    lista = [];
-                }
-
-                if (!Array.isArray(lista))
-                    lista = [];
-
-                const id = String(
-                    serie.id ||
-                    serie.tmdb_id ||
-                    serie.titulo ||
-                    serie.nome ||
-                    ""
-                );
-
-                const indice = lista.findIndex(function(item){
-
-                    return String(
-                        item.id ||
-                        item.tmdb_id ||
-                        item.titulo ||
-                        item.nome ||
-                        ""
-                    ) === id;
-
-                });
-
-                if (indice === -1) {
-
-                    const item = Object.assign({}, serie, {
-                        tipo: "serie",
-                        media_type: "tv"
-                    });
-
-                    lista.push(item);
-
-                    localStorage.setItem(
-                        "lukafilmes_minhalista",
-                        JSON.stringify(lista)
-                    );
-
-                } else {
-
-                    lista.splice(indice, 1);
-
-                    localStorage.setItem(
-                        "lukafilmes_minhalista",
-                        JSON.stringify(lista)
-                    );
-                }
-
-                atualizarBotaoListaSeries();
-
-                console.log(
-                    "[MINHA LISTA SERIES]",
-                    serie.titulo
-                );
-            };
-
-            atualizarBotaoListaSeries();
-        }
-
 
         console.log(
             "[HERO SERIES] OK:",
@@ -476,34 +291,16 @@ listaSeries.innerHTML=`
     <h2 class="titulo-catalogo">Séries</h2>
 
     <div id="listaSeries">
-        <div class="estado-series"></div>
+        <div class="estado-series">
+            Carregando séries...
+        </div>
     </div>
 `;
 
 const gradeSeries=document.getElementById("listaSeries");
 const campoPesquisa=document.getElementById("pesquisaSeries");
 
-const TOTAL_PAGINAS_CATALOGO_SERIES = 500;
-
-/*
- * LUKAFILMES — CATÁLOGO DE SÉRIES ALEATÓRIO
- *
- * A cada atualização da página:
- * 1. Escolhe uma página aleatória entre 1 e 1000.
- * 2. Carrega as séries dessa página.
- * 3. O carregamento infinito continua normalmente a partir dela.
- */
-let paginaSeries =
-    Math.floor(
-        Math.random() * TOTAL_PAGINAS_CATALOGO_SERIES
-    ) + 1;
-
-console.log(
-    "[SÉRIES] Página inicial aleatória:",
-    paginaSeries,
-    "/",
-    TOTAL_PAGINAS_CATALOGO_SERIES
-);
+let paginaSeries=1;
 let carregandoSeries=false;
 let fimSeries=false;
 let idsSeries=new Set();
@@ -758,16 +555,3 @@ window.addEventListener(
 
 carregarCatalogoSeries();
 </script>
-
-<style id="lukafilmes-pesquisa-series-centralizada">
-
-/* CENTRALIZA O TEXTO DENTRO DO CAMPO PESQUISAR SÉRIES */
-#pesquisaSeries {
-    text-align: center !important;
-}
-
-#pesquisaSeries::placeholder {
-    text-align: center !important;
-}
-
-</style>

@@ -2279,99 +2279,6 @@ body {
 
 <body>
 
-<header class="lukafilmes-header-padrao">
-    <a href="/" class="lukafilmes-logo-padrao" aria-label="LUKAFILMES">
-        <span>LUKA</span><strong>FILMES</strong>
-    </a>
-
-    <a href="/" class="lukafilmes-inicio-padrao">
-        Início
-    </a>
-</header>
-
-<style id="lukafilmes-header-padrao-css">
-
-.lukafilmes-header-padrao{
-    position:relative;
-    z-index:9999;
-
-    width:100%;
-    min-height:70px;
-
-    box-sizing:border-box;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    padding:18px 42px;
-
-    background:transparent;
-}
-
-.lukafilmes-logo-padrao{
-    display:inline-flex;
-    align-items:center;
-
-    text-decoration:none;
-
-    font-family:Arial,Helvetica,sans-serif;
-    font-size:28px;
-    font-weight:900;
-    letter-spacing:-1.2px;
-
-    white-space:nowrap;
-}
-
-.lukafilmes-logo-padrao span{
-    color:#fff;
-}
-
-.lukafilmes-logo-padrao strong{
-    color:#e50914;
-    font-weight:900;
-}
-
-.lukafilmes-inicio-padrao{
-    color:#fff;
-
-    text-decoration:none;
-
-    font-family:Arial,Helvetica,sans-serif;
-    font-size:16px;
-    font-weight:700;
-
-    padding:8px 4px;
-
-    transition:.2s ease;
-}
-
-.lukafilmes-inicio-padrao:hover{
-    color:#e50914;
-}
-
-@media (max-width:650px){
-
-    .lukafilmes-header-padrao{
-        min-height:58px;
-        padding:14px 18px;
-    }
-
-    .lukafilmes-logo-padrao{
-        font-size:23px;
-    }
-
-    .lukafilmes-inicio-padrao{
-        font-size:14px;
-    }
-
-}
-
-</style>
-
-
-
-
 <div id="fundoFilmes"></div>
 
 <div id="fundoFilmesEscuro"></div>
@@ -2380,7 +2287,35 @@ body {
 
 <div class="pagina">
 
+    <header class="topo-netflix">
+        <a href="../index.html" class="voltar">Início</a>
+
+        <div class="logo-netflix">LUKAFILMES</div>
+
+        <div class="titulo-topo">
+            <a href="series.html">Séries</a>
+        </div>
     
+<a
+    href="/paginas/minha-lista"
+    class="lukafilmes-minha-lista-btn"
+    style="
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap:6px;
+        padding:9px 16px;
+        margin-left:12px;
+        border-radius:6px;
+        background:#ffffff;
+        color:#000000;
+        text-decoration:none;
+        font-weight:700;
+        font-size:14px;
+        white-space:nowrap;
+    "
+>♥ Minha Lista</a>
+</header>
 
     <section id="heroFilme" class="hero-filme">
 
@@ -2417,12 +2352,6 @@ body {
                 <button id="heroLista" class="btn-lista">
                     ＋ Minha lista
                 </button>
-                <a
-                    href="/paginas/minha-lista"
-                    id="heroMinhaLista"
-                    class="btn-lista"
-                    style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;margin-left:8px;"
-                >♥ Minha Lista</a>
             </div>
         </div>
     </section>
