@@ -3005,8 +3005,8 @@ body{
 
 <style id="lukafilmes-trailer-mobile-real-final">
 /* =========================================================
-   LUKAFILMES — TRAILER MOBILE — POSIÇÃO REAL
-   O TRAILER OCUPA A LARGURA EXATA DA TELA.
+   LUKAFILMES — TRAILER MOBILE — HORIZONTAL
+   Ocupa toda a largura da tela em proporção 16:9.
    ========================================================= */
 
 @media screen and (max-width:650px){
@@ -3037,17 +3037,20 @@ body{
         width:100vw !important;
         max-width:100vw !important;
 
-        left:auto !important;
-        right:auto !important;
-        transform:none !important;
+        height:auto !important;
+        min-height:0 !important;
+        max-height:none !important;
+
+        aspect-ratio:16 / 9 !important;
 
         margin:0 !important;
         padding:0 !important;
 
-        aspect-ratio:16 / 9 !important;
+        overflow:hidden !important;
 
         box-sizing:border-box !important;
-        overflow:hidden !important;
+
+        background:#000 !important;
     }
 
     .botoes-assistir > #trailerContainer .trailer-video iframe,
@@ -3059,11 +3062,8 @@ body{
 
         height:56.25vw !important;
 
-        position:relative !important;
-
-        left:auto !important;
-        right:auto !important;
-        transform:none !important;
+        min-height:0 !important;
+        max-height:none !important;
 
         margin:0 !important;
         padding:0 !important;
@@ -3221,6 +3221,7 @@ body{
                 src=""
                 title="Filme"
                 allow="autoplay; fullscreen; picture-in-picture"
+                sandbox="allow-scripts allow-same-origin"
                 allowfullscreen>
             </iframe>
         </div>
@@ -3785,6 +3786,16 @@ document.getElementById("voltarFilmes").addEventListener(
 
 <script src="../js/navegacao.js"></script>
 
+
+<style id="filme-minha-lista-desktop-hide">
+@media (min-width: 769px) {
+    #botaoMinhaListaFilme,
+    #botaoAbrirMinhaListaFilme {
+        display: none !important;
+    }
+}
+</style>
+
 <style id="filme-favoritos-topo">
 #filmeFavoritosTopo{
     position:fixed;
@@ -3959,6 +3970,380 @@ document.getElementById("voltarFilmes").addEventListener(
     }
 
     atualizarBotao();
+
+})();
+</script>
+
+
+<style id="lukafilmes-player-netflix-visual">
+
+/* =========================================================
+   LUKAFILMES — SELEÇÃO DE PLAYERS
+   VISUAL INSPIRADO EM STREAMING
+   ========================================================= */
+
+.lista-plays,
+.players-serie-opcoes {
+    gap: 10px !important;
+}
+
+/* FILMES */
+
+.lista-plays .play-btn {
+    position: relative !important;
+    min-height: 46px !important;
+    padding: 0 20px !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    border-radius: 6px !important;
+    background: #181818 !important;
+    color: #fff !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: .2px !important;
+    cursor: pointer !important;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease !important;
+}
+
+.lista-plays .play-btn:hover {
+    background: #292929 !important;
+    border-color: rgba(255,255,255,.35) !important;
+    transform: translateY(-1px) !important;
+}
+
+.lista-plays .play-btn.player-selecionado {
+    background: #e50914 !important;
+    border-color: #e50914 !important;
+    box-shadow: 0 0 0 1px rgba(229,9,20,.25) !important;
+}
+
+.lista-plays .play-btn.player-selecionado:hover {
+    background: #f40612 !important;
+    border-color: #f40612 !important;
+}
+
+/* SÉRIES */
+
+.players-serie-opcoes .serie-player-btn {
+    min-height: 46px !important;
+    padding: 0 20px !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    border-radius: 6px !important;
+    background: #181818 !important;
+    color: #fff !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: .2px !important;
+    cursor: pointer !important;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease !important;
+}
+
+.players-serie-opcoes .serie-player-btn:hover {
+    background: #292929 !important;
+    border-color: rgba(255,255,255,.35) !important;
+    transform: translateY(-1px) !important;
+}
+
+.players-serie-opcoes .serie-player-btn.ativo {
+    background: #e50914 !important;
+    border-color: #e50914 !important;
+    box-shadow: 0 0 0 1px rgba(229,9,20,.25) !important;
+}
+
+/* TÍTULO DA ÁREA */
+
+.player-filme h2,
+.player-serie h2 {
+    margin-bottom: 18px !important;
+    color: #fff !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+}
+
+/* CELULAR */
+
+@media (max-width: 600px) {
+
+    .lista-plays,
+    .players-serie-opcoes {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 9px !important;
+    }
+
+    .lista-plays .play-btn,
+    .players-serie-opcoes .serie-player-btn {
+        width: 100% !important;
+        min-height: 44px !important;
+        padding: 0 10px !important;
+        font-size: 13px !important;
+    }
+
+}
+
+</style>
+
+
+<style id="lukafilmes-somente-play1">
+
+/* =========================================================
+   LUKAFILMES — SOMENTE PLAY 1 VISÍVEL
+   Os demais players continuam disponíveis no código.
+   ========================================================= */
+
+/* FILMES — esconder PLAY 2, 3 e 4 */
+.lista-plays .play-card:not(:first-child) {
+    display: none !important;
+}
+
+/* SÉRIES — esconder PLAY 2 e demais */
+.players-serie-opcoes .serie-player-btn:not(:first-child) {
+    display: none !important;
+}
+
+</style>
+
+<script src="/js/continuar-assistindo.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+ const v=document.querySelector("video");
+ if(v && window.LukaContinuar){
+  LukaContinuar.conectarPlayer(v,{id:new URLSearchParams(location.search).get("id"),titulo:document.querySelector("h1")?.textContent||"Filme",capa:document.querySelector("img")?.src||"",tipo:"filme"});
+ }
+});
+</script>
+
+<script id="lukafilmes-continuar-iframe-fix">
+(function(){
+
+    console.log("[CONTINUAR IFRAME] Sistema de integração ativo.");
+
+    function obterDadosFilme(){
+
+        try{
+
+            const id =
+                new URLSearchParams(location.search).get("id");
+
+            let filme = null;
+
+            try{
+                filme = JSON.parse(
+                    localStorage.getItem(
+                        "filmeSelecionadoHome_" + String(id)
+                    ) || "null"
+                );
+            }catch(e){}
+
+            if(!filme){
+
+                try{
+                    filme = JSON.parse(
+                        localStorage.getItem(
+                            "filmeSelecionado"
+                        ) || "null"
+                    );
+                }catch(e){}
+
+            }
+
+            if(!filme){
+                filme = {};
+            }
+
+            filme.id = filme.id || id;
+
+            filme.titulo =
+                filme.titulo ||
+                document.querySelector("h1")?.textContent ||
+                "Filme";
+
+            filme.capa =
+                filme.capa ||
+                document.querySelector("img")?.src ||
+                "";
+
+            filme.tipo = "filme";
+
+            return filme;
+
+        }catch(e){
+
+            console.warn(
+                "[CONTINUAR IFRAME] Erro ao obter filme:",
+                e
+            );
+
+            return null;
+        }
+    }
+
+
+    function salvarSelecaoPlayer(numero){
+
+        const filme = obterDadosFilme();
+
+        if(!filme || !filme.id){
+            console.warn(
+                "[CONTINUAR IFRAME] Filme sem ID."
+            );
+            return;
+        }
+
+        let lista = [];
+
+        try{
+
+            lista = JSON.parse(
+                localStorage.getItem(
+                    "lukafilmes_continuar"
+                ) || "[]"
+            );
+
+        }catch(e){
+
+            lista = [];
+        }
+
+        if(!Array.isArray(lista)){
+            lista = [];
+        }
+
+        const anterior =
+            lista.find(function(x){
+                return String(x.id) === String(filme.id);
+            });
+
+        const item = {
+
+            id: filme.id,
+
+            titulo:
+                filme.titulo,
+
+            capa:
+                filme.capa,
+
+            tipo:
+                "filme",
+
+            tempo:
+                anterior ?
+                    Number(anterior.tempo) || 0
+                    : 0,
+
+            duracao:
+                anterior ?
+                    Number(anterior.duracao) || 0
+                    : 0,
+
+            progresso:
+                anterior ?
+                    Number(anterior.progresso) || 0
+                    : 0,
+
+            player:
+                String(numero),
+
+            atualizadoEm:
+                Date.now()
+
+        };
+
+        lista =
+            lista.filter(function(x){
+                return String(x.id) !== String(filme.id);
+            });
+
+        lista.unshift(item);
+
+        localStorage.setItem(
+            "lukafilmes_continuar",
+            JSON.stringify(lista.slice(0,24))
+        );
+
+        console.log(
+            "[CONTINUAR IFRAME] Filme salvo:",
+            item
+        );
+    }
+
+
+    function instalar(){
+
+        const botoes =
+            document.querySelectorAll(
+                ".player-btn"
+            );
+
+        if(!botoes.length){
+
+            console.warn(
+                "[CONTINUAR IFRAME] Nenhum botão de player encontrado."
+            );
+
+            return;
+        }
+
+        botoes.forEach(function(botao){
+
+            if(botao.dataset.continuarLigado === "1"){
+                return;
+            }
+
+            botao.dataset.continuarLigado = "1";
+
+            botao.addEventListener(
+                "click",
+                function(){
+
+                    const numero =
+                        this.dataset.player ||
+                        "";
+
+                    console.log(
+                        "[CONTINUAR IFRAME] Player escolhido:",
+                        numero
+                    );
+
+                    salvarSelecaoPlayer(numero);
+
+                },
+                true
+            );
+
+        });
+
+        console.log(
+            "[CONTINUAR IFRAME] Botões monitorados:",
+            botoes.length
+        );
+    }
+
+
+    if(document.readyState === "loading"){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            instalar
+        );
+
+    }else{
+
+        instalar();
+
+    }
+
+    setTimeout(instalar,1000);
+    setTimeout(instalar,2500);
 
 })();
 </script>
@@ -5117,3 +5502,40 @@ body{
 }
 </style>
 
+
+<style id="lukafilmes-ajuste-favoritos-mobile-final">
+@media (max-width: 650px){
+
+    #filmeFavoritosTopo{
+        position: relative !important;
+
+        top: auto !important;
+        right: auto !important;
+
+        margin-top: 14px !important;
+        margin-right: 15px !important;
+
+        width: calc(100% - 30px) !important;
+
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+        gap: 8px !important;
+
+        box-sizing: border-box !important;
+
+        z-index: 30 !important;
+    }
+
+    #filmeFavoritosTopo button,
+    #filmeFavoritosTopo a{
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
+    }
+
+}
+</style>

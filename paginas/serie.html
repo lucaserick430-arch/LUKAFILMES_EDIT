@@ -1539,6 +1539,7 @@ main {
                 src=""
                 title="Player da série"
                 allow="autoplay; fullscreen; picture-in-picture"
+                sandbox="allow-scripts allow-same-origin"
                 allowfullscreen>
             </iframe>
 
@@ -2732,6 +2733,143 @@ document.addEventListener(
 })();
 </script>
 
+
+<style id="lukafilmes-player-netflix-visual">
+
+/* =========================================================
+   LUKAFILMES — SELEÇÃO DE PLAYERS
+   VISUAL INSPIRADO EM STREAMING
+   ========================================================= */
+
+.lista-plays,
+.players-serie-opcoes {
+    gap: 10px !important;
+}
+
+/* FILMES */
+
+.lista-plays .play-btn {
+    position: relative !important;
+    min-height: 46px !important;
+    padding: 0 20px !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    border-radius: 6px !important;
+    background: #181818 !important;
+    color: #fff !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: .2px !important;
+    cursor: pointer !important;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease !important;
+}
+
+.lista-plays .play-btn:hover {
+    background: #292929 !important;
+    border-color: rgba(255,255,255,.35) !important;
+    transform: translateY(-1px) !important;
+}
+
+.lista-plays .play-btn.player-selecionado {
+    background: #e50914 !important;
+    border-color: #e50914 !important;
+    box-shadow: 0 0 0 1px rgba(229,9,20,.25) !important;
+}
+
+.lista-plays .play-btn.player-selecionado:hover {
+    background: #f40612 !important;
+    border-color: #f40612 !important;
+}
+
+/* SÉRIES */
+
+.players-serie-opcoes .serie-player-btn {
+    min-height: 46px !important;
+    padding: 0 20px !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    border-radius: 6px !important;
+    background: #181818 !important;
+    color: #fff !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: .2px !important;
+    cursor: pointer !important;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease !important;
+}
+
+.players-serie-opcoes .serie-player-btn:hover {
+    background: #292929 !important;
+    border-color: rgba(255,255,255,.35) !important;
+    transform: translateY(-1px) !important;
+}
+
+.players-serie-opcoes .serie-player-btn.ativo {
+    background: #e50914 !important;
+    border-color: #e50914 !important;
+    box-shadow: 0 0 0 1px rgba(229,9,20,.25) !important;
+}
+
+/* TÍTULO DA ÁREA */
+
+.player-filme h2,
+.player-serie h2 {
+    margin-bottom: 18px !important;
+    color: #fff !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+}
+
+/* CELULAR */
+
+@media (max-width: 600px) {
+
+    .lista-plays,
+    .players-serie-opcoes {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 9px !important;
+    }
+
+    .lista-plays .play-btn,
+    .players-serie-opcoes .serie-player-btn {
+        width: 100% !important;
+        min-height: 44px !important;
+        padding: 0 10px !important;
+        font-size: 13px !important;
+    }
+
+}
+
+</style>
+
+
+<style id="lukafilmes-somente-play1">
+
+/* =========================================================
+   LUKAFILMES — SOMENTE PLAY 1 VISÍVEL
+   Os demais players continuam disponíveis no código.
+   ========================================================= */
+
+/* FILMES — esconder PLAY 2, 3 e 4 */
+.lista-plays .play-card:not(:first-child) {
+    display: none !important;
+}
+
+/* SÉRIES — esconder PLAY 2 e demais */
+.players-serie-opcoes .serie-player-btn:not(:first-child) {
+    display: none !important;
+}
+
+</style>
+
 </body>
 
 </html>
@@ -2744,3 +2882,40 @@ document.addEventListener(
 
 
 
+
+<style id="lukafilmes-ajuste-favoritos-mobile-final">
+@media (max-width: 700px){
+
+    #serieFavoritosTopo{
+        position: relative !important;
+
+        top: auto !important;
+        right: auto !important;
+
+        margin-top: 14px !important;
+        margin-right: 15px !important;
+
+        width: calc(100% - 30px) !important;
+
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+        gap: 8px !important;
+
+        box-sizing: border-box !important;
+
+        z-index: 30 !important;
+    }
+
+    #serieFavoritosTopo button,
+    #serieFavoritosTopo a{
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
+    }
+
+}
+</style>

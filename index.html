@@ -1134,6 +1134,215 @@ footer strong{
 }
 </style>
 
+
+<!-- LUKAFILMES — IDENTIDADE DO NAVEGADOR -->
+<link rel="icon" type="image/svg+xml" href="/favicon/lukafilmes.svg">
+<link rel="shortcut icon" href="/favicon/lukafilmes.svg">
+<link rel="apple-touch-icon" href="/favicon/lukafilmes.svg">
+
+
+<style id="lukafilmes-continuar-header-final">
+/* CONTINUAR ASSISTINDO — ITEM DO MENU PRINCIPAL */
+.continuar-header-btn{
+    display:inline-flex;
+    align-items:center;
+    color:#ddd;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+    white-space:nowrap;
+    cursor:pointer;
+    transition:.2s ease;
+    border:0;
+    background:none;
+    padding:0;
+    border-radius:0;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+}
+
+.continuar-header-btn:hover{
+    color:#fff;
+}
+
+@media(max-width:700px){
+    .continuar-header-btn{
+        font-size:13px;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-mobile-menu-final">
+/* =========================================================
+   LUKAFILMES — MENU MOBILE FINAL
+   Desktop permanece inalterado.
+   ========================================================= */
+
+@media(max-width:700px){
+
+    /* O NAV continua transparente para permitir
+       que Continuar Assistindo participe do header. */
+    .nav{
+        display:contents !important;
+    }
+
+    /* No celular somente Continuar Assistindo permanece
+       do NAV. Início, Filmes e Séries ficam ocultos. */
+    .nav a:not(.continuar-header-btn){
+        display:none !important;
+    }
+
+    /* Header-right deixa de formar uma caixa própria. */
+    .header-right{
+        display:contents !important;
+    }
+
+    /* Perfil fica no canto superior direito. */
+    .profile{
+        position:absolute !important;
+        right:18px !important;
+        top:10px !important;
+        width:28px !important;
+        height:28px !important;
+        z-index:20 !important;
+    }
+
+    /* MENU FICA ABAIXO DO PERFIL */
+    .menu-btn{
+        display:block !important;
+        position:absolute !important;
+        right:17px !important;
+        top:39px !important;
+        width:30px !important;
+        height:22px !important;
+        padding:0 !important;
+        margin:0 !important;
+        z-index:20 !important;
+        line-height:22px !important;
+    }
+
+    /* Pesquisa continua antes da área do menu. */
+    .search-btn{
+        position:relative !important;
+        z-index:10 !important;
+        margin-right:52px !important;
+    }
+
+    /* Continuar Assistindo fica antes da pesquisa,
+       sem ficar colado. */
+    .continuar-header-btn{
+        display:inline-flex !important;
+        align-items:center !important;
+        margin-left:auto !important;
+        margin-right:12px !important;
+        color:#ddd !important;
+        font-size:13px !important;
+        white-space:nowrap !important;
+        position:relative !important;
+        z-index:10 !important;
+    }
+}
+</style>
+
+
+
+<style id="lukafilmes-menu-mobile-final">
+
+@media(max-width:700px){
+
+    /* Esconde Início, Filmes e Séries no celular */
+    .nav{
+        display:contents !important;
+    }
+
+    .nav a:not(.continuar-header-btn){
+        display:none !important;
+    }
+
+    /* Header-right não cria uma coluna horizontal */
+    .header-right{
+        display:contents !important;
+    }
+
+    /* L — topo da coluna direita */
+    .profile{
+        position:absolute !important;
+        right:18px !important;
+        top:8px !important;
+        width:28px !important;
+        height:28px !important;
+        z-index:30 !important;
+    }
+
+    /* ☰ — diretamente abaixo do L */
+    .menu-btn{
+        display:block !important;
+        position:absolute !important;
+        right:17px !important;
+        top:38px !important;
+        width:30px !important;
+        height:26px !important;
+        padding:0 !important;
+        margin:0 !important;
+        z-index:30 !important;
+        line-height:26px !important;
+    }
+
+    /* 🔍 — diretamente abaixo do menu */
+    .search-btn{
+        display:block !important;
+        position:absolute !important;
+        right:17px !important;
+        top:64px !important;
+        width:30px !important;
+        height:26px !important;
+        padding:0 !important;
+        margin:0 !important;
+        z-index:30 !important;
+        line-height:26px !important;
+    }
+
+    /* Continuar Assistindo fica à esquerda da coluna */
+    .continuar-header-btn{
+        display:inline-flex !important;
+        align-items:center !important;
+        margin-left:auto !important;
+        margin-right:58px !important;
+        color:#ddd !important;
+        font-size:13px !important;
+        white-space:nowrap !important;
+        position:relative !important;
+        z-index:20 !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-menu-usuario-comum">
+/* Usuário comum:
+   computador: somente Sair no menu
+   celular: Celular, Séries, Filmes e Sair
+*/
+@media (min-width: 769px) {
+    body.lukafilmes-usuario-comum
+    a[href*="admin"],
+    body.lukafilmes-usuario-comum
+    a[href*="revendedor"] {
+        display:none !important;
+    }
+}
+
+body.lukafilmes-usuario-comum
+.lukafilmes-menu-admin,
+body.lukafilmes-usuario-comum
+.lukafilmes-admin,
+body.lukafilmes-usuario-comum
+.lukafilmes-revendedor {
+    display:none !important;
+}
+</style>
+
 </head>
 
 <body>
@@ -1148,9 +1357,15 @@ footer strong{
         <a href="#" class="active">Início</a>
         <a href="paginas/filmes.html">Filmes</a>
         <a href="paginas/series.html">Séries</a>
+        <a
+            class="continuar-header-btn"
+            href="/paginas/continuar-assistindo.html"
+            aria-label="Continuar assistindo"
+        >▶ Continuar Assistindo</a>
     </nav>
 
     <div class="header-right">
+
         <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
 
         <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
@@ -1179,7 +1394,7 @@ footer strong{
     <a href="#">Início</a>
     <a href="paginas/filmes.html">Filmes</a>
     <a href="paginas/series.html">Séries</a>
-    <a href="/admin.html">⚙️ Administração</a>
+    <a href="/admin.html">⚙️ Admin</a>
     <a href="#" onclick="logout(); return false;">🚪 Sair</a>
 </div>
 
@@ -2775,6 +2990,55 @@ function logout(){
 #searchBox {
     position: fixed !important;
 }
+
+/* =========================================================
+   LUKAFILMES — HEADER MOBILE
+   Desktop permanece inalterado.
+   No celular:
+   LUKAFILMES → Continuar Assistindo → Pesquisa → Menu → Perfil
+   ========================================================= */
+
+@media(max-width:700px){
+
+    /* O NAV deixa de ocupar uma coluna própria.
+       O item Continuar passa a participar diretamente
+       do flex do header. */
+    .nav{
+        display:contents !important;
+    }
+
+    /* Esconde Início, Filmes e Séries somente no celular. */
+    .nav a:not(.continuar-header-btn){
+        display:none !important;
+    }
+
+    /* O header-right também vira transparente para o flex,
+       permitindo que Continuar fique imediatamente antes
+       da Pesquisa. */
+    .header-right{
+        display:contents !important;
+    }
+
+    /* Empurra Continuar para a direita, ficando antes da lupa. */
+    .continuar-header-btn{
+        display:inline-flex !important;
+        align-items:center;
+        margin-left:auto;
+        margin-right:10px;
+        color:#ddd;
+        font-size:13px;
+        font-weight:600;
+        white-space:nowrap;
+    }
+
+    .search-btn,
+    .menu-btn,
+    .profile{
+        flex-shrink:0;
+    }
+
+}
+
 </style>
 
 <script id="lukafilmes-pesquisa-home-final">
@@ -2938,5 +3202,108 @@ function logout(){
 })();
 </script>
 
-<script>(function(){window.__heroAudioLiberado=false;document.addEventListener('pointerdown',function(){if(window.__heroAudioLiberado)return;window.__heroAudioLiberado=true;const f=document.getElementById('heroTrailer');if(f&&f.src){f.src=f.src.replace('&mute=1','&mute=0');}}, {once:true});})();</script></body>
+<script>(function(){window.__heroAudioLiberado=false;document.addEventListener('pointerdown',function(){if(window.__heroAudioLiberado)return;window.__heroAudioLiberado=true;const f=document.getElementById('heroTrailer');if(f&&f.src){f.src=f.src.replace('&mute=1','&mute=0');}}, {once:true});})();</script>
+<script src="/js/continuar-assistindo.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    if (window.LukaContinuar) {
+        LukaContinuar.renderContinuar("continuarAssistindo");
+    }
+});
+</script>
+
+
+
+
+<script id="lukafilmes-controle-menu-usuario">
+(function(){
+
+    fetch("/api/eu", {
+        credentials: "include",
+        cache: "no-store"
+    })
+    .then(function(r){
+        return r.ok ? r.json() : null;
+    })
+    .then(function(d){
+
+        if(!d) return;
+
+        const u = d.usuario || d.user || d;
+
+        const tipo = String(
+            u && (u.tipo || u.role || "")
+        ).toLowerCase();
+
+        const ehAdmin =
+            tipo === "admin" ||
+            tipo === "administrador";
+
+        const ehRevendedor =
+            tipo === "revendedor" ||
+            tipo === "revenda";
+
+        /*
+         * Usuário comum não recebe acesso administrativo.
+         */
+        if(!ehAdmin && !ehRevendedor){
+
+            document.body.classList.add(
+                "lukafilmes-usuario-comum"
+            );
+
+            document.querySelectorAll(
+                'a[href*="admin"],' +
+                'a[href*="revendedor"],' +
+                '.lukafilmes-menu-admin,' +
+                '.lukafilmes-admin,' +
+                '.lukafilmes-revendedor'
+            ).forEach(function(el){
+                el.remove();
+            });
+
+            /*
+             * No desktop, deixa somente Sair no menu.
+             * Não remove informações da página.
+             */
+            if(window.innerWidth >= 769){
+
+                document.querySelectorAll(
+                    'nav a,' +
+                    '.menu a,' +
+                    '.menu-item,' +
+                    '.dropdown-menu a'
+                ).forEach(function(el){
+
+                    const texto =
+                        String(el.textContent || "")
+                        .trim()
+                        .toLowerCase();
+
+                    if(
+                        texto &&
+                        !texto.includes("sair")
+                    ){
+                        el.style.display = "none";
+                    }
+                });
+            }
+        }
+
+    })
+    .catch(function(){
+        /*
+         * Em caso de falha, não liberar elementos administrativos.
+         */
+        document.body.classList.add(
+            "lukafilmes-usuario-comum"
+        );
+    });
+
+})();
+</script>
+</body>
+
 </html>
+
+

@@ -1,17 +1,3139 @@
-<div id="catalogo"></div>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050505">
+<title>LUKAFILMES — Filmes e Séries</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+html,body{
+    background:#050505;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    overflow-x:hidden;
+}
+
+body{
+    min-height:100vh;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:72px;
+    z-index:1000;
+    display:flex;
+    align-items:center;
+    padding:0 4%;
+    transition:.35s;
+    background:linear-gradient(
+        to bottom,
+        rgba(0,0,0,.95),
+        rgba(0,0,0,.55),
+        transparent
+    );
+}
+
+.header.scrolled{
+    background:rgba(5,5,5,.96);
+    box-shadow:0 5px 25px rgba(0,0,0,.45);
+}
+
+.logo{
+    font-size:25px;
+    font-weight:900;
+    letter-spacing:-1px;
+    color:#e50914;
+    margin-right:35px;
+    white-space:nowrap;
+}
+
+.logo span{
+    color:#fff;
+}
+
+.nav{
+    display:flex;
+    gap:22px;
+    align-items:center;
+}
+
+.nav a{
+    color:#ddd;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+    transition:.2s;
+}
+
+.nav a:hover,
+.nav a.active{
+    color:#fff;
+}
+
+/* CONTINUAR ASSISTINDO — ITEM DO MENU PRINCIPAL */
+.continuar-header-btn{
+    display:inline-flex;
+    align-items:center;
+    color:#ddd;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+    white-space:nowrap;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.continuar-header-btn:hover{
+    color:#fff;
+}
+
+@media(max-width:700px){
+    .continuar-header-btn{
+        font-size:13px;
+    }
+}
+
+.header-right{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+.search-btn,
+.profile-btn,
+.menu-btn{
+    border:0;
+    background:none;
+    color:#fff;
+    cursor:pointer;
+    font-size:20px;
+}
+
+.profile{
+    width:32px;
+    height:32px;
+    border-radius:5px;
+    background:linear-gradient(135deg,#e50914,#7b0000);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+    font-weight:bold;
+}
+
+
+
+/* ================= HERO ================= */
+
+.hero{
+    height:92vh;
+    min-height:570px;
+    position:relative;
+    display:flex;
+    align-items:center;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at 75% 35%,rgba(229,9,20,.25),transparent 28%),
+        linear-gradient(90deg,#050505 0%,rgba(5,5,5,.9) 25%,rgba(5,5,5,.2) 65%,#050505 100%);
+}
+
+.hero-bg{
+    position:absolute;
+    inset:0;
+    background-size:cover;
+    background-position:center;
+    opacity:.62;
+    transform:scale(1.03);
+}
+
+.hero-overlay{
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(90deg,#050505 0%,rgba(5,5,5,.8) 25%,rgba(5,5,5,.2) 65%,#050505 100%),
+        linear-gradient(0deg,#050505 0%,transparent 35%,rgba(0,0,0,.15) 100%);
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+    width:min(650px,90%);
+    margin-left:6%;
+    padding-top:80px;
+}
+
+.hero-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:#ddd;
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.hero-badge strong{
+    color:#e50914;
+}
+
+.hero-title{
+    font-size:clamp(42px,6vw,78px);
+    line-height:.95;
+    font-weight:900;
+    letter-spacing:-3px;
+    margin-bottom:20px;
+    text-shadow:0 5px 25px #000;
+}
+
+.hero-description{
+    color:#ddd;
+    max-width:560px;
+    font-size:17px;
+    line-height:1.55;
+    margin-bottom:25px;
+}
+
+.hero-info{
+    display:flex;
+    gap:14px;
+    align-items:center;
+    margin-bottom:22px;
+    color:#ddd;
+    font-size:14px;
+}
+
+.hero-info .age{
+    border:1px solid #777;
+    padding:2px 6px;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:12px;
+}
+
+.btn{
+    border:0;
+    border-radius:5px;
+    padding:13px 24px;
+    font-size:15px;
+    font-weight:800;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    transition:.2s;
+}
+
+.btn:hover{
+    transform:scale(1.04);
+}
+
+.btn-watch{
+    background:#fff;
+    color:#000;
+}
+
+.btn-info{
+    background:rgba(90,90,90,.75);
+    color:#fff;
+}
+
+/* ================= CONTENT ================= */
+
+.content{
+    position:relative;
+    z-index:5;
+    margin-top:-70px;
+    padding-bottom:60px;
+}
+
+.section{
+    margin-bottom:32px;
+}
+
+.section-title{
+    padding:0 4%;
+    margin-bottom:13px;
+    font-size:21px;
+    font-weight:800;
+}
+
+.row{
+    display:flex;
+    gap:9px;
+    overflow-x:auto;
+    padding:5px 4% 16px;
+    scroll-behavior:smooth;
+    scrollbar-width:none;
+}
+
+.row::-webkit-scrollbar{
+    display:none;
+}
+
+/* ================= CARDS ================= */
+
+.card{
+    flex:0 0 170px;
+    height:255px;
+    border-radius:5px;
+    overflow:hidden;
+    position:relative;
+    cursor:pointer;
+    background:#171717;
+    transition:.3s;
+    box-shadow:0 5px 15px rgba(0,0,0,.35);
+}
+
+.card:hover{
+    transform:scale(1.07);
+    z-index:20;
+    box-shadow:0 15px 35px rgba(0,0,0,.7);
+}
+
+.card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.card::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        to top,
+        rgba(0,0,0,.9),
+        transparent 55%
+    );
+    opacity:.8;
+}
+
+.card-info{
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:2;
+    padding:12px 10px;
+}
+
+.card-title{
+    font-size:13px;
+    font-weight:800;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.card-meta{
+    color:#aaa;
+    font-size:11px;
+    margin-top:4px;
+}
+
+.play-small{
+    position:absolute;
+    top:10px;
+    left:10px;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#e50914;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:4;
+    font-size:13px;
+}
+
+/* ================= TOP 10 ================= */
+
+.top-card{
+    flex-basis:190px;
+    height:270px;
+}
+
+.top-number{
+    position:absolute;
+    left:-2px;
+    bottom:-4px;
+    z-index:3;
+    font-size:90px;
+    line-height:.8;
+    font-weight:900;
+    color:#050505;
+    -webkit-text-stroke:2px #777;
+    text-shadow:4px 4px 10px #000;
+}
+
+/* ================= LOADING ================= */
+
+.loading{
+    color:#999;
+    padding:20px 4%;
+    font-size:14px;
+}
+
+.error{
+    color:#aaa;
+    padding:20px 4%;
+}
+
+/* ================= FOOTER ================= */
+
+footer{
+    border-top:1px solid #222;
+    padding:40px 5%;
+    color:#777;
+    font-size:12px;
+    text-align:center;
+    margin-top:40px;
+}
+
+footer strong{
+    color:#e50914;
+}
+
+/* ================= MOBILE ================= */
+
+.menu-btn{
+    display:none;
+}
+
+@media(max-width:800px){
+
+    .header{
+        height:60px;
+        padding:0 18px;
+    }
+
+    .logo{
+        font-size:20px;
+        margin-right:0;
+    }
+
+    .nav{
+        display:none;
+    }
+
+    .menu-btn{
+        display:block;
+    }
+
+    .header-right{
+        gap:12px;
+    }
+
+    .hero{
+        height:75vh;
+        min-height:500px;
+        align-items:flex-end;
+    }
+
+    .hero-content{
+        margin-left:18px;
+        margin-bottom:70px;
+        padding-top:0;
+        width:calc(100% - 36px);
+    }
+
+    .hero-title{
+        font-size:43px;
+        letter-spacing:-2px;
+    }
+
+    .hero-description{
+        font-size:14px;
+        line-height:1.45;
+        max-height:84px;
+        overflow:hidden;
+    }
+
+    .hero-info{
+        font-size:12px;
+    }
+
+    .btn{
+        padding:11px 17px;
+        font-size:13px;
+    }
+
+    .content{
+        margin-top:-45px;
+    }
+
+    .section{
+        margin-bottom:24px;
+    }
+
+    .section-title{
+        font-size:18px;
+        padding:0 18px;
+    }
+
+    .row{
+        padding-left:18px;
+        padding-right:18px;
+        gap:7px;
+    }
+
+    .card{
+        flex-basis:125px;
+        height:187px;
+    }
+
+    .top-card{
+        flex-basis:145px;
+        height:205px;
+    }
+
+    .top-number{
+        font-size:65px;
+    }
+
+    .card-title{
+        font-size:11px;
+    }
+
+    .card-meta{
+        font-size:9px;
+    }
+
+    .profile{
+        width:28px;
+        height:28px;
+    }
+}
+
+/* ================= SEARCH ================= */
+
+.search-box{
+    position:fixed !important;
+    top:72px !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:min(620px,calc(100% - 40px)) !important;
+    box-sizing:border-box;
+    background:#0b0b0b;
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:10px;
+    padding:10px;
+    z-index:1200;
+    display:none;
+    box-shadow:0 18px 50px rgba(0,0,0,.75);
+}
+
+.search-box.show{
+    display:block;
+}
+
+.search-box input{
+    display:block;
+    width:100%;
+    height:46px;
+    box-sizing:border-box;
+    border:0;
+    outline:0;
+    border-radius:7px;
+    background:#181818;
+    color:#fff;
+    padding:0 15px;
+    font-size:16px;
+    -webkit-appearance:none;
+    appearance:none;
+}
+
+.search-box input::placeholder{
+    color:#999;
+}
+
+/* Pesquisa no celular — estilo Netflix */
+@media (max-width:600px){
+
+    .search-box{
+        top:58px !important;
+        left:0 !important;
+        right:0 !important;
+        transform:none !important;
+        width:100% !important;
+        padding:8px 10px 10px !important;
+        border:0 !important;
+        border-radius:0 !important;
+        background:#050505 !important;
+        box-shadow:0 12px 30px rgba(0,0,0,.75);
+    }
+
+    .search-box input{
+        height:44px;
+        border-radius:5px;
+        background:#222;
+        font-size:16px;
+        padding:0 14px;
+    }
+}
+
+.mobile-menu{
+    position:fixed;
+    top:60px;
+    left:0;
+    right:0;
+    background:rgba(8,8,8,.98);
+    z-index:1100;
+    padding:20px;
+    display:none;
+    border-bottom:1px solid #222;
+}
+
+.mobile-menu.show{
+    display:block;
+}
+
+.mobile-menu a{
+    display:block;
+    color:#fff;
+    text-decoration:none;
+    padding:13px 5px;
+    border-bottom:1px solid #222;
+}
+
+/* =========================================================
+   TRAILER AUTOMATICO NO HERO
+   ========================================================= */
+
+#heroTrailer{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:100vw;
+    height:56.25vw;
+    min-height:100%;
+    min-width:177.78vh;
+    transform:translate(-50%,-50%);
+    border:0;
+    opacity:0;
+    pointer-events:none;
+    z-index:1;
+    transition:opacity .8s ease;
+}
+
+#heroTrailer.ativo{
+    opacity:1;
+}
+
+.hero-bg{
+    z-index:0;
+    transition:opacity .8s ease;
+}
+
+.hero-overlay{
+    z-index:2;
+}
+
+.hero-content{
+    z-index:3;
+}
+
+</style>
+
+<style id="pc-hero-trailer-fix">
+@media (min-width: 769px){
+    .hero{
+        overflow:hidden;
+    }
+
+    #heroTrailer{
+        width:120vw;
+        height:120vh;
+        min-width:120vw;
+        min-height:120vh;
+        top:50%;
+        left:50%;
+        transform:translate(-50%,-50%);
+    }
+}
+</style>
+
+<style id="pc-capas-hd">
+@media (min-width:769px){
+    .card img{
+        image-rendering:auto;
+        backface-visibility:hidden;
+        -webkit-backface-visibility:hidden;
+        transform:translateZ(0);
+        -webkit-transform:translateZ(0);
+    }
+}
+</style>
+
+<style id="hero-titulo-responsivo">
+/* =========================================================
+   LUKAFILMES — HERO
+   CORREÇÃO PARA TÍTULOS GRANDES
+   ========================================================= */
+
+#heroTitle{
+    max-width: min(850px, 75vw);
+
+    font-size: clamp(
+        2rem,
+        5vw,
+        4.8rem
+    );
+
+    line-height: 0.98;
+
+    margin-top: 8px;
+    margin-bottom: 14px;
+
+    overflow: hidden;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    line-clamp: 2;
+
+    word-break: normal;
+    overflow-wrap: break-word;
+
+    text-wrap: balance;
+}
+
+/*
+ * Mantém a área do Hero organizada mesmo
+ * quando o título possui duas linhas.
+ */
+
+.hero-content{
+    max-width: 900px;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+/*
+ * Evita que descrição e título empurrem
+ * os botões para cima do selo "Em destaque".
+ */
+
+#heroDescription{
+    max-width: 700px;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+
+    line-clamp: 3;
+
+    overflow: hidden;
+
+    margin-bottom: 18px;
+}
+
+/*
+ * Área dos botões permanece abaixo do texto.
+ */
+
+.hero-buttons,
+.hero-actions{
+    position: relative;
+    z-index: 5;
+
+    flex-shrink: 0;
+
+    margin-top: 8px;
+}
+
+/*
+ * Telas menores.
+ */
+
+@media (max-width: 768px){
+
+    #heroTitle{
+        max-width: 92vw;
+
+        font-size: clamp(
+            1.8rem,
+            9vw,
+            3rem
+        );
+
+        line-height: 1;
+
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+
+        margin-bottom: 12px;
+    }
+
+    .hero-content{
+        min-height: 360px;
+        max-width: 94vw;
+    }
+
+    #heroDescription{
+        max-width: 92vw;
+
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+    }
+}
+</style>
+
+
+<style id="hero-layout-final">
+/* =========================================================
+   LUKAFILMES — PROTEÇÃO FINAL DO HERO
+   Impede botoes de invadirem "Em destaque"
+   ========================================================= */
+
+.hero{
+    position: relative;
+    min-height: 620px;
+    overflow: hidden;
+}
+
+.hero-content{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 3;
+
+    max-width: 900px;
+
+    min-height: 0;
+
+    padding: 0 5% 70px;
+
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+#heroTitle{
+    max-width: min(850px, 75vw);
+
+    margin: 0 0 14px;
+
+    font-size: clamp(
+        2rem,
+        5vw,
+        4.8rem
+    );
+
+    line-height: .98;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+
+    overflow: hidden;
+
+    overflow-wrap: break-word;
+    word-break: normal;
+
+    text-wrap: balance;
+}
+
+#heroDescription{
+    max-width: 700px;
+
+    margin: 0 0 18px;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+
+    overflow: hidden;
+}
+
+.hero-buttons{
+    position: relative;
+
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    flex-shrink: 0;
+
+    margin: 0;
+}
+
+/*
+ * A seção seguinte nunca pode subir por trás do Hero.
+ */
+
+#destaques{
+    position: relative;
+    z-index: 20;
+    clear: both;
+}
+
+/*
+ * Título da seção "Em destaque".
+ */
+
+#destaques + *,
+.section-title{
+    position: relative;
+    z-index: 20;
+}
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 768px){
+
+    .hero{
+        min-height: 560px;
+    }
+
+    .hero-content{
+        position: absolute;
+
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        padding:
+            0 20px
+            55px;
+
+        max-width: none;
+    }
+
+    #heroTitle{
+        max-width: 92vw;
+
+        font-size: clamp(
+            1.8rem,
+            9vw,
+            3rem
+        );
+
+        line-height: 1;
+
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+
+        margin-bottom: 12px;
+    }
+
+    #heroDescription{
+        max-width: 92vw;
+
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+
+        margin-bottom: 16px;
+    }
+
+    .hero-buttons{
+        gap: 10px;
+    }
+}
+</style>
+
+
+<style id="hero-posicao-final">
+/* =========================================================
+   LUKAFILMES — POSIÇÃO DO CONTEÚDO DO HERO
+   PC / TV
+   ========================================================= */
+
+@media (min-width: 769px){
+
+    .hero-content{
+        left: 0 !important;
+        right: auto !important;
+
+        width: 100% !important;
+        max-width: 1000px !important;
+
+        padding-left: 18px !important;
+        padding-right: 20px !important;
+
+        padding-bottom: 115px !important;
+
+        margin: 0 !important;
+
+        box-sizing: border-box !important;
+
+        align-items: flex-start !important;
+    }
+
+    #heroTitle,
+    #heroDescription,
+    #heroYear,
+    .hero-buttons{
+        margin-left: 0 !important;
+    }
+
+    #heroTitle{
+        max-width: 850px !important;
+    }
+
+    #heroDescription{
+        max-width: 700px !important;
+    }
+
+}
+
+/* =========================================================
+   CELULAR — PRESERVADO
+   ========================================================= */
+
+@media (max-width: 768px){
+
+    .hero-content{
+        left: 0 !important;
+        right: 0 !important;
+
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+        padding-bottom: 55px !important;
+    }
+
+}
+</style>
+
+
+<style id="hero-posicao-celular-final">
+/* =========================================================
+   LUKAFILMES — HERO MOBILE
+   CONTEUDO ENCOSTADO NA LATERAL ESQUERDA
+   ========================================================= */
+
+@media (max-width: 768px){
+
+    .hero-content{
+        left: 0 !important;
+        right: 0 !important;
+
+        width: 100% !important;
+        max-width: none !important;
+
+        padding-left: 2px !important;
+        padding-right: 12px !important;
+
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+
+        box-sizing: border-box !important;
+
+        align-items: flex-start !important;
+    }
+
+    #heroTitle,
+    #heroDescription,
+    #heroYear,
+    .hero-buttons{
+        margin-left: 0 !important;
+    }
+
+    #heroTitle{
+        max-width: 96vw !important;
+    }
+
+    #heroDescription{
+        max-width: 96vw !important;
+    }
+
+    .hero-buttons{
+        align-self: flex-start !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-menu-desktop">
+/* =========================================================
+   LUKAFILMES — MENU DO COMPUTADOR
+   ========================================================= */
+
+.desktop-user-menu{
+    position: fixed;
+    top: 72px;
+    right: 24px;
+    z-index: 99999;
+
+    min-width: 190px;
+    padding: 8px;
+
+    background: rgba(15,15,15,.97);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+
+    box-shadow: 0 12px 35px rgba(0,0,0,.45);
+
+    display: none;
+}
+
+.desktop-user-menu.show{
+    display: block;
+}
+
+.desktop-user-menu a{
+    display: block;
+    padding: 12px 14px;
+
+    color: #fff;
+    text-decoration: none;
+
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.desktop-user-menu a:hover{
+    background: rgba(255,255,255,.10);
+}
+
+@media (max-width: 768px){
+    .desktop-user-menu{
+        display: none !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-menu-desktop-visible">
+/* =========================================================
+   LUKAFILMES — BOTÃO MENU DESKTOP
+   ========================================================= */
+
+@media (min-width: 769px){
+
+    .header .menu-btn{
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        width: 42px !important;
+        height: 42px !important;
+
+        cursor: pointer !important;
+        position: relative !important;
+        z-index: 100001 !important;
+    }
+
+}
+
+@media (max-width: 768px){
+
+    .header .menu-btn{
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+}
+</style>
+
+
+<!-- LUKAFILMES — IDENTIDADE DO NAVEGADOR -->
+<link rel="icon" type="image/svg+xml" href="/favicon/lukafilmes.svg">
+<link rel="shortcut icon" href="/favicon/lukafilmes.svg">
+<link rel="apple-touch-icon" href="/favicon/lukafilmes.svg">
+
+
+<style id="lukafilmes-continuar-header-final">
+</style>
+
+
+<style id="lukafilmes-mobile-menu-final">
+/* =========================================================
+   LUKAFILMES — MENU MOBILE FINAL
+   Desktop permanece inalterado.
+   ========================================================= */
+
+@media(max-width:700px){
+
+    /* O NAV continua transparente para permitir
+       que Continuar Assistindo participe do header. */
+    .nav{
+        display:contents !important;
+    }
+
+    /* No celular somente Continuar Assistindo permanece
+       do NAV. Início, Filmes e Séries ficam ocultos. */
+    .nav a:not(.continuar-header-btn){
+        display:none !important;
+    }
+
+    /* Header-right deixa de formar uma caixa própria. */
+    .header-right{
+        display:contents !important;
+    }
+
+    /* Perfil fica no canto superior direito. */
+    .profile{
+        position:absolute !important;
+        right:18px !important;
+        top:10px !important;
+        width:28px !important;
+        height:28px !important;
+        z-index:20 !important;
+    }
+
+    /* MENU FICA ABAIXO DO PERFIL */
+    .menu-btn{
+        display:block !important;
+        position:absolute !important;
+        right:17px !important;
+        top:39px !important;
+        width:30px !important;
+        height:22px !important;
+        padding:0 !important;
+        margin:0 !important;
+        z-index:20 !important;
+        line-height:22px !important;
+    }
+
+    /* Pesquisa continua antes da área do menu. */
+    .search-btn{
+        position:relative !important;
+        z-index:10 !important;
+        margin-right:52px !important;
+    }
+
+    /* Continuar Assistindo fica antes da pesquisa,
+       sem ficar colado. */
+    .continuar-header-btn{
+        display:inline-flex !important;
+        align-items:center !important;
+        margin-left:auto !important;
+        margin-right:12px !important;
+        color:#ddd !important;
+        font-size:13px !important;
+        white-space:nowrap !important;
+        position:relative !important;
+        z-index:10 !important;
+    }
+}
+</style>
+
+
+
+<style id="lukafilmes-menu-mobile-final">
+
+@media(max-width:700px){
+
+    /* Esconde Início, Filmes e Séries no celular */
+    .nav{
+        display:contents !important;
+    }
+
+    .nav a:not(.continuar-header-btn){
+        display:none !important;
+    }
+
+    /* Header-right não cria uma coluna horizontal */
+    .header-right{
+        display:contents !important;
+    }
+
+    /* L — topo da coluna direita */
+    .profile{
+        position:absolute !important;
+        right:18px !important;
+        top:8px !important;
+        width:28px !important;
+        height:28px !important;
+        z-index:30 !important;
+    }
+
+    /* ☰ — diretamente abaixo do L */
+    .menu-btn{
+        display:block !important;
+        position:absolute !important;
+        right:17px !important;
+        top:38px !important;
+        width:30px !important;
+        height:26px !important;
+        padding:0 !important;
+        margin:0 !important;
+        z-index:30 !important;
+        line-height:26px !important;
+    }
+
+    /* 🔍 — diretamente abaixo do menu */
+    .search-btn{
+        display:block !important;
+        position:absolute !important;
+        right:17px !important;
+        top:64px !important;
+        width:30px !important;
+        height:26px !important;
+        padding:0 !important;
+        margin:0 !important;
+        z-index:30 !important;
+        line-height:26px !important;
+    }
+
+    /* Continuar Assistindo fica à esquerda da coluna */
+    .continuar-header-btn{
+        display:inline-flex !important;
+        align-items:center !important;
+        margin-left:auto !important;
+        margin-right:58px !important;
+        color:#ddd !important;
+        font-size:13px !important;
+        white-space:nowrap !important;
+        position:relative !important;
+        z-index:20 !important;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<header class="header" id="header">
+
+    <div class="logo">
+        LUKA<span>FILMES</span>
+    </div>
+
+    <nav class="nav">
+        <a href="#" class="active">Início</a>
+        <a href="paginas/filmes.html">Filmes</a>
+        <a href="paginas/series.html">Séries</a>
+        <a
+            class="continuar-header-btn"
+            href="/paginas/continuar-assistindo.html"
+            aria-label="Continuar assistindo"
+        >▶ Continuar Assistindo</a>
+    </nav>
+
+    <div class="header-right">
+        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+
+        <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
+
+        <div class="profile">L</div>
+    </div>
+</header>
+
+
+<div class="desktop-user-menu" id="desktopUserMenu">
+    <div id="desktopUserOptions"></div>
+    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+</div>
+
+<div class="search-box" id="searchBox">
+    <input
+        id="searchInput"
+        type="search"
+        placeholder="Buscar filmes e séries..."
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter') pesquisar()"
+    >
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#">Início</a>
+    <a href="paginas/filmes.html">Filmes</a>
+    <a href="paginas/series.html">Séries</a>
+    <a href="/admin.html">⚙️ Administração</a>
+    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+</div>
+
+<section class="hero">
+
+    <div
+        class="hero-bg"
+        id="heroBg"
+        style="background-image:url('https://image.tmdb.org/t/p/original');">
+    </div>
+
+    
+<iframe
+    id="heroTrailer"
+    title="Trailer do filme"
+    allow="autoplay; encrypted-media; picture-in-picture"
+    allowfullscreen>
+</iframe>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+        <div class="hero-badge">
+            <strong>●</strong> LUKAFILMES ORIGINAL
+        </div>
+
+        <h1 class="hero-title" id="heroTitle">
+            Carregando...
+        </h1>
+
+        <div class="hero-info">
+            <span id="heroYear">2026</span>
+            <span class="age">16</span>
+            <span>Filme</span>
+            <span>HD</span>
+        </div>
+
+        <p class="hero-description" id="heroDescription">
+            Encontre seus filmes e séries favoritos.
+        </p>
+
+        <div class="hero-buttons">
+            <button class="btn btn-watch" onclick="abrirDestaque()">
+                ▶ Assistir
+            </button>
+        </div>
+
+    </div>
+</section>
+
+<main class="content">
+
+    <section class="section">
+        <h2 class="section-title">🔥 Em destaque</h2>
+        <div class="row" id="destaques">
+            <div class="loading">Carregando filmes...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">🎬 Filmes populares</h2>
+        <div class="row" id="filmes">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">📺 Séries populares</h2>
+        <div class="row" id="series">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">🆕 Lançamentos</h2>
+        <div class="row" id="lancamentos">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">🏆 Mais assistidos</h2>
+        <div class="row" id="top10">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <strong>LUKAFILMES</strong> — Filmes e séries para você assistir.
+</footer>
 
 <script>
-  fetch('./catalogo.json')
-    .then(res => res.json())
-    .then(data => {
-      const container = document.getElementById('catalogo');
-      data.forEach(filme => {
-        const item = document.createElement('div');
-        item.textContent = filme.titulo;
-        container.appendChild(item);
-      });
+
+let destaqueAtual = null;
+
+/* ================= HEADER ================= */
+
+window.addEventListener("scroll",()=>{
+    const header=document.getElementById("header");
+
+    if(window.scrollY>30){
+        header.classList.add("scrolled");
+    }else{
+        header.classList.remove("scrolled");
+    }
+});
+
+function toggleSearch(){
+    const box=document.getElementById("searchBox");
+    box.classList.toggle("show");
+
+    if(box.classList.contains("show")){
+        setTimeout(()=>{
+            document.getElementById("searchInput").focus();
+        },100);
+    }
+}
+
+function toggleMenu(){
+
+    /*
+     * CELULAR:
+     * mantém exatamente o menu mobile atual.
+     */
+    if(window.innerWidth <= 768){
+
+        document
+            .getElementById("mobileMenu")
+            .classList
+            .toggle("show");
+
+        return;
+    }
+
+    /*
+     * COMPUTADOR:
+     * abre somente o menu de usuário.
+     */
+    const menu =
+        document.getElementById("desktopUserMenu");
+
+    if(!menu){
+        return;
+    }
+
+    menu.classList.toggle("show");
+
+    if(
+        menu.classList.contains("show") &&
+        !menu.dataset.carregado
+    ){
+        carregarMenuUsuarioDesktop();
+    }
+}
+
+
+/* =========================================================
+   MENU DO USUÁRIO — DESKTOP
+   ========================================================= */
+
+async function carregarMenuUsuarioDesktop(){
+
+    const menu =
+        document.getElementById("desktopUserMenu");
+
+    const opcoes =
+        document.getElementById("desktopUserOptions");
+
+    if(!menu || !opcoes){
+        return;
+    }
+
+    try{
+
+        const resposta =
+            await fetch(
+                "/api/eu",
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+        if(!resposta.ok){
+            return;
+        }
+
+        const dados =
+            await resposta.json();
+
+        if(
+            !dados ||
+            !dados.logado ||
+            !dados.usuario
+        ){
+            return;
+        }
+
+        const tipo =
+            String(
+                dados.usuario.tipo || ""
+            ).toLowerCase();
+
+        if(tipo === "admin"){
+
+            opcoes.innerHTML =
+                '<a href="/admin.html">⚙️ Admin</a>';
+
+        }else if(tipo === "revendedor"){
+
+            opcoes.innerHTML =
+                '<a href="/revendedor.html">🏪 Revendedor</a>';
+
+        }else{
+
+            opcoes.innerHTML = "";
+
+        }
+
+        menu.dataset.carregado = "true";
+
+    }catch(erro){
+
+        console.warn(
+            "[MENU DESKTOP] Erro ao verificar usuário:",
+            erro
+        );
+
+    }
+}
+
+
+
+/* ================= API ================= */
+
+async function buscarJSON(url){
+
+    try{
+
+        const resposta=await fetch(url);
+
+        if(!resposta.ok){
+            throw new Error("HTTP "+resposta.status);
+        }
+
+        return await resposta.json();
+
+    }catch(erro){
+
+        console.error("Erro:",url,erro);
+
+        return null;
+    }
+}
+
+/* ================= NORMALIZAR ================= */
+
+function normalizarLista(data){
+
+    if(Array.isArray(data)) return data;
+
+    if(!data) return [];
+
+    if(Array.isArray(data.results)) return data.results;
+
+    if(Array.isArray(data.filmes)) return data.filmes;
+
+    if(Array.isArray(data.series)) return data.series;
+
+    if(Array.isArray(data.itens)) return data.itens;
+
+    return [];
+}
+
+function imagem(item){
+
+    return item.poster_path ||
+           item.poster ||
+           item.capa ||
+           item.imagem ||
+           item.backdrop_path ||
+           "";
+}
+
+function titulo(item){
+
+    return item.title ||
+           item.name ||
+           item.titulo ||
+           item.nome ||
+           "Sem título";
+}
+
+function ano(item){
+
+    const data=item.release_date ||
+                item.first_air_date ||
+                item.data_lancamento ||
+                "";
+
+    return data ? String(data).slice(0,4) : "";
+}
+
+function idItem(item){
+
+    return item.id ||
+           item.tmdb_id ||
+           item.id_tmdb ||
+           "";
+}
+
+/* ================= CARD ================= */
+
+function criarCard(item,numero){
+
+    const card=document.createElement("article");
+    card.className="card";
+
+    const img=imagem(item);
+
+    const poster=img
+        ? (
+            img.startsWith("http")
+            ? img
+            : "https://image.tmdb.org/t/p/original"+img
+          )
+        : "";
+
+    card.innerHTML=`
+
+        ${
+            poster
+            ? `<img src="${poster}" loading="lazy" alt="${titulo(item)}">`
+            : `<div style="
+                width:100%;
+                height:100%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                background:#222;
+                color:#777;
+                text-align:center;
+                padding:15px;
+              ">${titulo(item)}</div>`
+        }
+
+
+        ${
+            numero
+            ? `<div class="top-number">${numero}</div>`
+            : ""
+        }
+
+        <div class="card-info">
+
+            <div class="card-title">
+                ${titulo(item)}
+            </div>
+
+            <div class="card-meta">
+                ${ano(item)}
+                ${item.vote_average
+                    ? " • ⭐ "+Number(item.vote_average).toFixed(1)
+                    : ""}
+            </div>
+
+        </div>
+    `;
+
+    card.onclick=()=>abrirItem(item);
+
+    return card;
+}
+
+function renderizar(id,lista,top=false){
+
+    const container=document.getElementById(id);
+
+    if(!container)return;
+
+    container.innerHTML="";
+
+    if(!lista.length){
+
+        container.innerHTML=
+            `<div class="loading">Nenhum título encontrado.</div>`;
+
+        return;
+    }
+
+    lista.slice(0,20).forEach((item,index)=>{
+
+        container.appendChild(
+            criarCard(item,top ? index+1 : null)
+        );
+
     });
+}
+
+/* ================= ABRIR ================= */
+
+function abrirItem(item){
+
+    if(!item) return;
+
+    const id =
+        item.id ||
+        item.tmdb_id ||
+        item.id_tmdb;
+
+    if(!id) return;
+
+    const tipo =
+        item.media_type === "tv" ||
+        item.tipo === "serie" ||
+        item.tipo === "series"
+        ? "serie"
+        : "filme";
+
+    if(tipo === "serie"){
+        localStorage.removeItem("filmeSelecionado");
+        localStorage.setItem(
+            "serieSelecionada",
+            JSON.stringify({...item})
+        );
+    }else{
+        const filmeKey =
+            "filmeSelecionadoHome_" + String(id);
+
+        localStorage.setItem(
+            filmeKey,
+            JSON.stringify({...item})
+        );
+
+        localStorage.setItem(
+            "filmeSelecionado",
+            JSON.stringify({...item})
+        );
+    }
+
+    location.href =
+        `paginas/${tipo}.html?id=${encodeURIComponent(id)}`;
+}
+
+
+
+/* ================= HERO ================= */
+
+
+function abrirDestaque(){
+    if(!destaqueAtual) return;
+
+    const item = destaqueAtual;
+
+    const tipo =
+        item.media_type === "tv" ||
+        item.tipo === "serie" ||
+        item.tipo === "series"
+            ? "serie"
+            : "filme";
+
+    if(tipo === "serie"){
+        localStorage.removeItem("filmeSelecionado");
+        localStorage.setItem(
+            "serieSelecionada",
+            JSON.stringify(item)
+        );
+        window.location.href = "paginas/serie.html";
+        return;
+    }
+
+    localStorage.removeItem("serieSelecionada");
+    localStorage.setItem(
+        "filmeSelecionado",
+        JSON.stringify(item)
+    );
+
+    window.location.href = "paginas/filme.html";
+}
+
+
+/* =========================================================
+   TRAILER AUTOMATICO DO HERO
+   ========================================================= */
+
+let heroTrailerAtual = null;
+
+async function carregarTrailerHero(item){
+
+    const video =
+        document.getElementById("heroTrailer");
+
+    if(!video) return;
+
+    const id =
+        item && (
+            item.id ||
+            item.tmdb_id
+        );
+
+    if(!id){
+
+        video.classList.remove("ativo");
+        video.src="";
+
+        return;
+    }
+
+    const idAtual =
+        String(id);
+
+    heroTrailerAtual =
+        idAtual;
+
+    try{
+
+        /*
+         * Se a seleção do Hero já encontrou o trailer,
+         * usamos diretamente o resultado.
+         *
+         * Caso contrário, mantemos a busca original.
+         */
+
+        let chave =
+            item.__heroTrailerChave ||
+            null;
+
+        if(!chave){
+
+            const resultado =
+                await buscarTrailerDoHero(item);
+
+            if(
+                resultado &&
+                resultado.chave
+            ){
+
+                chave =
+                    resultado.chave;
+
+            }
+
+        }
+
+        if(heroTrailerAtual !== idAtual){
+            return;
+        }
+
+        if(!chave){
+
+            video.classList.remove("ativo");
+            video.src="";
+
+            console.log(
+                "[HERO TRAILER] Nenhum trailer:",
+                item.titulo || ""
+            );
+
+            /*
+             * Se por algum motivo o trailer não puder
+             * carregar, pula para outro filme.
+             */
+
+            setTimeout(() => {
+
+                if(
+                    destaqueAtual === item &&
+                    !window.__heroTrocaEmAndamento
+                ){
+
+                    proximoHeroTrailer();
+
+                }
+
+            }, 300);
+
+            return;
+        }
+
+        /*
+         * API IFrame do YouTube:
+         *
+         * enablejsapi=1 permite receber o evento
+         * de término do trailer.
+         *
+         * loop=0 é obrigatório aqui, pois queremos
+         * detectar o fim e trocar para outro filme.
+         */
+
+        const origem =
+            encodeURIComponent(
+                window.location.origin
+            );
+
+        const novaUrl =
+            "https://www.youtube.com/embed/" +
+            encodeURIComponent(chave) +
+            "?autoplay=1" +
+            "&mute=1" +
+            "&controls=0" +
+            "&loop=0" +
+            "&playsinline=1" +
+            "&rel=0" +
+            "&enablejsapi=1" +
+            "&origin=" +
+            origem;
+
+        video.classList.remove("ativo");
+
+        video.src =
+            novaUrl;
+
+        video.classList.add("ativo");
+
+        /*
+         * O player precisa ser reinicializado para
+         * que o evento ENDED seja recebido.
+         */
+
+        function configurarPlayerYouTube(){
+
+            if(
+                !window.YT ||
+                !window.YT.Player
+            ){
+                return false;
+            }
+
+            try{
+
+                if(window.__heroYTPlayer){
+
+                    try{
+                        window.__heroYTPlayer.destroy();
+                    }catch(e){}
+
+                    window.__heroYTPlayer =
+                        null;
+                }
+
+                window.__heroYTPlayer =
+                    new YT.Player(
+                        video,
+                        {
+                            events: {
+
+                                onStateChange:
+                                    function(evento){
+
+                                        /*
+                                         * 0 = ENDED
+                                         */
+
+                                        if(
+                                            evento &&
+                                            evento.data === 0
+                                        ){
+
+                                            console.log(
+                                                "[HERO TRAILER] Trailer terminou:",
+                                                item.titulo || ""
+                                            );
+
+                                            proximoHeroTrailer();
+                                        }
+
+                                    },
+
+                                onError:
+                                    function(){
+
+                                        console.warn(
+                                            "[HERO TRAILER] Erro no player:",
+                                            item.titulo || ""
+                                        );
+
+                                        proximoHeroTrailer();
+                                    }
+                            }
+                        }
+                    );
+
+                return true;
+
+            }catch(erro){
+
+                console.warn(
+                    "[HERO TRAILER] Erro ao configurar YouTube:",
+                    erro
+                );
+
+                return false;
+            }
+        }
+
+        /*
+         * Se a API já estiver carregada, configura.
+         * Caso contrário, carregamos a API uma única vez.
+         */
+
+        if(window.YT && window.YT.Player){
+
+            setTimeout(
+                configurarPlayerYouTube,
+                100
+            );
+
+        }else{
+
+            if(!window.__heroYTApiCarregando){
+
+                window.__heroYTApiCarregando =
+                    true;
+
+                const script =
+                    document.createElement("script");
+
+                script.src =
+                    "https://www.youtube.com/iframe_api";
+
+                script.async = true;
+
+                document.head.appendChild(script);
+            }
+
+            const anterior =
+                window.onYouTubeIframeAPIReady;
+
+            window.onYouTubeIframeAPIReady =
+                function(){
+
+                    if(typeof anterior === "function"){
+
+                        try{
+                            anterior();
+                        }catch(e){}
+                    }
+
+                    setTimeout(
+                        configurarPlayerYouTube,
+                        100
+                    );
+                };
+        }
+
+        if(window.__heroAudioLiberado){
+
+            /*
+             * Mantém o comportamento de áudio já existente.
+             */
+
+            try{
+
+                video.src =
+                    novaUrl.replace(
+                        "&mute=1",
+                        "&mute=0"
+                    );
+
+            }catch(e){}
+        }
+
+        console.log(
+            "[HERO TRAILER] Ativo:",
+            item.titulo || "",
+            chave
+        );
+
+    }catch(erro){
+
+        console.warn(
+            "[HERO TRAILER] Erro:",
+            erro
+        );
+
+        video.classList.remove("ativo");
+        video.src="";
+
+        setTimeout(() => {
+
+            if(
+                destaqueAtual === item &&
+                !window.__heroTrocaEmAndamento
+            ){
+
+                proximoHeroTrailer();
+
+            }
+
+        }, 300);
+    }
+}
+
+
+function montarHero(item){
+
+    if(!item)return;
+
+    destaqueAtual=item;
+
+    document.getElementById("heroTitle").textContent=
+        titulo(item);
+
+    document.getElementById("heroDescription").textContent=
+        item.overview ||
+        item.sinopse ||
+        "Assista agora no LUKAFILMES.";
+
+    document.getElementById("heroYear").textContent=
+        ano(item) || "2026";
+
+    const fundo=
+        item.backdrop_path ||
+        item.backdrop ||
+        imagem(item);
+
+    if(fundo){
+
+        const url=fundo.startsWith("http")
+            ? fundo
+            : "https://image.tmdb.org/t/p/original"+fundo;
+
+        document.getElementById("heroBg").style.backgroundImage=
+            `url("${url}")`;
+    }
+
+    carregarTrailerHero(item);
+}
+
+/* ================= CARREGAMENTO ================= */
+
+async function carregarHome(){
+
+    /*
+     * HOME DINÂMICA LUKAFILMES
+     *
+     * A cada atualização escolhemos páginas diferentes
+     * dos catálogos existentes.
+     *
+     * O servidor continua responsável por consultar o TMDB.
+     */
+
+    const baseFilmes = [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+        11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+    ];
+
+    const baseSeries = [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+        11, 12, 13, 14, 15
+    ];
+
+    /*
+     * Semente baseada no horário.
+     * Assim uma atualização pode trazer
+     * páginas diferentes sem alterar o servidor.
+     */
+    const agora = Date.now();
+
+    function escolherPaginas(lista, quantidade){
+
+        const copia = [...lista];
+
+        let semente = agora;
+
+        for(let i = copia.length - 1; i > 0; i--){
+
+            semente =
+                (semente * 9301 + 49297) % 233280;
+
+            const indice =
+                Math.floor(
+                    (semente / 233280) * (i + 1)
+                );
+
+            [copia[i], copia[indice]] =
+                [copia[indice], copia[i]];
+        }
+
+        return copia.slice(0, quantidade);
+    }
+
+    const paginasFilmes =
+        escolherPaginas(baseFilmes, 5);
+
+    const paginasSeries =
+        escolherPaginas(baseSeries, 3);
+
+    /*
+     * Busca várias páginas em paralelo.
+     */
+    const respostasFilmes =
+        await Promise.all(
+            paginasFilmes.map(pagina =>
+                buscarJSON(
+                    "/api/catalogo-filmes?pagina=" +
+                    pagina
+                )
+            )
+        );
+
+    const respostasSeries =
+        await Promise.all(
+            paginasSeries.map(pagina =>
+                buscarJSON(
+                    "/api/catalogo-series?pagina=" +
+                    pagina
+                )
+            )
+        );
+
+    /*
+     * Junta todos os filmes.
+     */
+    let filmes = [];
+
+    for(const resposta of respostasFilmes){
+
+        const lista =
+            normalizarLista(resposta);
+
+        filmes.push(...lista);
+    }
+
+    /*
+     * Junta todas as séries.
+     */
+    let series = [];
+
+    for(const resposta of respostasSeries){
+
+        const lista =
+            normalizarLista(resposta);
+
+        series.push(...lista);
+    }
+
+    /*
+     * Remove duplicados.
+     */
+    function removerDuplicados(lista){
+
+        const mapa = new Map();
+
+        for(const item of lista){
+
+            const id =
+                idItem(item) ||
+                titulo(item);
+
+            if(!mapa.has(String(id))){
+                mapa.set(String(id), item);
+            }
+        }
+
+        return Array.from(mapa.values());
+    }
+
+    filmes = removerDuplicados(filmes);
+    series = removerDuplicados(series);
+
+    /*
+     * Embaralha o resultado final para que
+     * as fileiras não sejam sempre iguais.
+     */
+    function embaralhar(lista){
+
+        const resultado = [...lista];
+
+        let semente =
+            Date.now() % 2147483647;
+
+        for(let i = resultado.length - 1; i > 0; i--){
+
+            semente =
+                (semente * 16807) % 2147483647;
+
+            const indice =
+                semente % (i + 1);
+
+            [resultado[i], resultado[indice]] =
+                [resultado[indice], resultado[i]];
+        }
+
+        return resultado;
+    }
+
+    filmes = embaralhar(filmes);
+    series = embaralhar(series);
+
+    /*
+     * ========================================
+     * HERO AUTOMÁTICO
+     * ========================================
+     */
+
+    /*
+     * ========================================
+     * HERO — SOMENTE FILMES COM TRAILER
+     * ========================================
+     *
+     * IMPORTANTE:
+     * O Hero é carregado de forma independente.
+     *
+     * Os catálogos NÃO esperam a busca dos trailers.
+     */
+
+    window.__heroFila = [];
+
+/*
+ * LUKAFILMES — HISTÓRICO PERSISTENTE DO HERO
+ *
+ * O histórico não é apagado quando a Home atualiza.
+ * Assim, a mesma capa não volta imediatamente.
+ */
+let historicoHero = [];
+
+try {
+
+    historicoHero = JSON.parse(
+        localStorage.getItem("lukafilmes_hero_exibidos") || "[]"
+    );
+
+    if(!Array.isArray(historicoHero)){
+        historicoHero = [];
+    }
+
+}catch(e){
+
+    historicoHero = [];
+}
+
+window.__heroExibidos = new Set(
+    historicoHero.map(String)
+);
+
+window.__heroVerificando = false;
+window.__heroTrocaEmAndamento = false;
+
+    async function buscarTrailerDoHero(item){
+
+        if(!item) return null;
+
+        const id =
+            item.id ||
+            item.tmdb_id;
+
+        if(!id) return null;
+
+        try{
+
+            const resposta =
+                await fetch(
+                    "/api/filme/" +
+                    encodeURIComponent(String(id)) +
+                    "/videos"
+                );
+
+            if(!resposta.ok){
+                return null;
+            }
+
+            const dados =
+                await resposta.json();
+
+            const lista =
+                Array.isArray(dados.trailers)
+                    ? dados.trailers
+                    : [];
+
+            let trailer = null;
+
+            for(const t of lista){
+
+                if(
+                    t &&
+                    (
+                        t.chave ||
+                        t.key
+                    )
+                ){
+
+                    trailer = t;
+                    break;
+                }
+            }
+
+            if(!trailer && dados.trailer){
+                trailer = dados.trailer;
+            }
+
+            const chave =
+                trailer &&
+                (
+                    trailer.chave ||
+                    trailer.key
+                );
+
+            if(!chave){
+                return null;
+            }
+
+            return {
+                item: item,
+                trailer: trailer,
+                chave: chave
+            };
+
+        }catch(erro){
+
+            console.warn(
+                "[HERO TRAILER] Falha ao verificar:",
+                item.titulo || "",
+                erro
+            );
+
+            return null;
+        }
+    }
+
+    async function prepararFilaHero(){
+
+        if(window.__heroVerificando){
+            return;
+        }
+
+        window.__heroVerificando = true;
+
+        try{
+
+            const candidatos = [];
+
+            /*
+             * Pega somente filmes ainda não exibidos.
+             *
+             * Não altera o catálogo.
+             */
+
+            const disponiveis = filmes.filter(item => {
+
+                if(!item) return false;
+
+                const id =
+                    item.id ||
+                    item.tmdb_id;
+
+                if(!id) return false;
+
+                return !window.__heroExibidos.has(
+                    String(id)
+                );
+            });
+
+            /*
+             * Embaralha os candidatos.
+             * Assim cada carregamento da Home pode começar
+             * em filmes diferentes.
+             */
+
+            for(
+                let i = disponiveis.length - 1;
+                i > 0;
+                i--
+            ){
+
+                const j =
+                    Math.floor(
+                        Math.random() * (i + 1)
+                    );
+
+                [
+                    disponiveis[i],
+                    disponiveis[j]
+                ] = [
+                    disponiveis[j],
+                    disponiveis[i]
+                ];
+            }
+
+            /*
+             * Verifica vários filmes simultaneamente.
+             *
+             * Isso evita aquela espera de uma consulta
+             * terminar para começar a próxima.
+             *
+             * O limite de 30 é apenas para formar uma fila
+             * inicial rapidamente.
+             */
+
+            const lote =
+                disponiveis.slice(0, 30);
+
+            const resultados =
+                await Promise.all(
+                    lote.map(item =>
+                        buscarTrailerDoHero(item)
+                    )
+                );
+
+            for(const resultado of resultados){
+
+                if(!resultado) continue;
+
+                const id =
+                    resultado.item.id ||
+                    resultado.item.tmdb_id;
+
+                if(!id) continue;
+
+                if(
+                    window.__heroExibidos.has(
+                        String(id)
+                    )
+                ){
+                    continue;
+                }
+
+                candidatos.push(resultado);
+            }
+
+            /*
+             * Embaralha somente os filmes que
+             * realmente possuem trailer.
+             */
+
+            for(
+                let i = candidatos.length - 1;
+                i > 0;
+                i--
+            ){
+
+                const j =
+                    Math.floor(
+                        Math.random() * (i + 1)
+                    );
+
+                [
+                    candidatos[i],
+                    candidatos[j]
+                ] = [
+                    candidatos[j],
+                    candidatos[i]
+                ];
+            }
+
+            window.__heroFila.push(
+                ...candidatos
+            );
+
+            console.log(
+                "[HERO TRAILER] Fila:",
+                window.__heroFila.length,
+                "filmes com trailer"
+            );
+
+        }catch(erro){
+
+            console.warn(
+                "[HERO TRAILER] Erro preparando fila:",
+                erro
+            );
+
+        }finally{
+
+            window.__heroVerificando = false;
+        }
+    }
+
+    async function proximoHeroTrailer(){
+
+        if(window.__heroTrocaEmAndamento){
+            return;
+        }
+
+        window.__heroTrocaEmAndamento = true;
+
+        try{
+
+            /*
+             * Se a fila estiver acabando, procura
+             * novos filmes com trailer.
+             */
+
+            if(window.__heroFila.length === 0){
+
+                await prepararFilaHero();
+            }
+
+            if(window.__heroFila.length === 0){
+
+                console.warn(
+                    "[HERO TRAILER] Nenhum outro filme com trailer disponível."
+                );
+
+                return;
+            }
+
+            const proximo =
+                window.__heroFila.shift();
+
+            const item =
+                proximo.item;
+
+            const id =
+                item.id ||
+                item.tmdb_id;
+
+            if(id){
+                window.__heroExibidos.add(
+                    String(id)
+                );
+
+/*
+ * Salva o filme exibido para que ele não
+ * seja sorteado novamente na próxima atualização.
+ */
+try{
+
+    localStorage.setItem(
+        "lukafilmes_hero_exibidos",
+        JSON.stringify(
+            Array.from(window.__heroExibidos)
+        )
+    );
+
+}catch(e){
+
+    console.warn(
+        "[HERO TRAILER] Não foi possível salvar histórico:",
+        e
+    );
+}
+            }
+
+            /*
+             * Guardamos o trailer encontrado para que
+             * carregarTrailerHero não precise procurar
+             * novamente.
+             */
+
+            item.__heroTrailer = proximo.trailer;
+            item.__heroTrailerChave = proximo.chave;
+
+            /*
+             * montarHero atualiza:
+             * - título
+             * - sinopse
+             * - ano
+             * - fundo
+             * - botão Assistir
+             * - trailer
+             */
+
+            montarHero(item);
+
+            /*
+             * Enquanto o trailer atual toca,
+             * tentamos preparar mais candidatos.
+             */
+
+            if(window.__heroFila.length < 5){
+
+                prepararFilaHero().catch(erro => {
+
+                    console.warn(
+                        "[HERO TRAILER] Erro ao renovar fila:",
+                        erro
+                    );
+
+                });
+            }
+
+        }finally{
+
+            setTimeout(() => {
+
+                window.__heroTrocaEmAndamento = false;
+
+            }, 300);
+        }
+    }
+
+    /*
+     * Primeiro trailer da Home.
+     *
+     * Não usamos await aqui.
+     *
+     * Assim o Hero começa a procurar trailers em paralelo
+     * enquanto a Home continua disponível.
+     */
+
+    prepararFilaHero()
+        .then(() => proximoHeroTrailer())
+        .catch(erro => {
+
+            console.warn(
+                "[HERO TRAILER] Falha inicial:",
+                erro
+            );
+
+        });
+
+    /*
+     * ========================================
+     * DESTAQUES
+     * ========================================
+     */
+
+    renderizar(
+        "destaques",
+        filmes.slice(0, 20)
+    );
+
+    /*
+     * ========================================
+     * FILMES POPULARES
+     * ========================================
+     */
+
+    renderizar(
+        "filmes",
+        filmes.slice(20, 40)
+    );
+
+    /*
+     * ========================================
+     * SÉRIES POPULARES
+     * ========================================
+     */
+
+    renderizar(
+        "series",
+        series.slice(0, 20)
+    );
+
+    /*
+     * ========================================
+     * LANÇAMENTOS
+     * ========================================
+     */
+
+    const lancamentos =
+        [...filmes].sort((a,b) =>
+            String(ano(b))
+                .localeCompare(String(ano(a)))
+        );
+
+    renderizar(
+        "lancamentos",
+        lancamentos.slice(0, 20)
+    );
+
+    /*
+     * ========================================
+     * MAIS ASSISTIDOS
+     * ========================================
+     *
+     * Usa a popularidade/nota/votos disponíveis
+     * nos dados recebidos do TMDB.
+     */
+
+    const top =
+        [...filmes].sort((a,b) => {
+
+            const notaA =
+                Number(
+                    a.vote_average ||
+                    a.nota ||
+                    0
+                );
+
+            const notaB =
+                Number(
+                    b.vote_average ||
+                    b.nota ||
+                    0
+                );
+
+            const votosA =
+                Number(
+                    a.vote_count ||
+                    a.votos ||
+                    0
+                );
+
+            const votosB =
+                Number(
+                    b.vote_count ||
+                    b.votos ||
+                    0
+                );
+
+            return (
+                (notaB * 1000 + votosB) -
+                (notaA * 1000 + votosA)
+            );
+        });
+
+    renderizar(
+        "top10",
+        top.slice(0, 10),
+        true
+    );
+
+    console.log(
+        "[HOME DINÂMICA]",
+        "Filmes:",
+        filmes.length,
+        "| Séries:",
+        series.length,
+        "| Páginas filmes:",
+        paginasFilmes.join(","),
+        "| Páginas séries:",
+        paginasSeries.join(",")
+    );
+}
+carregarHome();
+
 </script>
 
+
+<script>
+function logout(){
+    fetch("/logout", {
+        method: "POST"
+    })
+    .finally(function(){
+        window.location.href = "/login";
+    });
+}
+</script>
+
+
+<style id="lukafilmes-pesquisa-home-final">
+#resultadosBuscaHome {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: #111;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.65);
+}
+
+.busca-home-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.busca-home-item:hover {
+    background: #222;
+}
+
+.busca-home-item img {
+    width: 48px;
+    height: 68px;
+    object-fit: cover;
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+
+.busca-home-info {
+    min-width: 0;
+}
+
+.busca-home-titulo {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.busca-home-ano {
+    color: #aaa;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.busca-home-status {
+    padding: 18px;
+    color: #aaa;
+    text-align: center;
+}
+
+#searchBox {
+    position: fixed !important;
+}
+</style>
+
+<script id="lukafilmes-pesquisa-home-final">
+(function () {
+
+    const input = document.getElementById("searchInput");
+    const box = document.getElementById("searchBox");
+
+    if (!input || !box) {
+        console.warn("[PESQUISA HOME] Campo não encontrado.");
+        return;
+    }
+
+    let area = document.getElementById("resultadosBuscaHome");
+
+    if (!area) {
+        area = document.createElement("div");
+        area.id = "resultadosBuscaHome";
+        box.appendChild(area);
+    }
+
+    let contador = 0;
+
+    function escapar(valor) {
+        return String(valor || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function esconder() {
+        area.innerHTML = "";
+        area.style.display = "none";
+    }
+
+    async function pesquisarHome(termo) {
+
+        const pesquisaAtual = ++contador;
+
+        if (!termo) {
+            esconder();
+            return;
+        }
+
+        area.style.display = "block";
+        area.innerHTML =
+            '<div class="busca-home-status">🔎 Pesquisando...</div>';
+
+        try {
+
+            const resposta = await fetch(
+                "/api/pesquisar?q=" +
+                encodeURIComponent(termo)
+            );
+
+            if (!resposta.ok) {
+                throw new Error("HTTP " + resposta.status);
+            }
+
+            const dados = await resposta.json();
+
+            if (pesquisaAtual !== contador) return;
+
+            const lista = Array.isArray(dados.resultados)
+                ? dados.resultados
+                : [];
+
+            area.innerHTML = "";
+
+            if (!lista.length) {
+                area.innerHTML =
+                    '<div class="busca-home-status">Nenhum resultado encontrado.</div>';
+                return;
+            }
+
+            lista.slice(0, 20).forEach(function (filme) {
+
+                const item = document.createElement("div");
+                item.className = "busca-home-item";
+
+                const capa = filme.capa || "";
+                const titulo = filme.titulo || "Sem título";
+                const ano = filme.ano || "";
+
+                item.innerHTML = `
+                    ${capa
+                        ? `<img src="${escapar(capa)}" alt="">`
+                        : ""
+                    }
+                    <div class="busca-home-info">
+                        <div class="busca-home-titulo">
+                            ${escapar(titulo)}
+                        </div>
+                        <div class="busca-home-ano">
+                            ${escapar(ano)}
+                        </div>
+                    </div>
+                `;
+
+                item.addEventListener("click", function () {
+
+                    localStorage.setItem(
+                        "filmeSelecionado",
+                        JSON.stringify(filme)
+                    );
+
+                    window.location.href =
+                        "/paginas/filme.html";
+                });
+
+                area.appendChild(item);
+            });
+
+        } catch (erro) {
+
+            if (pesquisaAtual !== contador) return;
+
+            console.error(
+                "[PESQUISA HOME]",
+                erro
+            );
+
+            area.innerHTML =
+                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+        }
+    }
+
+    input.addEventListener("input", function () {
+        pesquisarHome(input.value.trim());
+    });
+
+    input.addEventListener("keydown", function (event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            const primeiro =
+                area.querySelector(".busca-home-item");
+
+            if (primeiro) {
+                primeiro.click();
+            }
+        }
+    });
+
+    document.addEventListener("click", function (event) {
+
+        if (!box.contains(event.target)) {
+            esconder();
+        }
+
+    });
+
+    console.log(
+        "[PESQUISA HOME] Sistema ativo."
+    );
+
+})();
+</script>
+
+<script>(function(){window.__heroAudioLiberado=false;document.addEventListener('pointerdown',function(){if(window.__heroAudioLiberado)return;window.__heroAudioLiberado=true;const f=document.getElementById('heroTrailer');if(f&&f.src){f.src=f.src.replace('&mute=1','&mute=0');}}, {once:true});})();</script>
+<script src="/js/continuar-assistindo.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    if (window.LukaContinuar) {
+        LukaContinuar.renderContinuar("continuarAssistindo");
+    }
+});
+</script>
+
+
+
+</body>
+</html>
 
 

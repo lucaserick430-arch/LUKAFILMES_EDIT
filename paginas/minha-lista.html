@@ -213,6 +213,7 @@ h1{
 
 <main id="lista"></main>
 
+<script src="../js/conta-storage.js"></script>
 <script>
 
 
@@ -589,9 +590,27 @@ if(botaoRemoverSelecionados){
 }
 
 
-carregarMinhaLista();
+function iniciarMinhaLista(){
+    carregarMinhaLista();
+}
+
+if(window.LukaContaPronta){
+    window.LukaContaPronta.then(iniciarMinhaLista);
+}else{
+    window.addEventListener(
+        "lukafilmes:conta-pronta",
+        iniciarMinhaLista,
+        {once:true}
+    );
+}
 
 </script>
 
+<section style="padding:24px 4%">
+<h2 style="color:white;margin-bottom:12px">Continuar Assistindo</h2>
+<div id="continuarAssistindoLista" style="display:flex;gap:14px;overflow:auto"></div>
+</section>
+<script src="/js/continuar-assistindo.js"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>LukaContinuar?.renderContinuar("continuarAssistindoLista"));</script>
 </body>
 </html>

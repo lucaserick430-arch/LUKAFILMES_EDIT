@@ -480,7 +480,9 @@ app.post("/login", async (req, res) => {
 
             usuario: pessoa.usuario,
 
-            tipo: pessoa.tipo
+            tipo: pessoa.tipo,
+
+            validade: pessoa.validade || null
 
         };
 
@@ -3462,6 +3464,27 @@ app.get(
     }
 );
 
+
+// ==========================================
+// FAVICON — IDENTIDADE LUKAFILMES
+// ==========================================
+app.get("/favicon/lukafilmes.svg", (req, res) => {
+    res.sendFile(
+        require("path").join(
+            __dirname,
+            "public",
+            "favicon",
+            "lukafilmes.svg"
+        ),
+        {
+            headers: {
+                "Content-Type": "image/svg+xml",
+                "Cache-Control": "public, max-age=86400"
+            }
+        }
+    );
+});
+
 // ==========================================
 // PROTEÇÃO DAS PÁGINAS
 // ==========================================
@@ -3480,6 +3503,7 @@ app.use(
         if (
 
             req.path === "/login" ||
+            req.path === "/favicon/lukafilmes.svg" ||
 
             req.path === "/admin.html" ||
 
@@ -3487,9 +3511,7 @@ app.use(
 
             req.path === "/api/eu" || req.path === "/api/admin/revendedores" || req.path === "/api/revendedor/clientes" ||
 
-            req.path === "/api/pesquisar" ||
-
-            req.path === '/api/catalogo' || req.path.startsWith('/api/serie/') || req.path === '/paginas/filmes.html' || req.path === '/paginas/filme.html' || req.path === '/paginas/filme' || req.path === '/paginas/series.html' || req.path === '/paginas/serie.html' || req.path === '/paginas/series_nova.html' || req.path === '/paginas/minha-lista'
+            req.path === "/api/pesquisar"
 
         ) {
 
@@ -3497,11 +3519,32 @@ app.use(
 
         }
 
-        if (!req.session.usuario) {
+        /*
+         * TODAS AS PÁGINAS DO SITE SÃO PROTEGIDAS.
+         *
+         * Primeiro verifica se existe sessão.
+         * Depois verifica se a validade do usuário expirou.
+         *
+         * Admin não possui expiração.
+         */
 
-            return res.redirect(
-                "/login"
-            );
+        if (!req.session || !req.session.usuario) {
+
+            return res.redirect("/login");
+
+        }
+
+        const usuarioSessao = req.session.usuario;
+
+        if (
+            usuarioSessao.tipo !== "admin" &&
+            usuarioSessao.validade &&
+            new Date(usuarioSessao.validade) <= new Date()
+        ) {
+
+            return req.session.destroy(() => {
+                res.redirect("/login");
+            });
 
         }
 
