@@ -247,6 +247,9 @@ body{
 
 .row{
     display:flex;
+    touch-action:pan-y;
+    user-select:none;
+    -webkit-user-select:none;
     gap:9px;
     overflow-x:auto;
     padding:5px 4% 16px;
@@ -4250,6 +4253,109 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.__lukaRowAtiva = row;
             },
             {passive:true}
+        );
+
+        /* =========================
+           TOQUE — ARRASTAR
+           ========================= */
+
+        let toqueAtivo = false;
+        let toqueInicioX = 0;
+        let toqueScrollInicial = 0;
+        let toqueMoveu = false;
+
+        row.addEventListener(
+            "touchstart",
+            function(e){
+
+                if(!e.touches || !e.touches.length){
+                    return;
+                }
+
+                const toque = e.touches[0];
+
+                toqueAtivo = true;
+                toqueMoveu = false;
+
+                toqueInicioX = toque.clientX;
+                toqueScrollInicial = row.scrollLeft;
+
+                row.style.scrollBehavior = "auto";
+                row.style.scrollSnapType = "none";
+
+                row.classList.add("luka-dragging");
+
+            },
+            {passive:true}
+        );
+
+        row.addEventListener(
+            "touchmove",
+            function(e){
+
+                if(!toqueAtivo){
+                    return;
+                }
+
+                if(!e.touches || !e.touches.length){
+                    return;
+                }
+
+                const toque = e.touches[0];
+
+                const deslocamento =
+                    toque.clientX - toqueInicioX;
+
+                if(Math.abs(deslocamento) > 5){
+                    toqueMoveu = true;
+                }
+
+                row.scrollLeft =
+                    toqueScrollInicial - deslocamento;
+
+            },
+            {passive:true}
+        );
+
+        function terminarToque(){
+
+            if(!toqueAtivo){
+                return;
+            }
+
+            toqueAtivo = false;
+
+            row.classList.remove("luka-dragging");
+
+        }
+
+        row.addEventListener(
+            "touchend",
+            terminarToque,
+            {passive:true}
+        );
+
+        row.addEventListener(
+            "touchcancel",
+            terminarToque,
+            {passive:true}
+        );
+
+        /* Impede abrir card depois de arrastar */
+        row.addEventListener(
+            "click",
+            function(e){
+
+                if(toqueMoveu){
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    toqueMoveu = false;
+                }
+
+            },
+            true
         );
 
         row.addEventListener(
