@@ -250,7 +250,7 @@ body{
     gap:9px;
     overflow-x:auto;
     padding:5px 4% 16px;
-    scroll-behavior:smooth;
+    scroll-behavior:auto;
     scrollbar-width:none;
 }
 
@@ -1343,6 +1343,230 @@ body.lukafilmes-usuario-comum
 }
 </style>
 
+
+
+
+\n
+<style id="luka-carrossel-performance">
+
+.section .row{
+    position:relative;
+
+    display:flex;
+    flex-wrap:nowrap;
+
+    overflow-x:auto;
+    overflow-y:hidden;
+
+    scrollbar-width:none;
+
+    -webkit-overflow-scrolling:touch;
+
+    scroll-behavior:auto;
+
+    cursor:grab;
+
+    user-select:none;
+    -webkit-user-select:none;
+
+    touch-action:pan-x;
+
+    overscroll-behavior-x:contain;
+}
+
+.section .row::-webkit-scrollbar{
+    display:none;
+}
+
+.section .row.luka-dragging{
+    cursor:grabbing;
+}
+
+.section .row.luka-no-focus,
+.section .row:focus,
+.section .row:focus-visible{
+    outline:none !important;
+    box-shadow:none !important;
+}
+
+.luka-carousel-wrapper{
+    position:relative;
+    width:100%;
+}
+
+.luka-carousel-arrow{
+    position:absolute;
+
+    top:50%;
+    transform:translateY(-50%);
+
+    width:40px;
+    height:68px;
+
+    padding:0;
+    margin:0;
+
+    border:0;
+    outline:0;
+
+    border-radius:8px;
+
+    background:rgba(0,0,0,.68);
+    color:#fff;
+
+    font-size:34px;
+    line-height:1;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    z-index:30;
+
+    opacity:.9;
+
+    -webkit-tap-highlight-color:transparent;
+}
+
+.luka-carousel-arrow:hover{
+    background:rgba(0,0,0,.88);
+}
+
+.luka-carousel-arrow:focus,
+.luka-carousel-arrow:focus-visible{
+    outline:none !important;
+    box-shadow:none !important;
+}
+
+.luka-carousel-arrow.left{
+    left:5px;
+}
+
+.luka-carousel-arrow.right{
+    right:5px;
+}
+
+@media(max-width:700px){
+
+    .luka-carousel-arrow{
+        width:32px;
+        height:56px;
+        font-size:27px;
+    }
+
+    .luka-carousel-arrow.left{
+        left:3px;
+    }
+
+    .luka-carousel-arrow.right{
+        right:3px;
+    }
+}
+
+</style>
+
+
+<style id="luka-setas-padrao-final">
+.luka-carousel-arrow{
+    position:absolute !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+
+    width:42px !important;
+    height:72px !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+
+    background:rgba(0,0,0,.45) !important;
+    color:#fff !important;
+
+    border-radius:6px !important;
+
+    font-size:38px !important;
+    line-height:1 !important;
+    font-weight:300 !important;
+
+    cursor:pointer !important;
+    z-index:20 !important;
+
+    opacity:.82 !important;
+
+    user-select:none !important;
+    -webkit-user-select:none !important;
+}
+
+.luka-carousel-arrow:hover{
+    background:rgba(0,0,0,.72) !important;
+    opacity:1 !important;
+}
+
+.luka-carousel-arrow:focus,
+.luka-carousel-arrow:focus-visible,
+.luka-carousel-arrow:active{
+    outline:none !important;
+    border:0 !important;
+    box-shadow:none !important;
+}
+
+.luka-carousel-arrow.left{
+    left:8px !important;
+    right:auto !important;
+}
+
+.luka-carousel-arrow.right{
+    right:8px !important;
+    left:auto !important;
+}
+
+.carrossel-wrapper-luka,
+.luka-carousel-wrapper{
+    position:relative !important;
+    width:100% !important;
+    box-sizing:border-box !important;
+}
+
+.carrossel-wrapper-luka .row,
+.luka-carousel-wrapper .row{
+    outline:none !important;
+    box-shadow:none !important;
+    border:0 !important;
+}
+
+/* Nunca mostrar contorno branco ao clicar/arrastar */
+.carrossel-wrapper-luka *,
+.luka-carousel-wrapper *{
+    -webkit-tap-highlight-color:transparent !important;
+}
+
+@media(max-width:700px){
+    .luka-carousel-arrow{
+        width:34px !important;
+        height:58px !important;
+        font-size:30px !important;
+        border-radius:5px !important;
+    }
+
+    .luka-carousel-arrow.left{
+        left:4px !important;
+    }
+
+    .luka-carousel-arrow.right{
+        right:4px !important;
+    }
+}
+</style>
+
 </head>
 
 <body>
@@ -1362,7 +1586,8 @@ body.lukafilmes-usuario-comum
             href="/paginas/continuar-assistindo.html"
             aria-label="Continuar assistindo"
         >▶ Continuar Assistindo</a>
-    </nav>
+    
+</nav>
 
     <div class="header-right">
 
@@ -1479,6 +1704,69 @@ body.lukafilmes-usuario-comum
     <section class="section">
         <h2 class="section-title">🏆 Mais assistidos</h2>
         <div class="row" id="top10">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">💥 Ação</h2>
+        <div class="row" id="acao">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">🚀 Ficção científica</h2>
+        <div class="row" id="ficcao">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">😂 Comédia</h2>
+        <div class="row" id="comedia">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">👻 Terror</h2>
+        <div class="row" id="terror">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">🗺️ Aventura</h2>
+        <div class="row" id="aventura">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">🐉 Fantasia</h2>
+        <div class="row" id="fantasia">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">🔎 Suspense</h2>
+        <div class="row" id="suspense">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">🎭 Drama</h2>
+        <div class="row" id="drama">
+            <div class="loading">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">❤️ Romance</h2>
+        <div class="row" id="romance">
             <div class="loading">Carregando...</div>
         </div>
     </section>
@@ -1787,7 +2075,12 @@ function renderizar(id,lista,top=false){
         return;
     }
 
-    lista.slice(0,20).forEach((item,index)=>{
+    const limite =
+        id === "series"
+            ? 20
+            : 100;
+
+    lista.slice(0, limite).forEach((item,index)=>{
 
         container.appendChild(
             criarCard(item,top ? index+1 : null)
@@ -2280,7 +2573,7 @@ async function carregarHome(){
     }
 
     const paginasFilmes =
-        escolherPaginas(baseFilmes, 5);
+        escolherPaginas(baseFilmes, 20);
 
     const paginasSeries =
         escolherPaginas(baseSeries, 3);
@@ -2827,9 +3120,29 @@ try{
      * ========================================
      */
 
+    /*
+     * ========================================
+     * SÉRIES POPULARES — GARANTIR TIPO TV
+     * ========================================
+     *
+     * A API de séries pode retornar os objetos
+     * sem media_type/tipo.
+     *
+     * Aqui marcamos explicitamente cada item
+     * como série, sem alterar a API nem os
+     * demais catálogos.
+     */
+
+    const seriesPopularesHome =
+        series.slice(0, 20).map(item => ({
+            ...item,
+            media_type: "tv",
+            tipo: "series"
+        }));
+
     renderizar(
         "series",
-        series.slice(0, 20)
+        seriesPopularesHome
     );
 
     /*
@@ -2894,6 +3207,399 @@ try{
                 (notaA * 1000 + votosA)
             );
         });
+
+
+    /*
+     * ========================================
+     * CATÁLOGOS POR GÊNERO — API COMPLETA
+     * ========================================
+     *
+     * Os dados da API podem trazer:
+     *
+     *   generos: ["Comédia", "Aventura"]
+     *
+     * ou:
+     *
+     *   genre_ids: [35, 12]
+     *
+     * A Home busca páginas adicionais da API
+     * para conseguir até 100 títulos por gênero.
+     */
+
+    const GENEROS_HOME = [
+        { id: 28,    nome: "acao" },
+        { id: 878,   nome: "ficcao" },
+        { id: 35,    nome: "comedia" },
+        { id: 27,    nome: "terror" },
+        { id: 12,    nome: "aventura" },
+        { id: 14,    nome: "fantasia" },
+        { id: 53,    nome: "suspense" },
+        { id: 18,    nome: "drama" },
+        { id: 10749, nome: "romance" }
+    ];
+
+    const NOMES_GENEROS = {
+        28: "ação",
+        878: "ficção científica",
+        35: "comédia",
+        27: "terror",
+        12: "aventura",
+        14: "fantasia",
+        53: "suspense",
+        18: "drama",
+        10749: "romance"
+    };
+
+    function generosDoFilme(item){
+
+        const ids =
+            item.genre_ids ||
+            item.generos_ids ||
+            item.genreIds ||
+            [];
+
+        const resultado = [];
+
+        if(Array.isArray(ids)){
+            for(const id of ids){
+                const numero = Number(id);
+                if(Number.isFinite(numero)){
+                    resultado.push(numero);
+                }
+            }
+        }
+
+        const nomes =
+            item.generos ||
+            item.generos ||
+            item.genero ||
+            item.categoria ||
+            "";
+
+        const listaNomes =
+            Array.isArray(nomes)
+                ? nomes
+                : String(nomes)
+                    .split(",")
+                    .map(x => x.trim())
+                    .filter(Boolean);
+
+        for(const texto of listaNomes){
+
+            const normalizado =
+                String(texto)
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase()
+                    .trim();
+
+            for(const [id,nome] of Object.entries(NOMES_GENEROS)){
+
+                const alvo =
+                    nome
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .toLowerCase();
+
+                if(normalizado === alvo){
+                    resultado.push(Number(id));
+                }
+
+                /*
+                 * A API pode usar "Thriller" para o gênero
+                 * que o catálogo chama de Suspense.
+                 */
+                if(Number(id) === 53 &&
+                   (normalizado === "thriller" ||
+                    normalizado === "suspense")){
+                    resultado.push(53);
+                }
+            }
+        }
+
+        return [...new Set(resultado)];
+    }
+
+    function filmesPorGenero(lista, generoId){
+
+        return lista.filter(item =>
+            generosDoFilme(item).includes(generoId)
+        );
+    }
+
+    /*
+     * Embaralha páginas para que uma atualização
+     * não carregue sempre exatamente os mesmos títulos.
+     */
+    function embaralharPaginas(lista){
+
+        const resultado = [...lista];
+
+        let semente =
+            (Date.now() % 2147483647) || 1;
+
+        for(let i = resultado.length - 1; i > 0; i--){
+
+            semente =
+                (semente * 16807) % 2147483647;
+
+            const indice =
+                semente % (i + 1);
+
+            [resultado[i], resultado[indice]] =
+                [resultado[indice], resultado[i]];
+        }
+
+        return resultado;
+    }
+
+    /*
+     * Busca páginas adicionais da API.
+     *
+     * Cada página normalmente possui vários filmes.
+     * Buscamos muitas páginas em paralelo, mas paramos
+     * assim que todos os gêneros atingirem 100 títulos
+     * ou quando chegarmos ao limite de segurança.
+     */
+    async function carregarGenerosDaAPI(){
+
+        /*
+         * ========================================
+         * GÊNEROS — CARREGAMENTO RÁPIDO
+         * ========================================
+         *
+         * Os gêneros são carregados em segundo plano.
+         *
+         * A Home NÃO espera os 100 filmes de cada
+         * gênero para aparecer.
+         *
+         * As páginas são buscadas em lotes paralelos.
+         */
+
+        const acumulados = new Map();
+
+        for(const genero of GENEROS_HOME){
+            acumulados.set(genero.id, []);
+        }
+
+        function adicionarFilme(generoId, item){
+
+            if(!acumulados.has(generoId))
+                return;
+
+            const lista =
+                acumulados.get(generoId);
+
+            if(lista.length >= 100)
+                return;
+
+            const id =
+                idItem(item) ||
+                titulo(item);
+
+            const existe =
+                lista.some(x =>
+                    String(
+                        idItem(x) || titulo(x)
+                    ) === String(id)
+                );
+
+            if(!existe){
+                lista.push(item);
+            }
+        }
+
+        function processarLista(lista){
+
+            for(const item of lista){
+
+                const ids =
+                    generosDoFilme(item);
+
+                for(const generoId of ids){
+                    adicionarFilme(
+                        generoId,
+                        item
+                    );
+                }
+            }
+        }
+
+        function renderizarGeneros(){
+
+            for(const genero of GENEROS_HOME){
+
+                const lista =
+                    acumulados.get(genero.id) || [];
+
+                /*
+                 * Mostra imediatamente o que já chegou.
+                 * O catálogo continua recebendo filmes
+                 * nos próximos lotes.
+                 */
+                const exibicao =
+                    embaralharPaginas(lista)
+                        .slice(0,100);
+
+                renderizar(
+                    genero.nome,
+                    exibicao
+                );
+            }
+        }
+
+        function completos(){
+
+            return GENEROS_HOME.every(genero =>
+                (acumulados.get(genero.id) || []).length >= 100
+            );
+        }
+
+        /*
+         * Primeiro aproveita os filmes que a Home
+         * já recebeu. Não desperdiça nenhuma requisição.
+         */
+        processarLista(filmes);
+
+        renderizarGeneros();
+
+        /*
+         * Páginas disponíveis da API.
+         *
+         * Em vez de buscar uma página por vez,
+         * fazemos 20 requisições simultâneas.
+         */
+        const paginas = [];
+
+        for(let pagina = 1; pagina <= 100; pagina++){
+            paginas.push(pagina);
+        }
+
+        /*
+         * Embaralhamento preservado para continuar
+         * trazendo filmes diferentes a cada atualização.
+         */
+        const paginasSorteadas =
+            embaralharPaginas(paginas);
+
+        /*
+         * 20 páginas simultâneas.
+         *
+         * 20 × 20 filmes = até 400 filmes por lote.
+         */
+        const TAMANHO_LOTE = 20;
+
+        for(
+            let inicioPagina = 0;
+            inicioPagina < paginasSorteadas.length;
+            inicioPagina += TAMANHO_LOTE
+        ){
+
+            if(completos())
+                break;
+
+            const lote =
+                paginasSorteadas.slice(
+                    inicioPagina,
+                    inicioPagina + TAMANHO_LOTE
+                );
+
+            /*
+             * Todas as páginas do lote são consultadas
+             * simultaneamente.
+             */
+            const respostas =
+                await Promise.allSettled(
+                    lote.map(pagina =>
+                        buscarJSON(
+                            "/api/catalogo-filmes?pagina=" +
+                            pagina
+                        )
+                    )
+                );
+
+            for(const resultado of respostas){
+
+                if(
+                    resultado.status !==
+                    "fulfilled"
+                ){
+                    continue;
+                }
+
+                const lista =
+                    normalizarLista(
+                        resultado.value
+                    );
+
+                processarLista(lista);
+            }
+
+            /*
+             * Atualiza os catálogos imediatamente
+             * após cada lote.
+             */
+            renderizarGeneros();
+
+            console.log(
+                "[GÊNEROS RÁPIDOS]",
+                "Lote:",
+                lote.join(","),
+                "|",
+                GENEROS_HOME.map(g =>
+                    g.nome + "=" +
+                    (acumulados.get(g.id) || []).length
+                ).join(" | ")
+            );
+
+            /*
+             * Pequena pausa para devolver o controle
+             * ao navegador entre os lotes.
+             *
+             * Isso evita travar a interface.
+             */
+            await new Promise(resolve =>
+                setTimeout(resolve, 10)
+            );
+        }
+
+        /*
+         * Renderização final garantindo no máximo 100.
+         */
+        renderizarGeneros();
+
+        console.log(
+            "[GÊNEROS HOME] FINAL:",
+            GENEROS_HOME.map(g => ({
+                genero: g.nome,
+                filmes:
+                    (acumulados.get(g.id) || []).length
+            }))
+        );
+    }
+
+    carregarGenerosDaAPI().catch(erro => {
+
+        console.error(
+            "[GÊNEROS HOME] Erro:",
+            erro
+        );
+
+        /*
+         * Mesmo se a busca adicional falhar,
+         * tenta mostrar os filmes já disponíveis.
+         */
+        for(const genero of GENEROS_HOME){
+
+            renderizar(
+                genero.nome,
+                filmesPorGenero(
+                    filmes,
+                    genero.id
+                ).slice(0,100)
+            );
+        }
+    });
 
     renderizar(
         "top10",
@@ -3302,8 +4008,354 @@ document.addEventListener("DOMContentLoaded", () => {
 
 })();
 </script>
+
+
+\n
+<script id="luka-carrossel-performance">
+(function(){
+
+    "use strict";
+
+    const rows = [];
+
+    function distancia(row){
+
+        const largura = row.clientWidth;
+
+        return Math.max(
+            360,
+            Math.floor(largura * 0.78)
+        );
+    }
+
+    function atualizar(row){
+
+        const wrapper =
+            row.parentElement;
+
+        if(!wrapper) return;
+
+        const esquerda =
+            wrapper.querySelector(
+                ".luka-carousel-arrow.left"
+            );
+
+        const direita =
+            wrapper.querySelector(
+                ".luka-carousel-arrow.right"
+            );
+
+        const max =
+            row.scrollWidth -
+            row.clientWidth;
+
+        if(esquerda){
+            esquerda.style.display =
+                row.scrollLeft > 8
+                    ? "flex"
+                    : "none";
+        }
+
+        if(direita){
+            direita.style.display =
+                row.scrollLeft <
+                max - 8
+                    ? "flex"
+                    : "none";
+        }
+    }
+
+    function criar(row){
+
+        if(!row || row.dataset.lukaCarousel){
+            return;
+        }
+
+        row.dataset.lukaCarousel =
+            "1";
+
+        row.classList.add(
+            "luka-no-focus"
+        );
+
+        const wrapper =
+            document.createElement("div");
+
+        wrapper.className =
+            "luka-carousel-wrapper";
+
+        row.parentNode.insertBefore(
+            wrapper,
+            row
+        );
+
+        wrapper.appendChild(row);
+
+        const esquerda =
+            document.createElement("button");
+
+        esquerda.type = "button";
+        esquerda.className =
+            "luka-carousel-arrow left";
+
+        esquerda.setAttribute(
+            "aria-label",
+            "Voltar catálogo"
+        );
+
+        esquerda.innerHTML = "‹";
+
+        const direita =
+            document.createElement("button");
+
+        direita.type = "button";
+        direita.className =
+            "luka-carousel-arrow right";
+
+        direita.setAttribute(
+            "aria-label",
+            "Avançar catálogo"
+        );
+
+        direita.innerHTML = "›";
+
+        wrapper.appendChild(esquerda);
+        wrapper.appendChild(direita);
+
+        esquerda.onclick =
+            function(){
+
+                row.scrollLeft -=
+                    distancia(row);
+
+                atualizar(row);
+            };
+
+        direita.onclick =
+            function(){
+
+                row.scrollLeft +=
+                    distancia(row);
+
+                atualizar(row);
+            };
+
+        /* =========================
+           MOUSE — ARRASTAR
+           ========================= */
+
+        let down = false;
+        let startX = 0;
+        let startScroll = 0;
+        let move = false;
+
+        row.addEventListener(
+            "mousedown",
+            function(e){
+
+                if(e.button !== 0){
+                    return;
+                }
+
+                down = true;
+                move = false;
+
+                startX = e.clientX;
+                startScroll =
+                    row.scrollLeft;
+
+                row.classList.add(
+                    "luka-dragging"
+                );
+
+                e.preventDefault();
+            }
+        );
+
+        window.addEventListener(
+            "mousemove",
+            function(e){
+
+                if(!down){
+                    return;
+                }
+
+                const delta =
+                    e.clientX - startX;
+
+                if(Math.abs(delta) > 4){
+                    move = true;
+                }
+
+                row.scrollLeft =
+                    startScroll - delta;
+            },
+            {passive:true}
+        );
+
+        window.addEventListener(
+            "mouseup",
+            function(){
+
+                if(!down){
+                    return;
+                }
+
+                down = false;
+
+                row.classList.remove(
+                    "luka-dragging"
+                );
+
+                atualizar(row);
+            },
+            {passive:true}
+        );
+
+        /* =========================
+           IMPEDE CLIQUE ACIDENTAL
+           APÓS ARRASTE
+           ========================= */
+
+        row.addEventListener(
+            "click",
+            function(e){
+
+                if(move){
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    move = false;
+                }
+            },
+            true
+        );
+
+        /* =========================
+           TECLADO / CONTROLE
+           ========================= */
+
+        row.addEventListener(
+            "mouseenter",
+            function(){
+                window.__lukaRowAtiva = row;
+            },
+            {passive:true}
+        );
+
+        row.addEventListener(
+            "touchstart",
+            function(){
+                window.__lukaRowAtiva = row;
+            },
+            {passive:true}
+        );
+
+        row.addEventListener(
+            "scroll",
+            function(){
+                atualizar(row);
+            },
+            {passive:true}
+        );
+
+        atualizar(row);
+
+        rows.push(row);
+    }
+
+    function iniciar(){
+
+        document
+            .querySelectorAll(
+                ".section .row"
+            )
+            .forEach(criar);
+
+        /*
+         * O DOM já está pronto.
+         * Não usamos MutationObserver.
+         * Isso evita ficar examinando a Home
+         * toda vez que um card é criado.
+         */
+
+        setTimeout(
+            function(){
+                rows.forEach(atualizar);
+            },
+            500
+        );
+    }
+
+    /*
+     * Teclado global.
+     * Não cria foco visual nos cards.
+     */
+
+    document.addEventListener(
+        "keydown",
+        function(e){
+
+            if(
+                e.key !== "ArrowLeft" &&
+                e.key !== "ArrowRight"
+            ){
+                return;
+            }
+
+            const row =
+                window.__lukaRowAtiva;
+
+            if(!row){
+                return;
+            }
+
+            e.preventDefault();
+
+            const valor =
+                distancia(row);
+
+            row.scrollLeft +=
+                e.key === "ArrowRight"
+                    ? valor
+                    : -valor;
+
+            atualizar(row);
+        },
+        {passive:false}
+    );
+
+    if(
+        document.readyState ===
+        "loading"
+    ){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            iniciar,
+            {once:true}
+        );
+
+    }else{
+
+        iniciar();
+    }
+
+})();
+</script>
+
+
+
+
+
+
+
 </body>
 
 </html>
+
+
+
 
 
