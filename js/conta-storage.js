@@ -6,6 +6,7 @@
 
     const CHAVES_ISOLADAS = [
         "lukafilmes_minhalista",
+        "lukafilmes_continuar",
         "lukafilmes_continuar_assistindo",
         "continuarAssistindo",
         "continuar_assistindo",

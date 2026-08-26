@@ -2605,40 +2605,90 @@ document.addEventListener(
     </a>
 </div>
 
+<script src="../js/conta-storage.js"></script>
 <script id="serie-favoritos-topo-script">
 (function(){
+
+    "use strict";
+
+    console.log("[FAVORITOS SÉRIE] Sistema iniciado.");
 
     function obterSerie(){
 
         try{
-            return JSON.parse(
-                localStorage.getItem("serieSelecionada") || "null"
-            );
+
+            const salvo =
+                localStorage.getItem("serieSelecionada");
+
+            if(!salvo){
+                console.warn(
+                    "[FAVORITOS SÉRIE] serieSelecionada não encontrada."
+                );
+                return null;
+            }
+
+            const serie = JSON.parse(salvo);
+
+            if(!serie || typeof serie !== "object"){
+                return null;
+            }
+
+            return serie;
+
         }catch(e){
+
+            console.error(
+                "[FAVORITOS SÉRIE] Erro ao obter série:",
+                e
+            );
+
             return null;
         }
     }
 
+
     function obterLista(){
 
         try{
-            const lista = JSON.parse(
-                localStorage.getItem("lukafilmes_minhalista") || "[]"
-            );
 
-            return Array.isArray(lista) ? lista : [];
+            const salvo =
+                localStorage.getItem("lukafilmes_minhalista");
+
+            if(!salvo){
+                return [];
+            }
+
+            const lista = JSON.parse(salvo);
+
+            return Array.isArray(lista)
+                ? lista
+                : [];
 
         }catch(e){
+
+            console.error(
+                "[FAVORITOS SÉRIE] Erro ao ler lista:",
+                e
+            );
+
             return [];
         }
     }
 
+
     function salvarLista(lista){
+
         localStorage.setItem(
             "lukafilmes_minhalista",
             JSON.stringify(lista)
         );
+
+        console.log(
+            "[FAVORITOS SÉRIE] Lista salva:",
+            lista
+        );
     }
+
 
     function idDaSerie(serie){
 
@@ -2647,88 +2697,293 @@ document.addEventListener(
             (
                 serie.id ||
                 serie.tmdb_id ||
-                serie.titulo
+                serie.tv_id ||
+                serie.titulo ||
+                serie.name ||
+                serie.nome
             )
             || ""
-        );
+        ).trim();
     }
+
+
+    function normalizarSerie(serie){
+
+        if(!serie){
+            return null;
+        }
+
+        const id =
+            idDaSerie(serie);
+
+        const titulo =
+            serie.titulo ||
+            serie.title ||
+            serie.name ||
+            serie.nome ||
+            document.getElementById("tituloSerie")?.textContent?.trim() ||
+            "Série";
+
+        const capa =
+            serie.capa ||
+            serie.poster ||
+            serie.poster_path ||
+            document.getElementById("posterSerie")?.src ||
+            "";
+
+        return {
+            ...serie,
+
+            id: id,
+
+            titulo: titulo,
+
+            capa: capa,
+
+            tipo: "serie",
+
+            media_type: "tv",
+
+            nome: serie.nome || serie.name || titulo
+        };
+    }
+
 
     function atualizarBotao(){
 
         const botao =
-            document.getElementById("serieAdicionarFavorito");
+            document.getElementById(
+                "serieAdicionarFavorito"
+            );
 
-        if(!botao) return;
-
-        const serie = obterSerie();
-        const id = idDaSerie(serie);
-
-        if(!id){
-            botao.style.display = "none";
+        if(!botao){
+            console.warn(
+                "[FAVORITOS SÉRIE] Botão não encontrado."
+            );
             return;
         }
 
-        botao.style.display = "inline-flex";
+        const serie =
+            normalizarSerie(
+                obterSerie()
+            );
 
-        const lista = obterLista();
+        if(!serie){
 
-        const existe = lista.some(function(item){
-            return idDaSerie(item) === id;
-        });
+            botao.style.display =
+                "none";
+
+            return;
+        }
+
+        const id =
+            idDaSerie(serie);
+
+        if(!id){
+
+            botao.style.display =
+                "none";
+
+            return;
+        }
+
+        botao.style.display =
+            "inline-flex";
+
+        const lista =
+            obterLista();
+
+        const existe =
+            lista.some(function(item){
+
+                return String(
+                    item &&
+                    (
+                        item.id ||
+                        item.tmdb_id ||
+                        item.tv_id ||
+                        item.titulo ||
+                        item.name ||
+                        item.nome
+                    )
+                ).trim() === id;
+
+            });
 
         if(existe){
-            botao.textContent = "♥ Remover dos favoritos";
-            botao.classList.add("favorito-ativo");
+
+            botao.textContent =
+                "♥ Remover dos favoritos";
+
+            botao.classList.add(
+                "favorito-ativo"
+            );
+
         }else{
-            botao.textContent = "＋ Adicionar aos favoritos";
-            botao.classList.remove("favorito-ativo");
+
+            botao.textContent =
+                "＋ Adicionar aos favoritos";
+
+            botao.classList.remove(
+                "favorito-ativo"
+            );
         }
     }
 
-    const botao =
-        document.getElementById("serieAdicionarFavorito");
 
-    if(botao){
+    function alternarFavorito(){
 
-        botao.addEventListener("click", function(){
+        const serie =
+            normalizarSerie(
+                obterSerie()
+            );
 
-            const serie = obterSerie();
+        if(!serie){
 
-            if(!serie){
-                return;
-            }
+            console.error(
+                "[FAVORITOS SÉRIE] Série não encontrada."
+            );
 
-            const id = idDaSerie(serie);
+            return;
+        }
 
-            if(!id){
-                return;
-            }
+        const id =
+            idDaSerie(serie);
 
-            let lista = obterLista();
+        if(!id){
 
-            const indice = lista.findIndex(function(item){
-                return idDaSerie(item) === id;
+            console.error(
+                "[FAVORITOS SÉRIE] ID da série não encontrado."
+            );
+
+            return;
+        }
+
+        let lista =
+            obterLista();
+
+        const indice =
+            lista.findIndex(function(item){
+
+                return String(
+                    item &&
+                    (
+                        item.id ||
+                        item.tmdb_id ||
+                        item.tv_id ||
+                        item.titulo ||
+                        item.name ||
+                        item.nome
+                    )
+                ).trim() === id;
+
             });
 
-            if(indice >= 0){
 
-                lista.splice(indice, 1);
+        if(indice >= 0){
 
-            }else{
+            lista.splice(
+                indice,
+                1
+            );
 
-                lista.push({
-                    ...serie,
-                    tipo: "serie"
-                });
+            console.log(
+                "[FAVORITOS SÉRIE] Série removida:",
+                serie
+            );
 
-            }
+        }else{
 
-            salvarLista(lista);
-            atualizarBotao();
-        });
+            lista.unshift(
+                serie
+            );
+
+            console.log(
+                "[FAVORITOS SÉRIE] Série adicionada:",
+                serie
+            );
+        }
+
+
+        salvarLista(lista);
+
+        atualizarBotao();
     }
 
-    atualizarBotao();
+
+    function instalar(){
+
+        const botao =
+            document.getElementById(
+                "serieAdicionarFavorito"
+            );
+
+        if(!botao){
+            return;
+        }
+
+        if(
+            botao.dataset.favoritoSerieLigado === "1"
+        ){
+            atualizarBotao();
+            return;
+        }
+
+        botao.dataset.favoritoSerieLigado =
+            "1";
+
+        botao.addEventListener(
+            "click",
+            function(evento){
+
+                evento.preventDefault();
+                evento.stopPropagation();
+
+                alternarFavorito();
+
+            },
+            true
+        );
+
+        atualizarBotao();
+
+        console.log(
+            "[FAVORITOS SÉRIE] Botão conectado."
+        );
+    }
+
+
+    if(
+        document.readyState ===
+        "loading"
+    ){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            instalar
+        );
+
+    }else{
+
+        instalar();
+    }
+
+
+    setTimeout(
+        instalar,
+        500
+    );
+
+    setTimeout(
+        instalar,
+        1500
+    );
+
+    setTimeout(
+        instalar,
+        3000
+    );
+
 
 })();
 </script>

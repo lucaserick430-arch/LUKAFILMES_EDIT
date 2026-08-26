@@ -483,20 +483,96 @@ listaSeries.innerHTML=`
 const gradeSeries=document.getElementById("listaSeries");
 const campoPesquisa=document.getElementById("pesquisaSeries");
 
-const TOTAL_PAGINAS_CATALOGO_SERIES = 500;
+const TOTAL_PAGINAS_CATALOGO_SERIES = 1000;
 
 /*
- * LUKAFILMES — CATÁLOGO DE SÉRIES ALEATÓRIO
+ * =========================================================
+ * LUKAFILMES — CATÁLOGO DE SÉRIES REALMENTE MISTURADO
+ * =========================================================
  *
- * A cada atualização da página:
- * 1. Escolhe uma página aleatória entre 1 e 1000.
- * 2. Carrega as séries dessa página.
- * 3. O carregamento infinito continua normalmente a partir dela.
+ * A API organiza as páginas em sequência.
+ *
+ * Para evitar:
+ *
+ * 2026 → 2025 → 2024 → 2023...
+ *
+ * criamos uma fila contendo todas as páginas disponíveis
+ * e embaralhamos essa fila antes do primeiro carregamento.
+ *
+ * Cada página é usada no máximo uma vez durante a abertura.
+ *
+ * O infinite scroll continua normalmente:
+ *
+ * página aleatória → página aleatória → página aleatória...
+ *
+ * Quando uma página estiver vazia, a próxima da fila é
+ * consultada imediatamente.
+ */
+
+function criarFilaPaginasSeries(){
+
+    const paginas =
+        Array.from(
+            {
+                length:
+                    TOTAL_PAGINAS_CATALOGO_SERIES
+            },
+            (_, indice) =>
+                indice + 1
+        );
+
+    for(
+        let i = paginas.length - 1;
+        i > 0;
+        i--
+    ){
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            paginas[i],
+            paginas[j]
+        ] = [
+            paginas[j],
+            paginas[i]
+        ];
+    }
+
+    return paginas;
+}
+
+const filaPaginasSeries =
+    criarFilaPaginasSeries();
+
+let indiceFilaPaginasSeries = 0;
+
+function proximaPaginaSeries(){
+
+    if(
+        indiceFilaPaginasSeries >=
+        filaPaginasSeries.length
+    ){
+        return null;
+    }
+
+    const pagina =
+        filaPaginasSeries[
+            indiceFilaPaginasSeries
+        ];
+
+    indiceFilaPaginasSeries++;
+
+    return pagina;
+}
+
+/*
+ * Primeira página também é aleatória.
  */
 let paginaSeries =
-    Math.floor(
-        Math.random() * TOTAL_PAGINAS_CATALOGO_SERIES
-    ) + 1;
+    proximaPaginaSeries();
 
 console.log(
     "[SÉRIES] Página inicial aleatória:",
@@ -504,6 +580,7 @@ console.log(
     "/",
     TOTAL_PAGINAS_CATALOGO_SERIES
 );
+
 let carregandoSeries=false;
 let fimSeries=false;
 let idsSeries=new Set();
@@ -568,69 +645,133 @@ async function carregarCatalogoSeries(){
 
     try{
 
-        const resposta=
-            await fetch(
-                "/api/catalogo-series?pagina="+
+        /*
+         * LUKAFILMES — BUSCA DE PÁGINAS VÁLIDAS
+         *
+         * A página inicial continua aleatória entre 1 e 1000.
+         * Se uma página estiver vazia, ela é ignorada e a próxima
+         * página é consultada automaticamente.
+         */
+
+        while(!fimSeries){
+
+            if(paginaSeries > TOTAL_PAGINAS_CATALOGO_SERIES){
+                fimSeries=true;
+                break;
+            }
+
+            const paginaAtual=paginaSeries;
+
+            console.log(
+                "[SÉRIES] Consultando página:",
+                paginaAtual,
+                "/",
+                TOTAL_PAGINAS_CATALOGO_SERIES
+            );
+
+            const resposta=
+                await fetch(
+                    "/api/catalogo-series?pagina="+
+                    paginaAtual
+                );
+
+            if(!resposta.ok){
+                throw new Error(
+                    "HTTP "+resposta.status+
+                    " na página "+paginaAtual
+                );
+            }
+
+            const dados=
+                await resposta.json();
+
+            const series=
+                Array.isArray(dados.series)?
+                dados.series:
+                [];
+
+            /*
+             * A página 1 limpa o estado inicial.
+             * Nas páginas aleatórias, o catálogo existente é preservado.
+             */
+            if(paginaAtual===1){
+                gradeSeries.innerHTML="";
+            }
+
+            let adicionadas=0;
+
+            for(const serie of series){
+
+                const id=
+                    String(
+                        serie.id||
+                        serie.tmdb_id||
+                        serie.titulo||
+                        ""
+                    );
+
+                if(!id||idsSeries.has(id)){
+                    continue;
+                }
+
+                idsSeries.add(id);
+
+                gradeSeries.appendChild(
+                    criarCardSerie(serie)
+                );
+
+                adicionadas++;
+            }
+
+            /*
+             * IMPORTANTE:
+             *
+             * A próxima página NÃO é paginaSeries + 1.
+             *
+             * A próxima página vem da fila embaralhada.
+             *
+             * Isso mantém o catálogo realmente misturado
+             * e impede a sequência cronológica da API.
+             */
+            paginaSeries =
+                proximaPaginaSeries();
+
+            if(paginaSeries === null){
+                fimSeries=true;
+            }
+
+            console.log(
+                "[SÉRIES] Página:",
+                paginaAtual,
+                "| Novas:",
+                adicionadas,
+                "| Total:",
+                idsSeries.size,
+                "| Próxima:",
                 paginaSeries
             );
 
-        const dados=
-            await resposta.json();
-
-        const series=
-            Array.isArray(dados.series)?
-            dados.series:
-            [];
-
-        if(paginaSeries===1){
-            gradeSeries.innerHTML="";
-        }
-
-        for(const serie of series){
-
-            const id=
-                String(
-                    serie.id||
-                    serie.tmdb_id||
-                    serie.titulo||
-                    ""
-                );
-
-            if(!id||idsSeries.has(id)){
-                continue;
+            /*
+             * Encontrou conteúdo: encerra esta execução.
+             * O infinite scroll continuará quando o usuário rolar.
+             *
+             * Se estava vazia, o while continua imediatamente
+             * procurando outra página.
+             */
+            if(adicionadas>0){
+                break;
             }
 
-            idsSeries.add(id);
-
-            gradeSeries.appendChild(
-                criarCardSerie(serie)
-            );
-        }
-
-        if(
-            dados.acabou||
-            !series.length
-        ){
-
-            fimSeries=true;
-
-        }else{
-
-            paginaSeries++;
+            if(fimSeries){
+                break;
+            }
 
         }
-
-        console.log(
-            "[SERIES] Página:",
-            paginaSeries,
-            "| Total:",
-            idsSeries.size
-        );
 
     }catch(erro){
 
         console.error(
-            "[SERIES] ERRO:",
+            "[SÉRIES] ERRO:",
             erro
         );
 

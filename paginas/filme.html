@@ -1336,6 +1336,48 @@ body{
 
 
 
+<style id="lukafilmes-play-central">
+.player-video{
+    position:relative;
+}
+
+.play-central-filme{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%, -50%);
+    z-index:20;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-width:150px;
+    min-height:58px;
+    padding:14px 28px;
+    border:0;
+    border-radius:10px;
+    background:#e50914;
+    color:#fff;
+    font-size:20px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 4px 18px rgba(0,0,0,.45);
+    transition:none !important;
+    animation:none !important;
+}
+
+.play-central-filme:hover,
+.play-central-filme:focus,
+.play-central-filme:active{
+    transform:translate(-50%, -50%);
+    transition:none !important;
+    animation:none !important;
+}
+
+.play-central-filme.oculto{
+    display:none !important;
+}
+</style>
+
 <style id="lukafilmes-seletor-plays">
 /* ==========================================
    LUKAFILMES — QUADROS DOS PLAYS
@@ -3171,7 +3213,8 @@ body{
                 src=""
                 title="Trailer do filme"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen>
+                allowfullscreen
+                referrerpolicy="strict-origin-when-cross-origin">
             </iframe>
 
         </div>
@@ -3215,7 +3258,14 @@ body{
 
         </div>
 
-        <div class="player-video">
+        <div class="player-video" id="playerVideoArea">
+            <button
+                type="button"
+                id="playCentralFilme"
+                class="play-central-filme">
+                ▶ PLAY
+            </button>
+
             <iframe
                 id="filmeFrame"
                 src=""
@@ -3504,22 +3554,142 @@ body{
                     tmdbId
                 );
 
-                /* MOSTRA TODAS AS OPCOES */
+                /* ABRE O PLAYER PRETO */
                 playerFilme.style.display =
                     "block";
 
-                /* LIMPA O PLAYER ANTERIOR */
+                /* NÃO CARREGA O SERVIDOR AINDA */
                 filmeFrame.src = "";
 
-                botao.innerHTML =
-                    "▶ ESCOLHA UM PLAYER";
+                const playCentral =
+                    document.getElementById(
+                        "playCentralFilme"
+                    );
 
+                if (playCentral) {
+                    playCentral.classList.remove(
+                        "oculto"
+                    );
+                }
+
+                botao.innerHTML =
+                    "▶ PLAY";
+
+                /* DESLOCAMENTO DIRETO, SEM ANIMAÇÃO */
                 playerFilme.scrollIntoView({
-                    behavior: "smooth",
+                    behavior: "auto",
                     block: "center"
                 });
 
             });
+
+            /* ==========================================
+               PLAY CENTRAL — CARREGA PLAYER 1
+               ========================================== */
+
+            const playCentral =
+                document.getElementById(
+                    "playCentralFilme"
+                );
+
+            if (playCentral) {
+
+                playCentral.addEventListener(
+                    "click",
+                    function () {
+
+                        const tmdbId =
+                            String(filme.id).trim();
+
+                        if (!tmdbId) return;
+
+                        const embedUrl =
+                            "https://myembed.biz/filme/" +
+                            tmdbId;
+
+                        filmeFrame.src =
+                            embedUrl;
+
+                        /* =====================================================
+                           CONTINUAR ASSISTINDO
+                           O PLAY CENTRAL também precisa registrar o filme.
+                           ===================================================== */
+                        if (typeof salvarSelecaoPlayer === "function") {
+                            salvarSelecaoPlayer("1");
+                        } else if (
+                            window.LukaContinuar &&
+                            typeof window.LukaContinuar.obterContinuar === "function"
+                        ) {
+                            try {
+                                const itemAtual = {
+                                    id: filme.id,
+                                    titulo: filme.titulo || "Filme",
+                                    capa: filme.capa || "",
+                                    tipo: "filme",
+                                    tempo: 0,
+                                    duracao: 0,
+                                    progresso: 0,
+                                    player: "1",
+                                    atualizadoEm: Date.now()
+                                };
+
+                                let lista =
+                                    window.LukaContinuar.obterContinuar() || [];
+
+                                lista = lista.filter(function(x) {
+                                    return String(x.id) !== String(itemAtual.id);
+                                });
+
+                                lista.unshift(itemAtual);
+
+                                localStorage.setItem(
+                                    "lukafilmes_continuar",
+                                    JSON.stringify(lista.slice(0,24))
+                                );
+
+                                console.log(
+                                    "[CONTINUAR] Filme registrado pelo PLAY central:",
+                                    itemAtual
+                                );
+                            } catch(e) {
+                                console.warn(
+                                    "[CONTINUAR] Erro ao registrar PLAY central:",
+                                    e
+                                );
+                            }
+                        }
+
+                        playCentral.classList.add(
+                            "oculto"
+                        );
+
+                        const primeiroPlayer =
+                            document.querySelector(
+                                '.player-btn[data-player="1"]'
+                            );
+
+                        if (primeiroPlayer) {
+
+                            document
+                                .querySelectorAll(
+                                    ".player-btn"
+                                )
+                                .forEach(function(btn){
+                                    btn.classList.remove(
+                                        "player-selecionado"
+                                    );
+                                });
+
+                            primeiroPlayer.classList.add(
+                                "player-selecionado"
+                            );
+                        }
+
+                        botao.innerHTML =
+                            "▶ REPRODUZINDO";
+                    }
+                );
+            }
 
             /* ==========================================
                SELECAO DOS PLAYERS
@@ -3729,8 +3899,40 @@ body{
                     dados.trailer.embed
                 ) {
 
-                    frame.src =
-                        dados.trailer.embed;
+                    /*
+                     * LUKAFILMES — TRAILER COM ÁUDIO
+                     *
+                     * Mantém o embed original, mas remove parâmetros
+                     * que possam forçar o trailer a iniciar sem áudio.
+                     */
+                    let trailerEmbed =
+                        String(dados.trailer.embed || "");
+
+                    try {
+
+                        const urlTrailer =
+                            new URL(
+                                trailerEmbed,
+                                window.location.origin
+                            );
+
+                        urlTrailer.searchParams.delete("mute");
+                        urlTrailer.searchParams.delete("muted");
+                        urlTrailer.searchParams.delete("volume");
+
+                        trailerEmbed =
+                            urlTrailer.toString();
+
+                    } catch(erroUrl) {
+
+                        console.warn(
+                            "[TRAILER] Não foi possível normalizar URL:",
+                            erroUrl
+                        );
+
+                    }
+
+                    frame.src = trailerEmbed;
 
                     frame.title =
                         dados.trailer.nome ||
@@ -3860,15 +4062,116 @@ document.getElementById("voltarFilmes").addEventListener(
     </a>
 </div>
 
+<script src="../js/conta-storage.js"></script>
 <script id="filme-favoritos-topo-script">
 (function(){
 
     function obterFilme(){
         try{
-            return JSON.parse(
-                localStorage.getItem("filmeSelecionado") || "null"
+
+            const params =
+                new URLSearchParams(window.location.search);
+
+            const id =
+                params.get("id");
+
+            let filme = null;
+
+            /* PRIMEIRA FONTE: filme específico pelo ID */
+            if(id){
+
+                try{
+                    filme = JSON.parse(
+                        localStorage.getItem(
+                            "filmeSelecionadoHome_" + String(id)
+                        ) || "null"
+                    );
+                }catch(e){}
+
+            }
+
+            /* SEGUNDA FONTE: filmeSelecionado */
+            if(!filme){
+
+                try{
+                    filme = JSON.parse(
+                        localStorage.getItem(
+                            "filmeSelecionado"
+                        ) || "null"
+                    );
+                }catch(e){}
+
+            }
+
+            /* TERCEIRA FONTE: dados mínimos da própria página */
+            if(!filme && id){
+
+                filme = {
+                    id: id,
+                    titulo:
+                        document.querySelector("h1")?.textContent?.trim()
+                        || "Filme",
+                    capa:
+                        document.getElementById("poster")?.src
+                        || document.querySelector("img")?.src
+                        || "",
+                    tipo: "filme"
+                };
+
+            }
+
+            if(filme){
+
+                filme.id =
+                    filme.id ||
+                    filme.tmdb_id ||
+                    id;
+
+                filme.titulo =
+                    filme.titulo ||
+                    filme.title ||
+                    document.querySelector("h1")?.textContent?.trim()
+                    || "Filme";
+
+                filme.capa =
+                    filme.capa ||
+                    document.getElementById("poster")?.src
+                    || document.querySelector("img")?.src
+                    || "";
+
+                filme.tipo = "filme";
+
+                /* Mantém as duas referências sincronizadas */
+                try{
+                    localStorage.setItem(
+                        "filmeSelecionado",
+                        JSON.stringify(filme)
+                    );
+
+                    if(filme.id){
+                        localStorage.setItem(
+                            "filmeSelecionadoHome_" + String(filme.id),
+                            JSON.stringify(filme)
+                        );
+                    }
+                }catch(e){}
+
+            }
+
+            console.log(
+                "[FAVORITOS] Filme obtido:",
+                filme
             );
+
+            return filme;
+
         }catch(e){
+
+            console.warn(
+                "[FAVORITOS] Erro ao obter filme:",
+                e
+            );
+
             return null;
         }
     }

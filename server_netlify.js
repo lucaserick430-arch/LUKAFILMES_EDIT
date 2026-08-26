@@ -1308,7 +1308,7 @@ async function atualizarCatalogo() {
         const mapa = new Map();
 
         for (const resposta of respostas) {
-            for (const filme of (resposta.results || [])) {
+            for (const filme of resultadosFiltrados) {
                 if (filme && filme.id && !mapa.has(filme.id)) {
                     mapa.set(filme.id, filme);
                 }
@@ -1334,12 +1334,359 @@ async function atualizarCatalogo() {
 }
 
 
+
+/*
+ * LUKAFILMES — AÇÃO EXCLUSIVA
+ *
+ * Endpoint separado para garantir que a página de Ação
+ * nunca misture filmes de outras categorias.
+ */
+
+
+
+app.get('/api/catalogo-comedia', async (req, res) => {
+    try {
+
+        const paginaSolicitada = Math.max(
+            1,
+            Number(req.query.pagina || 1)
+        );
+
+        const FILMES_POR_PAGINA = 20;
+        const MAX_FILMES = 10000;
+
+        /*
+         * COMÉDIA = TMDB genre_id 35
+         *
+         * Cada página do nosso catálogo corresponde
+         * diretamente a uma página do TMDB.
+         *
+         * 1 -> página 1 de Ação
+         * 2 -> página 2 de Ação
+         * 3 -> página 3 de Ação
+         * ...
+         * até 500 páginas = aproximadamente 10.000 filmes.
+         */
+
+        const MAX_PAGINAS =
+            Math.ceil(
+                MAX_FILMES /
+                FILMES_POR_PAGINA
+            );
+
+        if (paginaSolicitada > MAX_PAGINAS) {
+
+            return res.json({
+                sucesso: true,
+                filmes: [],
+                total: 0,
+                pagina: paginaSolicitada,
+                acabou: true
+            });
+        }
+
+        console.log(
+            '[COMÉDIA EXCLUSIVA] Página:',
+            paginaSolicitada
+        );
+
+        const resposta = await tmdb(
+            '/discover/movie?language=pt-BR' +
+            '&sort_by=popularity.desc' +
+            '&with_genres=28' +
+            '&page=' + paginaSolicitada +
+            '&include_adult=false' +
+            '&vote_count.gte=5'
+        );
+
+        const mapa = new Map();
+
+        /*
+         * Validação FINAL usando o genre_ids original
+         * recebido diretamente do TMDB.
+         */
+        for (
+            const filme of
+            (resposta.results || [])
+        ) {
+
+            if (
+                !filme ||
+                !filme.id
+            ) {
+                continue;
+            }
+
+            if (
+                !Array.isArray(
+                    filme.genre_ids
+                )
+            ) {
+                continue;
+            }
+
+            /*
+             * O filme precisa obrigatoriamente
+             * possuir Ação.
+             */
+            if (
+                !filme.genre_ids.includes(28)
+            ) {
+                continue;
+            }
+
+            const convertido =
+                converterFilme(filme);
+
+            if (!convertido) {
+                continue;
+            }
+
+            const id =
+                String(
+                    convertido.id ||
+                    convertido.tmdb_id ||
+                    filme.id
+                );
+
+            if (!mapa.has(id)) {
+                mapa.set(
+                    id,
+                    convertido
+                );
+            }
+        }
+
+        let filmes =
+            Array.from(
+                mapa.values()
+            );
+
+        filmes =
+            filmes.slice(
+                0,
+                FILMES_POR_PAGINA
+            );
+
+        const acabou =
+            filmes.length === 0 ||
+            paginaSolicitada >= MAX_PAGINAS;
+
+        return res.json({
+            sucesso: true,
+            filmes: filmes,
+            total: filmes.length,
+            pagina: paginaSolicitada,
+            acabou: acabou
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[COMÉDIA EXCLUSIVA] Erro:',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            filmes: [],
+            total: 0,
+            mensagem:
+                'Erro ao carregar filmes de Ação.'
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+app.get('/api/catalogo-acao', async (req, res) => {
+    try {
+
+        const paginaSolicitada = Math.max(
+            1,
+            Number(req.query.pagina || 1)
+        );
+
+        const FILMES_POR_PAGINA = 20;
+        const MAX_FILMES = 10000;
+
+        /*
+         * AÇÃO = TMDB genre_id 28
+         *
+         * Cada página do nosso catálogo corresponde
+         * diretamente a uma página do TMDB.
+         *
+         * 1 -> página 1 de Ação
+         * 2 -> página 2 de Ação
+         * 3 -> página 3 de Ação
+         * ...
+         * até 500 páginas = aproximadamente 10.000 filmes.
+         */
+
+        const MAX_PAGINAS =
+            Math.ceil(
+                MAX_FILMES /
+                FILMES_POR_PAGINA
+            );
+
+        if (paginaSolicitada > MAX_PAGINAS) {
+
+            return res.json({
+                sucesso: true,
+                filmes: [],
+                total: 0,
+                pagina: paginaSolicitada,
+                acabou: true
+            });
+        }
+
+        console.log(
+            '[AÇÃO EXCLUSIVA] Página:',
+            paginaSolicitada
+        );
+
+        const resposta = await tmdb(
+            '/discover/movie?language=pt-BR' +
+            '&sort_by=popularity.desc' +
+            '&with_genres=28' +
+            '&page=' + paginaSolicitada +
+            '&include_adult=false' +
+            '&vote_count.gte=5'
+        );
+
+        const mapa = new Map();
+
+        /*
+         * Validação FINAL usando o genre_ids original
+         * recebido diretamente do TMDB.
+         */
+        for (
+            const filme of
+            (resposta.results || [])
+        ) {
+
+            if (
+                !filme ||
+                !filme.id
+            ) {
+                continue;
+            }
+
+            if (
+                !Array.isArray(
+                    filme.genre_ids
+                )
+            ) {
+                continue;
+            }
+
+            /*
+             * O filme precisa obrigatoriamente
+             * possuir Ação.
+             */
+            if (
+                !filme.genre_ids.includes(28)
+            ) {
+                continue;
+            }
+
+            const convertido =
+                converterFilme(filme);
+
+            if (!convertido) {
+                continue;
+            }
+
+            const id =
+                String(
+                    convertido.id ||
+                    convertido.tmdb_id ||
+                    filme.id
+                );
+
+            if (!mapa.has(id)) {
+                mapa.set(
+                    id,
+                    convertido
+                );
+            }
+        }
+
+        let filmes =
+            Array.from(
+                mapa.values()
+            );
+
+        filmes =
+            filmes.slice(
+                0,
+                FILMES_POR_PAGINA
+            );
+
+        const acabou =
+            filmes.length === 0 ||
+            paginaSolicitada >= MAX_PAGINAS;
+
+        return res.json({
+            sucesso: true,
+            filmes: filmes,
+            total: filmes.length,
+            pagina: paginaSolicitada,
+            acabou: acabou
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[AÇÃO EXCLUSIVA] Erro:',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            filmes: [],
+            total: 0,
+            mensagem:
+                'Erro ao carregar filmes de Ação.'
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
 app.get('/api/catalogo-filmes', async (req, res) => {
     try {
         const paginaSolicitada = Math.max(
             1,
             Number(req.query.pagina || 1)
         );
+
+        /*
+         * LUKAFILMES — FILTRO REAL POR CATEGORIA
+         *
+         * Quando o usuário entra em:
+         * /paginas/filmes.html?categoria=acao
+         *
+         * a categoria é enviada para esta API.
+         */
+        const categoriaSolicitada =
+            String(req.query.categoria || "")
+                .trim()
+                .toLowerCase();
 
         const ANO_INICIAL = 2000;
         const ANO_FINAL = 2026;
@@ -1390,14 +1737,88 @@ app.get('/api/catalogo-filmes', async (req, res) => {
             paginaTMDB
         );
 
-        const resposta = await tmdb(
+        /*
+         * Consulta base do catálogo.
+         */
+        let urlTMDB =
             '/discover/movie?language=pt-BR' +
             '&sort_by=popularity.desc' +
             '&primary_release_year=' + ano +
             '&page=' + paginaTMDB +
             '&include_adult=false' +
-            '&vote_count.gte=5'
-        );
+            '&vote_count.gte=5';
+
+        /*
+         * Categorias do catálogo:
+         *
+         * ação             = 28
+         * comédia          = 35
+         * terror           = 27
+         * romance          = 10749
+         * fantasia         = 14
+         * ficção científica= 878
+         * animação         = 16
+         */
+        const mapaCategorias = {
+            acao: "28",
+            comedia: "35",
+            terror: "27",
+            romance: "10749",
+            fantasia: "14",
+            "ficcao-cientifica": "878",
+            animacao: "16"
+        };
+
+        if (
+            categoriaSolicitada &&
+            mapaCategorias[categoriaSolicitada]
+        ) {
+            urlTMDB +=
+                '&with_genres=' +
+                mapaCategorias[categoriaSolicitada];
+        }
+
+        const resposta = await tmdb(urlTMDB);
+
+
+        /*
+         * LUKAFILMES — FILTRO DEFINITIVO DA CATEGORIA
+         *
+         * O TMDB recebe with_genres, mas fazemos também
+         * a validação local ANTES de converter os filmes.
+         *
+         * Isso garante que uma página de Ação nunca entregue
+         * Comédia, Terror, Romance etc. sem Ação.
+         */
+
+        let resultadosFiltrados =
+            resposta.results || [];
+
+        if (categoriaSolicitada) {
+
+            const mapaGenerosCategoria = {
+                acao: 28,
+                comedia: 35,
+                terror: 27,
+                romance: 10749,
+                fantasia: 14,
+                "ficcao-cientifica": 878,
+                animacao: 16
+            };
+
+            const generoAlvo =
+                mapaGenerosCategoria[categoriaSolicitada];
+
+            if (generoAlvo) {
+
+                resultadosFiltrados =
+                    resultadosFiltrados.filter(filme =>
+                        Array.isArray(filme.genre_ids) &&
+                        filme.genre_ids.includes(generoAlvo)
+                    );
+            }
+        }
+
 
         const mapa = new Map();
 

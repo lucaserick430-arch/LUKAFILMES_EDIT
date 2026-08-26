@@ -1400,6 +1400,340 @@ async function atualizarCatalogo() {
 }
 
 
+
+/*
+ * LUKAFILMES — AÇÃO EXCLUSIVA
+ *
+ * Endpoint separado para garantir que a página de Ação
+ * nunca misture filmes de outras categorias.
+ */
+
+
+
+app.get('/api/catalogo-comedia', async (req, res) => {
+    try {
+
+        const paginaSolicitada = Math.max(
+            1,
+            Number(req.query.pagina || 1)
+        );
+
+        const FILMES_POR_PAGINA = 20;
+        const MAX_FILMES = 10000;
+
+        /*
+         * COMÉDIA = TMDB genre_id 35
+         *
+         * Cada página do nosso catálogo corresponde
+         * diretamente a uma página do TMDB.
+         *
+         * 1 -> página 1 de Ação
+         * 2 -> página 2 de Ação
+         * 3 -> página 3 de Ação
+         * ...
+         * até 500 páginas = aproximadamente 10.000 filmes.
+         */
+
+        const MAX_PAGINAS =
+            Math.ceil(
+                MAX_FILMES /
+                FILMES_POR_PAGINA
+            );
+
+        if (paginaSolicitada > MAX_PAGINAS) {
+
+            return res.json({
+                sucesso: true,
+                filmes: [],
+                total: 0,
+                pagina: paginaSolicitada,
+                acabou: true
+            });
+        }
+
+        console.log(
+            '[COMÉDIA EXCLUSIVA] Página:',
+            paginaSolicitada
+        );
+
+        const resposta = await tmdb(
+            '/discover/movie?language=pt-BR' +
+            '&sort_by=popularity.desc' +
+            '&with_genres=28' +
+            '&page=' + paginaSolicitada +
+            '&include_adult=false' +
+            '&vote_count.gte=5'
+        );
+
+        const mapa = new Map();
+
+        /*
+         * Validação FINAL usando o genre_ids original
+         * recebido diretamente do TMDB.
+         */
+        for (
+            const filme of
+            (resposta.results || [])
+        ) {
+
+            if (
+                !filme ||
+                !filme.id
+            ) {
+                continue;
+            }
+
+            if (
+                !Array.isArray(
+                    filme.genre_ids
+                )
+            ) {
+                continue;
+            }
+
+            /*
+             * O filme precisa obrigatoriamente
+             * possuir Ação.
+             */
+            if (
+                !filme.genre_ids.includes(28)
+            ) {
+                continue;
+            }
+
+            const convertido =
+                converterFilme(filme);
+
+            if (!convertido) {
+                continue;
+            }
+
+            const id =
+                String(
+                    convertido.id ||
+                    convertido.tmdb_id ||
+                    filme.id
+                );
+
+            if (!mapa.has(id)) {
+                mapa.set(
+                    id,
+                    convertido
+                );
+            }
+        }
+
+        let filmes =
+            Array.from(
+                mapa.values()
+            );
+
+        filmes =
+            filmes.slice(
+                0,
+                FILMES_POR_PAGINA
+            );
+
+        const acabou =
+            filmes.length === 0 ||
+            paginaSolicitada >= MAX_PAGINAS;
+
+        return res.json({
+            sucesso: true,
+            filmes: filmes,
+            total: filmes.length,
+            pagina: paginaSolicitada,
+            acabou: acabou
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[COMÉDIA EXCLUSIVA] Erro:',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            filmes: [],
+            total: 0,
+            mensagem:
+                'Erro ao carregar filmes de Ação.'
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+app.get('/api/catalogo-acao', async (req, res) => {
+    try {
+
+        const paginaSolicitada = Math.max(
+            1,
+            Number(req.query.pagina || 1)
+        );
+
+        const FILMES_POR_PAGINA = 20;
+        const MAX_FILMES = 10000;
+
+        /*
+         * AÇÃO = TMDB genre_id 28
+         *
+         * Cada página do nosso catálogo corresponde
+         * diretamente a uma página do TMDB.
+         *
+         * 1 -> página 1 de Ação
+         * 2 -> página 2 de Ação
+         * 3 -> página 3 de Ação
+         * ...
+         * até 500 páginas = aproximadamente 10.000 filmes.
+         */
+
+        const MAX_PAGINAS =
+            Math.ceil(
+                MAX_FILMES /
+                FILMES_POR_PAGINA
+            );
+
+        if (paginaSolicitada > MAX_PAGINAS) {
+
+            return res.json({
+                sucesso: true,
+                filmes: [],
+                total: 0,
+                pagina: paginaSolicitada,
+                acabou: true
+            });
+        }
+
+        console.log(
+            '[AÇÃO EXCLUSIVA] Página:',
+            paginaSolicitada
+        );
+
+        const resposta = await tmdb(
+            '/discover/movie?language=pt-BR' +
+            '&sort_by=popularity.desc' +
+            '&with_genres=28' +
+            '&page=' + paginaSolicitada +
+            '&include_adult=false' +
+            '&vote_count.gte=5'
+        );
+
+        const mapa = new Map();
+
+        /*
+         * Validação FINAL usando o genre_ids original
+         * recebido diretamente do TMDB.
+         */
+        for (
+            const filme of
+            (resposta.results || [])
+        ) {
+
+            if (
+                !filme ||
+                !filme.id
+            ) {
+                continue;
+            }
+
+            if (
+                !Array.isArray(
+                    filme.genre_ids
+                )
+            ) {
+                continue;
+            }
+
+            /*
+             * O filme precisa obrigatoriamente
+             * possuir Ação.
+             */
+            if (
+                !filme.genre_ids.includes(28)
+            ) {
+                continue;
+            }
+
+            const convertido =
+                converterFilme(filme);
+
+            if (!convertido) {
+                continue;
+            }
+
+            const id =
+                String(
+                    convertido.id ||
+                    convertido.tmdb_id ||
+                    filme.id
+                );
+
+            if (!mapa.has(id)) {
+                mapa.set(
+                    id,
+                    convertido
+                );
+            }
+        }
+
+        let filmes =
+            Array.from(
+                mapa.values()
+            );
+
+        filmes =
+            filmes.slice(
+                0,
+                FILMES_POR_PAGINA
+            );
+
+        const acabou =
+            filmes.length === 0 ||
+            paginaSolicitada >= MAX_PAGINAS;
+
+        return res.json({
+            sucesso: true,
+            filmes: filmes,
+            total: filmes.length,
+            pagina: paginaSolicitada,
+            acabou: acabou
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[AÇÃO EXCLUSIVA] Erro:',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            filmes: [],
+            total: 0,
+            mensagem:
+                'Erro ao carregar filmes de Ação.'
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
 app.get('/api/catalogo-filmes', async (req, res) => {
     try {
         const paginaSolicitada = Math.max(
@@ -1407,11 +1741,140 @@ app.get('/api/catalogo-filmes', async (req, res) => {
             Number(req.query.pagina || 1)
         );
 
+        /*
+         * LUKAFILMES — FILTRO REAL POR CATEGORIA
+         *
+         * Quando o usuário entra em:
+         * /paginas/filmes.html?categoria=acao
+         *
+         * a categoria é enviada para esta API.
+         */
+        const categoriaSolicitada =
+            String(req.query.categoria || "")
+                .trim()
+                .toLowerCase();
+
         const ANO_INICIAL = 2000;
         const ANO_FINAL = 2026;
 
         const FILMES_POR_PAGINA = 20;
         const MAX_FILMES = 10000;
+
+        /*
+         * =====================================================
+         * LUKAFILMES — LANÇAMENTOS
+         * =====================================================
+         *
+         * A Home usa:
+         *
+         * /api/catalogo-filmes?pagina=N&lancamentos=1
+         *
+         * Lançamentos NÃO usam a paginação misturada por anos.
+         * Cada página é uma nova página real do TMDB.
+         *
+         * 1 -> 20 lançamentos
+         * 2 -> mais 20
+         * 3 -> mais 20
+         * 4 -> mais 20
+         * ...
+         */
+
+        const modoLancamentos =
+            String(req.query.lancamentos || "")
+                .trim() === "1";
+
+        if (modoLancamentos) {
+
+            const paginaLancamentos =
+                Math.max(
+                    1,
+                    Number(req.query.pagina || 1)
+                );
+
+            console.log(
+                '[LANÇAMENTOS] Página:',
+                paginaLancamentos
+            );
+
+            const urlLancamentos =
+                '/discover/movie?language=pt-BR' +
+                '&sort_by=popularity.desc' +
+                '&primary_release_date.gte=2025-01-01' +
+                '&primary_release_date.lte=2026-12-31' +
+                '&page=' + paginaLancamentos +
+                '&include_adult=false' +
+                '&vote_count.gte=1';
+
+            const respostaLancamentos =
+                await tmdb(urlLancamentos);
+
+            const resultados =
+                Array.isArray(respostaLancamentos.results)
+                    ? respostaLancamentos.results
+                    : [];
+
+            const mapaLancamentos =
+                new Map();
+
+            for (const filme of resultados) {
+
+                if (!filme || !filme.id) {
+                    continue;
+                }
+
+                const convertido =
+                    converterFilme(filme);
+
+                if (!convertido) {
+                    continue;
+                }
+
+                const id =
+                    String(
+                        convertido.id ||
+                        convertido.tmdb_id ||
+                        filme.id
+                    );
+
+                if (!mapaLancamentos.has(id)) {
+                    mapaLancamentos.set(
+                        id,
+                        convertido
+                    );
+                }
+            }
+
+            const filmesLancamentos =
+                Array.from(
+                    mapaLancamentos.values()
+                ).slice(
+                    0,
+                    FILMES_POR_PAGINA
+                );
+
+            const totalPaginas =
+                Number(
+                    respostaLancamentos.total_pages || 1
+                );
+
+            return res.json({
+                sucesso: true,
+                filmes: filmesLancamentos,
+                total: filmesLancamentos.length,
+                pagina: paginaLancamentos,
+                acabou:
+                    paginaLancamentos >= totalPaginas
+            });
+        }
+
+        /*
+         * =====================================================
+         * CATÁLOGO NORMAL
+         * =====================================================
+         *
+         * A partir daqui permanece exatamente a lógica
+         * normal de anos misturados.
+         */
 
         /*
          * Cada chamada da nossa API busca somente UMA página
@@ -1430,14 +1893,35 @@ app.get('/api/catalogo-filmes', async (req, res) => {
 
         const paginasPorAno = 500;
 
-        const indice = paginaSolicitada - 1;
+        const totalAnos =
+            ANO_FINAL - ANO_INICIAL + 1;
 
-        const anoOffset = Math.floor(indice / paginasPorAno);
-        const paginaTMDB = (indice % paginasPorAno) + 1;
+        const indice =
+            paginaSolicitada - 1;
 
-        const ano = ANO_FINAL - anoOffset;
+        /*
+         * Mistura os anos:
+         * 1 -> 2026 pág.1
+         * 2 -> 2025 pág.1
+         * ...
+         * 27 -> 2000 pág.1
+         * 28 -> 2026 pág.2
+         */
 
-        if (ano < ANO_INICIAL) {
+        const anoOffset =
+            indice % totalAnos;
+
+        const paginaTMDB =
+            Math.floor(
+                indice / totalAnos
+            ) + 1;
+
+        const ano =
+            ANO_FINAL - anoOffset;
+
+        if (
+            paginaTMDB > paginasPorAno
+        ) {
             return res.json({
                 sucesso: true,
                 filmes: [],
@@ -1456,18 +1940,92 @@ app.get('/api/catalogo-filmes', async (req, res) => {
             paginaTMDB
         );
 
-        const resposta = await tmdb(
+        /*
+         * Consulta base do catálogo.
+         */
+        let urlTMDB =
             '/discover/movie?language=pt-BR' +
             '&sort_by=popularity.desc' +
             '&primary_release_year=' + ano +
             '&page=' + paginaTMDB +
             '&include_adult=false' +
-            '&vote_count.gte=5'
-        );
+            '&vote_count.gte=5';
+
+        /*
+         * Categorias do catálogo:
+         *
+         * ação             = 28
+         * comédia          = 35
+         * terror           = 27
+         * romance          = 10749
+         * fantasia         = 14
+         * ficção científica= 878
+         * animação         = 16
+         */
+        const mapaCategorias = {
+            acao: "28",
+            comedia: "35",
+            terror: "27",
+            romance: "10749",
+            fantasia: "14",
+            "ficcao-cientifica": "878",
+            animacao: "16"
+        };
+
+        if (
+            categoriaSolicitada &&
+            mapaCategorias[categoriaSolicitada]
+        ) {
+            urlTMDB +=
+                '&with_genres=' +
+                mapaCategorias[categoriaSolicitada];
+        }
+
+        const resposta = await tmdb(urlTMDB);
+
+
+        /*
+         * LUKAFILMES — FILTRO DEFINITIVO DA CATEGORIA
+         *
+         * O TMDB recebe with_genres, mas fazemos também
+         * a validação local ANTES de converter os filmes.
+         *
+         * Isso garante que uma página de Ação nunca entregue
+         * Comédia, Terror, Romance etc. sem Ação.
+         */
+
+        let resultadosFiltrados =
+            resposta.results || [];
+
+        if (categoriaSolicitada) {
+
+            const mapaGenerosCategoria = {
+                acao: 28,
+                comedia: 35,
+                terror: 27,
+                romance: 10749,
+                fantasia: 14,
+                "ficcao-cientifica": 878,
+                animacao: 16
+            };
+
+            const generoAlvo =
+                mapaGenerosCategoria[categoriaSolicitada];
+
+            if (generoAlvo) {
+
+                resultadosFiltrados =
+                    resultadosFiltrados.filter(filme =>
+                        Array.isArray(filme.genre_ids) &&
+                        filme.genre_ids.includes(generoAlvo)
+                    );
+            }
+        }
+
 
         const mapa = new Map();
 
-        for (const filme of (resposta.results || [])) {
+        for (const filme of resultadosFiltrados) {
 
             if (!filme || !filme.id) {
                 continue;
@@ -1593,6 +2151,7 @@ app.get('/api/catalogo', async (req, res) => {
 
 app.get('/api/filme/:id/videos', async (req, res) => {
     try {
+
         const id = req.params.id;
 
         if (!id || !/^\d+$/.test(id)) {
@@ -1602,55 +2161,183 @@ app.get('/api/filme/:id/videos', async (req, res) => {
             });
         }
 
-        const resposta = await tmdb(
-            '/movie/' + id + '/videos?language=pt-BR'
-        );
+        /*
+         * =====================================================
+         * TRAILER HERO — BUSCA ROBUSTA
+         * =====================================================
+         *
+         * Tentamos mais de um idioma porque muitos filmes
+         * possuem trailer no YouTube, mas o TMDB não devolve
+         * esse vídeo quando consultamos somente pt-BR.
+         *
+         * Ordem:
+         *
+         * 1. pt-BR
+         * 2. en-US
+         * 3. consulta geral
+         *
+         * O catálogo não é alterado.
+         */
 
-        const videos = Array.isArray(resposta.results)
-            ? resposta.results
-            : [];
+        const idiomas = [
+            'pt-BR',
+            'en-US',
+            null
+        ];
 
-        const youtube = videos.filter(video =>
-            video &&
-            video.site === 'YouTube' &&
-            video.key
-        );
+        let videos = [];
 
-        const trailers = youtube.filter(video =>
-            String(video.type || '').toLowerCase() === 'trailer'
-        );
+        for (const idioma of idiomas) {
 
-        const oficiais = trailers.filter(video =>
-            video.official === true
-        );
+            try {
 
-        const pt = oficiais.filter(video =>
-            String(video.iso_639_1 || '').toLowerCase() === 'pt'
-        );
+                const endpoint =
+                    idioma
+                        ? '/movie/' + id + '/videos?language=' + idioma
+                        : '/movie/' + id + '/videos';
 
-        const en = oficiais.filter(video =>
-            String(video.iso_639_1 || '').toLowerCase() === 'en'
-        );
+                const resposta =
+                    await tmdb(endpoint);
+
+                const encontrados =
+                    Array.isArray(resposta.results)
+                        ? resposta.results
+                        : [];
+
+                videos.push(...encontrados);
+
+                /*
+                 * Se já encontramos trailers do YouTube,
+                 * não precisamos continuar procurando.
+                 */
+                const temTrailer =
+                    encontrados.some(video =>
+                        video &&
+                        video.site === 'YouTube' &&
+                        video.key &&
+                        String(video.type || '').toLowerCase() === 'trailer'
+                    );
+
+                if (temTrailer) {
+                    break;
+                }
+
+            } catch (erro) {
+
+                console.warn(
+                    '[TRAILER] Falha idioma:',
+                    idioma || 'geral',
+                    '| filme:',
+                    id
+                );
+
+            }
+        }
+
+        /*
+         * Remove vídeos duplicados.
+         */
+        const mapaVideos = new Map();
+
+        for (const video of videos) {
+
+            if (
+                video &&
+                video.site === 'YouTube' &&
+                video.key
+            ) {
+
+                mapaVideos.set(
+                    String(video.key),
+                    video
+                );
+
+            }
+        }
+
+        const youtube =
+            Array.from(mapaVideos.values());
+
+        /*
+         * Primeiro procuramos trailers.
+         */
+        const trailers =
+            youtube.filter(video =>
+                String(video.type || '').toLowerCase() === 'trailer'
+            );
+
+        /*
+         * Depois damos preferência aos oficiais.
+         */
+        const oficiais =
+            trailers.filter(video =>
+                video.official === true
+            );
+
+        /*
+         * Preferência de idioma:
+         * PT > EN > qualquer idioma.
+         */
+        const pt =
+            oficiais.filter(video =>
+                String(video.iso_639_1 || '').toLowerCase() === 'pt'
+            );
+
+        const en =
+            oficiais.filter(video =>
+                String(video.iso_639_1 || '').toLowerCase() === 'en'
+            );
+
+        const ptTrailers =
+            trailers.filter(video =>
+                String(video.iso_639_1 || '').toLowerCase() === 'pt'
+            );
+
+        const enTrailers =
+            trailers.filter(video =>
+                String(video.iso_639_1 || '').toLowerCase() === 'en'
+            );
 
         const escolhido =
             pt[0] ||
             en[0] ||
             oficiais[0] ||
+            ptTrailers[0] ||
+            enTrailers[0] ||
             trailers[0] ||
             youtube[0] ||
             null;
 
         if (!escolhido) {
+
+            console.log(
+                '[TRAILER] NÃO ENCONTRADO:',
+                id
+            );
+
             return res.json({
                 sucesso: true,
                 encontrado: false,
                 trailer: null
             });
+
         }
 
+        console.log(
+            '[TRAILER] ENCONTRADO:',
+            id,
+            '|',
+            escolhido.name || '',
+            '|',
+            escolhido.key
+        );
+
         return res.json({
+
             sucesso: true,
+
             encontrado: true,
+
             trailer: {
                 id: escolhido.id,
                 nome: escolhido.name,
@@ -1659,20 +2346,38 @@ app.get('/api/filme/:id/videos', async (req, res) => {
                 tipo: escolhido.type,
                 oficial: escolhido.official === true,
                 idioma: escolhido.iso_639_1 || null,
-                url: 'https://www.youtube.com/watch?v=' + escolhido.key,
-                embed: 'https://www.youtube.com/embed/' + escolhido.key
+
+                url:
+                    'https://www.youtube.com/watch?v=' +
+                    escolhido.key,
+
+                embed:
+                    'https://www.youtube.com/embed/' +
+                    escolhido.key
             }
+
         });
 
     } catch (erro) {
-        console.error('[ERRO TRAILER TMDB]', erro);
+
+        console.error(
+            '[ERRO TRAILER TMDB]',
+            erro
+        );
 
         return res.status(500).json({
+
             sucesso: false,
+
             encontrado: false,
+
             trailer: null,
-            mensagem: 'Não foi possível buscar o trailer.'
+
+            mensagem:
+                'Não foi possível buscar o trailer.'
+
         });
+
     }
 });
 

@@ -2453,11 +2453,169 @@ body {
  * O Hero / trailer possui lógica própria e não é alterado.
  */
 
-let paginaFilmes = 1;
+/*
+ * LUKAFILMES — CATÁLOGO TOTALMENTE MISTURADO
+ *
+ * A API normalmente entrega as páginas em ordem
+ * cronológica/popularidade. Para que o catálogo não
+ * apareça como:
+ *
+ * 2024 → 2023 → 2022 → 2021...
+ *
+ * criamos uma fila de páginas embaralhada.
+ *
+ * Assim o infinite scroll pode buscar:
+ *
+ * página 317 → página 42 → página 189 → página 7
+ * → página 401 → página 93...
+ *
+ * Cada página também é embaralhada individualmente.
+ */
+
+const TOTAL_PAGINAS_CATALOGO_FILMES = 500;
+
+/*
+ * =========================================================
+ * LUKAFILMES — FILMES REALMENTE MISTURADOS
+ * =========================================================
+ *
+ * A API organiza as páginas aproximadamente por época.
+ *
+ * Por isso, simplesmente sortear 1..500 não é suficiente:
+ * as páginas 1 e 2, que concentram 2026/2025, apareceriam
+ * muito pouco.
+ *
+ * Estratégia:
+ *
+ * 1. As primeiras 50 páginas são embaralhadas juntas.
+ *    Isso garante uma mistura forte de 2026 até anos mais
+ *    antigos logo no começo.
+ *
+ * 2. Depois entram as páginas 51..500, também embaralhadas.
+ *
+ * 3. Nenhuma página é repetida durante a sessão.
+ *
+ * 4. O infinite scroll continua normalmente.
+ */
+
+function embaralharFila(lista){
+
+    const resultado = [...lista];
+
+    for(let i = resultado.length - 1; i > 0; i--){
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            resultado[i],
+            resultado[j]
+        ] = [
+            resultado[j],
+            resultado[i]
+        ];
+    }
+
+    return resultado;
+}
+
+
+function criarFilaPaginasFilmes(){
+
+    const paginasIniciais =
+        Array.from(
+            {length: Math.min(50, TOTAL_PAGINAS_CATALOGO_FILMES)},
+            (_, i) => i + 1
+        );
+
+    const paginasRestantes =
+        Array.from(
+            {
+                length:
+                    Math.max(
+                        0,
+                        TOTAL_PAGINAS_CATALOGO_FILMES - 50
+                    )
+            },
+            (_, i) => i + 51
+        );
+
+    /*
+     * Mistura fortemente as páginas que contêm
+     * os anos mais recentes e intermediários.
+     */
+    const primeiras =
+        embaralharFila(
+            paginasIniciais
+        );
+
+    /*
+     * Depois mistura todo o restante.
+     */
+    const restantes =
+        embaralharFila(
+            paginasRestantes
+        );
+
+    return [
+        ...primeiras,
+        ...restantes
+    ];
+}
+
+
+const filaPaginasFilmes =
+    criarFilaPaginasFilmes();
+
+let indiceFilaPaginasFilmes = 0;
+
+let paginaFilmes = null;
+
+/*
+ * Próxima página realmente aleatória.
+ *
+ * Nunca volta para uma página já utilizada
+ * durante esta abertura.
+ */
+function proximaPaginaFilmes(){
+
+    if(
+        indiceFilaPaginasFilmes >=
+        filaPaginasFilmes.length
+    ){
+        return null;
+    }
+
+    const pagina =
+        filaPaginasFilmes[
+            indiceFilaPaginasFilmes
+        ];
+
+    indiceFilaPaginasFilmes++;
+
+    return pagina;
+}
+
+/*
+ * LUKAFILMES — CATEGORIA ATUAL DA PÁGINA
+ * Uma única fonte para catálogo infinito e Hero.
+ */
+const parametrosCategoriaPagina =
+    new URLSearchParams(window.location.search);
+
+const categoriaAtualPagina =
+    String(
+        parametrosCategoriaPagina.get("categoria") || ""
+    ).trim().toLowerCase();
+
+
 let carregandoFilmes = false;
 let acabouFilmes = false;
 
 const filmesCarregados = new Set();
+const titulosFilmesCarregados = new Set();
 
 /*
  * Página inicial aleatória.
@@ -2466,14 +2624,14 @@ const filmesCarregados = new Set();
  * Começamos em uma página diferente a cada
  * atualização para variar os primeiros filmes.
  */
-const TOTAL_PAGINAS_CATALOGO = 50;
-
-const paginaInicialAleatoria =
-    Math.floor(
-        Math.random() * TOTAL_PAGINAS_CATALOGO
-    ) + 1;
-
-paginaFilmes = paginaInicialAleatoria;
+/*
+ * Primeira página também vem da fila totalmente
+ * embaralhada.
+ *
+ * Se uma página estiver vazia, carregarFilmes()
+ * continuará procurando outra página da fila.
+ */
+paginaFilmes = proximaPaginaFilmes();
 
 
 /*
@@ -2516,9 +2674,44 @@ async function carregarFilmes() {
 
     try {
 
-        const resposta = await fetch(
+        /*
+         * Mantém a categoria durante TODO o catálogo infinito.
+         */
+        /*
+         * AÇÃO É UMA PÁGINA EXCLUSIVA.
+         *
+         * Quando categoria=acao:
+         * - usa somente /api/catalogo-acao
+         * - nunca consulta o catálogo geral
+         * - cada página continua sendo somente Ação
+         */
+        /*
+         * CATEGORIA DO MENU
+         *
+         * Todas as categorias usam a mesma rota oficial.
+         * O servidor aplica o filtro real do gênero no TMDB.
+         *
+         * Exemplo:
+         * ?categoria=acao
+         * ?categoria=comedia
+         * ?categoria=terror
+         *
+         * A categoria permanece durante TODO o infinite scroll.
+         */
+        let urlCatalogo =
             "/api/catalogo-filmes?pagina=" +
-            paginaFilmes
+            paginaFilmes;
+
+        if (categoriaAtualPagina) {
+            urlCatalogo +=
+                "&categoria=" +
+                encodeURIComponent(
+                    categoriaAtualPagina
+                );
+        }
+
+        const resposta = await fetch(
+            urlCatalogo
         );
 
         if(!resposta.ok){
@@ -2560,21 +2753,46 @@ async function carregarFilmes() {
             const id = String(
                 filme.id ||
                 filme.tmdb_id ||
-                filme.titulo ||
                 ""
             ).trim();
 
+            const tituloNormalizado =
+                String(
+                    filme.titulo ||
+                    ""
+                )
+                .normalize("NFD")
+                .replace(/[\\u0300-\\u036f]/g, "")
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, " ")
+                .trim();
+
             /*
-             * Não permite repetição.
+             * Proteção dupla contra repetição:
+             *
+             * 1. ID do filme.
+             * 2. Título normalizado.
+             *
+             * Assim o mesmo filme não entra novamente
+             * mesmo que a API apresente alguma diferença
+             * na identificação.
              */
             if (
-                !id ||
-                filmesCarregados.has(id)
+                (!id && !tituloNormalizado) ||
+                (id && filmesCarregados.has(id)) ||
+                (tituloNormalizado &&
+                 titulosFilmesCarregados.has(tituloNormalizado))
             ) {
                 continue;
             }
 
-            filmesCarregados.add(id);
+            if(id)
+                filmesCarregados.add(id);
+
+            if(tituloNormalizado)
+                titulosFilmesCarregados.add(
+                    tituloNormalizado
+                );
 
             primeiroLote.push(filme);
 
@@ -2665,9 +2883,15 @@ async function carregarFilmes() {
             adicionados === 0
         ){
 
-            paginaFilmes++;
+            paginaFilmes =
+                proximaPaginaFilmes();
 
             carregandoFilmes = false;
+
+            if(paginaFilmes === null){
+                acabouFilmes = true;
+                return;
+            }
 
             return carregarFilmes();
         }
@@ -2699,17 +2923,16 @@ async function carregarFilmes() {
         ){
 
             /*
-             * A partir daqui tentamos voltar
-             * para o começo do catálogo.
+             * O catálogo chegou ao limite disponível.
              *
-             * Isso permite continuar encontrando
-             * filmes que ainda não foram exibidos.
+             * NÃO voltar para a página 1.
+             * Isso evita repetir filmes.
              */
-            paginaFilmes = 1;
+            acabouFilmes = true;
 
         } else {
 
-            paginaFilmes++;
+            paginaFilmes = proximaPaginaFilmes();
         }
 
 
@@ -3181,8 +3404,18 @@ async function buscarFilmes(){
 
                             const resposta=
                                 await fetch(
-                                    "/api/catalogo-filmes?pagina="+
-                                    pagina
+                                    (
+                                        "/api/catalogo-filmes?pagina=" +
+                                        pagina +
+                                        (
+                                            categoriaAtualPagina
+                                                ? "&categoria=" +
+                                                  encodeURIComponent(
+                                                      categoriaAtualPagina
+                                                  )
+                                                : ""
+                                        )
+                                    )
                                 );
 
                             if(!resposta.ok)
