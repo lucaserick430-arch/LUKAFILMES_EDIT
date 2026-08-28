@@ -1410,6 +1410,332 @@ main {
 
 </style>
 
+
+<style id="lukafilmes-serie-mega-maya">
+
+/* =========================================================
+   LUKAFILMES — SERVIDORES DE SÉRIES
+   MEGA + MAYA
+   ========================================================= */
+
+.players-serie-opcoes {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    margin: 18px auto !important;
+}
+
+.players-serie-opcoes .serie-player-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 115px !important;
+    min-height: 46px !important;
+    padding: 10px 22px !important;
+    border: 1px solid rgba(255,255,255,.14) !important;
+    border-radius: 7px !important;
+    background: #181818 !important;
+    color: #fff !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: .4px !important;
+    cursor: pointer !important;
+    transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease !important;
+}
+
+.players-serie-opcoes .serie-player-btn:hover {
+    background: #262626 !important;
+    border-color: rgba(255,255,255,.35) !important;
+    transform: translateY(-1px) !important;
+}
+
+.players-serie-opcoes .serie-player-btn.player-selecionado,
+.players-serie-opcoes .serie-player-btn.active {
+    background: #e50914 !important;
+    border-color: #e50914 !important;
+    color: #fff !important;
+    box-shadow: 0 4px 18px rgba(229,9,20,.25) !important;
+}
+
+.players-serie-opcoes .serie-player-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+}
+
+@media (max-width: 600px) {
+    .players-serie-opcoes {
+        gap: 8px !important;
+    }
+
+    .players-serie-opcoes .serie-player-btn {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        padding: 10px 14px !important;
+    }
+}
+
+</style>
+
+
+<style id="lukafilmes-play1-play2-final">
+.players-serie-opcoes .serie-player-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 9px !important;
+}
+
+.players-serie-opcoes .serie-player-numero {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    opacity: .65 !important;
+    letter-spacing: .5px !important;
+}
+
+.players-serie-opcoes .serie-player-badge {
+    font-size: 14px !important;
+    font-weight: 800 !important;
+}
+
+.players-serie-opcoes .serie-player-btn.ativo,
+.players-serie-opcoes .serie-player-btn.player-selecionado {
+    background: #e50914 !important;
+    border-color: #e50914 !important;
+    color: #fff !important;
+}
+
+@media(max-width:600px) {
+    .players-serie-opcoes .serie-player-btn {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-play-final">
+.players-serie-opcoes {
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:10px !important;
+    width:100% !important;
+    margin:18px auto !important;
+}
+
+.players-serie-opcoes .serie-player-btn {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:8px !important;
+    min-width:125px !important;
+    min-height:46px !important;
+    padding:10px 18px !important;
+    border:1px solid rgba(255,255,255,.15) !important;
+    border-radius:7px !important;
+    background:#181818 !important;
+    color:#fff !important;
+    font-weight:700 !important;
+    cursor:pointer !important;
+}
+
+.players-serie-opcoes .serie-player-btn.ativo,
+.players-serie-opcoes .serie-player-btn.player-selecionado {
+    background:#e50914 !important;
+    border-color:#e50914 !important;
+}
+
+.serie-player-numero {
+    font-size:11px !important;
+    font-weight:800 !important;
+    opacity:.7 !important;
+}
+
+.serie-player-badge {
+    font-size:14px !important;
+    font-weight:800 !important;
+}
+
+@media(max-width:600px) {
+    .players-serie-opcoes .serie-player-btn {
+        flex:1 !important;
+        min-width:0 !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-series-players-visible-final">
+
+/* =========================================================
+   LUKAFILMES — PLAY 1 + PLAY 2
+   Ambos devem permanecer visíveis
+   ========================================================= */
+
+.players-serie-opcoes {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.players-serie-opcoes .serie-player-btn {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.players-serie-opcoes .serie-player-btn:nth-child(1),
+.players-serie-opcoes .serie-player-btn:nth-child(2) {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+
+
+.players-serie-opcoes .serie-player-numero {
+    display: inline !important;
+}
+
+.players-serie-opcoes .serie-player-badge {
+    display: inline !important;
+}
+
+/* =========================================================
+   VISUAL
+   ========================================================= */
+
+.players-serie-opcoes {
+    width: 100% !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+}
+
+.players-serie-opcoes .serie-player-btn {
+    min-width: 125px !important;
+    min-height: 46px !important;
+    padding: 10px 18px !important;
+    border-radius: 7px !important;
+    background: #181818 !important;
+    border: 1px solid rgba(255,255,255,.15) !important;
+    color: #fff !important;
+}
+
+.players-serie-opcoes .serie-player-btn.ativo {
+    background: #e50914 !important;
+    border-color: #e50914 !important;
+}
+
+@media (max-width:600px) {
+    .players-serie-opcoes .serie-player-btn:nth-child(1),
+    .players-serie-opcoes .serie-player-btn:nth-child(2) {
+        flex: 1 1 calc(50% - 5px) !important;
+    }
+}
+
+</style>
+
+
+<style id="lukafilmes-series-play1-play2-final">
+
+.players-serie-opcoes {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+.players-serie-opcoes .serie-player-btn {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 46px !important;
+    padding: 0 20px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+
+
+.players-serie-opcoes .serie-player-btn[data-player="1"],
+.players-serie-opcoes .serie-player-btn[data-player="2"] {
+    display: inline-flex !important;
+}
+
+</style>
+
+
+<style>
+/* LUKAFILMES — FORÇA PLAY 2 SÉRIES */
+.players-serie-opcoes{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:10px !important;
+    visibility:visible !important;
+    opacity:1 !important;
+}
+
+.players-serie-opcoes .serie-player-btn{
+    display:inline-flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    position:relative !important;
+    z-index:20 !important;
+}
+
+.players-serie-opcoes .serie-player-btn[data-player="1"],
+.players-serie-opcoes .serie-player-btn[data-player="2"]{
+    display:inline-flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+}
+
+.players-serie-opcoes .serie-player-btn[data-player="2"]{
+    pointer-events:auto !important;
+}
+</style>
+
+
+<style id="lukafilmes-players-serie-definitivo">
+.players-serie-opcoes{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:10px !important;
+    visibility:visible !important;
+    opacity:1 !important;
+}
+
+.players-serie-opcoes .serie-player-btn[data-player="1"],
+.players-serie-opcoes .serie-player-btn[data-player="2"]{
+    display:inline-flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    position:relative !important;
+    z-index:100 !important;
+}
+
+@media(max-width:600px){
+    .players-serie-opcoes .serie-player-btn[data-player="1"],
+    .players-serie-opcoes .serie-player-btn[data-player="2"]{
+        flex:1 1 calc(50% - 5px) !important;
+    }
+}
+</style>
+
 </head>
 
 
@@ -1520,15 +1846,15 @@ main {
                 type="button"
                 class="serie-player-btn ativo"
                 data-player="1">
-                ▶ PLAY 1
-            </button>
+                <span class="serie-player-numero">PLAY 1</span>
+            MegaEmbed</button>
 
             <button
                 type="button"
                 class="serie-player-btn"
                 data-player="2">
-                ▶ PLAY 2
-            </button>
+                <span class="serie-player-numero">PLAY 2</span>
+            EmbedMovies</button>
 
         </div>
 
@@ -1538,8 +1864,7 @@ main {
                 id="serieFrame"
                 src=""
                 title="Player da série"
-                allow="autoplay; fullscreen; picture-in-picture"
-                sandbox="allow-scripts allow-same-origin"
+                allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
                 allowfullscreen>
             </iframe>
 
@@ -2382,110 +2707,321 @@ function criarTemporadaFallback() {
             return;
         }
 
+        const idSerie =
+            String(serie.id).trim();
+
+        const temporadaId =
+            String(temporada).trim();
+
+        const episodioId =
+            String(episodio).trim();
+
+        if (!idSerie || !temporadaId || !episodioId) {
+
+            console.error(
+                "[SERIES] Dados do episódio incompletos.",
+                {
+                    idSerie,
+                    temporadaId,
+                    episodioId
+                }
+            );
+
+            return;
+        }
+
         console.log(
-            "[SERIES] Abrindo episódio:",
+            "[SERIES PLAYER] Abrindo episódio:",
             {
-                serie: serie.id,
-                temporada: temporada,
-                episodio: episodio
+                serie: idSerie,
+                temporada: temporadaId,
+                episodio: episodioId,
+                nome: nome || ""
             }
         );
 
-        const tmdbId =
-            encodeURIComponent(serie.id);
+        const playerSerie =
+            document.getElementById("playerSerie");
 
-        const temporadaId =
-            encodeURIComponent(temporada);
+        const serieFrame =
+            document.getElementById("serieFrame");
 
-        const episodioId =
-            encodeURIComponent(episodio);
+        if (!playerSerie || !serieFrame) {
 
-        const players = {
+            console.error(
+                "[SERIES PLAYER] Área do player não encontrada."
+            );
 
-            1:
-                "https://myembed.biz/serie/" +
-                tmdbId +
-                "/" +
-                temporadaId +
-                "/" +
-                episodioId,
+            return;
+        }
 
-            2:
-                "https://vidsrc.to/embed/tv/" +
-                tmdbId +
-                "/" +
-                temporadaId +
-                "/" +
-                episodioId
+        /*
+         * GUARDA OS DADOS DO EPISÓDIO
+         */
 
-        };
+        playerSerie.dataset.serieId =
+            idSerie;
 
-        function carregarPlayer(numero) {
+        playerSerie.dataset.temporada =
+            temporadaId;
 
-            const urlPlayer =
-                players[numero];
+        playerSerie.dataset.episodio =
+            episodioId;
 
-            if (!urlPlayer) {
+        /*
+         * ABRE O PLAYER
+         */
+
+        playerSerie.style.display =
+            "block";
+
+        /*
+         * PLAY 1 — MEGA
+         * INICIA COMO PADRÃO
+         */
+
+        const play1Url =
+            "https://mgeb.top/embed/" +
+            idSerie +
+            "/" +
+            temporadaId +
+            "/" +
+            episodioId;
+
+        serieFrame.src =
+            play1Url;
+
+        /*
+         * MARCA PLAY 1
+         */
+
+        const botoesPlayers =
+            playerSerie.querySelectorAll(
+                ".serie-player-btn"
+            );
+
+        botoesPlayers.forEach(function(btn) {
+
+            btn.classList.remove(
+                "ativo"
+            );
+
+            btn.classList.remove(
+                "player-selecionado"
+            );
+
+        });
+
+        const play1 =
+            playerSerie.querySelector(
+                '.serie-player-btn[data-player="1"]'
+            );
+
+        if (play1) {
+
+            play1.classList.add(
+                "ativo"
+            );
+
+            play1.classList.add(
+                "player-selecionado"
+            );
+
+        }
+
+        /*
+         * CONFIGURA PLAY 1 E PLAY 2
+         */
+
+        botoesPlayers.forEach(function(btn) {
+
+            if (
+                btn.dataset.playerConfigurado === "1"
+            ) {
                 return;
             }
 
-            console.log(
-                "[SERIES] Player " + numero + ":",
-                urlPlayer
-            );
+            btn.dataset.playerConfigurado =
+                "1";
 
-            frame.src =
-                urlPlayer;
+            btn.addEventListener(
+                "click",
+                function() {
 
-            document
-                .querySelectorAll(".serie-player-btn")
-                .forEach(function(btn) {
+                    const numero =
+                        String(
+                            this.dataset.player || ""
+                        );
 
-                    btn.classList.remove("ativo");
+                    let embedUrl = "";
 
-                    if (
-                        btn.dataset.player ===
-                        String(numero)
-                    ) {
-                        btn.classList.add("ativo");
+                    /*
+                     * PLAY 1 — MEGA
+                     */
+
+                    if (numero === "1") {
+
+                        embedUrl =
+                            "https://mgeb.top/embed/" +
+                            idSerie +
+                            "/" +
+                            temporadaId +
+                            "/" +
+                            episodioId;
                     }
 
-                });
-        }
+                    /*
+                     * PLAY 2 — MAYA / MYEMBED
+                     */
 
-        document
-            .querySelectorAll(".serie-player-btn")
-            .forEach(function(btn) {
+                    else if (numero === "2") {
 
-                btn.onclick = function() {
+                        embedUrl =
+                            "https://myembed.biz/serie/" +
+                            idSerie +
+                            "/" +
+                            temporadaId +
+                            "/" +
+                            episodioId;
+                    }
 
-                    carregarPlayer(
-                        Number(
-                            this.dataset.player
-                        )
+                    if (!embedUrl) {
+                        return;
+                    }
+
+                    /*
+                     * DESELECIONA OS OUTROS
+                     */
+
+                    botoesPlayers.forEach(
+                        function(item) {
+
+                            item.classList.remove(
+                                "ativo"
+                            );
+
+                            item.classList.remove(
+                                "player-selecionado"
+                            );
+
+                        }
                     );
 
-                };
+                    /*
+                     * MARCA O ESCOLHIDO
+                     */
+
+                    this.classList.add(
+                        "ativo"
+                    );
+
+                    this.classList.add(
+                        "player-selecionado"
+                    );
+
+                    /*
+                     * TROCA O IFRAME
+                     */
+
+                    serieFrame.src =
+                        embedUrl;
+
+                    console.log(
+                        "[SERIES PLAYER]",
+                        "PLAY " + numero,
+                        embedUrl
+                    );
+
+                    /*
+                     * CONTINUAR ASSISTINDO
+                     */
+
+                    if (window.LukaContinuar) {
+
+                        LukaContinuar.registrarInicio({
+
+                            id: idSerie,
+
+                            titulo:
+                                serie.name ||
+                                serie.titulo ||
+                                nome ||
+                                "Série",
+
+                            capa:
+                                serie.poster_path
+                                    ? "https://image.tmdb.org/t/p/w500" +
+                                      serie.poster_path
+                                    : "",
+
+                            tipo: "serie",
+
+                            player: numero,
+
+                            temporada:
+                                temporadaId,
+
+                            episodio:
+                                episodioId
+
+                        });
+
+                    }
+
+                }
+            );
+
+        });
+
+        /*
+         * REGISTRA PLAY 1
+         */
+
+        if (window.LukaContinuar) {
+
+            LukaContinuar.registrarInicio({
+
+                id: idSerie,
+
+                titulo:
+                    serie.name ||
+                    serie.titulo ||
+                    nome ||
+                    "Série",
+
+                capa:
+                    serie.poster_path
+                        ? "https://image.tmdb.org/t/p/w500" +
+                          serie.poster_path
+                        : "",
+
+                tipo: "serie",
+
+                player: "1",
+
+                temporada:
+                    temporadaId,
+
+                episodio:
+                    episodioId
 
             });
 
-        tituloPlayer.textContent =
-            "🎬 " +
-            (
-                nome ||
-                "Episódio " + episodio
-            );
+        }
 
-        player.style.display =
-            "block";
+        /*
+         * DESCE ATÉ O PLAYER
+         */
 
-        /* PLAY 1 É O PRIMEIRO PLAYER */
-        carregarPlayer(1);
-
-        player.scrollIntoView({
+        playerSerie.scrollIntoView({
             behavior: "smooth",
             block: "center"
         });
+
+        console.log(
+            "[SERIES PLAYER] PLAY 1 carregado:",
+            play1Url
+        );
 
     }
 
@@ -3119,9 +3655,7 @@ document.addEventListener(
 }
 
 /* SÉRIES — esconder PLAY 2 e demais */
-.players-serie-opcoes .serie-player-btn:not(:first-child) {
-    display: none !important;
-}
+
 
 </style>
 
@@ -3150,6 +3684,407 @@ document.addEventListener(
 
 
 
+
+
+<script id="lukafilmes-series-player-logica-final">
+
+(function () {
+
+    "use strict";
+
+    function ativarPlayersSerie() {
+
+        const playerSerie =
+            document.getElementById("playerSerie");
+
+        const serieFrame =
+            document.getElementById("serieFrame");
+
+        const botoes =
+            document.querySelectorAll(
+                ".players-serie-opcoes .serie-player-btn"
+            );
+
+        if (!playerSerie || !serieFrame || !botoes.length) {
+            return;
+        }
+
+        if (playerSerie.dataset.playersConfigurados === "1") {
+            return;
+        }
+
+        playerSerie.dataset.playersConfigurados = "1";
+
+        botoes.forEach(function (btn) {
+
+            btn.addEventListener("click", function () {
+
+                const numero =
+                    String(this.dataset.player || "");
+
+                const idSerie =
+                    String(
+                        playerSerie.dataset.serieId ||
+                        localStorage.getItem("seriePlayerId") ||
+                        ""
+                    ).trim();
+
+                const temporada =
+                    String(
+                        playerSerie.dataset.temporada ||
+                        localStorage.getItem("seriePlayerTemporada") ||
+                        ""
+                    ).trim();
+
+                const episodio =
+                    String(
+                        playerSerie.dataset.episodio ||
+                        localStorage.getItem("seriePlayerEpisodio") ||
+                        ""
+                    ).trim();
+
+                let embedUrl = "";
+
+                if (numero === "1") {
+
+                    if (!idSerie || !temporada || !episodio) {
+                        console.warn(
+                            "[SÉRIE] Dados insuficientes para PLAY 1."
+                        );
+                        return;
+                    }
+
+                    embedUrl =
+                        "https://mgeb.top/embed/" +
+                        idSerie +
+                        "/" +
+                        temporada +
+                        "/" +
+                        episodio;
+                }
+
+                else if (numero === "2") {
+
+                    if (!idSerie || !temporada || !episodio) {
+                        console.warn(
+                            "[SÉRIE] Dados insuficientes para PLAY 2."
+                        );
+                        return;
+                    }
+
+                    embedUrl =
+                        "https://myembed.biz/serie/" +
+                        idSerie +
+                        "/" +
+                        temporada +
+                        "/" +
+                        episodio;
+                }
+
+                if (!embedUrl) {
+                    return;
+                }
+
+                botoes.forEach(function (item) {
+                    item.classList.remove("ativo");
+                    item.classList.remove("player-selecionado");
+                });
+
+                this.classList.add("ativo");
+                this.classList.add("player-selecionado");
+
+                serieFrame.src = embedUrl;
+
+                console.log(
+                    "[SÉRIE PLAYER]",
+                    "PLAY " + numero,
+                    embedUrl
+                );
+
+                playerSerie.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+            });
+
+        });
+
+    }
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        ativarPlayersSerie
+    );
+
+    setTimeout(
+        ativarPlayersSerie,
+        500
+    );
+
+    setTimeout(
+        ativarPlayersSerie,
+        1500
+    );
+
+})();
+
+</script>
+
+
+
+<!-- LUKAFILMES-CONTINUAR-SERIE-RESUME -->
+<script>
+(function () {
+
+    "use strict";
+
+    /*
+     * LUKAFILMES
+     * CONTINUAR ASSISTINDO — SÉRIES
+     *
+     * A fonte oficial da retomada é:
+     * lukafilmes_continuar
+     *
+     * Não usa mais serieSelecionada para descobrir
+     * qual episódio deve ser retomado.
+     */
+
+    function obterSerieContinuar() {
+
+        try {
+
+            const salvo =
+                localStorage.getItem("lukafilmes_continuar");
+
+            if (!salvo) {
+                console.log(
+                    "[CONTINUAR SÉRIE] Nenhum histórico encontrado."
+                );
+                return null;
+            }
+
+            const lista = JSON.parse(salvo);
+
+            if (!Array.isArray(lista)) {
+                return null;
+            }
+
+            const serie =
+                lista.find(function (item) {
+
+                    return (
+                        item &&
+                        String(item.tipo || "").toLowerCase() === "serie" &&
+                        item.id != null &&
+                        item.temporada != null &&
+                        item.episodio != null
+                    );
+
+                });
+
+            if (!serie) {
+
+                console.log(
+                    "[CONTINUAR SÉRIE] Nenhuma série com episódio salvo.",
+                    lista
+                );
+
+                return null;
+            }
+
+            return serie;
+
+        } catch (erro) {
+
+            console.error(
+                "[CONTINUAR SÉRIE] Erro ao ler histórico:",
+                erro
+            );
+
+            return null;
+        }
+    }
+
+
+    function restaurarContinuarSerie() {
+
+        if (window.__lukafilmesContinuarSerieExecutado) {
+            return true;
+        }
+
+        const item =
+            obterSerieContinuar();
+
+        if (!item) {
+            return false;
+        }
+
+        if (
+            typeof window.assistirEpisodio !== "function"
+        ) {
+            return false;
+        }
+
+        const temporada =
+            String(item.temporada).trim();
+
+        const episodio =
+            String(item.episodio).trim();
+
+        if (!temporada || !episodio) {
+            return false;
+        }
+
+        window.__lukafilmesContinuarSerieExecutado = true;
+
+        console.log(
+            "[CONTINUAR SÉRIE] RETOMANDO:",
+            {
+                id: item.id,
+                titulo: item.titulo,
+                temporada: temporada,
+                episodio: episodio,
+                player: item.player || "1"
+            }
+        );
+
+        /*
+         * Mantém serieSelecionada sincronizada com o item
+         * que realmente veio do Continuar Assistindo.
+         */
+        try {
+
+            localStorage.setItem(
+                "serieSelecionada",
+                JSON.stringify(item)
+            );
+
+            localStorage.setItem(
+                "seriePlayerId",
+                String(item.id)
+            );
+
+            localStorage.setItem(
+                "seriePlayerTemporada",
+                temporada
+            );
+
+            localStorage.setItem(
+                "seriePlayerEpisodio",
+                episodio
+            );
+
+            if (item.player != null) {
+
+                localStorage.setItem(
+                    "seriePlayer",
+                    String(item.player)
+                );
+
+            }
+
+        } catch (erro) {
+
+            console.warn(
+                "[CONTINUAR SÉRIE] Não foi possível sincronizar dados:",
+                erro
+            );
+        }
+
+        /*
+         * Abre exatamente a temporada e o episódio salvos.
+         */
+        window.assistirEpisodio(
+            temporada,
+            episodio,
+            item.titulo || "Série"
+        );
+
+        /*
+         * assistirEpisodio() inicia no PLAY 1.
+         *
+         * Se o usuário estava no PLAY 2,
+         * restauramos o mesmo player.
+         */
+        const playerSalvo =
+            String(item.player || "1");
+
+        if (playerSalvo !== "1") {
+
+            let tentativasPlayer = 0;
+
+            const intervaloPlayer =
+                setInterval(function () {
+
+                    tentativasPlayer++;
+
+                    const botao =
+                        document.querySelector(
+                            '.players-serie-opcoes .serie-player-btn[data-player="' +
+                            playerSalvo +
+                            '"]'
+                        );
+
+                    if (botao) {
+
+                        botao.click();
+
+                        clearInterval(
+                            intervaloPlayer
+                        );
+
+                        console.log(
+                            "[CONTINUAR SÉRIE] Player restaurado:",
+                            playerSalvo
+                        );
+
+                        return;
+                    }
+
+                    if (tentativasPlayer >= 20) {
+
+                        clearInterval(
+                            intervaloPlayer
+                        );
+
+                        console.warn(
+                            "[CONTINUAR SÉRIE] Player não encontrado:",
+                            playerSalvo
+                        );
+
+                    }
+
+                }, 250);
+        }
+
+        return true;
+    }
+
+
+    /*
+     * Espera assistirEpisodio existir.
+     */
+    let tentativas = 0;
+
+    const intervalo =
+        setInterval(function () {
+
+            tentativas++;
+
+            if (
+                restaurarContinuarSerie() ||
+                tentativas >= 40
+            ) {
+
+                clearInterval(intervalo);
+
+            }
+
+        }, 250);
+
+})();
+</script>
 
 </body>
 
