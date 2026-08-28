@@ -675,6 +675,7 @@ input,select,textarea{
 <div class="panelHead"><h2>Ações rápidas</h2></div>
 <div class="quick">
 <button class="btn primary" onclick="abrirModal('usuario')">＋ Criar usuário</button>
+<button class="btn yellow" onclick="abrirModal('teste')">＋ Criar teste</button>
 
 <button class="btn green" onclick="abrirModal('revendedor')">＋ Criar revendedor</button>
 </div>
@@ -823,7 +824,7 @@ input,select,textarea{
 <label>Senha</label>
 <input id="fSenha" type="password" required>
 
-<label>Dias</label>
+<label id="fTempoLabel">Dias</label>
 <input id="fDias" type="number" min="1" value="30" required>
 
 <div id="limiteBox" style="display:none">
@@ -875,7 +876,11 @@ function abrirModal(tipo){
 
  document.getElementById("fUsuario").value="";
  document.getElementById("fSenha").value="";
- document.getElementById("fDias").value=tipo==="teste"?7:30;
+ document.getElementById("fTempoLabel").textContent =
+  tipo==="teste" ? "Horas de teste" : "Dias";
+
+ document.getElementById("fDias").value =
+  tipo==="teste" ? 1 : 30;
 
  if(document.getElementById("fValor")){
   document.getElementById("fValor").value="";

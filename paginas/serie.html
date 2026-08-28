@@ -4086,6 +4086,106 @@ document.addEventListener(
 })();
 </script>
 
+
+
+<script id="lukafilmes-serie-protecao-popup-final">
+(function () {
+    "use strict";
+
+    /*
+     * LUKAFILMES — PROTEÇÃO DO PLAYER DE SÉRIE
+     * Mesma proteção estrutural usada na página de filme.
+     * Protege a página principal contra pop-ups e navegação externa.
+     */
+
+    const frame = document.getElementById("serieFrame");
+
+    if (!frame) {
+        console.log("[SERIE PROTEÇÃO] serieFrame não encontrado.");
+        return;
+    }
+
+    /*
+     * Mantém o iframe configurado para reprodução.
+     */
+    frame.setAttribute(
+        "allow",
+        "autoplay; encrypted-media; picture-in-picture; fullscreen"
+    );
+
+    frame.setAttribute("allowfullscreen", "");
+
+    frame.setAttribute(
+        "referrerpolicy",
+        "strict-origin-when-cross-origin"
+    );
+
+    /*
+     * Impede links da página principal de abrirem
+     * novas abas/janelas.
+     */
+    document.addEventListener("click", function (e) {
+
+        const alvo = e.target;
+
+        if (!alvo || !alvo.closest) return;
+
+        const link = alvo.closest("a");
+
+        if (!link) return;
+
+        if (
+            link.target === "_blank" ||
+            link.target === "_new" ||
+            link.target === "_parent" ||
+            link.target === "_top"
+        ) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            link.removeAttribute("target");
+
+            console.log(
+                "[SERIE PROTEÇÃO] navegação externa bloqueada:",
+                link.href || ""
+            );
+
+            return false;
+        }
+
+    }, true);
+
+    /*
+     * Bloqueia window.open usado pela página principal.
+     */
+    window.open = function () {
+
+        console.log(
+            "[SERIE PROTEÇÃO] popup externo bloqueado."
+        );
+
+        return null;
+    };
+
+    /*
+     * Confirma carregamento do player.
+     */
+    frame.addEventListener("load", function () {
+
+        console.log(
+            "[SERIE PROTEÇÃO] iframe carregado:",
+            frame.src
+        );
+
+    });
+
+    console.log(
+        "[SERIE PROTEÇÃO] proteção do player de série ativa."
+    );
+
+})();
+</script>
+
 </body>
 
 

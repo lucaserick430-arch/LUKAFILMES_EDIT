@@ -3596,10 +3596,18 @@ function adicionarMaisCardsHome(
 
     for(let i=indice;i<fim;i++){
 
-        const item=lista[i];
+        let item=lista[i];
 
         if(!item)
             continue;
+
+        if(container._lukaTipo==="series"){
+            item={
+                ...item,
+                media_type:"tv",
+                tipo:"serie"
+            };
+        }
 
         fragmento.appendChild(
             criarCard(
@@ -3643,10 +3651,23 @@ function abrirItem(item){
 
     if(tipo === "serie"){
         localStorage.removeItem("filmeSelecionado");
+
         localStorage.setItem(
             "serieSelecionada",
-            JSON.stringify({...item})
+            JSON.stringify({
+                ...item,
+                titulo:item.title||item.name||item.titulo||item.nome||"",
+                ano:(item.first_air_date||item.release_date||"").slice(0,4),
+                capa:item.poster_path||item.capa||"",
+                sinopse:item.overview||item.sinopse||"",
+                nota:item.vote_average||item.nota||0,
+                media_type:"tv",
+                tipo:"serie"
+            })
         );
+
+        location.href="paginas/serie.html";
+        return;
     }else{
         const filmeKey =
             "filmeSelecionadoHome_" + String(id);

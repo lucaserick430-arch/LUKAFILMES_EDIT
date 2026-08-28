@@ -1,38 +1,57 @@
+# Dependências
+node_modules/
+
+# Segredos e configurações locais
 .env
 .env.*
 !.env.example
-node_modules/
-*.db
-*.db-shm
-*.db-wal
-*.log
-*.pid
-*.tar.gz
-.netlify/
-backups/
-*.backup*
-*.bak
-*.antes*
-*.pre-*
-*.CORROMPIDO*
-*_backup*
-diagnostico_*
-.diagnostico*
-.resultado*
-.teste*
-.servidor*
-.corrigir*
-.preparar*
-.status*
-PUBLICACAO_*
-ANTES_RESTAURAR_*
-_CHECK_*
-LUKAFILMES_BACKUP*
-test-*.json
-*.txt
 
-# Arquivos antigos adicionais
+# Bancos locais
+*.db
+*.sqlite
+*.sqlite3
+banco.db
+
+# Backups
+*.bak
+*.backup
+*.bak_*
+*.backup_*
+BACKUP-*/
+backup-*/
+BACKUP_*/
+backup_*/
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.log
+/tmp/
+.DS_Store
+
+# Arquivos de editor/sistema
+.vscode/
+.idea/
+
+# Arquivos de backup gerados durante desenvolvimento
+*.bak
+*.bak_*
+*.backup
+*.backup_*
+*.backup-*
+*.back
+BACKUP-*/
+backup-*/
+BACKUP_*/
+backup_*/
+
+# Diagnósticos e testes locais
+diagnostico_*
+diagnostico-*
+teste_*
+teste-*
+*diagnostico*
+*teste*.txt
+*teste*.html
+
 *.bak-*
-*.antes-*
-*_antes_*
-*-teste.*

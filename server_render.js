@@ -350,7 +350,7 @@ app.use((req, res, next) => {
 app.set("trust proxy", 1);
 
 const configuracaoSessao = {
-    secret: "LUKAFILMES-SEGREDO-TROCAR-DEPOIS",
+    secret: process.env.SESSION_SECRET || require("crypto").randomBytes(32).toString("hex"),
 
     resave: false,
 
@@ -2739,6 +2739,166 @@ app.post(
 
     }
 );
+
+// ==========================================
+// ADMIN — CRIAR TESTE
+// ==========================================
+
+app.post("/api/admin/usuarios/teste", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+
+        }
+
+        const usuario =
+            String(req.body.usuario || "").trim();
+
+        const senha =
+            String(req.body.senha || "");
+
+        const horas =
+            Number(req.body.horas ?? req.body.dias);
+
+        const valor =
+            Number(req.body.valor || 0);
+
+        const telefone =
+            String(req.body.telefone || "").trim();
+
+        if (
+            !usuario ||
+            !senha ||
+            !Number.isInteger(horas) ||
+            horas < 1 ||
+            !Number.isFinite(valor) ||
+            valor < 0
+        ) {
+
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Preencha os dados corretamente."
+            });
+
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const existente =
+            usuarios.find(
+                u =>
+                    String(u.usuario || "").trim().toLowerCase() ===
+                    usuario.toLowerCase()
+            );
+
+        if (existente) {
+
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse usuário já existe."
+            });
+
+        }
+
+        const senhaHash =
+            await bcrypt.hash(
+                senha,
+                12
+            );
+
+        const validade =
+            new Date(
+                Date.now() +
+                horas *
+                60 *
+                60 *
+                1000
+            );
+
+        const novoTeste = {
+
+            id: proximoId(usuarios),
+
+            usuario,
+
+            senha: senhaHash,
+
+            status: "ativo",
+
+            tipo: "teste",
+
+            validade:
+                validade.toISOString(),
+
+            criado_em:
+                new Date().toISOString(),
+
+            valor,
+
+            telefone,
+
+            online: false
+
+        };
+
+        usuarios.push(novoTeste);
+
+        await salvarUsuarios(usuarios);
+
+        console.log(
+            "[ADMIN] Teste criado:",
+            usuario
+        );
+
+        return res.json({
+
+            sucesso: true,
+
+            mensagem:
+                "Teste criado com sucesso.",
+
+            usuario,
+
+            tipo: "teste",
+
+            validade:
+                validade.toISOString(),
+
+            valor,
+
+            telefone
+
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO CRIAR TESTE]",
+            erro
+        );
+
+        return res.status(500).json({
+
+            sucesso: false,
+
+            mensagem:
+                "Erro interno ao criar teste."
+
+        });
+
+    }
+
+});
 
 // ==========================================
 /*
