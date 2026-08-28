@@ -1,0 +1,135 @@
+
+<style id="lukafilmes-trailer-full-final">
+/* =========================================================
+   LUKAFILMES — TRAILER HERO 100% PREENCHIMENTO
+   ========================================================= */
+
+.hero{
+    position:relative;
+    overflow:hidden !important;
+}
+
+#heroTrailer{
+    position:absolute !important;
+    top:50% !important;
+    left:50% !important;
+
+    width:100vw !important;
+    height:56.25vw !important;
+
+    min-width:177.78vh !important;
+    min-height:100% !important;
+
+    transform:translate(-50%,-50%) !important;
+
+    border:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+
+    z-index:1 !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+
+    transition:opacity .8s ease !important;
+}
+
+#heroTrailer.ativo{
+    opacity:1 !important;
+}
+
+/* PC — garante cobertura completa do Hero */
+@media (min-width:769px){
+
+    #heroTrailer{
+        width:177.78vh !important;
+        height:100vh !important;
+
+        min-width:177.78vh !important;
+        min-height:100vh !important;
+
+        max-width:none !important;
+        max-height:none !important;
+
+        top:50% !important;
+        left:50% !important;
+        transform:translate(-50%,-50%) !important;
+    }
+
+}
+
+/* CELULAR — trailer cobre todo o Hero */
+@media (max-width:768px){
+
+    #heroTrailer{
+        width:177.78vh !important;
+        height:100vh !important;
+
+        min-width:177.78vh !important;
+        min-height:100% !important;
+
+        max-width:none !important;
+        max-height:none !important;
+
+        top:50% !important;
+        left:50% !important;
+        transform:translate(-50%,-50%) !important;
+    }
+
+}
+</style>
+
+
+<style id="lukafilmes-trailer-cover-todos">
+/* =========================================================
+   LUKAFILMES — TODOS OS TRAILERS COBREM TODO O HERO
+   ========================================================= */
+
+.hero{
+    position:relative !important;
+    overflow:hidden !important;
+}
+
+#heroTrailer{
+    position:absolute !important;
+    inset:0 !important;
+
+    width:100% !important;
+    height:100% !important;
+
+    min-width:0 !important;
+    min-height:0 !important;
+
+    max-width:none !important;
+    max-height:none !important;
+
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+
+    transform:none !important;
+
+    z-index:1 !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+
+    transition:opacity .8s ease !important;
+}
+
+#heroTrailer.ativo{
+    opacity:1 !important;
+}
+
+/* Mantém a capa atrás do trailer como fallback */
+.hero-bg{
+    z-index:0 !important;
+}
+
+.hero-overlay{
+    z-index:2 !important;
+}
+
+.hero-content{
+    z-index:3 !important;
+}
+</style>
+

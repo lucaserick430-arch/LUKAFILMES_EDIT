@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LUKAFILMES - Séries</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#141414;color:#fff;font-family:Arial,sans-serif}
+body{overflow-x:hidden}
+.topo{position:absolute;top:0;left:0;right:0;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 4%;z-index:10;background:linear-gradient(180deg,rgba(0,0,0,.85),transparent)}
+.logo{font-size:28px;font-weight:900;color:#fff;text-decoration:none}
+.logo span{color:#e50914}
+.inicio{color:#fff;text-decoration:none;font-weight:bold}
+</style>
+
+<style id="lukafilmes-favoritos-series">
+/* =====================================================
+   LUKAFILMES — FAVORITOS / MINHA LISTA — SÉRIES
+   ===================================================== */
+
+#botaoMinhaListaSerie,
+#botaoAbrirMinhaListaSerie {
+    position: relative;
+    z-index: 50;
+}
+
+/* Área dos dois botões */
+.favoritos-series-topo {
+    position: absolute !important;
+    top: 85px !important;
+    left: 20px !important;
+    z-index: 999 !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+
+    gap: 10px !important;
+    width: auto !important;
+    max-width: calc(100% - 40px) !important;
+
+    margin: 0 !important;
+}
+
+/* Evita que os botões sejam cobertos pelo conteúdo */
+.favoritos-series-topo button,
+.favoritos-series-topo a {
+    position: relative !important;
+    z-index: 1000 !important;
+    white-space: nowrap !important;
+}
+
+/* Celular */
+@media (max-width: 768px) {
+
+    .favoritos-series-topo {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+
+        width: calc(100% - 30px) !important;
+        max-width: none !important;
+
+        margin: 12px auto !important;
+
+        justify-content: flex-start !important;
+    }
+
+    .favoritos-series-topo button,
+    .favoritos-series-topo a {
+        font-size: 14px !important;
+        padding: 10px 14px !important;
+    }
+}
+</style>
+
+</head>
+<body>
+<header class="topo">
+<a class="logo" href="../index.html">LUKA<span>FILMES</span></a>
+<a class="inicio" href="../index.html">Início</a>
+
+
+</header>
+<section id="heroSeries"></section>
+<main id="conteudo"></main>
+</body>
+</html>
+<style>
+#heroSeries{
+    position:relative;
+    height:620px;
+    min-height:620px;
+    overflow:hidden;
+    background:#050505 center/cover no-repeat;
+}
+#heroSeries::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(90deg,rgba(0,0,0,.96) 0%,rgba(0,0,0,.72) 35%,rgba(0,0,0,.25) 72%,rgba(0,0,0,.08) 100%),
+        linear-gradient(0deg,#141414 0%,rgba(20,20,20,.75) 14%,transparent 60%);
+    z-index:1;
+}
+.hero-conteudo{
+    position:absolute;
+    left:5%;
+    bottom:90px;
+    max-width:600px;
+    z-index:2;
+}
+.hero-tag{
+    font-size:13px;
+    font-weight:bold;
+    letter-spacing:2px;
+    margin-bottom:14px;
+}
+#heroTituloSeries{
+    font-size:clamp(38px,5vw,64px);
+    line-height:1.05;
+    margin:0 0 16px;
+}
+.hero-meta{
+    display:flex;
+    gap:16px;
+    margin-bottom:15px;
+    color:#ddd;
+}
+#heroSinopseSeries{
+    max-width:570px;
+    color:#ddd;
+    font-size:17px;
+    line-height:1.5;
+    margin:0 0 24px;
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+}
+.hero-botoes{
+    display:flex;
+    gap:10px;
+}
+.hero-btn{
+    border:0;
+    border-radius:4px;
+    padding:12px 22px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.hero-assistir{
+    background:#fff;
+    color:#000;
+}
+.hero-lista{
+    background:rgba(109,109,110,.75);
+    color:#fff;
+}
+@media(max-width:700px){
+    #heroSeries{
+        height:560px;
+        min-height:560px;
+        background-position:center;
+    }
+    .hero-conteudo{
+        left:20px;
+        right:20px;
+        bottom:55px;
+    }
+    #heroTituloSeries{
+        font-size:38px;
+    }
+    #heroSinopseSeries{
+        font-size:15px;
+    }
+}
+</style>
+
+<script>
+async function carregarHeroSeries(){
+    try{
+        const resposta=await fetch("/api/catalogo-series?pagina=1");
+        const dados=await resposta.json();
+
+        const lista=Array.isArray(dados.series)?dados.series:[];
+
+        if(!lista.length)return;
+
+        const serie=lista[Math.floor(Math.random()*lista.length)];
+
+        const fundo=serie.fundo||serie.backdrop_path||serie.capa||"";
+
+        const hero=document.getElementById("heroSeries");
+
+        if(fundo){
+            hero.style.backgroundImage='url("'+fundo.replace(/"/g,"%22")+'")';
+        }
+
+        hero.innerHTML=`
+            <div class="hero-conteudo">
+                <div class="hero-tag">LUKAFILMES</div>
+
+                <h1 id="heroTituloSeries">
+                    ${serie.titulo||"Série"}
+                </h1>
+
+                <div class="hero-meta">
+                    <span>${serie.ano||""}</span>
+                    <span>${serie.nota?"⭐ "+Number(serie.nota).toFixed(1):""}</span>
+                </div>
+
+                <p id="heroSinopseSeries">
+                    ${serie.sinopse||""}
+                </p>
+
+                <div class="hero-botoes">
+                    <button class="hero-btn hero-assistir" id="heroAssistirSeries">
+                        ▶ Assistir
+                    </button>
+
+                    <button class="hero-btn hero-lista" id="heroListaSeries">
+                        ＋ Adicionar aos favoritos
+                    </button>
+                    <a
+                        href="/paginas/minha-lista"
+                        id="heroMinhaListaSeries"
+                        class="hero-btn hero-lista"
+                        style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;margin-left:8px;"
+                    >♥ Meus Favoritos</a>
+                </div>
+            </div>
+        `;
+
+        document.getElementById("heroAssistirSeries").onclick=function(){
+            localStorage.setItem(
+                "serieSelecionada",
+                JSON.stringify(serie)
+            );
+            location.href="serie.html";
+        };
+
+        const botaoListaSeries =
+            document.getElementById("heroListaSeries");
+
+        if (botaoListaSeries) {
+
+            function atualizarBotaoListaSeries(){
+
+                let lista = [];
+
+                try {
+                    lista = JSON.parse(
+                        localStorage.getItem("lukafilmes_minhalista") || "[]"
+                    );
+                } catch(e) {
+                    lista = [];
+                }
+
+                const id = String(
+                    serie.id ||
+                    serie.tmdb_id ||
+                    serie.titulo ||
+                    serie.nome ||
+                    ""
+                );
+
+                const existe = lista.some(function(item){
+
+                    return String(
+                        item.id ||
+                        item.tmdb_id ||
+                        item.titulo ||
+                        item.nome ||
+                        ""
+                    ) === id;
+
+                });
+
+                botaoListaSeries.textContent =
+                    existe
+                    ? "✓ Na minha lista"
+                    : "＋ Adicionar aos favoritos";
+            }
+
+            botaoListaSeries.onclick = function(){
+
+                let lista = [];
+
+                try {
+                    lista = JSON.parse(
+                        localStorage.getItem("lukafilmes_minhalista") || "[]"
+                    );
+                } catch(e) {
+                    lista = [];
+                }
+
+                if (!Array.isArray(lista))
+                    lista = [];
+
+                const id = String(
+                    serie.id ||
+                    serie.tmdb_id ||
+                    serie.titulo ||
+                    serie.nome ||
+                    ""
+                );
+
+                const indice = lista.findIndex(function(item){
+
+                    return String(
+                        item.id ||
+                        item.tmdb_id ||
+                        item.titulo ||
+                        item.nome ||
+                        ""
+                    ) === id;
+
+                });
+
+                if (indice === -1) {
+
+                    const item = Object.assign({}, serie, {
+                        tipo: "serie",
+                        media_type: "tv"
+                    });
+
+                    lista.push(item);
+
+                    localStorage.setItem(
+                        "lukafilmes_minhalista",
+                        JSON.stringify(lista)
+                    );
+
+                } else {
+
+                    lista.splice(indice, 1);
+
+                    localStorage.setItem(
+                        "lukafilmes_minhalista",
+                        JSON.stringify(lista)
+                    );
+                }
+
+                atualizarBotaoListaSeries();
+
+                console.log(
+                    "[MINHA LISTA SERIES]",
+                    serie.titulo
+                );
+            };
+
+            atualizarBotaoListaSeries();
+        }
+
+
+        console.log(
+            "[HERO SERIES] OK:",
+            serie.titulo,
+            "| FUNDO:",
+            fundo
+        );
+
+    }catch(erro){
+        console.error("[HERO SERIES] ERRO:",erro);
+    }
+}
+
+carregarHeroSeries();
+</script>
+<style>
+#conteudo{
+    position:relative;
+    z-index:5;
+    padding:20px 4% 60px;
+    margin-top:-35px;
+}
+.pesquisa-series{
+    width:100%;
+    max-width:520px;
+    margin:0 auto 35px;
+}
+#pesquisaSeries{
+    width:100%;
+    height:46px;
+    padding:0 16px;
+    border:1px solid #666;
+    border-radius:4px;
+    outline:none;
+    background:#222;
+    color:#fff;
+    font-size:16px;
+}
+#pesquisaSeries:focus{
+    border-color:#fff;
+}
+.titulo-catalogo{
+    font-size:24px;
+    margin:0 0 18px;
+}
+#listaSeries{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+    gap:18px;
+}
+.card-serie{
+    min-width:0;
+    background:#181818;
+    border-radius:4px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:transform .2s ease;
+}
+.card-serie:hover{
+    transform:scale(1.04);
+    z-index:3;
+}
+.card-serie img{
+    display:block;
+    width:100%;
+    aspect-ratio:2/3;
+    object-fit:cover;
+    background:#222;
+}
+.card-info{
+    padding:10px;
+}
+.card-info h3{
+    margin:0 0 7px;
+    font-size:15px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+.card-info p{
+    margin:0;
+    font-size:13px;
+    color:#aaa;
+}
+.estado-series{
+    grid-column:1/-1;
+    text-align:center;
+    padding:40px 10px;
+    color:#aaa;
+}
+@media(max-width:700px){
+    #conteudo{
+        padding-left:18px;
+        padding-right:18px;
+    }
+    #listaSeries{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:12px;
+    }
+    .titulo-catalogo{
+        font-size:21px;
+    }
+}
+</style>
+
+<script>
+const listaSeries=document.getElementById("conteudo");
+
+listaSeries.innerHTML=`
+    <div class="pesquisa-series">
+        <input
+            id="pesquisaSeries"
+            type="search"
+            placeholder="Pesquisar séries..."
+            autocomplete="off">
+    </div>
+
+    <h2 class="titulo-catalogo">Séries</h2>
+
+    <div id="listaSeries">
+        <div class="estado-series"></div>
+    </div>
+`;
+
+const gradeSeries=document.getElementById("listaSeries");
+const campoPesquisa=document.getElementById("pesquisaSeries");
+
+const TOTAL_PAGINAS_CATALOGO_SERIES = 1000;
+
+/*
+ * LUKAFILMES — CATÁLOGO DE SÉRIES ALEATÓRIO
+ *
+ * A cada atualização da página:
+ * 1. Escolhe uma página aleatória entre 1 e 1000.
+ * 2. Carrega as séries dessa página.
+ * 3. O carregamento infinito continua normalmente a partir dela.
+ */
+let paginaSeries =
+    Math.floor(
+        Math.random() * TOTAL_PAGINAS_CATALOGO_SERIES
+    ) + 1;
+
+console.log(
+    "[SÉRIES] Página inicial aleatória:",
+    paginaSeries,
+    "/",
+    TOTAL_PAGINAS_CATALOGO_SERIES
+);
+let carregandoSeries=false;
+let fimSeries=false;
+let idsSeries=new Set();
+
+function criarCardSerie(serie){
+
+    const card=document.createElement("article");
+
+    card.className="card-serie";
+
+    const imagem=
+        serie.capa||
+        serie.poster_path||
+        "";
+
+    const titulo=
+        serie.titulo||
+        serie.name||
+        "Sem título";
+
+    const nota=
+        serie.nota?
+        "⭐ "+Number(serie.nota).toFixed(1):
+        "";
+
+    const ano=
+        serie.ano||
+        "";
+
+    card.innerHTML=`
+        <img
+            src="${imagem}"
+            alt="${titulo.replace(/"/g,"&quot;")}"
+            loading="lazy">
+
+        <div class="card-info">
+            <h3>${titulo}</h3>
+            <p>${nota}${ano?" • "+ano:""}</p>
+        </div>
+    `;
+
+    card.onclick=function(){
+
+        localStorage.setItem(
+            "serieSelecionada",
+            JSON.stringify(serie)
+        );
+
+        window.location.href="serie.html";
+    };
+
+    return card;
+}
+
+async function carregarCatalogoSeries(){
+
+    if(carregandoSeries||fimSeries){
+        return;
+    }
+
+    carregandoSeries=true;
+
+    try{
+
+        const resposta=
+            await fetch(
+                "/api/catalogo-series?pagina="+
+                paginaSeries
+            );
+
+        const dados=
+            await resposta.json();
+
+        const series=
+            Array.isArray(dados.series)?
+            dados.series:
+            [];
+
+        if(paginaSeries===1){
+            gradeSeries.innerHTML="";
+        }
+
+        for(const serie of series){
+
+            const id=
+                String(
+                    serie.id||
+                    serie.tmdb_id||
+                    serie.titulo||
+                    ""
+                );
+
+            if(!id||idsSeries.has(id)){
+                continue;
+            }
+
+            idsSeries.add(id);
+
+            gradeSeries.appendChild(
+                criarCardSerie(serie)
+            );
+        }
+
+        if(
+            dados.acabou||
+            !series.length
+        ){
+
+            fimSeries=true;
+
+        }else{
+
+            paginaSeries++;
+
+        }
+
+        console.log(
+            "[SERIES] Página:",
+            paginaSeries,
+            "| Total:",
+            idsSeries.size
+        );
+
+    }catch(erro){
+
+        console.error(
+            "[SERIES] ERRO:",
+            erro
+        );
+
+        if(!idsSeries.size){
+
+            gradeSeries.innerHTML=
+                '<div class="estado-series">'+
+                'Erro ao carregar séries.'+
+                '</div>';
+
+        }
+
+    }finally{
+
+        carregandoSeries=false;
+
+    }
+}
+
+let timerPesquisaSeries=null;
+
+campoPesquisa.addEventListener(
+    "input",
+    function(){
+
+        clearTimeout(
+            timerPesquisaSeries
+        );
+
+        timerPesquisaSeries=
+            setTimeout(
+                function(){
+
+                    pesquisarSeries(
+                        campoPesquisa.value.trim()
+                    );
+
+                },
+                300
+            );
+
+    }
+);
+
+async function pesquisarSeries(texto){
+
+    if(!texto){
+
+        gradeSeries.innerHTML="";
+        paginaSeries=1;
+        fimSeries=false;
+        idsSeries.clear();
+
+        carregarCatalogoSeries();
+
+        return;
+    }
+
+    try{
+
+        const resposta=
+            await fetch(
+                "/api/pesquisar-series?q="+
+                encodeURIComponent(texto)
+            );
+
+        const dados=
+            await resposta.json();
+
+        const series=
+            Array.isArray(dados.series)?
+            dados.series:
+            Array.isArray(dados.resultados)?
+            dados.resultados:
+            [];
+
+        gradeSeries.innerHTML="";
+
+        if(!series.length){
+
+            gradeSeries.innerHTML=
+                '<div class="estado-series">'+
+                'Nenhuma série encontrada.'+
+                '</div>';
+
+            return;
+        }
+
+        series.forEach(
+            function(serie){
+
+                gradeSeries.appendChild(
+                    criarCardSerie(serie)
+                );
+
+            }
+        );
+
+    }catch(erro){
+
+        console.error(
+            "[PESQUISA SERIES] ERRO:",
+            erro
+        );
+
+    }
+}
+
+window.addEventListener(
+    "scroll",
+    function(){
+
+        if(
+            window.innerHeight+
+            window.scrollY>=
+            document.body.offsetHeight-700
+        ){
+
+            carregarCatalogoSeries();
+
+        }
+
+    }
+);
+
+carregarCatalogoSeries();
+</script>
+
+<style id="lukafilmes-pesquisa-series-centralizada">
+
+/* CENTRALIZA O TEXTO DENTRO DO CAMPO PESQUISAR SÉRIES */
+#pesquisaSeries {
+    text-align: center !important;
+}
+
+#pesquisaSeries::placeholder {
+    text-align: center !important;
+}
+
+</style>
