@@ -3279,7 +3279,7 @@ body{
                 ▶ PLAY
             </button>
 
-            <iframe id="filmeFrame" src="https://myembed.biz/filme/tt22084616" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:70vh"></iframe>
+            <iframe id="filmeFrame" src="" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:70vh"></iframe>
         </div>
 
     </section>
@@ -3610,7 +3610,7 @@ body{
                         if (!tmdbId) return;
 
                         const embedUrl =
-                            "https://myembed.biz/filme/" +
+                            "https://mgeb.top/embed/" +
                             tmdbId;
 
                         filmeFrame.src =
@@ -3692,7 +3692,7 @@ body{
                         if (numero === "1") {
 
                             embedUrl =
-                                "https://myembed.biz/filme/" +
+                                "https://mgeb.top/embed/" +
                                 tmdbId;
                         }
 
@@ -3703,7 +3703,7 @@ body{
                         else if (numero === "2") {
 
                             embedUrl =
-                                "https://vidsrc.to/embed/movie/" +
+                                "https://myembed.biz/filme/" +
                                 tmdbId;
                         }
 
@@ -4355,12 +4355,12 @@ document.getElementById("voltarFilmes").addEventListener(
    ========================================================= */
 
 /* FILMES — esconder PLAY 2, 3 e 4 */
-.lista-plays .play-card:not(:first-child) {
+.lista-plays .play-card:nth-child(n+3) {
     display: none !important;
 }
 
-/* SÉRIES — esconder PLAY 2 e demais */
-.players-serie-opcoes .serie-player-btn:not(:first-child) {
+/* SÉRIES — mostrar PLAY 1 e PLAY 2 */
+.players-serie-opcoes .serie-player-btn:nth-child(n+3) {
     display: none !important;
 }
 
@@ -4666,6 +4666,50 @@ document.addEventListener("DOMContentLoaded",()=>{
     };
 
     console.log("[LUKAFILMES] proteção da página ativa.");
+})();
+</script>
+
+
+<script id="lukafilmes-anti-popup">
+(function () {
+    "use strict";
+
+    /*
+     * TESTE — bloqueia tentativas de abrir
+     * novas abas/janelas a partir da página.
+     */
+    const abrirOriginal = window.open;
+
+    window.open = function () {
+        console.log("[LUKAFILMES] Popup bloqueado.");
+        return null;
+    };
+
+    document.addEventListener("click", function (e) {
+        const link = e.target.closest("a");
+
+        if (!link) return;
+
+        const href = link.getAttribute("href");
+
+        if (
+            link.target === "_blank" ||
+            link.target === "_new" ||
+            link.target === "_parent" ||
+            link.target === "_top"
+        ) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            console.log(
+                "[LUKAFILMES] Navegação externa bloqueada:",
+                href || ""
+            );
+
+            return false;
+        }
+    }, true);
+
 })();
 </script>
 

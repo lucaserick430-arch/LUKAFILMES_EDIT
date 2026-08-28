@@ -4233,6 +4233,15 @@ app.use(
          * Admin não possui expiração.
          */
 
+
+        /*
+         * APIs de séries devem responder diretamente em JSON.
+         * Não redirecionar detalhes, temporadas e episódios para /login.
+         */
+        if (req.path.startsWith("/api/serie/") || req.path.startsWith("/api/series")) {
+            return next();
+        }
+
         if (!req.session || !req.session.usuario) {
 
             return res.redirect("/login");

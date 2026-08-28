@@ -88,7 +88,18 @@ function registrarInicio(dados){
     progresso: anterior ? Number(anterior.progresso) || 0 : 0,
 
     /* Player externo utilizado */
-    player: dados.player || anterior?.player || null
+    player: dados.player || anterior?.player || null,
+
+    /* Dados da série */
+    temporada:
+      dados.temporada ||
+      anterior?.temporada ||
+      null,
+
+    episodio:
+      dados.episodio ||
+      anterior?.episodio ||
+      null
   });
 
   document.dispatchEvent(
@@ -317,6 +328,47 @@ function abrir(item){
       "filmeSelecionado",
       JSON.stringify(item)
     );
+
+    /*
+     * SÉRIES:
+     * serie.html utiliza serieSelecionada.
+     * Mantém também temporada, episódio e player.
+     */
+    if (
+      String(item.tipo || "").toLowerCase() === "serie"
+    ) {
+
+      localStorage.setItem(
+        "serieSelecionada",
+        JSON.stringify(item)
+      );
+
+      if (item.temporada != null) {
+        localStorage.setItem(
+          "seriePlayerTemporada",
+          String(item.temporada)
+        );
+      }
+
+      if (item.episodio != null) {
+        localStorage.setItem(
+          "seriePlayerEpisodio",
+          String(item.episodio)
+        );
+      }
+
+      if (item.player != null) {
+        localStorage.setItem(
+          "seriePlayerPlayer",
+          String(item.player)
+        );
+      }
+
+      localStorage.setItem(
+        "seriePlayerId",
+        String(item.id)
+      );
+    }
 
   }catch(e){
 
