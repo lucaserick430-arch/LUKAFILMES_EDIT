@@ -2042,6 +2042,750 @@ z-index:2;
 }
 </style>
 
+
+<style id="lukafilmes-tv-mode-final">
+/* ============================================================
+   LUKAFILMES — EXPERIÊNCIA PARA TV / TELAS GRANDES
+   Ativa somente em telas >= 1600x800.
+   Celular e notebook comum permanecem com o layout atual.
+   ============================================================ */
+
+@media (min-width:1600px) and (min-height:800px){
+
+    html,
+    body{
+        min-width:100%;
+        overflow-x:hidden;
+    }
+
+    /* --------------------------------------------------------
+       HEADER
+       -------------------------------------------------------- */
+
+    .header{
+        min-height:82px !important;
+        padding-left:42px !important;
+        padding-right:42px !important;
+    }
+
+    .header .logo,
+    .header .logo a{
+        font-size:30px !important;
+    }
+
+    .header .nav{
+        gap:30px !important;
+    }
+
+    .header .nav a,
+    .header .nav button,
+    .lukafilmes-catalogo-btn{
+        font-size:18px !important;
+    }
+
+    .header .header-right{
+        gap:18px !important;
+    }
+
+    .header .search-btn,
+    .header .menu-btn,
+    .header .profile{
+        width:52px !important;
+        height:52px !important;
+        font-size:24px !important;
+    }
+
+    /* --------------------------------------------------------
+       HERO
+       -------------------------------------------------------- */
+
+    .hero{
+        min-height:720px !important;
+        height:72vh !important;
+        max-height:900px !important;
+    }
+
+    .hero-content{
+        max-width:760px !important;
+        left:6% !important;
+        bottom:12% !important;
+    }
+
+    .hero-title{
+        font-size:clamp(48px,4.5vw,82px) !important;
+        line-height:1.04 !important;
+        max-width:850px !important;
+    }
+
+    .hero-description{
+        max-width:720px !important;
+        font-size:21px !important;
+        line-height:1.55 !important;
+    }
+
+    .hero-info{
+        font-size:18px !important;
+        gap:16px !important;
+    }
+
+    .hero-buttons .btn{
+        min-width:190px !important;
+        min-height:58px !important;
+        padding:15px 28px !important;
+        font-size:20px !important;
+        border-radius:7px !important;
+    }
+
+    /* --------------------------------------------------------
+       CONTEÚDO
+       -------------------------------------------------------- */
+
+    .content{
+        padding-left:42px !important;
+        padding-right:42px !important;
+    }
+
+    .section{
+        margin-bottom:42px !important;
+    }
+
+    .section-title{
+        font-size:28px !important;
+        margin-bottom:18px !important;
+    }
+
+    /* --------------------------------------------------------
+       CARDS
+       -------------------------------------------------------- */
+
+    .section .row{
+        gap:18px !important;
+        padding:10px 8px 24px !important;
+        scroll-padding-left:60px !important;
+        scroll-padding-right:60px !important;
+    }
+
+    .section .row > .card,
+    .section .row > .filme,
+    .section .row > .serie,
+    .section .row > a{
+        flex:0 0 auto !important;
+    }
+
+    /*
+       O tamanho visual é aumentado sem alterar a estrutura
+       dos cards existentes.
+    */
+
+    .section .row .card img,
+    .section .row .filme img,
+    .section .row .serie img{
+        min-width:210px !important;
+        width:210px !important;
+        max-width:210px !important;
+        min-height:315px !important;
+        height:315px !important;
+        object-fit:cover !important;
+    }
+
+    /* --------------------------------------------------------
+       FOCO DO CONTROLE REMOTO
+       -------------------------------------------------------- */
+
+    body.lukafilmes-tv-mode .lukafilmes-tv-focus{
+        outline:4px solid rgba(255,255,255,.95) !important;
+        outline-offset:5px !important;
+        border-radius:8px !important;
+        transform:scale(1.045) !important;
+        z-index:100 !important;
+        transition:transform .12s ease, outline .12s ease !important;
+    }
+
+    body.lukafilmes-tv-mode .lukafilmes-tv-focus::after{
+        content:"";
+        position:absolute;
+        inset:0;
+        border-radius:8px;
+        pointer-events:none;
+    }
+
+    /* --------------------------------------------------------
+       SETAS DOS CARROSSÉIS
+       -------------------------------------------------------- */
+
+    .luka-carousel-arrow{
+        width:58px !important;
+        height:96px !important;
+        font-size:50px !important;
+        border-radius:8px !important;
+        opacity:.9 !important;
+    }
+
+    .luka-carousel-arrow.left{
+        left:12px !important;
+    }
+
+    .luka-carousel-arrow.right{
+        right:12px !important;
+    }
+
+    /* --------------------------------------------------------
+       BOTÕES / LINKS INTERATIVOS
+       -------------------------------------------------------- */
+
+    body.lukafilmes-tv-mode a:focus,
+    body.lukafilmes-tv-mode button:focus,
+    body.lukafilmes-tv-mode input:focus{
+        outline:4px solid rgba(255,255,255,.9) !important;
+        outline-offset:5px !important;
+    }
+
+    /* --------------------------------------------------------
+       CONTINUAR ASSISTINDO
+       -------------------------------------------------------- */
+
+    .lukafilmes-continuar-destaque-btn{
+        font-size:17px !important;
+        padding:12px 18px !important;
+        border-radius:8px !important;
+    }
+
+    /* --------------------------------------------------------
+       SCROLLBAR INVISÍVEL
+       -------------------------------------------------------- */
+
+    .section .row::-webkit-scrollbar{
+        display:none !important;
+    }
+}
+
+
+/* ============================================================
+   TELAS 4K
+   ============================================================ */
+
+@media (min-width:2500px) and (min-height:1300px){
+
+    .header{
+        min-height:100px !important;
+        padding-left:70px !important;
+        padding-right:70px !important;
+    }
+
+    .header .logo,
+    .header .logo a{
+        font-size:38px !important;
+    }
+
+    .header .nav a,
+    .header .nav button,
+    .lukafilmes-catalogo-btn{
+        font-size:22px !important;
+    }
+
+    .content{
+        padding-left:70px !important;
+        padding-right:70px !important;
+    }
+
+    .hero{
+        min-height:900px !important;
+        height:76vh !important;
+        max-height:1150px !important;
+    }
+
+    .hero-title{
+        font-size:92px !important;
+    }
+
+    .hero-description{
+        font-size:25px !important;
+    }
+
+    .section-title{
+        font-size:34px !important;
+    }
+
+    .section .row{
+        gap:24px !important;
+    }
+
+    .section .row .card img,
+    .section .row .filme img,
+    .section .row .serie img{
+        min-width:270px !important;
+        width:270px !important;
+        max-width:270px !important;
+        min-height:405px !important;
+        height:405px !important;
+    }
+}
+</style>
+
+<script id="lukafilmes-tv-navigation-final">
+(function(){
+
+    /*
+     * TV real:
+     * 1920x1080 / 3840x2160 normalmente entra aqui.
+     *
+     * Notebook comum fica fora.
+     */
+
+    function ehTV(){
+
+        return (
+            window.innerWidth >= 1600 &&
+            window.innerHeight >= 800
+        );
+
+    }
+
+    if(!ehTV()) return;
+
+    document.body.classList.add("lukafilmes-tv-mode");
+
+    const SELECTOR =
+        ".section .row .card," +
+        ".section .row .filme," +
+        ".section .row .serie," +
+        ".section .row > a";
+
+    function itensDaLinha(row){
+
+        return Array.from(
+            row.querySelectorAll(SELECTOR)
+        ).filter(function(el){
+
+            return el.offsetParent !== null;
+
+        });
+
+    }
+
+    function linhas(){
+
+        return Array.from(
+            document.querySelectorAll(".section .row")
+        ).filter(function(row){
+
+            return itensDaLinha(row).length > 0;
+
+        });
+
+    }
+
+    function preparar(){
+
+        document.querySelectorAll(SELECTOR)
+            .forEach(function(item){
+
+                if(!item.hasAttribute("tabindex")){
+                    item.setAttribute("tabindex","0");
+                }
+
+            });
+
+    }
+
+    function limparFoco(){
+
+        document
+            .querySelectorAll(".lukafilmes-tv-focus")
+            .forEach(function(item){
+
+                item.classList.remove(
+                    "lukafilmes-tv-focus"
+                );
+
+            });
+
+    }
+
+    function focar(item){
+
+        if(!item) return;
+
+        limparFoco();
+
+        item.classList.add(
+            "lukafilmes-tv-focus"
+        );
+
+        item.focus({
+            preventScroll:true
+        });
+
+        item.scrollIntoView({
+            behavior:"smooth",
+            block:"nearest",
+            inline:"center"
+        });
+
+    }
+
+    function abrir(item){
+
+        if(!item) return;
+
+        const link =
+            item.matches("a")
+                ? item
+                : item.querySelector("a");
+
+        if(link){
+            link.click();
+            return;
+        }
+
+        item.click();
+
+    }
+
+    function centroHorizontal(el){
+
+        const r = el.getBoundingClientRect();
+
+        return r.left + (r.width / 2);
+
+    }
+
+    function encontrarVertical(atual, direcao){
+
+        const rowAtual =
+            atual.closest(".row");
+
+        if(!rowAtual) return null;
+
+        const todas = linhas();
+
+        const indice =
+            todas.indexOf(rowAtual);
+
+        if(indice < 0) return null;
+
+        const alvoIndice =
+            indice + direcao;
+
+        if(
+            alvoIndice < 0 ||
+            alvoIndice >= todas.length
+        ){
+            return null;
+        }
+
+        const alvo =
+            todas[alvoIndice];
+
+        const candidatos =
+            itensDaLinha(alvo);
+
+        if(!candidatos.length) return null;
+
+        const xAtual =
+            centroHorizontal(atual);
+
+        let melhor = candidatos[0];
+        let distancia = Infinity;
+
+        candidatos.forEach(function(item){
+
+            const distanciaAtual =
+                Math.abs(
+                    centroHorizontal(item) -
+                    xAtual
+                );
+
+            if(distanciaAtual < distancia){
+
+                distancia =
+                    distanciaAtual;
+
+                melhor = item;
+
+            }
+
+        });
+
+        return melhor;
+
+    }
+
+    function iniciar(){
+
+        preparar();
+
+        const primeiraLinha =
+            linhas()[0];
+
+        if(!primeiraLinha) return;
+
+        const primeiro =
+            itensDaLinha(primeiraLinha)[0];
+
+        if(primeiro){
+
+            setTimeout(function(){
+
+                focar(primeiro);
+
+            },600);
+
+        }
+
+    }
+
+    document.addEventListener(
+        "keydown",
+        function(event){
+
+            if(!document.body.classList.contains(
+                "lukafilmes-tv-mode"
+            )){
+                return;
+            }
+
+            const tag =
+                document.activeElement &&
+                document.activeElement.tagName;
+
+            if(
+                tag === "INPUT" ||
+                tag === "TEXTAREA" ||
+                tag === "SELECT"
+            ){
+                return;
+            }
+
+            const atual =
+                document.activeElement &&
+                document.activeElement.matches(SELECTOR)
+                    ? document.activeElement
+                    : document.querySelector(
+                        ".lukafilmes-tv-focus"
+                    );
+
+            if(!atual) return;
+
+            let proximo = null;
+
+            if(event.key === "ArrowRight"){
+
+                const lista =
+                    itensDaLinha(
+                        atual.closest(".row")
+                    );
+
+                const indice =
+                    lista.indexOf(atual);
+
+                if(indice >= 0){
+                    proximo =
+                        lista[indice + 1] ||
+                        lista[indice];
+                }
+
+            }
+
+            else if(event.key === "ArrowLeft"){
+
+                const lista =
+                    itensDaLinha(
+                        atual.closest(".row")
+                    );
+
+                const indice =
+                    lista.indexOf(atual);
+
+                if(indice > 0){
+                    proximo =
+                        lista[indice - 1];
+                }
+
+            }
+
+            else if(event.key === "ArrowDown"){
+
+                proximo =
+                    encontrarVertical(
+                        atual,
+                        1
+                    );
+
+            }
+
+            else if(event.key === "ArrowUp"){
+
+                proximo =
+                    encontrarVertical(
+                        atual,
+                        -1
+                    );
+
+            }
+
+            else if(
+                event.key === "Enter" ||
+                event.key === " "
+            ){
+
+                event.preventDefault();
+
+                abrir(atual);
+
+                return;
+
+            }
+
+            else if(event.key === "Escape"){
+
+                limparFoco();
+
+                if(
+                    document.activeElement &&
+                    typeof document.activeElement.blur ===
+                    "function"
+                ){
+                    document.activeElement.blur();
+                }
+
+                return;
+
+            }
+
+            if(proximo && proximo !== atual){
+
+                event.preventDefault();
+
+                focar(proximo);
+
+            }
+
+        },
+        true
+    );
+
+    /*
+     * Cards criados dinamicamente pelo catálogo também
+     * recebem navegação.
+     */
+
+    const observer =
+        new MutationObserver(function(){
+
+            preparar();
+
+        });
+
+    observer.observe(
+        document.body,
+        {
+            childList:true,
+            subtree:true
+        }
+    );
+
+    if(document.readyState === "loading"){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            iniciar
+        );
+
+    }else{
+
+        iniciar();
+
+    }
+
+})();
+</script>
+
+
+<style id="lukafilmes-tv-hero-posicao-final">
+/* ============================================================
+   LUKAFILMES — HERO TV — POSIÇÃO FINAL
+   Somente telas grandes.
+   Celular e notebook preservados.
+   ============================================================ */
+
+@media (min-width:1600px) and (min-height:800px){
+
+    .hero-content{
+        left:2.5vw !important;
+        right:auto !important;
+
+        /*
+         * Desce o conjunto inteiro:
+         * título + informações + sinopse + botões.
+         */
+        bottom:7% !important;
+
+        width:auto !important;
+        max-width:850px !important;
+
+        padding-left:0 !important;
+        padding-right:0 !important;
+        margin-left:0 !important;
+        margin-right:0 !important;
+    }
+
+    .hero-content h1,
+    .hero-title{
+        margin-left:0 !important;
+        margin-bottom:18px !important;
+    }
+
+    .hero-content p,
+    .hero-description{
+        margin-left:0 !important;
+        max-width:820px !important;
+        margin-bottom:18px !important;
+    }
+
+    .hero-content button,
+    .hero-content a{
+        margin-left:0 !important;
+    }
+}
+
+/* 4K */
+@media (min-width:3000px) and (min-height:1600px){
+
+    .hero-content{
+        left:2.5vw !important;
+        bottom:7% !important;
+        max-width:1100px !important;
+    }
+
+    .hero-content p,
+    .hero-description{
+        max-width:1050px !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-tv-quadro-centro-removido">
+/* ============================================================
+   LUKAFILMES — REMOVER QUADRO TV PERMANENTE
+   Preserva a lógica de navegação e a mensagem temporária.
+   ============================================================ */
+
+@media (min-width:1600px) and (min-height:800px){
+
+    /*
+     * O elemento antigo de boas-vindas não deve permanecer
+     * visível depois que a mensagem temporária desaparecer.
+     */
+    #lukafilmes-tv-boasvindas:not(.ativo){
+        display:none !important;
+        visibility:hidden !important;
+        opacity:0 !important;
+    }
+}
+</style>
+
 </head>
 
 <body>
@@ -2133,6 +2877,7 @@ z-index:2;
     <a href="#">Início</a>
     <a href="paginas/filmes.html">Filmes</a>
     <a href="paginas/series.html">Séries</a>
+    <a href="/paginas/continuar-assistindo.html">▶ Continuar Assistindo</a>
     <a href="/admin.html">⚙️ Admin</a>
     <a href="#" onclick="logout(); return false;">🚪 Sair</a>
 </div>
@@ -6271,6 +7016,749 @@ document.addEventListener("DOMContentLoaded", () => {
 })();
 </script>
 
+
+
+
+
+<style id="lukafilmes-tv-refino-final">
+
+/* ============================================================
+   LUKAFILMES — REFINO TV
+   SOMENTE TELAS GRANDES
+   Celular e notebook comum permanecem intactos.
+   ============================================================ */
+
+@media (min-width:1600px) and (min-height:800px){
+
+    html{
+        font-size:18px !important;
+    }
+
+    body{
+        overflow-x:hidden !important;
+    }
+
+    /* --------------------------------------------------------
+       CABEÇALHO TV
+       -------------------------------------------------------- */
+
+    .header{
+        min-height:82px !important;
+        padding-left:48px !important;
+        padding-right:48px !important;
+
+        display:flex !important;
+        align-items:center !important;
+    }
+
+    .header a,
+    .header button,
+    .header .nav a{
+        font-size:20px !important;
+    }
+
+    /* --------------------------------------------------------
+       HERO TV
+       -------------------------------------------------------- */
+
+    .hero{
+        min-height:700px !important;
+        height:70vh !important;
+        max-height:820px !important;
+    }
+
+    .hero-content{
+        max-width:900px !important;
+        padding-left:70px !important;
+        padding-right:70px !important;
+    }
+
+    .hero-content h1{
+        font-size:clamp(42px,4vw,72px) !important;
+        line-height:1.05 !important;
+        margin-bottom:22px !important;
+    }
+
+    .hero-content p{
+        font-size:22px !important;
+        line-height:1.5 !important;
+        max-width:780px !important;
+    }
+
+    .hero-content button,
+    .hero-content a{
+        min-height:58px !important;
+        padding:14px 28px !important;
+        font-size:19px !important;
+    }
+
+    /* --------------------------------------------------------
+       SEÇÕES
+       -------------------------------------------------------- */
+
+    .section{
+        padding-left:48px !important;
+        padding-right:48px !important;
+        margin-bottom:42px !important;
+    }
+
+    .section-title{
+        font-size:28px !important;
+        margin-bottom:20px !important;
+    }
+
+    /* --------------------------------------------------------
+       CARDS TV
+       -------------------------------------------------------- */
+
+    .section .row{
+        gap:22px !important;
+        padding-top:14px !important;
+        padding-bottom:24px !important;
+    }
+
+    .section .card{
+        flex:0 0 220px !important;
+        width:220px !important;
+        min-width:220px !important;
+    }
+
+    .section .card img{
+        width:220px !important;
+        height:330px !important;
+        object-fit:cover !important;
+    }
+
+    .section .card-title,
+    .section .card h3,
+    .section .card p{
+        font-size:17px !important;
+    }
+
+    /* --------------------------------------------------------
+       FOCO PARA CONTROLE / TECLADO
+       -------------------------------------------------------- */
+
+    .section .card.luka-tv-focus,
+    .section .card:focus,
+    .section .card:focus-visible{
+        outline:4px solid #fff !important;
+        outline-offset:5px !important;
+        border-radius:6px !important;
+
+        transform:scale(1.07) !important;
+
+        z-index:100 !important;
+    }
+
+    /* --------------------------------------------------------
+       SETAS TV
+       -------------------------------------------------------- */
+
+    .luka-carousel-arrow{
+        width:58px !important;
+        height:100px !important;
+
+        font-size:52px !important;
+
+        border-radius:8px !important;
+
+        background:rgba(0,0,0,.72) !important;
+    }
+
+    .luka-carousel-arrow.left{
+        left:12px !important;
+    }
+
+    .luka-carousel-arrow.right{
+        right:12px !important;
+    }
+
+    /* --------------------------------------------------------
+       CONTINUAR ASSISTINDO
+       -------------------------------------------------------- */
+
+    .secao-continuar-home{
+        margin-bottom:42px !important;
+    }
+
+    /* --------------------------------------------------------
+       FOCO GERAL DE BOTÕES
+       -------------------------------------------------------- */
+
+    button:focus-visible,
+    a:focus-visible{
+        outline:4px solid #fff !important;
+        outline-offset:4px !important;
+    }
+}
+
+/* ============================================================
+   4K
+   ============================================================ */
+
+@media (min-width:3000px) and (min-height:1600px){
+
+    .header{
+        min-height:110px !important;
+        padding-left:80px !important;
+        padding-right:80px !important;
+    }
+
+    .header a,
+    .header button,
+    .header .nav a{
+        font-size:28px !important;
+    }
+
+    .hero{
+        min-height:1000px !important;
+        height:72vh !important;
+        max-height:1250px !important;
+    }
+
+    .hero-content{
+        max-width:1250px !important;
+        padding-left:110px !important;
+    }
+
+    .hero-content h1{
+        font-size:90px !important;
+    }
+
+    .hero-content p{
+        font-size:30px !important;
+        max-width:1050px !important;
+    }
+
+    .section{
+        padding-left:80px !important;
+        padding-right:80px !important;
+        margin-bottom:60px !important;
+    }
+
+    .section-title{
+        font-size:40px !important;
+    }
+
+    .section .row{
+        gap:32px !important;
+    }
+
+    .section .card{
+        flex-basis:300px !important;
+        width:300px !important;
+        min-width:300px !important;
+    }
+
+    .section .card img{
+        width:300px !important;
+        height:450px !important;
+    }
+
+    .luka-carousel-arrow{
+        width:76px !important;
+        height:130px !important;
+        font-size:68px !important;
+    }
+}
+
+</style>
+
+
+
+
+
+<style id="lukafilmes-tv-hero-esquerda-desfoque-final">
+
+/* ============================================================
+   LUKAFILMES — HERO TV
+   Texto extremamente próximo da lateral esquerda.
+   Fundo mais desfocado para destacar informações.
+   SOMENTE TV.
+   ============================================================ */
+
+@media (min-width:1600px) and (min-height:800px){
+
+    /* --------------------------------------------------------
+       CONTEÚDO DO HERO
+       -------------------------------------------------------- */
+
+    .hero-content{
+        max-width:900px !important;
+
+        /*
+         * Margem pequena para não colar literalmente na borda.
+         * Título, ano, HD e sinopse começam praticamente na lateral.
+         */
+        padding-left:18px !important;
+        padding-right:40px !important;
+
+        margin-left:0 !important;
+        margin-right:auto !important;
+    }
+
+    /* --------------------------------------------------------
+       FUNDO DO HERO — DESFOQUE FORTE
+       -------------------------------------------------------- */
+
+    #heroBg{
+        filter:blur(7px) !important;
+        transform:scale(1.035) !important;
+    }
+
+    /*
+     * O trailer permanece sem blur.
+     * A imagem de fundo é que fica suave.
+     */
+    #heroTrailer{
+        filter:none !important;
+    }
+
+    /*
+     * Escurece suavemente a região do texto para melhorar
+     * leitura sem esconder o filme.
+     */
+    .hero-overlay{
+        background:
+            linear-gradient(
+                90deg,
+                rgba(0,0,0,.78) 0%,
+                rgba(0,0,0,.52) 28%,
+                rgba(0,0,0,.20) 58%,
+                rgba(0,0,0,.08) 100%
+            ) !important;
+    }
+}
+
+/* ============================================================
+   TV 4K
+   ============================================================ */
+
+@media (min-width:3000px) and (min-height:1600px){
+
+    .hero-content{
+        max-width:1250px !important;
+        padding-left:28px !important;
+        padding-right:60px !important;
+
+        margin-left:0 !important;
+        margin-right:auto !important;
+    }
+
+    #heroBg{
+        filter:blur(10px) !important;
+        transform:scale(1.04) !important;
+    }
+
+    #heroTrailer{
+        filter:none !important;
+    }
+
+    .hero-overlay{
+        background:
+            linear-gradient(
+                90deg,
+                rgba(0,0,0,.80) 0%,
+                rgba(0,0,0,.54) 30%,
+                rgba(0,0,0,.20) 60%,
+                rgba(0,0,0,.08) 100%
+            ) !important;
+    }
+}
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style id="lukafilmes-boasvindas-unificado-final">
+/* ============================================================
+   LUKAFILMES — BOAS-VINDAS UNIFICADA
+   Celular + computador + TV
+   ============================================================ */
+
+#lukafilmes-boasvindas-unificado{
+    position:fixed !important;
+    left:50% !important;
+    bottom:28px !important;
+    transform:translateX(-50%) !important;
+
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    width:max-content !important;
+    min-width:260px !important;
+    max-width:calc(100vw - 32px) !important;
+    box-sizing:border-box !important;
+
+    padding:13px 22px !important;
+
+    background:rgba(0,0,0,.82) !important;
+    border:1px solid rgba(255,255,255,.18) !important;
+    border-radius:10px !important;
+
+    color:#fff !important;
+    font-family:Arial,sans-serif !important;
+    text-align:center !important;
+
+    box-shadow:0 8px 30px rgba(0,0,0,.35) !important;
+    backdrop-filter:blur(8px) !important;
+    -webkit-backdrop-filter:blur(8px) !important;
+
+    z-index:2147483646 !important;
+    pointer-events:none !important;
+
+    opacity:0 !important;
+    visibility:hidden !important;
+
+    transition:opacity .45s ease, visibility .45s ease !important;
+}
+
+#lukafilmes-boasvindas-unificado.ativo{
+    opacity:1 !important;
+    visibility:visible !important;
+}
+
+#lukafilmes-boasvindas-unificado .luka-bv-titulo{
+    display:block !important;
+    margin:0 0 5px !important;
+    font-size:18px !important;
+    font-weight:800 !important;
+}
+
+#lukafilmes-boasvindas-unificado .luka-bv-texto{
+    display:block !important;
+    margin:0 !important;
+    font-size:13px !important;
+    font-weight:500 !important;
+    opacity:.88 !important;
+}
+
+/* COMPUTADOR */
+@media (min-width:769px) and (max-width:1599px){
+    #lukafilmes-boasvindas-unificado{
+        bottom:30px !important;
+        padding:14px 26px !important;
+    }
+
+    #lukafilmes-boasvindas-unificado .luka-bv-titulo{
+        font-size:20px !important;
+    }
+
+    #lukafilmes-boasvindas-unificado .luka-bv-texto{
+        font-size:14px !important;
+    }
+}
+
+/* TV */
+@media (min-width:1600px) and (min-height:800px){
+    #lukafilmes-boasvindas-unificado{
+        bottom:48px !important;
+        min-width:420px !important;
+        max-width:720px !important;
+        padding:18px 30px !important;
+        border-radius:12px !important;
+    }
+
+    #lukafilmes-boasvindas-unificado .luka-bv-titulo{
+        font-size:24px !important;
+    }
+
+    #lukafilmes-boasvindas-unificado .luka-bv-texto{
+        font-size:16px !important;
+    }
+}
+
+/* 4K */
+@media (min-width:3000px) and (min-height:1600px){
+    #lukafilmes-boasvindas-unificado{
+        bottom:70px !important;
+        min-width:560px !important;
+        padding:24px 40px !important;
+    }
+
+    #lukafilmes-boasvindas-unificado .luka-bv-titulo{
+        font-size:32px !important;
+    }
+
+    #lukafilmes-boasvindas-unificado .luka-bv-texto{
+        font-size:21px !important;
+    }
+}
+
+/* CELULAR */
+@media (max-width:768px){
+    #lukafilmes-boasvindas-unificado{
+        bottom:22px !important;
+        min-width:0 !important;
+        width:calc(100vw - 32px) !important;
+        max-width:420px !important;
+        padding:13px 18px !important;
+        border-radius:10px !important;
+    }
+
+    #lukafilmes-boasvindas-unificado .luka-bv-titulo{
+        font-size:17px !important;
+    }
+
+    #lukafilmes-boasvindas-unificado .luka-bv-texto{
+        font-size:12px !important;
+    }
+}
+</style>
+
+<div id="lukafilmes-boasvindas-unificado" aria-hidden="true">
+    <span class="luka-bv-titulo">🎬 Bem-vindo ao LUKAFILMES</span>
+    <span class="luka-bv-texto">Prepare-se para assistir aos seus filmes e séries favoritos.</span>
+</div>
+
+<script id="lukafilmes-boasvindas-unificado-script">
+(function(){
+
+    try{
+
+        const CHAVE = "lukafilmes_boasvindas_sessao";
+
+        if(sessionStorage.getItem(CHAVE)){
+            return;
+        }
+
+        const mostrar = function(){
+
+            const caixa =
+                document.getElementById(
+                    "lukafilmes-boasvindas-unificado"
+                );
+
+            if(!caixa){
+                return;
+            }
+
+            sessionStorage.setItem(CHAVE,"1");
+
+            caixa.classList.add("ativo");
+            caixa.setAttribute("aria-hidden","false");
+
+            setTimeout(function(){
+
+                caixa.classList.remove("ativo");
+                caixa.setAttribute("aria-hidden","true");
+
+            },5500);
+
+        };
+
+        if(document.readyState === "loading"){
+            document.addEventListener(
+                "DOMContentLoaded",
+                mostrar,
+                {once:true}
+            );
+        }else{
+            mostrar();
+        }
+
+    }catch(e){
+
+        console.warn(
+            "LUKAFILMES — boas-vindas:",
+            e
+        );
+
+    }
+
+})();
+</script>
+
+
+<script id="lukafilmes-boasvindas-home-fix">
+(function(){
+
+    function iniciarBoasVindas(){
+
+        var caixa = document.getElementById(
+            "lukafilmes-boasvindas-unificado"
+        );
+
+        if(!caixa) return;
+
+        caixa.classList.add("ativo");
+        caixa.setAttribute("aria-hidden","false");
+
+        setTimeout(function(){
+
+            caixa.classList.remove("ativo");
+            caixa.setAttribute("aria-hidden","true");
+
+        },5500);
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener(
+            "DOMContentLoaded",
+            iniciarBoasVindas,
+            {once:true}
+        );
+    }else{
+        iniciarBoasVindas();
+    }
+
+})();
+</script>
+
+
+<style id="lukafilmes-tv-hero-area-final">
+/* ============================================================
+   LUKAFILMES — HERO TV / ÁREA DE INFORMAÇÕES
+   Somente telas grandes
+   ============================================================ */
+
+@media (min-width:1600px) and (min-height:800px){
+
+    .hero-content{
+        position:absolute !important;
+
+        left:0 !important;
+        right:auto !important;
+
+        bottom:7% !important;
+
+        width:min(900px, 48vw) !important;
+        max-width:900px !important;
+
+        margin:0 !important;
+
+        padding:0 0 0 52px !important;
+
+        box-sizing:border-box !important;
+
+        z-index:10 !important;
+    }
+
+    .hero-content h1,
+    .hero-title{
+        margin:0 0 18px 0 !important;
+
+        max-width:850px !important;
+
+        text-align:left !important;
+
+        font-size:clamp(48px,4vw,78px) !important;
+        line-height:1.04 !important;
+
+        word-break:normal !important;
+        overflow-wrap:break-word !important;
+    }
+
+    .hero-content p,
+    .hero-description{
+        max-width:820px !important;
+
+        margin:0 0 22px 0 !important;
+
+        text-align:left !important;
+
+        font-size:21px !important;
+        line-height:1.48 !important;
+    }
+
+    .hero-content .hero-info,
+    .hero-info{
+        justify-content:flex-start !important;
+        align-items:center !important;
+
+        margin-bottom:18px !important;
+
+        gap:12px !important;
+    }
+
+    .hero-content button,
+    .hero-content a{
+        margin-top:4px !important;
+
+        min-height:56px !important;
+
+        padding:13px 30px !important;
+
+        font-size:19px !important;
+
+        box-sizing:border-box !important;
+    }
+
+    /* Mantém o conteúdo dentro da área visível da televisão */
+    .hero-content *{
+        max-width:100% !important;
+        box-sizing:border-box !important;
+    }
+}
+
+/* ============================================================
+   4K
+   ============================================================ */
+
+@media (min-width:3000px) and (min-height:1600px){
+
+    .hero-content{
+        width:min(1250px,48vw) !important;
+
+        max-width:1250px !important;
+
+        bottom:8% !important;
+
+        padding-left:80px !important;
+    }
+
+    .hero-content h1,
+    .hero-title{
+        max-width:1150px !important;
+
+        font-size:clamp(64px,4vw,100px) !important;
+
+        margin-bottom:24px !important;
+    }
+
+    .hero-content p,
+    .hero-description{
+        max-width:1050px !important;
+
+        font-size:27px !important;
+        line-height:1.5 !important;
+
+        margin-bottom:28px !important;
+    }
+
+    .hero-content .hero-info,
+    .hero-info{
+        gap:16px !important;
+        margin-bottom:24px !important;
+    }
+
+    .hero-content button,
+    .hero-content a{
+        min-height:68px !important;
+
+        padding:17px 38px !important;
+
+        font-size:23px !important;
+    }
+}
+</style>
+
 </body>
 
 
@@ -6369,3 +7857,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
+
+<style id="lukafilmes-continuar-mobile-menu-final">
+/* ============================================================
+   LUKAFILMES — CONTINUAR ASSISTINDO
+   DESKTOP / NOTEBOOK / TV: permanece no cabeçalho
+   CELULAR: fica dentro do menu ☰
+   ============================================================ */
+
+@media (max-width:768px){
+
+    /* O botão do cabeçalho some SOMENTE no celular */
+    .continuar-header-btn{
+        display:none !important;
+        pointer-events:none !important;
+    }
+
+    /* Se existir a versão antiga mobile do header,
+       também fica escondida somente no celular */
+    .lukafilmes-continuar-mobile-btn{
+        display:none !important;
+        pointer-events:none !important;
+    }
+
+}
+</style>

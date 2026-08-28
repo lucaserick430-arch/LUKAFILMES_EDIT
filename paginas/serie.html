@@ -3125,7 +3125,36 @@ document.addEventListener(
 
 </style>
 
+
+<style id="lukafilmes-favoritos-serie-mobile-topo">
+@media (max-width:768px){
+
+    /* Área dos favoritos no detalhe da série */
+    #botaoMinhaListaSerie,
+    #botaoAbrirMinhaListaSerie,
+    .botao-favorito-serie,
+    .favorito-serie{
+        position:absolute !important;
+
+        top:18px !important;
+        right:18px !important;
+        left:auto !important;
+        bottom:auto !important;
+
+        margin:0 !important;
+        z-index:9999 !important;
+    }
+
+}
+</style>
+
+
+
+
 </body>
+
+
+
 
 </html>
 
@@ -3138,39 +3167,27 @@ document.addEventListener(
 
 
 
-<style id="lukafilmes-ajuste-favoritos-mobile-final">
-@media (max-width: 700px){
 
-    #serieFavoritosTopo{
-        position: relative !important;
 
-        top: auto !important;
-        right: auto !important;
 
-        margin-top: 14px !important;
-        margin-right: 15px !important;
-
-        width: calc(100% - 30px) !important;
-
-        display: flex !important;
-        justify-content: flex-end !important;
-        align-items: center !important;
-        gap: 8px !important;
-
-        box-sizing: border-box !important;
-
-        z-index: 30 !important;
+<style id="serieFavoritosTopo-mobile-tamanho-ajuste">
+@media (max-width: 600px) {
+    #serieFavoritosTopo {
+        top: 8px !important;
+        right: 8px !important;
+        left: auto !important;
+        gap: 4px !important;
+        max-width: calc(100vw - 16px) !important;
     }
 
     #serieFavoritosTopo button,
-    #serieFavoritosTopo a{
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-
+    #serieFavoritosTopo a {
+        padding: 6px 8px !important;
+        font-size: 10px !important;
+        line-height: 1.15 !important;
         white-space: nowrap !important;
-        box-sizing: border-box !important;
+        border-radius: 6px !important;
     }
-
 }
 </style>
+

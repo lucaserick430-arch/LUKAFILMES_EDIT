@@ -55,6 +55,47 @@ function obterContinuar(){
   return lerContinuar();
 }
 
+/* ============================================================
+   REGISTRAR INICIO DO CONTEUDO
+   Usado quando o player externo e carregado.
+   Mantem varios filmes/series no Continuar Assistindo.
+   ============================================================ */
+
+function registrarInicio(dados){
+
+  if(!dados || !dados.id) return;
+
+  const tipo =
+    dados.tipo || "filme";
+
+  const anterior =
+    obterContinuar().find(function(item){
+      return (
+        String(item.id) === String(dados.id) &&
+        String(item.tipo || "filme") === String(tipo)
+      );
+    });
+
+  salvarContinuar({
+    id: dados.id,
+    titulo: dados.titulo || "Conteudo",
+    capa: dados.capa || "",
+    tipo: tipo,
+
+    /* Preserva eventual progresso ja salvo */
+    tempo: anterior ? Number(anterior.tempo) || 0 : 0,
+    duracao: anterior ? Number(anterior.duracao) || 0 : 0,
+    progresso: anterior ? Number(anterior.progresso) || 0 : 0,
+
+    /* Player externo utilizado */
+    player: dados.player || anterior?.player || null
+  });
+
+  document.dispatchEvent(
+    new CustomEvent("lukafilmes:continuar-alterado")
+  );
+}
+
 function conectarPlayer(video, dados){
   if(!video) return;
 
@@ -298,6 +339,7 @@ function abrir(item){
 
 window.LukaContinuar = {
   conectarPlayer,
+  registrarInicio,
   renderContinuar,
   abrir,
   abrirPorDados,
