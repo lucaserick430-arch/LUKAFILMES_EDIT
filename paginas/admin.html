@@ -827,7 +827,18 @@ function clearCache(){
   setTimeout(() => location.reload(), 300);
 }
 
+
 render();
+
+window.addEventListener("pageshow", () => {
+  render();
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    render();
+  }
+});
 </script>
 
 
