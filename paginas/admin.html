@@ -222,6 +222,40 @@ th{color:#a1a1aa}
   .number{font-size:25px}
   .actions{grid-template-columns:1fr}
 }
+
+.admin-user-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.admin-user-actions button{
+  border:0;
+  border-radius:7px;
+  padding:7px 10px;
+  font-size:12px;
+  font-weight:700;
+  color:#fff;
+}
+.admin-edit-btn{
+  background:#2563eb;
+}
+.admin-delete-btn{
+  background:#dc2626;
+}
+.admin-user-actions button:hover{
+  filter:brightness(1.15);
+}
+@media(max-width:700px){
+  .admin-user-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .admin-user-actions button{
+    width:100%;
+  }
+}
+
 </style>
 
 <style id="luka-update-button-final">
@@ -395,6 +429,7 @@ th{color:#a1a1aa}
             <th>Tipo</th>
             <th>Status</th>
             <th>Criado</th>
+            <th>Ações</th>
           </tr>
         </thead>
 
@@ -411,67 +446,110 @@ th{color:#a1a1aa}
 </div>
 
 <script>
-const STORAGE_KEY = "luka_admin_users_v2";
+let usuariosPainel = [];
 
-function loadUsers(){
+async function loadUsers(){
   try{
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const resposta = await fetch("/api/admin/usuarios", {
+      credentials: "same-origin",
+      cache: "no-store"
+    });
+
+    if(!resposta.ok){
+      throw new Error("HTTP " + resposta.status);
+    }
+
+    const dados = await resposta.json();
+
+    if(!dados.sucesso){
+      throw new Error(dados.mensagem || "Erro ao carregar usuários.");
+    }
+
+    usuariosPainel = Array.isArray(dados.usuarios)
+      ? dados.usuarios
+      : [];
+
+    return usuariosPainel;
+
   }catch(e){
+    console.error("[ADMIN] Erro ao carregar usuários:", e);
+    usuariosPainel = [];
     return [];
   }
 }
 
-function saveUsers(users){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-}
-
-function render(){
-  const users = loadUsers();
+async function render(){
+  const users = await loadUsers();
 
   const total = users.length;
   const online = users.filter(u => u.online).length;
-  const tests = users.filter(u => u.type === "teste").length;
-  const resellers = users.filter(u => u.type === "revendedor").length;
+  const tests = users.filter(u =>
+    String(u.tipo || "").toLowerCase() === "teste"
+  ).length;
+  const resellers = users.filter(u =>
+    String(u.tipo || "").toLowerCase() === "revendedor"
+  ).length;
 
-  document.getElementById("totalUsers").textContent = total;
-  document.getElementById("onlineUsers").textContent = online;
-  document.getElementById("activeTests").textContent = tests;
-  document.getElementById("resellers").textContent = resellers;
+  const totalEl = document.getElementById("totalUsers");
+  const onlineEl = document.getElementById("onlineUsers");
+  const testsEl = document.getElementById("activeTests");
+  const resellersEl = document.getElementById("resellers");
+
+  if(totalEl) totalEl.textContent = total;
+  if(onlineEl) onlineEl.textContent = online;
+  if(testsEl) testsEl.textContent = tests;
+  if(resellersEl) resellersEl.textContent = resellers;
 
   const tbody = document.getElementById("usersTable");
+
+  if(!tbody){
+    return;
+  }
 
   tbody.innerHTML = users.length
     ? users.slice().reverse().map(u => `
       <tr>
-        <td>${escapeHtml(u.username)}</td>
-        <td><span class="badge">${escapeHtml(u.type)}</span></td>
+        <td>${escapeHtml(u.usuario || "")}</td>
+        <td>
+          <span class="badge">
+            ${escapeHtml(u.tipo || "usuario")}
+          </span>
+        </td>
         <td class="${u.online ? "online" : "offline"}">
           ${u.online ? "ONLINE" : "OFFLINE"}
         </td>
-        <td>${escapeHtml(u.created)}</td>
+        <td>
+          ${u.criado_em
+            ? new Date(u.criado_em).toLocaleDateString("pt-BR")
+            : "—"}
+        </td>
+        <td>
+          <div class="admin-user-actions">
+            <button
+              type="button"
+              class="admin-edit-btn"
+              onclick="editarUsuario(${Number(u.id)})">
+              ✏️ Editar
+            </button>
+            <button
+              type="button"
+              class="admin-delete-btn"
+              onclick="excluirUsuario(${Number(u.id)})">
+              🗑️ Excluir
+            </button>
+          </div>
+        </td>
       </tr>
     `).join("")
     : `
       <tr>
-        <td colspan="4" style="text-align:center;color:#71717a">
-          Nenhum acesso cadastrado.
+        <td colspan="5" style="text-align:center;color:#71717a">
+          Nenhum usuário cadastrado.
         </td>
       </tr>
     `;
 
   drawChart();
-}
-
-function drawChart(){
-  const chart = document.getElementById("chart");
-  chart.innerHTML = "";
-
-  for(let i = 0; i < 14; i++){
-    const bar = document.createElement("div");
-    bar.className = "bar";
-    bar.style.height = (20 + Math.random() * 80) + "%";
-    chart.appendChild(bar);
-  }
 }
 
 function escapeHtml(value){
@@ -483,38 +561,234 @@ function escapeHtml(value){
     .replaceAll("'","&#039;");
 }
 
-function saveAccess(){
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const type = document.getElementById("type").value;
+async function saveAccess(){
+  const username =
+    document.getElementById("username").value.trim();
+
+  const password =
+    document.getElementById("password").value.trim();
+
+  const type =
+    document.getElementById("type").value;
 
   if(!username || !password){
     alert("Preencha usuário e senha.");
     return;
   }
 
-  const users = loadUsers();
+  const dias = 30;
 
-  if(users.some(u => u.username.toLowerCase() === username.toLowerCase())){
-    alert("Esse usuário já existe.");
+  try{
+    const resposta = await fetch("/api/admin/usuarios", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        usuario: username,
+        senha: password,
+        dias: dias,
+        tipo: type
+      })
+    });
+
+    const dados = await resposta.json();
+
+    if(!resposta.ok || !dados.sucesso){
+      alert(dados.mensagem || "Não foi possível criar o usuário.");
+      return;
+    }
+
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+
+    await render();
+
+    alert("Acesso criado com sucesso.");
+
+  }catch(e){
+    console.error("[ADMIN] Erro ao criar usuário:", e);
+    alert("Erro de comunicação com o servidor.");
+  }
+}
+
+
+async function editarUsuario(id){
+  const usuarioAtual = usuariosPainel.find(
+    u => Number(u.id) === Number(id)
+  );
+
+  if(!usuarioAtual){
+    alert("Usuário não encontrado.");
     return;
   }
 
-  users.push({
-    username,
-    password,
-    type,
-    online:false,
-    created:new Date().toLocaleDateString("pt-BR")
-  });
+  const novoUsuario = prompt(
+    "Nome do usuário:",
+    usuarioAtual.usuario || ""
+  );
 
-  saveUsers(users);
+  if(novoUsuario === null){
+    return;
+  }
 
-  document.getElementById("username").value = "";
-  document.getElementById("password").value = "";
+  const usuario = novoUsuario.trim();
 
-  render();
-  alert("Acesso criado com sucesso.");
+  if(!usuario){
+    alert("Informe um nome de usuário.");
+    return;
+  }
+
+  const novaSenha = prompt(
+    "Nova senha (deixe vazio para manter a atual):",
+    ""
+  );
+
+  if(novaSenha === null){
+    return;
+  }
+
+  let tipo = prompt(
+    "Tipo: usuario, teste ou revendedor",
+    usuarioAtual.tipo || "usuario"
+  );
+
+  if(tipo === null){
+    return;
+  }
+
+  tipo = tipo.trim().toLowerCase();
+
+  if(!["usuario","teste","revendedor","admin"].includes(tipo)){
+    alert("Tipo inválido.");
+    return;
+  }
+
+  try{
+    const resposta = await fetch("/api/admin/usuarios/editar", {
+      method:"POST",
+      credentials:"same-origin",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        id:Number(id),
+        usuario:usuario,
+        senha:novaSenha,
+        tipo:tipo
+      })
+    });
+
+    const dados = await resposta.json();
+
+    if(!resposta.ok || !dados.sucesso){
+      alert(
+        dados.mensagem ||
+        "Não foi possível editar o usuário."
+      );
+      return;
+    }
+
+    await render();
+
+    alert("Usuário atualizado com sucesso.");
+
+  }catch(e){
+    console.error(
+      "[ADMIN] Erro ao editar usuário:",
+      e
+    );
+
+    alert(
+      "Erro de comunicação com o servidor."
+    );
+  }
+}
+
+async function excluirUsuario(id){
+  const usuarioAtual = usuariosPainel.find(
+    u => Number(u.id) === Number(id)
+  );
+
+  if(!usuarioAtual){
+    alert("Usuário não encontrado.");
+    return;
+  }
+
+  if(
+    String(usuarioAtual.tipo || "").toLowerCase() === "admin"
+  ){
+    alert("O administrador não pode ser excluído.");
+    return;
+  }
+
+  const confirmar = confirm(
+    "Excluir o usuário \"" +
+    usuarioAtual.usuario +
+    "\"?\n\nEssa ação não pode ser desfeita."
+  );
+
+  if(!confirmar){
+    return;
+  }
+
+  try{
+    const resposta = await fetch(
+      "/api/admin/usuarios/excluir",
+      {
+        method:"POST",
+        credentials:"same-origin",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          id:Number(id)
+        })
+      }
+    );
+
+    const dados = await resposta.json();
+
+    if(!resposta.ok || !dados.sucesso){
+      alert(
+        dados.mensagem ||
+        "Não foi possível excluir o usuário."
+      );
+      return;
+    }
+
+    await render();
+
+    alert("Usuário excluído com sucesso.");
+
+  }catch(e){
+    console.error(
+      "[ADMIN] Erro ao excluir usuário:",
+      e
+    );
+
+    alert(
+      "Erro de comunicação com o servidor."
+    );
+  }
+}
+
+function drawChart(){
+  const chart = document.getElementById("chart");
+
+  if(!chart){
+    return;
+  }
+
+  chart.innerHTML = "";
+
+  for(let i = 0; i < 14; i++){
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    bar.style.height = (20 + Math.random() * 80) + "%";
+    chart.appendChild(bar);
+  }
 }
 
 function createUser(){
