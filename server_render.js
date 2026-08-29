@@ -397,8 +397,18 @@ app.get("/admin.html", (req, res) => {
         return res.status(403).send("Acesso negado.");
     }
 
+    res.set({
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Surrogate-Control": "no-store"
+    });
+
     res.sendFile(
-        path.join(__dirname, "public", "admin.html")
+        path.join(__dirname, "public", "admin.html"),
+        {
+            cacheControl: false
+        }
     );
 });
 
