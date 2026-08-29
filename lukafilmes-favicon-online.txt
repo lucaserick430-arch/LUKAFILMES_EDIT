@@ -1,0 +1,17 @@
+============================================================
+LUKAFILMES — TESTE DO FAVICON ONLINE
+============================================================
+
+===== FAVICON ONLINE =====
+HTTP: 200
+Content-Type: text/html; charset=utf-8
+URL FINAL: https://lukafilmes.onrender.com/login
+
+===== HOME ONLINE =====
+HTTP: 200
+Content-Type: text/html; charset=utf-8
+URL FINAL: https://lukafilmes.onrender.com/login
+
+============================================================
+FIM DO TESTE
+============================================================

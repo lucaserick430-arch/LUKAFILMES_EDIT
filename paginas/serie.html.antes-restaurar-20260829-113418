@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LUKAFILMES - Série</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+
+    
+
+</head>
+
+
+<body>
+
+
+
+
+
+
+<div class="pagina-serie">
+
+    <!-- ==========================================
+         VOLTAR
+         ========================================== -->
+
+    <div class="voltar-area">
+
+        <a href="#" class="voltar" id="voltarSerie">
+            ← Voltar para séries
+        </a>
+
+    </div>
+
+
+    <!-- ==========================================
+         DETALHES DA SÉRIE
+         ========================================== -->
+
+    <main class="detalhes-serie">
+
+        <div class="poster-serie">
+
+            <img
+                id="posterSerie"
+                src=""
+                alt="Capa da série"
+            >
+
+        </div>
+
+
+        <h1 id="tituloSerie">
+            Carregando...
+        </h1>
+
+
+        <div
+            id="dadosSerie"
+            class="dados-serie">
+        </div>
+
+
+        <div class="sinopse-box">
+
+            <h2>
+                📝 Sinopse
+            </h2>
+
+            <p
+                id="sinopseSerie"
+                class="sinopse">
+                Carregando sinopse...
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <!-- ==========================================
+         TEMPORADAS
+         ========================================== -->
+
+    <section class="temporadas">
+
+        <h2>
+            📚 Temporadas e episódios
+        </h2>
+
+        <select id="selectTemporada"></select>
+
+        <div
+            id="episodios"
+            class="episodios">
+
+            <div class="episodio">
+                🔄 Carregando episódios...
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         PLAYER
+         ========================================== -->
+
+    <section
+        id="playerSerie"
+        class="player-serie"
+        style="display: none;"
+    >
+
+        <h2 id="tituloPlayer">
+            🎬 Assistindo
+        </h2>
+
+        <div class="players-serie-opcoes">
+
+            <button
+                type="button"
+                class="serie-player-btn ativo"
+                data-player="1">
+                <span class="serie-player-numero">PLAY 1</span>
+            MegaEmbed</button>
+
+            <button
+                type="button"
+                class="serie-player-btn"
+                data-player="2">
+                <span class="serie-player-numero">PLAY 2</span>
+            EmbedMovies</button>
+
+        </div>
+
+        <div class="player-video">
+
+            <iframe
+                id="serieFrame"
+                src=""
+                title="Player da série"
+                allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+
+
+
+
+
+
+</body>
+
+
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style id="serieFavoritosTopo-mobile-tamanho-ajuste">
+@media (max-width: 600px) {
+    #serieFavoritosTopo {
+        top: 8px !important;
+        right: 8px !important;
+        left: auto !important;
+        gap: 4px !important;
+        max-width: calc(100vw - 16px) !important;
+    }
+
+    #serieFavoritosTopo button,
+    #serieFavoritosTopo a {
+        padding: 6px 8px !important;
+        font-size: 10px !important;
+        line-height: 1.15 !important;
+        white-space: nowrap !important;
+        border-radius: 6px !important;
+    }
+}
+</style>
+

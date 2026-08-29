@@ -1,0 +1,365 @@
+LUKAFILMES — CONTEXTO MESTRE
+DATA: 24/08/2026
+
+BASE FUNCIONAL / RENDER
+Repositorio:
+https://github.com/lucaserick430-arch/LUKAFILMES_EDIT
+
+Diretorio Git:
+~/FACETO_RENDER_34186A1
+
+Commit funcional:
+34186a1e01cf691d9f684cd9699d7d1436f2ba30
+
+Commit curto:
+34186a1
+
+Mensagem:
+Adicionar cliente LibSQL para Render
+
+Branch de referencia:
+main / commit 34186a1
+
+AREA PRINCIPAL DO PROJETO
+LUKAFILMES e um catalogo de filmes e series.
+
+PAGINAS PRINCIPAIS
+
+HOME:
+index.html
+
+CATALOGO DE FILMES:
+paginas/filmes.html
+
+PAGINA INDIVIDUAL DO FILME:
+paginas/filme.html
+
+CATALOGO DE SERIES:
+paginas/series.html
+
+PAGINA INDIVIDUAL DA SERIE:
+paginas/serie.html
+
+ARQUIVOS IMPORTANTES
+index.html
+paginas/filmes.html
+paginas/filme.html
+paginas/series.html
+paginas/serie.html
+js/script.js
+js/home-visual.js
+js/navegacao.js
+css/style.css
+server_render.js
+server_netlify.js
+netlify-server.js
+
+ESTADO EM 24/08/2026
+
+Arquivos modificados em relacao a base 34186a1:
+index.html
+package-lock.json
+paginas/filmes.html
+paginas/serie.html
+paginas/series.html
+server_render.js
+
+As modificacoes atuais sao locais no repositorio FACETO_RENDER_34186A1.
+O commit 34186a1 continua sendo a base funcional de referencia.
+
+HOME — ALTERACOES DE HOJE
+
+Arquivo:
+index.html
+
+Objetivos das alteracoes:
+- melhorar a pesquisa;
+- centralizar e ampliar a caixa de pesquisa;
+- adaptar a pesquisa para celular;
+- melhorar o HERO;
+- corrigir tamanho e enquadramento do trailer no computador;
+- melhorar qualidade visual das capas no computador;
+- corrigir titulos grandes no HERO;
+- limitar titulo a duas linhas;
+- limitar descricao a tres linhas;
+- organizar botoes do HERO;
+- impedir botoes de invadirem a area "Em destaque";
+- ajustar posicionamento do conteudo do HERO;
+- aproximar o conteudo da lateral esquerda no celular;
+- manter o layout responsivo.
+
+Pesquisa:
+.search-box foi alterado para ficar centralizado no computador.
+No celular ocupa a largura da tela.
+O input recebeu altura, tamanho e estilo novos.
+
+HERO:
+Foi adicionado ajuste para #heroTrailer no computador.
+O trailer passa a ocupar uma area maior do HERO.
+
+Titulos:
+#heroTitle usa clamp de tamanho.
+O titulo fica limitado a duas linhas.
+A descricao fica limitada a tres linhas.
+
+Layout:
+.hero recebeu min-height e overflow hidden.
+.hero-content passou a ser posicionado de forma absoluta no HERO.
+Os botoes ficam abaixo do texto.
+A secao seguinte fica protegida contra sobreposicao.
+
+Mobile:
+O conteudo do HERO foi aproximado da lateral esquerda.
+O layout mobile foi preservado.
+
+Poster:
+A criacao de cards na HOME passou a utilizar:
+https://image.tmdb.org/t/p/original
+quando a imagem recebida nao e uma URL completa.
+
+Trailer do HERO:
+A logica foi alterada para reutilizar um trailer ja encontrado no processo de selecao do HERO quando disponivel.
+Foi criada integracao com a API IFrame do YouTube.
+O trailer usa autoplay, mute, controls=0, playsinline, rel=0 e enablejsapi.
+Loop continuo foi removido.
+Quando o trailer termina, o sistema chama proximoHeroTrailer().
+Em caso de erro, tambem tenta passar para outro destaque.
+
+IMPORTANTE:
+Nao alterar a logica principal de catalogo/pesquisa sem necessidade.
+A Home deve continuar funcionando com o catalogo existente.
+
+FILMES — ALTERACOES DE HOJE
+
+Arquivo:
+paginas/filmes.html
+
+Esta e a pagina de CATALOGO de filmes.
+Nao confundir com:
+paginas/filme.html
+que e a pagina individual depois que o usuario escolhe um filme.
+
+Alteracoes realizadas:
+- ajustes visuais do HERO;
+- ajustes de trailers;
+- melhorias no comportamento automatico do HERO;
+- ajustes para trailer automatico;
+- melhorias de enquadramento;
+- ajustes de catalogo/cards;
+- ajustes relacionados a visual semelhante a Netflix;
+- alteracoes de navegacao no topo;
+- testes de menu e navegacao;
+- ajustes para elementos do HERO e trailers.
+
+Existe historico de backups nesta area.
+Backups sao apenas referencias historicas.
+Nao assumir que backup e a versao atual.
+
+Backups conhecidos:
+paginas/filmes.html.backup-1000trailers-fix-20260824-103502
+paginas/filmes.html.backup-hero-rapido-20260824-103651
+paginas/filmes.html.backup-topo-series-20260824-104406
+
+A pagina atual deve ser:
+paginas/filmes.html
+
+Nao restaurar backup sem comparar primeiro com a pagina atual.
+
+SERIES — ALTERACOES DE HOJE
+
+Arquivo:
+paginas/series.html
+
+Esta e a pagina de CATALOGO DE SERIES.
+
+Ela possui:
+- cabecalho;
+- navegacao;
+- HERO de series;
+- pesquisa;
+- autocomplete;
+- catalogo;
+- categorias;
+- carregamento;
+- integracao com /api/catalogo-series;
+- HERO dinamico.
+
+HERO DE SERIES:
+Existe:
+<script id="hero-series-dinamico">
+
+A funcao principal e:
+carregarHeroSerieAutomatico()
+
+Ela busca:
+ /api/catalogo-series?pagina=...
+
+O codigo atual do HERO utiliza:
+serie.fundo || serie.capa || ""
+
+PROBLEMA ATUAL:
+O backdrop/fundo do HERO de Series nao esta aparecendo corretamente.
+
+O TMDB esta funcionando.
+A API esta funcionando.
+O catalogo esta funcionando.
+
+PONTO PRINCIPAL DA INVESTIGACAO:
+A API pode estar retornando:
+backdrop_path
+
+enquanto o HERO procura:
+fundo
+
+Se isso ocorrer, o HERO pode acabar usando capa vertical em vez de backdrop horizontal.
+
+PROXIMO PASSO OBRIGATORIO:
+Antes de alterar CSS ou fazer nova correcao, verificar o retorno REAL de:
+ /api/catalogo-series
+
+Verificar quais campos existem:
+fundo
+backdrop_path
+capa
+id
+titulo
+
+Depois verificar qual URL final esta sendo montada e aplicada ao HERO.
+
+NAO alterar o TMDB sem confirmar primeiro a estrutura real da resposta.
+
+SERIE — PAGINA INDIVIDUAL
+
+Arquivo:
+paginas/serie.html
+
+Esta pagina e aberta depois que o usuario escolhe uma serie.
+
+A serie e salva em:
+localStorage.setItem("serieSelecionada", JSON.stringify(serie))
+
+A pagina individual recupera:
+localStorage.getItem("serieSelecionada")
+
+e depois:
+JSON.parse(salvo)
+
+Foi confirmado que a pagina individual possui logica para backdrop:
+
+let fundo = "";
+
+if (serie.fundo) {
+    fundo = serie.fundo;
+} else if (serie.backdrop_path) {
+    fundo = "https://image.tmdb.org/t/p/w1280" + serie.backdrop_path;
+}
+
+Depois:
+document.documentElement.style.setProperty(
+    "--fundo-serie",
+    'url("' + fundo + '")'
+);
+
+O CSS utiliza:
+var(--fundo-serie)
+
+Portanto a pagina individual ja sabe trabalhar com backdrop_path.
+
+API DE SERIES
+
+Catalogo:
+ /api/catalogo-series?pagina=...
+
+Pesquisa:
+ /api/pesquisar-series?q=...
+
+Nao confundir com APIs de filmes.
+
+FILMES X SERIES
+
+Filmes possuem fluxo proprio.
+Series possuem fluxo proprio.
+
+Nao modificar:
+js/script.js
+server_render.js
+APIs
+TMDB
+players
+catalogos
+
+sem necessidade diretamente relacionada ao problema solicitado.
+
+REGRA DE TRABALHO
+
+Sempre identificar primeiro:
+1. HOME
+2. FILMES
+3. SERIES
+
+Depois identificar:
+CATALOGO ou PAGINA INDIVIDUAL.
+
+HOME:
+index.html
+
+FILMES CATALOGO:
+paginas/filmes.html
+
+FILME INDIVIDUAL:
+paginas/filme.html
+
+SERIES CATALOGO:
+paginas/series.html
+
+SERIE INDIVIDUAL:
+paginas/serie.html
+
+Fazer sempre a menor alteracao necessaria.
+
+Nao usar nano.
+
+Nao substituir paginas inteiras quando uma pequena alteracao resolver.
+
+Nao assumir que backups sao atuais.
+
+BASE DE SEGURANCA
+
+Se alguma alteracao quebrar o projeto, comparar com:
+34186a1e01cf691d9f684cd9699d7d1436f2ba30
+
+Esse commit e a referencia funcional original do Render.
+
+OBJETIVO DO PROJETO
+
+Manter o LUKAFILMES funcionando com visual moderno inspirado na Netflix, preservando:
+- catalogo;
+- pesquisa;
+- filmes;
+- series;
+- paginas individuais;
+- TMDB;
+- trailers;
+- players;
+- banco;
+- APIs;
+- navegacao;
+- HERO;
+- responsividade.
+
+PROBLEMA IMEDIATO AO CONTINUAR
+
+A proxima investigacao relacionada a SERIES deve comecar por:
+paginas/series.html
+
+Verificar a resposta real de:
+ /api/catalogo-series
+
+e descobrir se o objeto fornece:
+fundo
+backdrop_path
+capa
+
+Nao comecar alterando CSS.
+
+FIM DO CONTEXTO MESTRE

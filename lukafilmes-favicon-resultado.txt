@@ -1,0 +1,21 @@
+============================================================
+LUKAFILMES — REINICIANDO SERVIDOR E TESTANDO FAVICON
+============================================================
+
+===== TESTE FAVICON =====
+HTTP: 404
+Content-Type: text/html; charset=utf-8
+Redirect: 
+
+===== ARQUIVO =====
+-rw-------. 1 u0_a412 u0_a412 1.1K Aug 25 09:07 public/favicon/lukafilmes.svg
+
+===== LOG DO SERVIDOR =====
+◇ injected env (3) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[LINKS FILMES] Carregados: 10
+LUKAFILMES iniciado na porta 3000
+[DEBUG PROTEÇÃO] originalUrl: /favicon/lukafilmes.svg url: /favicon/lukafilmes.svg path: /favicon/lukafilmes.svg method: GET
+
+============================================================
+FIM DO TESTE
+============================================================

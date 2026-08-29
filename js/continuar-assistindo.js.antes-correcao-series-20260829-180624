@@ -65,163 +65,46 @@ function registrarInicio(dados){
 
   if(!dados || !dados.id) return;
 
-  /*
-   * SÉRIES:
-   * Garante que o registro somente aconteça depois que
-   * o STORAGE isolado da conta estiver pronto.
-   */
-  const executarRegistro = function(){
+  const tipo =
+    dados.tipo || "filme";
 
-    try{
-
-      const tipo =
-        String(dados.tipo || "filme").toLowerCase() === "series"
-          ? "serie"
-          : String(dados.tipo || "filme").toLowerCase();
-
-      const id =
-        String(dados.id).trim();
-
-      if(!id) return;
-
-      const lista =
-        obterContinuar();
-
-      const anterior =
-        lista.find(function(item){
-
-          return (
-            String(item.id) === id &&
-            String(item.tipo || "filme").toLowerCase() === tipo
-          );
-
-        });
-
-      const registro = {
-
-        id: id,
-
-        titulo:
-          dados.titulo ||
-          anterior?.titulo ||
-          "Conteudo",
-
-        capa:
-          dados.capa ||
-          anterior?.capa ||
-          "",
-
-        tipo: tipo,
-
-        /*
-         * Preserva progresso existente.
-         */
-        tempo:
-          anterior
-            ? Number(anterior.tempo) || 0
-            : 0,
-
-        duracao:
-          anterior
-            ? Number(anterior.duracao) || 0
-            : 0,
-
-        progresso:
-          anterior
-            ? Number(anterior.progresso) || 0
-            : 0,
-
-        /*
-         * Player.
-         */
-        player:
-          dados.player != null
-            ? String(dados.player)
-            : (
-                anterior?.player != null
-                  ? String(anterior.player)
-                  : "1"
-              )
-      };
-
-      /*
-       * DADOS EXCLUSIVOS DE SÉRIE
-       */
-      if(tipo === "serie"){
-
-        registro.temporada =
-          dados.temporada != null &&
-          String(dados.temporada).trim() !== ""
-            ? String(dados.temporada)
-            : (
-                anterior?.temporada != null
-                  ? String(anterior.temporada)
-                  : null
-              );
-
-        registro.episodio =
-          dados.episodio != null &&
-          String(dados.episodio).trim() !== ""
-            ? String(dados.episodio)
-            : (
-                anterior?.episodio != null
-                  ? String(anterior.episodio)
-                  : null
-              );
-
-      }
-
-      salvarContinuar(registro);
-
-      console.log(
-        "[CONTINUAR] Registro salvo:",
-        registro
+  const anterior =
+    obterContinuar().find(function(item){
+      return (
+        String(item.id) === String(dados.id) &&
+        String(item.tipo || "filme") === String(tipo)
       );
+    });
 
-      document.dispatchEvent(
-        new CustomEvent(
-          "lukafilmes:continuar-alterado"
-        )
-      );
+  salvarContinuar({
+    id: dados.id,
+    titulo: dados.titulo || "Conteudo",
+    capa: dados.capa || "",
+    tipo: tipo,
 
-    }catch(e){
+    /* Preserva eventual progresso ja salvo */
+    tempo: anterior ? Number(anterior.tempo) || 0 : 0,
+    duracao: anterior ? Number(anterior.duracao) || 0 : 0,
+    progresso: anterior ? Number(anterior.progresso) || 0 : 0,
 
-      console.error(
-        "[CONTINUAR] Erro ao registrar:",
-        e
-      );
+    /* Player externo utilizado */
+    player: dados.player || anterior?.player || null,
 
-    }
+    /* Dados da série */
+    temporada:
+      dados.temporada ||
+      anterior?.temporada ||
+      null,
 
-  };
+    episodio:
+      dados.episodio ||
+      anterior?.episodio ||
+      null
+  });
 
-  /*
-   * Se o storage isolado já estiver pronto,
-   * grava imediatamente.
-   */
-  if(
-    window.LukaContaPronta &&
-    typeof window.LukaContaPronta.then === "function"
-  ){
-
-    window.LukaContaPronta
-      .then(function(){
-
-        executarRegistro();
-
-      })
-      .catch(function(){
-
-        executarRegistro();
-
-      });
-
-  }else{
-
-    executarRegistro();
-
-  }
-
+  document.dispatchEvent(
+    new CustomEvent("lukafilmes:continuar-alterado")
+  );
 }
 
 function conectarPlayer(video, dados){

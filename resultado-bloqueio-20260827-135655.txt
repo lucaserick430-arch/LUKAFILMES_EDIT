@@ -1,0 +1,463 @@
+===== PROCURANDO BLOQUEIO/REDIRECIONAMENTO =====
+./index.html:2632:                event.preventDefault();
+./index.html:2658:                event.preventDefault();
+./index.html:2810:                aria-haspopup="true"
+./index.html:5784:            event.preventDefault();
+./index.html:5833:            event.preventDefault();
+./index.html:5834:            event.stopPropagation();
+./index.html:6111:                e.preventDefault();
+./index.html:6166:                    e.preventDefault();
+./index.html:6167:                    e.stopPropagation();
+./index.html:6288:                    e.preventDefault();
+./index.html:6289:                    e.stopPropagation();
+./index.html:6357:            e.preventDefault();
+./index.html:6969:         * do evento visibilitychange.
+./index.html:6996:        "visibilitychange",
+./js/app.js:387:                event.preventDefault();
+./js/script.js:24:                event.preventDefault();
+./js/navegacao.js:600:                evento.preventDefault();
+./diagnostico-lista-completa.txt:123:250-                e.preventDefault();
+./diagnostico-lista-completa.txt:124:251-                e.stopPropagation();
+./hero_blocos.txt:698:            e.preventDefault();
+./paginas/filme.html:3180:                    target="_blank"
+./paginas/filme.html:3553:                evento.preventDefault();
+./paginas/filme.html:3946:        e.preventDefault();
+./paginas/filme.html:4475:<script id="lukafilmes-popup-protecao">
+./paginas/filme.html:4523:     * Evita window.open disparado diretamente pelo código
+./paginas/filme.html:4526:    const abrirOriginal = window.open;
+./paginas/filme.html:4528:    window.open = function (url, target, features) {
+./paginas/filme.html:4583:    window.addEventListener("beforeunload", function () {
+./paginas/serie.html:2506:                e.preventDefault();
+./paginas/serie.html:2939:                evento.preventDefault();
+./paginas/serie.html:2940:                evento.stopPropagation();
+./paginas/minha-lista.html:406:                e.stopPropagation();
+./paginas/minha-lista.html:433:                e.preventDefault();
+./paginas/minha-lista.html:434:                e.stopPropagation();
+./paginas/continuar-assistindo.html:464:                    e.preventDefault();
+./paginas/continuar-assistindo.html:465:                    e.stopPropagation();
+./public/admin.html:1120: e.preventDefault();
+./public/index.html:3098:            event.preventDefault();
+./public/login.html:215:            event.preventDefault();
+./public/revendedor.html:1563:    event.preventDefault();
+./public/revendedor.html:1902:        "visibilitychange",
+./resultado_continuar_pagina.txt:329:                    event.preventDefault();
+./resultado_continuar_pagina.txt:330:                    event.stopPropagation();
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3180:                    target="_blank"
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3536:                evento.preventDefault();
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3901:        e.preventDefault();
+./index.html.antes-restauracao-20260826-081508:1933:                aria-haspopup="true"
+./index.html.antes-restauracao-20260826-081508:4661:            event.preventDefault();
+./index.html.antes-restauracao-20260826-081508:4710:            event.preventDefault();
+./index.html.antes-restauracao-20260826-081508:4711:            event.stopPropagation();
+./index.html.antes-restauracao-20260826-081508:5014:                e.preventDefault();
+./index.html.antes-restauracao-20260826-081508:5069:                    e.preventDefault();
+./index.html.antes-restauracao-20260826-081508:5070:                    e.stopPropagation();
+./index.html.antes-restauracao-20260826-081508:5191:                    e.preventDefault();
+./index.html.antes-restauracao-20260826-081508:5192:                    e.stopPropagation();
+./index.html.antes-restauracao-20260826-081508:5260:            e.preventDefault();
+./myembed-teste.html:1576:            e.preventDefault();
+./myembed-teste.html:1588:                if (t) { e.preventDefault(); scrollTo(t, { behavior: 'smooth', block: 'start' }); }
+
+===== PLAYERS E NAVEGACAO =====
+./index.html:3665:    location.href =
+./index.html:3692:        window.location.href = "paginas/serie.html";
+./index.html:3702:    window.location.href = "paginas/filme.html";
+./index.html:3905:            window.location.origin
+./index.html:5532:        window.location.href = "/login";
+./index.html:5755:                    window.location.href =
+./series_nova.html:172:            location.href="serie.html";
+./series_nova.html:352:        window.location.href="serie.html";
+./minha_lista_resposta.html:212:                window.location.href="serie.html";
+./minha_lista_resposta.html:221:                window.location.href="filme.html";
+./js/app.js:342:    window.location.href =
+./js/script.js:655:    window.location.href = 'paginas/filme.html';
+./js/home-visual.js:96:            label.textContent = "LUKANET"; label.style.cursor = "pointer"; label.onclick = function () { window.location.href = "https://lukanetmovelilimitada.netlify.app/"; };
+./js/home-visual.js:189:            window.location.href =
+./js/continuar-assistindo.js:334:  window.location.href =
+./js/navegacao.js:16:        window.location.pathname;
+./js/navegacao.js:32:    window.location.href = HOME;
+./js/navegacao.js:182:            window.location.replace(LOGIN);
+./js/navegacao.js:534:    const filmeFrame =
+./js/navegacao.js:535:        document.getElementById("filmeFrame");
+./js/navegacao.js:544:        if (filmeFrame) {
+./js/navegacao.js:545:            filmeFrame.src = "";
+./diagnostico_minhalista.txt:47:2978-            window.location.href=
+./diagnostico_minhalista.txt:176:172-            location.href="serie.html";
+./teste_filmes.html:2552:                            location.href =
+./teste_filmes.html:2998:            window.location.href=
+./teste_series.html:192:            location.href="serie.html";
+./teste_series.html:372:        window.location.href="serie.html";
+./teste_minha_lista.html:212:                window.location.href="serie.html";
+./teste_minha_lista.html:221:                window.location.href="filme.html";
+./diagnostico-lista-conteudo.txt:92:212-                window.location.href="serie.html";
+./diagnostico-lista-conteudo.txt:228:192-            location.href="serie.html";
+./diagnostico-lista-completa.txt:112:239-                window.location.href="filme.html";
+./hero_blocos.txt:109:                window.location.origin
+./hero_blocos.txt:421:                window.location.origin
+./paginas/filme.html:1287:#playerFilme > .player-video > #filmeFrame {
+./paginas/filme.html:1326:    #playerFilme > .player-video > #filmeFrame {
+./paginas/filme.html:3236:                        class="play-btn player-btn"
+./paginas/filme.html:3246:                        class="play-btn player-btn"
+./paginas/filme.html:3256:                        class="play-btn player-btn"
+./paginas/filme.html:3266:                        class="play-btn player-btn"
+./paginas/filme.html:3283:                id="filmeFrame"
+./paginas/filme.html:3304:        new URLSearchParams(window.location.search);
+./paginas/filme.html:3546:        const filmeFrame =
+./paginas/filme.html:3547:            document.getElementById("filmeFrame");
+./paginas/filme.html:3549:        if (botao && playerFilme && filmeFrame && filme.id) {
+./paginas/filme.html:3578:                filmeFrame.src = "";
+./paginas/filme.html:3623:                            "https://myembed.biz/filme/" +
+./paginas/filme.html:3626:                        filmeFrame.src =
+./paginas/filme.html:3649:                                '.player-btn[data-player="1"]'
+./paginas/filme.html:3656:                                    ".player-btn"
+./paginas/filme.html:3681:                    ".player-btn"
+./paginas/filme.html:3700:                         * MyEmbed
+./paginas/filme.html:3705:                                "https://myembed.biz/filme/" +
+./paginas/filme.html:3716:                                "https://vidsrc.to/embed/movie/" +
+./paginas/filme.html:3727:                                "https://vidsrc.me/embed/movie/" +
+./paginas/filme.html:3738:                                "https://vidsrc.xyz/embed/movie/" +
+./paginas/filme.html:3770:                        filmeFrame.src =
+./paginas/filme.html:3947:        window.location.href = "filmes.html";
+./paginas/filme.html:4036:                new URLSearchParams(window.location.search);
+./paginas/filme.html:4296:.players-serie-opcoes .serie-player-btn {
+./paginas/filme.html:4314:.players-serie-opcoes .serie-player-btn:hover {
+./paginas/filme.html:4320:.players-serie-opcoes .serie-player-btn.ativo {
+./paginas/filme.html:4349:    .players-serie-opcoes .serie-player-btn {
+./paginas/filme.html:4374:.players-serie-opcoes .serie-player-btn:not(:first-child) {
+./paginas/filme.html:4427:#playerFilme > .player-video > #filmeFrame {
+./paginas/filme.html:4458:#playerFilme .player-btn {
+./paginas/filme.html:4487:    const frame = document.getElementById("filmeFrame");
+./paginas/filme.html:4490:        console.log("[PLAYER PROTEÇÃO] filmeFrame não encontrado.");
+./paginas/filme.html:4557:    const iframe = document.getElementById("filmeFrame");
+./paginas/filme.html:4560:        console.log("[PLAYER PROTECAO] filmeFrame não encontrado.");
+./paginas/filmes.html:2606:    new URLSearchParams(window.location.search);
+./paginas/filmes.html:2841:                            location.href =
+./paginas/filmes.html:3292:            window.location.href=
+./paginas/serie.html:1381:.serie-player-btn{
+./paginas/serie.html:1391:.serie-player-btn.ativo{
+./paginas/serie.html:1403:    .serie-player-btn{
+./paginas/serie.html:1521:                class="serie-player-btn ativo"
+./paginas/serie.html:1528:                class="serie-player-btn"
+./paginas/serie.html:2406:                "https://myembed.biz/serie/" +
+./paginas/serie.html:2414:                "https://vidsrc.to/embed/tv/" +
+./paginas/serie.html:2441:                .querySelectorAll(".serie-player-btn")
+./paginas/serie.html:2457:            .querySelectorAll(".serie-player-btn")
+./paginas/serie.html:2508:                window.location.href = "series.html";
+./paginas/serie.html:3044:.players-serie-opcoes .serie-player-btn {
+./paginas/serie.html:3062:.players-serie-opcoes .serie-player-btn:hover {
+./paginas/serie.html:3068:.players-serie-opcoes .serie-player-btn.ativo {
+./paginas/serie.html:3097:    .players-serie-opcoes .serie-player-btn {
+./paginas/serie.html:3122:.players-serie-opcoes .serie-player-btn:not(:first-child) {
+./paginas/series.html:243:            location.href="serie.html";
+./paginas/series.html:632:        window.location.href="serie.html";
+./paginas/series_nova.html:172:            location.href="serie.html";
+./paginas/series_nova.html:352:        window.location.href="serie.html";
+./paginas/minha-lista.html:506:                    window.location.href =
+./paginas/minha-lista.html:516:                    window.location.href =
+./paginas/series.html.antes-recuperacao-20260824-123756:2297:                window.location.href =
+./paginas/series.html.antes-recuperacao-20260824-123756:2946:        window.location.href = "serie.html";
+./paginas/series.html.antes-recuperacao-20260824-123756:3461:                window.location.href =
+./paginas/series.html.antes-troca-final-20260824-125845:1998:                window.location.href =
+./paginas/series.html.antes-troca-final-20260824-125845:2647:        window.location.href = "serie.html";
+./paginas/series.html.antes-troca-final-20260824-125845:3326:            window.location.href =
+./paginas/continuar-assistindo.html:348:        window.location.href =
+./public/admin.html:642:<button type="button" onclick="window.location.href='/'" title="Voltar para a página inicial">🎬 Luca Filme</button>
+./public/index.html:1808:    location.href =
+./public/index.html:1835:        window.location.href = "paginas/serie.html";
+./public/index.html:1845:    window.location.href = "paginas/filme.html";
+./public/index.html:1959:                window.location.origin
+./public/index.html:2895:        window.location.href = "/login";
+./public/index.html:3069:                    window.location.href =
+./public/login.html:255:                    window.location.href = "/";
+./public/revendedor.html:1403:            window.location.href = "/login";
+./public/revendedor.html:1655:    window.location.href = "/login";
+./resultado_diagnostico_continuar_2.txt:45:  window.location.href =
+./resultado_diagnostico_continuar_2.txt:61:        new URLSearchParams(window.location.search);
+./resultado_diagnostico_continuar_2.txt:209:178-  window.location.href =
+./resultado_home_continuar.txt:41:1193-            onclick="window.location.href='/paginas/continuar-assistindo.html'"
+./resultado_home_continuar.txt:101:1193:            onclick="window.location.href='/paginas/continuar-assistindo.html'"
+./resultado_home_continuar.txt:302:  window.location.href =
+./resultado_continuar_pagina.txt:467:373:                    window.location.href =
+./resultado_continuar_pagina.txt:481:387:            window.location.href = "/";
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:1287:#playerFilme > .player-video > #filmeFrame {
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:1326:    #playerFilme > .player-video > #filmeFrame {
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3242:                        class="play-btn player-btn"
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3252:                        class="play-btn player-btn"
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3269:                id="filmeFrame"
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3287:        new URLSearchParams(window.location.search);
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3529:        const filmeFrame =
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3530:            document.getElementById("filmeFrame");
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3532:        if (botao && playerFilme && filmeFrame && filme.id) {
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3561:                filmeFrame.src = "";
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3606:                            "https://myembed.biz/filme/" +
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3609:                        filmeFrame.src =
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3618:                                '.player-btn[data-player="1"]'
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3625:                                    ".player-btn"
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3650:                    ".player-btn"
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3669:                         * MyEmbed
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3674:                                "https://myembed.biz/filme/" +
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3685:                                "https://vidsrc.to/embed/movie/" +
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3696:                                "https://vidsrc.me/embed/movie/" +
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3707:                                "https://vidsrc.xyz/embed/movie/" +
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3739:                        filmeFrame.src =
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3902:        window.location.href = "filmes.html";
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4150:.players-serie-opcoes .serie-player-btn {
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4168:.players-serie-opcoes .serie-player-btn:hover {
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4174:.players-serie-opcoes .serie-player-btn.ativo {
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4203:    .players-serie-opcoes .serie-player-btn {
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4228:.players-serie-opcoes .serie-player-btn:not(:first-child) {
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4404:                ".player-btn"
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filmes.html:2649:                            location.href =
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filmes.html:3095:            window.location.href=
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/series.html:243:            location.href="serie.html";
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/series.html:555:        window.location.href="serie.html";
+./index.html.antes-restauracao-20260826-081508:2650:    location.href =
+./index.html.antes-restauracao-20260826-081508:2677:        window.location.href = "paginas/serie.html";
+./index.html.antes-restauracao-20260826-081508:2687:    window.location.href = "paginas/filme.html";
+./index.html.antes-restauracao-20260826-081508:2890:            window.location.origin
+./index.html.antes-restauracao-20260826-081508:4409:        window.location.href = "/login";
+./index.html.antes-restauracao-20260826-081508:4632:                    window.location.href =
+./resultado-bloqueio-20260827-135655.txt:58:./myembed-teste.html:1576:            e.preventDefault();
+./resultado-bloqueio-20260827-135655.txt:59:./myembed-teste.html:1588:                if (t) { e.preventDefault(); scrollTo(t, { behavior: 'smooth', block: 'start' }); }
+./resultado-bloqueio-20260827-135655.txt:62:./index.html:3665:    location.href =
+./resultado-bloqueio-20260827-135655.txt:63:./index.html:3692:        window.location.href = "paginas/serie.html";
+./resultado-bloqueio-20260827-135655.txt:64:./index.html:3702:    window.location.href = "paginas/filme.html";
+./resultado-bloqueio-20260827-135655.txt:65:./index.html:3905:            window.location.origin
+./resultado-bloqueio-20260827-135655.txt:66:./index.html:5532:        window.location.href = "/login";
+./resultado-bloqueio-20260827-135655.txt:67:./index.html:5755:                    window.location.href =
+./resultado-bloqueio-20260827-135655.txt:68:./series_nova.html:172:            location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:69:./series_nova.html:352:        window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:70:./minha_lista_resposta.html:212:                window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:71:./minha_lista_resposta.html:221:                window.location.href="filme.html";
+./resultado-bloqueio-20260827-135655.txt:72:./js/app.js:342:    window.location.href =
+./resultado-bloqueio-20260827-135655.txt:73:./js/script.js:655:    window.location.href = 'paginas/filme.html';
+./resultado-bloqueio-20260827-135655.txt:74:./js/home-visual.js:96:            label.textContent = "LUKANET"; label.style.cursor = "pointer"; label.onclick = function () { window.location.href = "https://lukanetmovelilimitada.netlify.app/"; };
+./resultado-bloqueio-20260827-135655.txt:75:./js/home-visual.js:189:            window.location.href =
+./resultado-bloqueio-20260827-135655.txt:76:./js/continuar-assistindo.js:334:  window.location.href =
+./resultado-bloqueio-20260827-135655.txt:77:./js/navegacao.js:16:        window.location.pathname;
+./resultado-bloqueio-20260827-135655.txt:78:./js/navegacao.js:32:    window.location.href = HOME;
+./resultado-bloqueio-20260827-135655.txt:79:./js/navegacao.js:182:            window.location.replace(LOGIN);
+./resultado-bloqueio-20260827-135655.txt:80:./js/navegacao.js:534:    const filmeFrame =
+./resultado-bloqueio-20260827-135655.txt:81:./js/navegacao.js:535:        document.getElementById("filmeFrame");
+./resultado-bloqueio-20260827-135655.txt:82:./js/navegacao.js:544:        if (filmeFrame) {
+./resultado-bloqueio-20260827-135655.txt:83:./js/navegacao.js:545:            filmeFrame.src = "";
+./resultado-bloqueio-20260827-135655.txt:84:./diagnostico_minhalista.txt:47:2978-            window.location.href=
+./resultado-bloqueio-20260827-135655.txt:85:./diagnostico_minhalista.txt:176:172-            location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:86:./teste_filmes.html:2552:                            location.href =
+./resultado-bloqueio-20260827-135655.txt:87:./teste_filmes.html:2998:            window.location.href=
+./resultado-bloqueio-20260827-135655.txt:88:./teste_series.html:192:            location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:89:./teste_series.html:372:        window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:90:./teste_minha_lista.html:212:                window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:91:./teste_minha_lista.html:221:                window.location.href="filme.html";
+./resultado-bloqueio-20260827-135655.txt:92:./diagnostico-lista-conteudo.txt:92:212-                window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:93:./diagnostico-lista-conteudo.txt:228:192-            location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:94:./diagnostico-lista-completa.txt:112:239-                window.location.href="filme.html";
+./resultado-bloqueio-20260827-135655.txt:95:./hero_blocos.txt:109:                window.location.origin
+./resultado-bloqueio-20260827-135655.txt:96:./hero_blocos.txt:421:                window.location.origin
+./resultado-bloqueio-20260827-135655.txt:97:./paginas/filme.html:1287:#playerFilme > .player-video > #filmeFrame {
+./resultado-bloqueio-20260827-135655.txt:98:./paginas/filme.html:1326:    #playerFilme > .player-video > #filmeFrame {
+./resultado-bloqueio-20260827-135655.txt:99:./paginas/filme.html:3236:                        class="play-btn player-btn"
+./resultado-bloqueio-20260827-135655.txt:100:./paginas/filme.html:3246:                        class="play-btn player-btn"
+./resultado-bloqueio-20260827-135655.txt:101:./paginas/filme.html:3256:                        class="play-btn player-btn"
+./resultado-bloqueio-20260827-135655.txt:102:./paginas/filme.html:3266:                        class="play-btn player-btn"
+./resultado-bloqueio-20260827-135655.txt:103:./paginas/filme.html:3283:                id="filmeFrame"
+./resultado-bloqueio-20260827-135655.txt:104:./paginas/filme.html:3304:        new URLSearchParams(window.location.search);
+./resultado-bloqueio-20260827-135655.txt:105:./paginas/filme.html:3546:        const filmeFrame =
+./resultado-bloqueio-20260827-135655.txt:106:./paginas/filme.html:3547:            document.getElementById("filmeFrame");
+./resultado-bloqueio-20260827-135655.txt:107:./paginas/filme.html:3549:        if (botao && playerFilme && filmeFrame && filme.id) {
+./resultado-bloqueio-20260827-135655.txt:108:./paginas/filme.html:3578:                filmeFrame.src = "";
+./resultado-bloqueio-20260827-135655.txt:109:./paginas/filme.html:3623:                            "https://myembed.biz/filme/" +
+./resultado-bloqueio-20260827-135655.txt:110:./paginas/filme.html:3626:                        filmeFrame.src =
+./resultado-bloqueio-20260827-135655.txt:111:./paginas/filme.html:3649:                                '.player-btn[data-player="1"]'
+./resultado-bloqueio-20260827-135655.txt:112:./paginas/filme.html:3656:                                    ".player-btn"
+./resultado-bloqueio-20260827-135655.txt:113:./paginas/filme.html:3681:                    ".player-btn"
+./resultado-bloqueio-20260827-135655.txt:114:./paginas/filme.html:3700:                         * MyEmbed
+./resultado-bloqueio-20260827-135655.txt:115:./paginas/filme.html:3705:                                "https://myembed.biz/filme/" +
+./resultado-bloqueio-20260827-135655.txt:116:./paginas/filme.html:3716:                                "https://vidsrc.to/embed/movie/" +
+./resultado-bloqueio-20260827-135655.txt:117:./paginas/filme.html:3727:                                "https://vidsrc.me/embed/movie/" +
+./resultado-bloqueio-20260827-135655.txt:118:./paginas/filme.html:3738:                                "https://vidsrc.xyz/embed/movie/" +
+./resultado-bloqueio-20260827-135655.txt:119:./paginas/filme.html:3770:                        filmeFrame.src =
+./resultado-bloqueio-20260827-135655.txt:120:./paginas/filme.html:3947:        window.location.href = "filmes.html";
+./resultado-bloqueio-20260827-135655.txt:121:./paginas/filme.html:4036:                new URLSearchParams(window.location.search);
+./resultado-bloqueio-20260827-135655.txt:122:./paginas/filme.html:4296:.players-serie-opcoes .serie-player-btn {
+./resultado-bloqueio-20260827-135655.txt:123:./paginas/filme.html:4314:.players-serie-opcoes .serie-player-btn:hover {
+./resultado-bloqueio-20260827-135655.txt:124:./paginas/filme.html:4320:.players-serie-opcoes .serie-player-btn.ativo {
+./resultado-bloqueio-20260827-135655.txt:125:./paginas/filme.html:4349:    .players-serie-opcoes .serie-player-btn {
+./resultado-bloqueio-20260827-135655.txt:126:./paginas/filme.html:4374:.players-serie-opcoes .serie-player-btn:not(:first-child) {
+./resultado-bloqueio-20260827-135655.txt:127:./paginas/filme.html:4427:#playerFilme > .player-video > #filmeFrame {
+./resultado-bloqueio-20260827-135655.txt:128:./paginas/filme.html:4458:#playerFilme .player-btn {
+./resultado-bloqueio-20260827-135655.txt:129:./paginas/filme.html:4487:    const frame = document.getElementById("filmeFrame");
+./resultado-bloqueio-20260827-135655.txt:130:./paginas/filme.html:4490:        console.log("[PLAYER PROTEÇÃO] filmeFrame não encontrado.");
+./resultado-bloqueio-20260827-135655.txt:131:./paginas/filme.html:4557:    const iframe = document.getElementById("filmeFrame");
+./resultado-bloqueio-20260827-135655.txt:132:./paginas/filme.html:4560:        console.log("[PLAYER PROTECAO] filmeFrame não encontrado.");
+./resultado-bloqueio-20260827-135655.txt:133:./paginas/filmes.html:2606:    new URLSearchParams(window.location.search);
+./resultado-bloqueio-20260827-135655.txt:134:./paginas/filmes.html:2841:                            location.href =
+./resultado-bloqueio-20260827-135655.txt:135:./paginas/filmes.html:3292:            window.location.href=
+./resultado-bloqueio-20260827-135655.txt:136:./paginas/serie.html:1381:.serie-player-btn{
+./resultado-bloqueio-20260827-135655.txt:137:./paginas/serie.html:1391:.serie-player-btn.ativo{
+./resultado-bloqueio-20260827-135655.txt:138:./paginas/serie.html:1403:    .serie-player-btn{
+./resultado-bloqueio-20260827-135655.txt:139:./paginas/serie.html:1521:                class="serie-player-btn ativo"
+./resultado-bloqueio-20260827-135655.txt:140:./paginas/serie.html:1528:                class="serie-player-btn"
+./resultado-bloqueio-20260827-135655.txt:141:./paginas/serie.html:2406:                "https://myembed.biz/serie/" +
+./resultado-bloqueio-20260827-135655.txt:142:./paginas/serie.html:2414:                "https://vidsrc.to/embed/tv/" +
+./resultado-bloqueio-20260827-135655.txt:143:./paginas/serie.html:2441:                .querySelectorAll(".serie-player-btn")
+./resultado-bloqueio-20260827-135655.txt:144:./paginas/serie.html:2457:            .querySelectorAll(".serie-player-btn")
+./resultado-bloqueio-20260827-135655.txt:145:./paginas/serie.html:2508:                window.location.href = "series.html";
+./resultado-bloqueio-20260827-135655.txt:146:./paginas/serie.html:3044:.players-serie-opcoes .serie-player-btn {
+./resultado-bloqueio-20260827-135655.txt:147:./paginas/serie.html:3062:.players-serie-opcoes .serie-player-btn:hover {
+./resultado-bloqueio-20260827-135655.txt:148:./paginas/serie.html:3068:.players-serie-opcoes .serie-player-btn.ativo {
+./resultado-bloqueio-20260827-135655.txt:149:./paginas/serie.html:3097:    .players-serie-opcoes .serie-player-btn {
+./resultado-bloqueio-20260827-135655.txt:150:./paginas/serie.html:3122:.players-serie-opcoes .serie-player-btn:not(:first-child) {
+./resultado-bloqueio-20260827-135655.txt:151:./paginas/series.html:243:            location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:152:./paginas/series.html:632:        window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:153:./paginas/series_nova.html:172:            location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:154:./paginas/series_nova.html:352:        window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:155:./paginas/minha-lista.html:506:                    window.location.href =
+./resultado-bloqueio-20260827-135655.txt:156:./paginas/minha-lista.html:516:                    window.location.href =
+./resultado-bloqueio-20260827-135655.txt:157:./paginas/series.html.antes-recuperacao-20260824-123756:2297:                window.location.href =
+./resultado-bloqueio-20260827-135655.txt:158:./paginas/series.html.antes-recuperacao-20260824-123756:2946:        window.location.href = "serie.html";
+./resultado-bloqueio-20260827-135655.txt:159:./paginas/series.html.antes-recuperacao-20260824-123756:3461:                window.location.href =
+./resultado-bloqueio-20260827-135655.txt:160:./paginas/series.html.antes-troca-final-20260824-125845:1998:                window.location.href =
+./resultado-bloqueio-20260827-135655.txt:161:./paginas/series.html.antes-troca-final-20260824-125845:2647:        window.location.href = "serie.html";
+./resultado-bloqueio-20260827-135655.txt:162:./paginas/series.html.antes-troca-final-20260824-125845:3326:            window.location.href =
+./resultado-bloqueio-20260827-135655.txt:163:./paginas/continuar-assistindo.html:348:        window.location.href =
+./resultado-bloqueio-20260827-135655.txt:164:./public/admin.html:642:<button type="button" onclick="window.location.href='/'" title="Voltar para a página inicial">🎬 Luca Filme</button>
+./resultado-bloqueio-20260827-135655.txt:165:./public/index.html:1808:    location.href =
+./resultado-bloqueio-20260827-135655.txt:166:./public/index.html:1835:        window.location.href = "paginas/serie.html";
+./resultado-bloqueio-20260827-135655.txt:167:./public/index.html:1845:    window.location.href = "paginas/filme.html";
+./resultado-bloqueio-20260827-135655.txt:168:./public/index.html:1959:                window.location.origin
+./resultado-bloqueio-20260827-135655.txt:169:./public/index.html:2895:        window.location.href = "/login";
+./resultado-bloqueio-20260827-135655.txt:170:./public/index.html:3069:                    window.location.href =
+./resultado-bloqueio-20260827-135655.txt:171:./public/login.html:255:                    window.location.href = "/";
+./resultado-bloqueio-20260827-135655.txt:172:./public/revendedor.html:1403:            window.location.href = "/login";
+./resultado-bloqueio-20260827-135655.txt:173:./public/revendedor.html:1655:    window.location.href = "/login";
+./resultado-bloqueio-20260827-135655.txt:174:./resultado_diagnostico_continuar_2.txt:45:  window.location.href =
+./resultado-bloqueio-20260827-135655.txt:175:./resultado_diagnostico_continuar_2.txt:61:        new URLSearchParams(window.location.search);
+./resultado-bloqueio-20260827-135655.txt:176:./resultado_diagnostico_continuar_2.txt:209:178-  window.location.href =
+./resultado-bloqueio-20260827-135655.txt:177:./resultado_home_continuar.txt:41:1193-            onclick="window.location.href='/paginas/continuar-assistindo.html'"
+./resultado-bloqueio-20260827-135655.txt:178:./resultado_home_continuar.txt:101:1193:            onclick="window.location.href='/paginas/continuar-assistindo.html'"
+./resultado-bloqueio-20260827-135655.txt:179:./resultado_home_continuar.txt:302:  window.location.href =
+./resultado-bloqueio-20260827-135655.txt:180:./resultado_continuar_pagina.txt:467:373:                    window.location.href =
+./resultado-bloqueio-20260827-135655.txt:181:./resultado_continuar_pagina.txt:481:387:            window.location.href = "/";
+./resultado-bloqueio-20260827-135655.txt:182:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:1287:#playerFilme > .player-video > #filmeFrame {
+./resultado-bloqueio-20260827-135655.txt:183:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:1326:    #playerFilme > .player-video > #filmeFrame {
+./resultado-bloqueio-20260827-135655.txt:184:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3242:                        class="play-btn player-btn"
+./resultado-bloqueio-20260827-135655.txt:185:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3252:                        class="play-btn player-btn"
+./resultado-bloqueio-20260827-135655.txt:186:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3269:                id="filmeFrame"
+./resultado-bloqueio-20260827-135655.txt:187:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3287:        new URLSearchParams(window.location.search);
+./resultado-bloqueio-20260827-135655.txt:188:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3529:        const filmeFrame =
+./resultado-bloqueio-20260827-135655.txt:189:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3530:            document.getElementById("filmeFrame");
+./resultado-bloqueio-20260827-135655.txt:190:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3532:        if (botao && playerFilme && filmeFrame && filme.id) {
+./resultado-bloqueio-20260827-135655.txt:191:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3561:                filmeFrame.src = "";
+./resultado-bloqueio-20260827-135655.txt:192:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3606:                            "https://myembed.biz/filme/" +
+./resultado-bloqueio-20260827-135655.txt:193:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3609:                        filmeFrame.src =
+./resultado-bloqueio-20260827-135655.txt:194:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3618:                                '.player-btn[data-player="1"]'
+./resultado-bloqueio-20260827-135655.txt:195:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3625:                                    ".player-btn"
+./resultado-bloqueio-20260827-135655.txt:196:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3650:                    ".player-btn"
+./resultado-bloqueio-20260827-135655.txt:197:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3669:                         * MyEmbed
+./resultado-bloqueio-20260827-135655.txt:198:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3674:                                "https://myembed.biz/filme/" +
+./resultado-bloqueio-20260827-135655.txt:199:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3685:                                "https://vidsrc.to/embed/movie/" +
+./resultado-bloqueio-20260827-135655.txt:200:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3696:                                "https://vidsrc.me/embed/movie/" +
+./resultado-bloqueio-20260827-135655.txt:201:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3707:                                "https://vidsrc.xyz/embed/movie/" +
+./resultado-bloqueio-20260827-135655.txt:202:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3739:                        filmeFrame.src =
+./resultado-bloqueio-20260827-135655.txt:203:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:3902:        window.location.href = "filmes.html";
+./resultado-bloqueio-20260827-135655.txt:204:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4150:.players-serie-opcoes .serie-player-btn {
+./resultado-bloqueio-20260827-135655.txt:205:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4168:.players-serie-opcoes .serie-player-btn:hover {
+./resultado-bloqueio-20260827-135655.txt:206:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4174:.players-serie-opcoes .serie-player-btn.ativo {
+./resultado-bloqueio-20260827-135655.txt:207:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4203:    .players-serie-opcoes .serie-player-btn {
+./resultado-bloqueio-20260827-135655.txt:208:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4228:.players-serie-opcoes .serie-player-btn:not(:first-child) {
+./resultado-bloqueio-20260827-135655.txt:209:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filme.html:4404:                ".player-btn"
+./resultado-bloqueio-20260827-135655.txt:210:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filmes.html:2649:                            location.href =
+./resultado-bloqueio-20260827-135655.txt:211:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/filmes.html:3095:            window.location.href=
+./resultado-bloqueio-20260827-135655.txt:212:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/series.html:243:            location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:213:./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/series.html:555:        window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:214:./index.html.antes-restauracao-20260826-081508:2650:    location.href =
+./resultado-bloqueio-20260827-135655.txt:215:./index.html.antes-restauracao-20260826-081508:2677:        window.location.href = "paginas/serie.html";
+./resultado-bloqueio-20260827-135655.txt:216:./index.html.antes-restauracao-20260826-081508:2687:    window.location.href = "paginas/filme.html";
+./resultado-bloqueio-20260827-135655.txt:217:./index.html.antes-restauracao-20260826-081508:2890:            window.location.origin
+./resultado-bloqueio-20260827-135655.txt:218:./index.html.antes-restauracao-20260826-081508:4409:        window.location.href = "/login";
+./resultado-bloqueio-20260827-135655.txt:219:./index.html.antes-restauracao-20260826-081508:4632:                    window.location.href =
+./resultado-bloqueio-20260827-135655.txt:220:./resultado-bloqueio-20260827-135655.txt:58:./myembed-teste.html:1576:            e.preventDefault();
+./resultado-bloqueio-20260827-135655.txt:221:./resultado-bloqueio-20260827-135655.txt:59:./myembed-teste.html:1588:                if (t) { e.preventDefault(); scrollTo(t, { behavior: 'smooth', block: 'start' }); }
+./resultado-bloqueio-20260827-135655.txt:222:./resultado-bloqueio-20260827-135655.txt:62:./index.html:3665:    location.href =
+./resultado-bloqueio-20260827-135655.txt:223:./resultado-bloqueio-20260827-135655.txt:63:./index.html:3692:        window.location.href = "paginas/serie.html";
+./resultado-bloqueio-20260827-135655.txt:224:./resultado-bloqueio-20260827-135655.txt:64:./index.html:3702:    window.location.href = "paginas/filme.html";
+./resultado-bloqueio-20260827-135655.txt:225:./resultado-bloqueio-20260827-135655.txt:65:./index.html:3905:            window.location.origin
+./resultado-bloqueio-20260827-135655.txt:226:./resultado-bloqueio-20260827-135655.txt:66:./index.html:5532:        window.location.href = "/login";
+./resultado-bloqueio-20260827-135655.txt:227:./resultado-bloqueio-20260827-135655.txt:67:./index.html:5755:                    window.location.href =
+./resultado-bloqueio-20260827-135655.txt:228:./resultado-bloqueio-20260827-135655.txt:68:./series_nova.html:172:            location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:229:./resultado-bloqueio-20260827-135655.txt:69:./series_nova.html:352:        window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:230:./resultado-bloqueio-20260827-135655.txt:70:./minha_lista_resposta.html:212:                window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:231:./resultado-bloqueio-20260827-135655.txt:71:./minha_lista_resposta.html:221:                window.location.href="filme.html";
+./resultado-bloqueio-20260827-135655.txt:232:./resultado-bloqueio-20260827-135655.txt:72:./js/app.js:342:    window.location.href =
+./resultado-bloqueio-20260827-135655.txt:233:./resultado-bloqueio-20260827-135655.txt:73:./js/script.js:655:    window.location.href = 'paginas/filme.html';
+./resultado-bloqueio-20260827-135655.txt:234:./resultado-bloqueio-20260827-135655.txt:74:./js/home-visual.js:96:            label.textContent = "LUKANET"; label.style.cursor = "pointer"; label.onclick = function () { window.location.href = "https://lukanetmovelilimitada.netlify.app/"; };
+./resultado-bloqueio-20260827-135655.txt:235:./resultado-bloqueio-20260827-135655.txt:75:./js/home-visual.js:189:            window.location.href =
+./resultado-bloqueio-20260827-135655.txt:236:./resultado-bloqueio-20260827-135655.txt:76:./js/continuar-assistindo.js:334:  window.location.href =
+./resultado-bloqueio-20260827-135655.txt:237:./resultado-bloqueio-20260827-135655.txt:77:./js/navegacao.js:16:        window.location.pathname;
+./resultado-bloqueio-20260827-135655.txt:238:./resultado-bloqueio-20260827-135655.txt:78:./js/navegacao.js:32:    window.location.href = HOME;
+./resultado-bloqueio-20260827-135655.txt:239:./resultado-bloqueio-20260827-135655.txt:79:./js/navegacao.js:182:            window.location.replace(LOGIN);
+./resultado-bloqueio-20260827-135655.txt:240:./resultado-bloqueio-20260827-135655.txt:80:./js/navegacao.js:534:    const filmeFrame =
+./resultado-bloqueio-20260827-135655.txt:241:./resultado-bloqueio-20260827-135655.txt:81:./js/navegacao.js:535:        document.getElementById("filmeFrame");
+./resultado-bloqueio-20260827-135655.txt:242:./resultado-bloqueio-20260827-135655.txt:82:./js/navegacao.js:544:        if (filmeFrame) {
+./resultado-bloqueio-20260827-135655.txt:243:./resultado-bloqueio-20260827-135655.txt:83:./js/navegacao.js:545:            filmeFrame.src = "";
+./resultado-bloqueio-20260827-135655.txt:244:./resultado-bloqueio-20260827-135655.txt:84:./diagnostico_minhalista.txt:47:2978-            window.location.href=
+./resultado-bloqueio-20260827-135655.txt:245:./resultado-bloqueio-20260827-135655.txt:85:./diagnostico_minhalista.txt:176:172-            location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:246:./resultado-bloqueio-20260827-135655.txt:86:./teste_filmes.html:2552:                            location.href =
+./resultado-bloqueio-20260827-135655.txt:247:./resultado-bloqueio-20260827-135655.txt:87:./teste_filmes.html:2998:            window.location.href=
+./resultado-bloqueio-20260827-135655.txt:248:./resultado-bloqueio-20260827-135655.txt:88:./teste_series.html:192:            location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:249:./resultado-bloqueio-20260827-135655.txt:89:./teste_series.html:372:        window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:250:./resultado-bloqueio-20260827-135655.txt:90:./teste_minha_lista.html:212:                window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:251:./resultado-bloqueio-20260827-135655.txt:91:./teste_minha_lista.html:221:                window.location.href="filme.html";
+./resultado-bloqueio-20260827-135655.txt:252:./resultado-bloqueio-20260827-135655.txt:92:./diagnostico-lista-conteudo.txt:92:212-                window.location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:253:./resultado-bloqueio-20260827-135655.txt:93:./diagnostico-lista-conteudo.txt:228:192-            location.href="serie.html";
+./resultado-bloqueio-20260827-135655.txt:254:./resultado-bloqueio-20260827-135655.txt:94:./diagnostico-lista-completa.txt:112:239-                window.location.href="filme.html";
+./resultado-bloqueio-20260827-135655.txt:255:./resultado-bloqueio-20260827-135655.txt:95:./hero_blocos.txt:109:                window.location.origin
+./resultado-bloqueio-20260827-135655.txt:256:./resultado-bloqueio-20260827-135655.txt:96:./hero_blocos.txt:421:                window.location.origin
+./resultado-bloqueio-20260827-135655.txt:257:./resultado-bloqueio-20260827-135655.txt:97:./paginas/filme.html:1287:#playerFilme > .player-video > #filmeFrame {
+./resultado-bloqueio-20260827-135655.txt:258:./resultado-bloqueio-20260827-135655.txt:98:./paginas/filme.html:1326:    #playerFilme > .player-video > #filmeFrame {
+./resultado-bloqueio-20260827-135655.txt:259:./resultado-bloqueio-20260827-135655.txt:99:./paginas/filme.html:3236:                        class="play-btn player-btn"
+./resultado-bloqueio-20260827-135655.txt:260:./resultado-bloqueio-20260827-135655.txt:100:./paginas/filme.html:3246:                        class="play-btn player-btn"
+./resultado-bloqueio-20260827-135655.txt:261:./resultado-bloqueio-20260827-135655.txt:101:./paginas/filme.html:3256:                        class="play-btn player-btn"
+./resultado-bloqueio-20260827-135655.txt:262:./resultado-bloqueio-20260827-135655.txt:102:./paginas/filme.html:3266:                        class="play-btn player-btn"
+./resultado-bloqueio-20260827-135655.txt:263:./resultado-bloqueio-20260827-135655.txt:103:./paginas/filme.html:3283:                id="filmeFrame"
+./resultado-bloqueio-20260827-135655.txt:264:./resultado-bloqueio-20260827-135655.txt:104:./paginas/filme.html:3304:        new URLSearchParams(window.location.search);
+./resultado-bloqueio-20260827-135655.txt:265:./resultado-bloqueio-20260827-135655.txt:105:./paginas/filme.html:3546:        const filmeFrame =
+./resultado-bloqueio-20260827-135655.txt:266:./resultado-bloqueio-20260827-135655.txt:106:./paginas/filme.html:3547:            document.getElementById("filmeFrame");
+./resultado-bloqueio-20260827-135655.txt:267:./resultado-bloqueio-20260827-135655.txt:107:./paginas/filme.html:3549:        if (botao && playerFilme && filmeFrame && filme.id) {
+./resultado-bloqueio-20260827-135655.txt:268:./resultado-bloqueio-20260827-135655.txt:108:./paginas/filme.html:3578:                filmeFrame.src = "";
+./resultado-bloqueio-20260827-135655.txt:269:./resultado-bloqueio-20260827-135655.txt:109:./paginas/filme.html:3623:                            "https://myembed.biz/filme/" +
+./resultado-bloqueio-20260827-135655.txt:270:./resultado-bloqueio-20260827-135655.txt:110:./paginas/filme.html:3626:                        filmeFrame.src =
+./resultado-bloqueio-20260827-135655.txt:271:./resultado-bloqueio-20260827-135655.txt:111:./paginas/filme.html:3649:                                '.player-btn[data-player="1"]'
+./resultado-bloqueio-20260827-135655.txt:272:./resultado-bloqueio-20260827-135655.txt:112:./paginas/filme.html:3656:                                    ".player-btn"
+./resultado-bloqueio-20260827-135655.txt:273:./resultado-bloqueio-20260827-135655.txt:113:./paginas/filme.html:3681:                    ".player-btn"
+./resultado-bloqueio-20260827-135655.txt:274:./resultado-bloqueio-20260827-135655.txt:114:./paginas/filme.html:3700:                         * MyEmbed
+./resultado-bloqueio-20260827-135655.txt:275:./resultado-bloqueio-20260827-135655.txt:115:./paginas/filme.html:3705:                                "https://myembed.biz/filme/" +
+./resultado-bloqueio-20260827-135655.txt:276:./resultado-bloqueio-20260827-135655.txt:116:./paginas/filme.html:3716:                                "https://vidsrc.to/embed/movie/" +
+./resultado-bloqueio-20260827-135655.txt:277:./resultado-bloqueio-20260827-135655.txt:117:./paginas/filme.html:3727:                                "https://vidsrc.me/embed/movie/" +
+./resultado-bloqueio-20260827-135655.txt:278:./resultado-bloqueio-20260827-135655.txt:118:./paginas/filme.html:3738:                                "https://vidsrc.xyz/embed/movie/" +
+./resultado-bloqueio-20260827-135655.txt:279:./resultado-bloqueio-20260827-135655.txt:119:./paginas/filme.html:3770:                        filmeFrame.src =
+./resultado-bloqueio-20260827-135655.txt:280:./resultado-bloqueio-20260827-135655.txt:120:./paginas/filme.html:3947:        window.location.href = "filmes.html";
+./resultado-bloqueio-20260827-135655.txt:281:./resultado-bloqueio-20260827-135655.txt:121:./paginas/filme.html:4036:                new URLSearchParams(window.location.search);
+./resultado-bloqueio-20260827-135655.txt:282:./resultado-bloqueio-20260827-135655.txt:122:./paginas/filme.html:4296:.players-serie-opcoes .serie-player-btn {
+./resultado-bloqueio-20260827-135655.txt:283:./resultado-bloqueio-20260827-135655.txt:123:./paginas/filme.html:4314:.players-serie-opcoes .serie-player-btn:hover {
+./resultado-bloqueio-20260827-135655.txt:284:./resultado-bloqueio-20260827-135655.txt:124:./paginas/filme.html:4320:.players-serie-opcoes .serie-player-btn.ativo {
+./resultado-bloqueio-20260827-135655.txt:285:./resultado-bloqueio-20260827-135655.txt:125:./paginas/filme.html:4349:    .players-serie-opcoes .serie-player-btn {
+./resultado-bloqueio-20260827-135655.txt:286:./resultado-bloqueio-20260827-135655.txt:126:./paginas/filme.html:4374:.players-serie-opcoes .serie-player-btn:not(:first-child) {
+./resultado-bloqueio-20260827-135655.txt:287:./resultado-bloqueio-20260827-135655.txt:127:./paginas/filme.html:4427:#playerFilme > .player-video > #filmeFrame {
+./resultado-bloqueio-20260827-135655.txt:288:./resultado-bloqueio-20260827-135655.txt:128:./paginas/filme.html:4458:#playerFilme .player-btn {
+./resultado-bloqueio-20260827-135655.txt:289:./resultado-bloqueio-20260827-135655.txt:129:./paginas/filme.html:4487:    const frame = document.getElementById("filmeFrame");
+./resultado-bloqueio-20260827-135655.txt:290:./resultado-bloqueio-20260827-135655.txt:130:./paginas/filme.html:4490:        console.log("[PLAYER PROTEÇÃO] filmeFrame não encontrado.");
+./resultado-bloqueio-20260827-135655.txt:291:./resultado-bloqueio-20260827-135655.txt:131:./paginas/filme.html:4557:    const iframe = document.getElementById("filmeFrame");
+./resultado-bloqueio-20260827-135655.txt:292:./resultado-bloqueio-20260827-135655.txt:132:./paginas/filme.html:4560:        console.log("[PLAYER PROTECAO] filmeFrame não encontrado.");
+./resultado-bloqueio-20260827-135655.txt:293:./resultado-bloqueio-20260827-135655.txt:133:./paginas/filmes.html:2606:    new URLSearchParams(window.location.search);
+./resultado-bloqueio-20260827-135655.txt:294:./resultado-bloqueio-20260827-135655.txt:134:./paginas/filmes.html:2841:                            location.href =
+./resultado-bloqueio-20260827-135655.txt:295:./resultado-bloqueio-20260827-135655.txt:135:./paginas/filmes.html:3292:            window.location.href=
+./resultado-bloqueio-20260827-135655.txt:296:./resultado-bloqueio-20260827-135655.txt:136:./paginas/serie.html:1381:.serie-player-btn{
+./resultado-bloqueio-20260827-135655.txt:297:./resultado-bloqueio-20260827-135655.txt:137:./paginas/serie.html:1391:.serie-player-btn.ativo{
+./resultado-bloqueio-20260827-135655.txt:298:./resultado-bloqueio-20260827-135655.txt:138:./paginas/serie.html:1403:    .serie-player-btn{
+./resultado-bloqueio-20260827-135655.txt:299:./resultado-bloqueio-20260827-135655.txt:139:./paginas/serie.html:1521:                class="serie-player-btn ativo"
+./resultado-bloqueio-20260827-135655.txt:300:./resultado-bloqueio-20260827-135655.txt:140:./paginas/serie.html:1528:                class="serie-player-btn"
+./resultado-bloqueio-20260827-135655.txt:301:./resultado-bloqueio-20260827-135655.txt:141:./paginas/serie.html:2406:                "https://myembed.biz/serie/" +
+
+===== FIM =====

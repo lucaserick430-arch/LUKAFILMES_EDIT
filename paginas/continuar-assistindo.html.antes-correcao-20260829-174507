@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050505">
+<title>Continuar Assistindo — LUKAFILMES</title>
+
+
+
+</head>
+
+<body>
+
+
+
+
+
+<header class="header">
+
+    <div class="logo">
+        LUKA<span>FILMES</span>
+    </div>
+    <a class="inicio-header" href="../index.html">Início</a></header>
+
+
+
+
+<main>
+
+    <h1>▶ Continuar Assistindo</h1>
+
+    <div id="listaContinuar"></div>
+
+</main>
+
+
+
+
+
+
+
+</body>
+</html>

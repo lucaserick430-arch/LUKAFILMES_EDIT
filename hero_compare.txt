@@ -1,0 +1,73 @@
+===== GITHUB 52e32ed =====
+From https://github.com/lucaserick430-arch/LUKAFILMES_EDIT
+ * branch            master     -> FETCH_HEAD
+596:#heroTrailer{
+612:#heroTrailer.ativo{
+637:    #heroTrailer{
+1639:    id="heroTrailer"
+2181:let heroTrailerAtual = null;
+2183:async function carregarTrailerHero(item){
+2186:        document.getElementById("heroTrailer");
+2207:    heroTrailerAtual =
+2220:            item.__heroTrailerChave ||
+2240:        if(heroTrailerAtual !== idAtual){
+2291:            "https://www.youtube.com/embed/" +
+2326:                if(window.__heroYTPlayer){
+2329:                        window.__heroYTPlayer.destroy();
+2332:                    window.__heroYTPlayer =
+2336:                window.__heroYTPlayer =
+2414:                    "https://www.youtube.com/iframe_api";
+2441:        if(window.__heroAudioLiberado){
+2522:    carregarTrailerHero(item);
+3032:             * carregarTrailerHero não precise procurar
+3036:            item.__heroTrailer = proximo.trailer;
+3037:            item.__heroTrailerChave = proximo.chave;
+3914:<script>(function(){window.__heroAudioLiberado=false;document.addEventListener('pointerdown',function(){if(window.__heroAudioLiberado)return;window.__heroAudioLiberado=true;const f=document.getElementById('heroTrailer');if(f&&f.src){f.src=f.src.replace('&mute=1','&mute=0');}}, {once:true});})();</script>
+
+===== INDEX ATUAL =====
+596:#heroTrailer{
+612:#heroTrailer.ativo{
+663:    #heroTrailer{
+1691:#heroTrailer{
+1695:#heroTrailer,
+1696:#heroTrailer.ativo{
+2017:    id="heroTrailer"
+2695:let heroTrailerAtual = null;
+2697:async function carregarTrailerHero(item){
+2700:        document.getElementById("heroTrailer");
+2721:    heroTrailerAtual =
+2734:            item.__heroTrailerChave ||
+2754:        if(heroTrailerAtual !== idAtual){
+2805:            "https://www.youtube.com/embed/" +
+2845:                if(window.__heroYTPlayer){
+2848:                        window.__heroYTPlayer.destroy();
+2851:                    window.__heroYTPlayer =
+2855:                window.__heroYTPlayer =
+2888:                                                window.__heroAudioLiberado &&
+2889:                                                window.__heroYTPlayer
+2895:                                                        typeof window.__heroYTPlayer.unMute === "function"
+2897:                                                        window.__heroYTPlayer.unMute();
+2911:                                                            typeof window.__heroYTPlayer.unMute === "function"
+2913:                                                            window.__heroYTPlayer.unMute();
+2917:                                                            typeof window.__heroYTPlayer.pauseVideo === "function"
+2919:                                                            window.__heroYTPlayer.pauseVideo();
+2944:                                                window.__heroAudioLiberado = false;
+3024:                    "https://www.youtube.com/iframe_api";
+3123:    carregarTrailerHero(item);
+3645:             * carregarTrailerHero não precise procurar
+3649:            item.__heroTrailer = proximo.trailer;
+3650:            item.__heroTrailerChave = proximo.chave;
+5144:    window.__heroAudioLiberado = false;
+5149:        const player = window.__heroYTPlayer;
+5158:            if(typeof player.unMute === "function"){
+5159:                player.unMute();
+5162:            if(typeof player.pauseVideo === "function"){
+5163:                player.pauseVideo();
+5184:        if(window.__heroAudioLiberado){
+5188:        window.__heroAudioLiberado = true;
+5234:#heroTrailer {
+5262:#heroTrailer.ativo {
+5277:    #heroTrailer {
+5286:    #heroTrailer {
+
+===== FIM =====

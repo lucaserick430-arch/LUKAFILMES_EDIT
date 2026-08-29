@@ -1,0 +1,16 @@
+===== BACKUP SERVER =====
+server_render.js.backup-minha-lista-protecao-20260824-130521
+
+===== LIBERANDO ROTA NA PROTEÇÃO =====
+ROTA MINHA LISTA LIBERADA COM SUCESSO
+
+===== VERIFICAÇÃO =====
+3492:            req.path === '/api/catalogo' || req.path.startsWith('/api/serie/') || req.path === '/paginas/filmes.html' || req.path === '/paginas/filme.html' || req.path === '/paginas/filme' || req.path === '/paginas/series.html' || req.path === '/paginas/series_nova.html' || req.path === '/paginas/minha-lista'
+3524:app.get("/paginas/minha-lista", (req, res) => {
+
+===== STATUS =====
+ M server_render.js
+?? paginas/minha-lista.html
+
+===== BACKUP =====
+-rw-------. 1 u0_a412 u0_a412 82K Aug 24 13:05 server_render.js.backup-minha-lista-protecao-20260824-130521

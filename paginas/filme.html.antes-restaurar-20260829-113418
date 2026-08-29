@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LUKAFILMES - Filme</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+
+
+</head>
+
+<body>
+
+
+
+
+
+
+<div class="pagina-filme">
+
+    <div class="voltar-area">
+        <a href="#" class="voltar" id="voltarFilmes">
+            ← Voltar para filmes
+        </a>
+    </div>
+
+    <main class="detalhes">
+
+        <div class="poster">
+            <img id="poster" src="" alt="Capa do filme">
+        </div>
+
+        <div class="informacoes">
+
+            <h1 id="titulo">Carregando...</h1>
+
+            <div id="dados" class="dados"></div>
+
+            <div id="generos" class="generos"></div>
+
+            <div class="sinopse-box">
+
+                <h2 class="sinopse-titulo">
+                    Sinopse
+                </h2>
+
+                <p id="sinopse" class="sinopse">
+                    Carregando sinopse...
+                </p>
+
+            </div>
+
+            <div
+                class="botoes-assistir"
+                style="
+                    display:flex;
+                    flex-wrap:wrap;
+                    justify-content:center;
+                    align-items:center;
+                    gap:12px;
+                    margin:20px auto;
+                ">
+
+                <a
+                    class="assistir"
+                    id="botaoAssistir"
+                    href="#">
+                    ▶ PLAY
+                </a>
+
+                <a
+                    class="assistir"
+                    id="botaoAssistirOrigem"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style="display:none;">
+                    🌐 SITE DE ORIGEM
+                </a>
+
+                <a
+                    class="assistir"
+                    id="botaoMinhaListaFilme"
+                    href="javascript:void(0)"
+                    style="text-decoration:none;">
+                    ＋ Minha lista
+                </a>
+
+                
+
+<section
+        class="trailer"
+        id="trailerContainer"
+        style="display:none;">
+
+        <h2>▶ Trailer</h2>
+
+        <div class="trailer-video">
+
+            <iframe
+                id="trailerFrame"
+                src=""
+                title="Trailer do filme"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+    </section>
+
+            </div>
+
+    </main>
+
+    <section
+        class="player-filme"
+        id="playerFilme"
+        style="display:none;">
+
+        <h2>🎬 Escolha o Player</h2>
+
+        <div
+            id="listaPlayers"
+            class="lista-plays">
+
+            <div class="play-card">
+                <div class="play-numero">PLAY 1</div>
+                
+                <button type="button"
+                        class="play-btn player-btn"
+                        data-player="1">
+                    ▶ PLAY
+                </button>
+            </div>
+
+            <div class="play-card">
+                <div class="play-numero">PLAY 2</div>
+                
+                <button type="button"
+                        class="play-btn player-btn"
+                        data-player="2">
+                    ▶ PLAY
+                </button>
+            </div>
+
+            <div class="play-card">
+                <div class="play-numero">PLAY 3</div>
+
+                <button type="button"
+                        class="play-btn player-btn"
+                        data-player="3">
+                    ▶ PLAY
+                </button>
+            </div>
+
+            <div class="play-card">
+                <div class="play-numero">PLAY 4</div>
+
+                <button type="button"
+                        class="play-btn player-btn"
+                        data-player="4">
+                    ▶ PLAY
+                </button>
+            </div>
+
+        </div>
+
+        <div class="player-video" id="playerVideoArea">
+            <button
+                type="button"
+                id="playCentralFilme"
+                class="play-central-filme">
+                ▶ PLAY
+            </button>
+
+            <iframe id="filmeFrame" src="" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:70vh"></iframe>
+        </div>
+
+    </section>
+    
+
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style id="lukafilmes-netflix-hero-final">
+
+/* =========================================================
+   LUKAFILMES — HERO CINEMATOGRÁFICO
+   ESTILO NETFLIX
+   SOMENTE VISUAL
+   ========================================================= */
+
+body{
+    background:#050505 !important;
+}
+
+/* HERO PRINCIPAL */
+.pagina-filme{
+    min-height:100vh !important;
+    background:#050505 !important;
+    overflow-x:hidden !important;
+}
+
+/* IMAGEM DO FILME */
+.pagina-filme::before{
+    content:"" !important;
+    position:absolute !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+
+    height:820px !important;
+
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.97) 0%,
+            rgba(0,0,0,.78) 28%,
+            rgba(0,0,0,.30) 65%,
+            rgba(0,0,0,.72) 100%
+        ),
+        linear-gradient(
+            0deg,
+            #050505 0%,
+            rgba(5,5,5,.05) 45%,
+            rgba(0,0,0,.12) 100%
+        ),
+        var(--fundo-filme) !important;
+
+    background-size:cover !important;
+    background-position:center top !important;
+
+    filter:none !important;
+    opacity:1 !important;
+    transform:none !important;
+
+    z-index:0 !important;
+}
+
+/* DEGRADÊ INFERIOR */
+.pagina-filme::after{
+    content:"" !important;
+    position:absolute !important;
+    inset:0 !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent 0%,
+            transparent 42%,
+            rgba(5,5,5,.25) 55%,
+            rgba(5,5,5,.88) 76%,
+            #050505 91%
+        ) !important;
+
+    z-index:0 !important;
+    pointer-events:none !important;
+}
+
+/* VOLTAR */
+.voltar-area{
+    position:relative !important;
+    z-index:10 !important;
+
+    width:100% !important;
+    max-width:none !important;
+
+    padding:22px 4% 0 !important;
+}
+
+.voltar{
+    background:rgba(0,0,0,.58) !important;
+    border:1px solid rgba(255,255,255,.16) !important;
+    color:#fff !important;
+
+    border-radius:5px !important;
+
+    padding:9px 16px !important;
+
+    backdrop-filter:blur(10px) !important;
+}
+
+.voltar:hover{
+    background:#fff !important;
+    color:#000 !important;
+}
+
+/* =========================================================
+   HERO / INFORMAÇÕES
+   ========================================================= */
+
+.detalhes{
+    position:relative !important;
+    z-index:5 !important;
+
+    width:100% !important;
+    max-width:none !important;
+
+    min-height:700px !important;
+
+    margin:0 !important;
+
+    padding:
+        0 4% 90px !important;
+
+    display:flex !important;
+    align-items:flex-end !important;
+    justify-content:flex-start !important;
+
+    text-align:left !important;
+}
+
+/* REMOVE A CAPA SEPARADA */
+.poster{
+    display:none !important;
+}
+
+/* INFORMAÇÕES SOBRE O BACKDROP */
+.informacoes{
+    width:min(700px,65vw) !important;
+
+    padding:0 !important;
+    margin:0 !important;
+
+    align-self:flex-end !important;
+}
+
+/* TÍTULO */
+.informacoes h1{
+    margin:0 0 14px !important;
+
+    font-size:clamp(42px,5.5vw,76px) !important;
+
+    line-height:.98 !important;
+
+    font-weight:900 !important;
+
+    letter-spacing:-2.5px !important;
+
+    color:#fff !important;
+
+    text-shadow:
+        0 4px 25px rgba(0,0,0,.95),
+        0 8px 50px rgba(0,0,0,.8) !important;
+}
+
+/* DADOS */
+.dados{
+    margin:0 0 12px !important;
+
+    color:#ddd !important;
+
+    font-size:15px !important;
+    font-weight:500 !important;
+}
+
+/* GÊNEROS */
+.generos{
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* SINOPSE */
+.sinopse-box{
+    max-width:680px !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    background:none !important;
+    border:0 !important;
+
+    border-radius:0 !important;
+    box-shadow:none !important;
+
+    backdrop-filter:none !important;
+}
+
+/* ESCONDE "SINOPSE" */
+.sinopse-titulo{
+    display:none !important;
+}
+
+.sinopse{
+    max-width:680px !important;
+
+    margin:0 !important;
+
+    color:#ddd !important;
+
+    font-size:16px !important;
+
+    line-height:1.55 !important;
+
+    display:-webkit-box !important;
+    -webkit-box-orient:vertical !important;
+    -webkit-line-clamp:4 !important;
+
+    overflow:hidden !important;
+
+    text-shadow:0 2px 12px rgba(0,0,0,.8) !important;
+}
+
+/* =========================================================
+   BOTÕES
+   ========================================================= */
+
+.botoes-assistir{
+    display:flex !important;
+
+    justify-content:flex-start !important;
+    align-items:center !important;
+
+    gap:10px !important;
+
+    margin:22px 0 0 !important;
+}
+
+.assistir{
+    min-width:145px !important;
+
+    min-height:43px !important;
+
+    margin:0 !important;
+
+    padding:11px 21px !important;
+
+    display:inline-flex !important;
+
+    align-items:center !important;
+    justify-content:center !important;
+
+    border:0 !important;
+    border-radius:4px !important;
+
+    background:#fff !important;
+    color:#000 !important;
+
+    font-size:14px !important;
+    font-weight:800 !important;
+
+    box-shadow:none !important;
+
+    transition:
+        transform .2s ease,
+        background .2s ease !important;
+}
+
+.assistir:hover{
+    transform:scale(1.04) !important;
+    background:#e6e6e6 !important;
+}
+
+#botaoAssistirOrigem{
+    background:rgba(109,109,110,.78) !important;
+    color:#fff !important;
+}
+
+#botaoAssistirOrigem:hover{
+    background:rgba(109,109,110,.95) !important;
+}
+
+/* =========================================================
+   PLAYER
+   ========================================================= */
+
+.player-filme{
+    position:relative !important;
+    z-index:8 !important;
+
+    width:92% !important;
+    max-width:1100px !important;
+
+    margin:0 auto 55px !important;
+
+    padding:22px !important;
+
+    background:#111 !important;
+
+    border:1px solid rgba(255,255,255,.08) !important;
+
+    border-radius:7px !important;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.8) !important;
+
+    backdrop-filter:none !important;
+}
+
+.player-filme h2{
+    margin:0 0 16px !important;
+
+    text-align:left !important;
+
+    font-size:21px !important;
+}
+
+.player-video{
+    max-width:none !important;
+
+    border-radius:5px !important;
+}
+
+/* =========================================================
+   TRAILER
+   ========================================================= */
+
+.trailer{
+    position:relative !important;
+    z-index:8 !important;
+
+    width:92% !important;
+    max-width:1100px !important;
+
+    margin:0 auto 70px !important;
+
+    padding:22px !important;
+
+    background:#111 !important;
+
+    border:1px solid rgba(255,255,255,.08) !important;
+
+    border-radius:7px !important;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.8) !important;
+
+    backdrop-filter:none !important;
+}
+
+.trailer h2{
+    margin:0 0 16px !important;
+
+    text-align:left !important;
+
+    font-size:21px !important;
+}
+
+.trailer-video{
+    max-width:none !important;
+    border-radius:5px !important;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:700px){
+
+    .pagina-filme::before{
+        height:680px !important;
+
+        background-image:
+            linear-gradient(
+                180deg,
+                rgba(0,0,0,.08) 0%,
+                rgba(0,0,0,.22) 30%,
+                rgba(0,0,0,.65) 55%,
+                rgba(5,5,5,.96) 82%,
+                #050505 100%
+            ),
+            var(--fundo-filme) !important;
+
+        background-position:center top !important;
+    }
+
+    .voltar-area{
+        padding:15px !important;
+    }
+
+    .voltar{
+        padding:8px 13px !important;
+        font-size:12px !important;
+    }
+
+    .detalhes{
+        min-height:630px !important;
+
+        margin:0 !important;
+
+        padding:
+            0 16px 45px !important;
+
+        display:flex !important;
+
+        align-items:flex-start !important;
+        justify-content:flex-end !important;
+
+        text-align:center !important;
+    }
+
+    .informacoes{
+        width:100% !important;
+
+        margin-top:auto !important;
+
+        padding:0 !important;
+    }
+
+    .informacoes h1{
+        font-size:38px !important;
+
+        letter-spacing:-1px !important;
+
+        margin-bottom:12px !important;
+    }
+
+    .dados{
+        font-size:13px !important;
+    }
+
+    .generos{
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+    .sinopse{
+        max-width:100% !important;
+
+        font-size:14px !important;
+
+        line-height:1.55 !important;
+
+        -webkit-line-clamp:4 !important;
+    }
+
+    .botoes-assistir{
+        width:100% !important;
+
+        flex-direction:column !important;
+
+        gap:9px !important;
+
+        margin-top:20px !important;
+    }
+
+    .assistir,
+    #botaoAssistirOrigem{
+        width:100% !important;
+
+        min-height:46px !important;
+    }
+
+    .player-filme{
+        width:100% !important;
+
+        margin:0 0 30px !important;
+
+        padding:15px 8px 20px !important;
+
+        border-left:0 !important;
+        border-right:0 !important;
+
+        border-radius:0 !important;
+    }
+
+    .player-filme h2{
+        padding:0 5px !important;
+
+        font-size:19px !important;
+    }
+
+    .player-video{
+        width:100% !important;
+
+        aspect-ratio:16/9 !important;
+
+        height:auto !important;
+
+        min-height:0 !important;
+
+        border-radius:5px !important;
+    }
+
+    .trailer{
+        width:100% !important;
+
+        margin:0 0 45px !important;
+
+        padding:15px 8px 20px !important;
+
+        border-left:0 !important;
+        border-right:0 !important;
+
+        border-radius:0 !important;
+    }
+
+    .trailer h2{
+        padding:0 5px !important;
+
+        font-size:19px !important;
+    }
+
+    .trailer-video{
+        width:100% !important;
+
+        aspect-ratio:16/9 !important;
+
+        border-radius:5px !important;
+    }
+}
+
+</style>
+
+<style id="lukafilmes-hero-final-correcao">
+
+/* =========================================================
+   LUKAFILMES — HERO FINAL
+   SOMENTE VISUAL
+   ========================================================= */
+
+.pagina-filme{
+    position:relative !important;
+    min-height:100vh !important;
+    background:#050505 !important;
+    overflow-x:hidden !important;
+}
+
+/* BACKDROP */
+.pagina-filme::before{
+    content:"" !important;
+    position:absolute !important;
+    z-index:0 !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:850px !important;
+
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.98) 0%,
+            rgba(0,0,0,.82) 25%,
+            rgba(0,0,0,.35) 62%,
+            rgba(0,0,0,.72) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,.05) 0%,
+            rgba(5,5,5,.08) 35%,
+            rgba(5,5,5,.92) 82%,
+            #050505 100%
+        ),
+        var(--fundo-filme) !important;
+
+    background-size:cover !important;
+    background-position:center top !important;
+
+    filter:none !important;
+    opacity:1 !important;
+    transform:none !important;
+}
+
+/* DEGRADÊ GERAL */
+.pagina-filme::after{
+    content:"" !important;
+    position:absolute !important;
+    z-index:1 !important;
+    inset:0 !important;
+    pointer-events:none !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent 0%,
+            transparent 42%,
+            rgba(5,5,5,.28) 57%,
+            rgba(5,5,5,.82) 75%,
+            #050505 92%
+        ) !important;
+}
+
+/* VOLTAR */
+.voltar-area{
+    position:relative !important;
+    z-index:10 !important;
+    width:100% !important;
+    max-width:none !important;
+    padding:22px 4% 0 !important;
+}
+
+.voltar{
+    background:rgba(0,0,0,.60) !important;
+    border:1px solid rgba(255,255,255,.15) !important;
+    border-radius:5px !important;
+    color:#fff !important;
+    backdrop-filter:blur(10px) !important;
+}
+
+/* HERO */
+.detalhes{
+    position:relative !important;
+    z-index:5 !important;
+
+    width:100% !important;
+    max-width:none !important;
+
+    min-height:720px !important;
+
+    margin:0 !important;
+    padding:0 4% 85px !important;
+
+    display:flex !important;
+    align-items:flex-end !important;
+    justify-content:flex-start !important;
+
+    text-align:left !important;
+}
+
+/* REMOVE POSTER CENTRAL */
+.poster{
+    display:none !important;
+}
+
+/* INFORMAÇÕES */
+.informacoes{
+    width:min(700px,65vw) !important;
+    margin:0 !important;
+    padding:0 !important;
+    align-self:flex-end !important;
+}
+
+/* TÍTULO */
+.informacoes h1{
+    margin:0 0 14px !important;
+
+    font-size:clamp(42px,5.5vw,76px) !important;
+
+    line-height:.98 !important;
+    font-weight:900 !important;
+    letter-spacing:-2.5px !important;
+
+    color:#fff !important;
+
+    text-shadow:
+        0 4px 25px rgba(0,0,0,.95),
+        0 8px 50px rgba(0,0,0,.8) !important;
+}
+
+/* DADOS */
+.dados{
+    margin:0 0 12px !important;
+    color:#ddd !important;
+    font-size:15px !important;
+}
+
+/* GÊNEROS */
+.generos{
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* SINOPSE */
+.sinopse-box{
+    max-width:680px !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    background:none !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+
+    backdrop-filter:none !important;
+}
+
+.sinopse-titulo{
+    display:none !important;
+}
+
+.sinopse{
+    max-width:680px !important;
+
+    margin:0 !important;
+
+    color:#ddd !important;
+    font-size:16px !important;
+    line-height:1.55 !important;
+
+    display:-webkit-box !important;
+    -webkit-box-orient:vertical !important;
+    -webkit-line-clamp:4 !important;
+
+    overflow:hidden !important;
+
+    text-shadow:0 2px 12px rgba(0,0,0,.8) !important;
+}
+
+/* BOTÕES */
+.botoes-assistir{
+    display:flex !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+
+    gap:10px !important;
+
+    margin:22px 0 0 !important;
+}
+
+.assistir{
+    min-width:145px !important;
+    min-height:43px !important;
+
+    margin:0 !important;
+    padding:11px 21px !important;
+
+    display:inline-flex !important;
+
+    align-items:center !important;
+    justify-content:center !important;
+
+    border:0 !important;
+    border-radius:4px !important;
+
+    background:#fff !important;
+    color:#000 !important;
+
+    font-size:14px !important;
+    font-weight:800 !important;
+
+    box-shadow:none !important;
+}
+
+.assistir:hover{
+    background:#e6e6e6 !important;
+    transform:scale(1.04) !important;
+}
+
+#botaoAssistirOrigem{
+    background:rgba(109,109,110,.80) !important;
+    color:#fff !important;
+}
+
+/* PLAYER */
+.player-filme{
+    position:relative !important;
+    z-index:8 !important;
+
+    width:92% !important;
+    max-width:1100px !important;
+
+    margin:0 auto 55px !important;
+
+    padding:22px !important;
+
+    background:#111 !important;
+
+    border:1px solid rgba(255,255,255,.08) !important;
+    border-radius:7px !important;
+
+    box-shadow:0 25px 70px rgba(0,0,0,.8) !important;
+}
+
+.player-filme h2{
+    margin:0 0 16px !important;
+    text-align:left !important;
+    font-size:21px !important;
+}
+
+/* TRAILER */
+.trailer{
+    position:relative !important;
+    z-index:8 !important;
+
+    width:92% !important;
+    max-width:1100px !important;
+
+    margin:0 auto 70px !important;
+
+    padding:22px !important;
+
+    background:#111 !important;
+
+    border:1px solid rgba(255,255,255,.08) !important;
+    border-radius:7px !important;
+
+    box-shadow:0 25px 70px rgba(0,0,0,.8) !important;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+
+    .pagina-filme::before{
+        height:680px !important;
+
+        background-image:
+            linear-gradient(
+                180deg,
+                rgba(0,0,0,.08) 0%,
+                rgba(0,0,0,.22) 30%,
+                rgba(0,0,0,.62) 55%,
+                rgba(5,5,5,.96) 82%,
+                #050505 100%
+            ),
+            var(--fundo-filme) !important;
+
+        background-position:center top !important;
+        background-size:cover !important;
+    }
+
+    .voltar-area{
+        padding:15px !important;
+    }
+
+    .detalhes{
+        min-height:630px !important;
+
+        padding:0 16px 45px !important;
+
+        display:flex !important;
+
+        align-items:flex-end !important;
+        justify-content:flex-start !important;
+
+        text-align:left !important;
+    }
+
+    .informacoes{
+        width:100% !important;
+        margin:0 !important;
+    }
+
+    .informacoes h1{
+        font-size:38px !important;
+        letter-spacing:-1px !important;
+        margin-bottom:12px !important;
+    }
+
+    .dados{
+        font-size:13px !important;
+    }
+
+    .generos{
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+    .sinopse{
+        max-width:100% !important;
+        font-size:14px !important;
+        line-height:1.55 !important;
+        -webkit-line-clamp:4 !important;
+    }
+
+    .botoes-assistir{
+        width:100% !important;
+
+        flex-direction:column !important;
+
+        gap:9px !important;
+
+        margin-top:20px !important;
+    }
+
+    .assistir,
+    #botaoAssistirOrigem{
+        width:100% !important;
+        min-height:46px !important;
+    }
+
+    .player-filme{
+        width:100% !important;
+        margin:0 0 30px !important;
+        padding:15px 8px 20px !important;
+        border-left:0 !important;
+        border-right:0 !important;
+        border-radius:0 !important;
+    }
+
+    .player-filme h2{
+        padding:0 5px !important;
+        font-size:19px !important;
+    }
+
+    .trailer{
+        width:100% !important;
+        margin:0 0 45px !important;
+        padding:15px 8px 20px !important;
+        border-left:0 !important;
+        border-right:0 !important;
+        border-radius:0 !important;
+    }
+}
+
+</style>
+
+<style id="ajuste-final-player-trailer">
+
+/* =========================================================
+   AJUSTE FINAL — PLAYER + TRAILER
+   ========================================================= */
+
+.player-filme{
+    height:auto !important;
+    min-height:0 !important;
+    margin-bottom:12px !important;
+    padding-bottom:12px !important;
+}
+
+.player-video{
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    aspect-ratio:16/9 !important;
+    margin-bottom:0 !important;
+}
+
+.player-video iframe{
+    width:100% !important;
+    height:100% !important;
+    min-height:0 !important;
+    display:block !important;
+}
+
+.trailer{
+    height:auto !important;
+    min-height:0 !important;
+    margin-top:0 !important;
+    margin-bottom:25px !important;
+}
+
+.trailer-video{
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    aspect-ratio:16/9 !important;
+}
+
+.trailer-video iframe{
+    width:100% !important;
+    height:100% !important;
+    min-height:0 !important;
+    display:block !important;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+
+    .player-filme{
+        height:auto !important;
+        min-height:0 !important;
+        margin:0 0 10px !important;
+        padding:10px 8px !important;
+    }
+
+    .player-video{
+        width:100% !important;
+        height:auto !important;
+        min-height:0 !important;
+        aspect-ratio:16/9 !important;
+        margin:0 !important;
+    }
+
+    .player-video iframe{
+        width:100% !important;
+        height:100% !important;
+        min-height:0 !important;
+    }
+
+    .trailer{
+        height:auto !important;
+        min-height:0 !important;
+        margin:0 0 25px !important;
+        padding:10px 8px 15px !important;
+    }
+
+    .trailer-video{
+        width:100% !important;
+        height:auto !important;
+        min-height:0 !important;
+        aspect-ratio:16/9 !important;
+    }
+
+    .trailer-video iframe{
+        width:100% !important;
+        height:100% !important;
+        min-height:0 !important;
+    }
+}
+
+</style>
+
+
+<style id="lukafilmes-mobile-trailer-central-final">
+@media (max-width: 768px){
+
+    /* CENTRALIZA O QUADRO INTEIRO DO TRAILER */
+    .trailer,
+    .trailer-video{
+        width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        left: auto !important;
+        right: auto !important;
+        transform: none !important;
+        box-sizing: border-box !important;
+    }
+
+    .trailer-video iframe{
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        box-sizing: border-box !important;
+    }
+
+}
+</style>
+
+<style id="lukafilmes-mobile-trailer-position-final">
+@media screen and (max-width: 768px){
+
+    /* FORÇA A ÁREA DO TRAILER A USAR O CENTRO REAL DA TELA */
+    .trailer{
+        position: relative !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* QUADRO DO TRAILER */
+    .trailer-video{
+        position: relative !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+
+        width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        box-sizing: border-box !important;
+    }
+
+    /* PLAYER */
+    .trailer-video iframe{
+        display: block !important;
+
+        position: relative !important;
+        left: 0 !important;
+        right: auto !important;
+        transform: none !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        box-sizing: border-box !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-mobile-trailer-fullwidth-final">
+@media screen and (max-width: 768px){
+
+    .trailer{
+        position: relative !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .trailer-video{
+        position: relative !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        box-sizing: border-box !important;
+    }
+
+    .trailer-video iframe{
+        display: block !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        box-sizing: border-box !important;
+    }
+
+}
+</style>
+
+
+
+
+
+<style id="filmeFavoritosTopo-mobile-tamanho-ajuste">
+@media (max-width: 600px) {
+    #filmeFavoritosTopo {
+        top: 8px !important;
+        right: 8px !important;
+        left: auto !important;
+        gap: 4px !important;
+        max-width: calc(100vw - 16px) !important;
+    }
+
+    #filmeFavoritosTopo button,
+    #filmeFavoritosTopo a {
+        padding: 6px 8px !important;
+        font-size: 10px !important;
+        line-height: 1.15 !important;
+        white-space: nowrap !important;
+        border-radius: 6px !important;
+    }
+}
+</style>
+
+
+
+<style id="lukafilmes-player-myembed-mobile-final">
+/* =========================================================
+   LUKAFILMES — PLAYER MYEMBED MOBILE FINAL
+   SOMENTE PLAYER
+   ========================================================= */
+
+#playerFilme > .player-video {
+    width: 100% !important;
+    max-width: 1100px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+}
+
+#playerFilme > .player-video > #filmeFrame {
+    display: block !important;
+    width: 100% !important;
+    height: 70vh !important;
+    min-height: 420px !important;
+    max-height: 720px !important;
+    margin: 0 auto !important;
+    border: 0 !important;
+    box-sizing: border-box !important;
+}
+
+@media (max-width: 768px) {
+
+    #playerFilme > .player-video {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin-left: 50% !important;
+        margin-right: 0 !important;
+        transform: translateX(-50%) !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    #playerFilme > .player-video > #filmeFrame {
+        display: block !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 70vh !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        box-sizing: border-box !important;
+    }
+}
+</style>
+

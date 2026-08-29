@@ -1,0 +1,43 @@
+===== HOME → SÉRIES POPULARES CORRIGIDO =====
+Backup: index.html.backup-home-series-20260828-113949
+3639-        item.tipo === "serie" ||
+3640-        item.tipo === "series"
+3641-        ? "serie"
+3642-        : "filme";
+3643-
+3644:    if(tipo === "serie"){
+3645-        localStorage.removeItem("filmeSelecionado");
+3646-
+3647-        localStorage.setItem(
+3648-            "serieSelecionada",
+3649-            JSON.stringify({
+3650-                ...item,
+3651-                titulo:item.title||item.name||item.titulo||item.nome||"",
+3652-                ano:(item.first_air_date||item.release_date||"").slice(0,4),
+3653-                capa:item.poster_path||item.capa||"",
+3654-                sinopse:item.overview||item.sinopse||"",
+3655-                nota:item.vote_average||item.nota||0,
+3656-                media_type:"tv",
+3657-                tipo:"serie"
+3658-            })
+3659-        );
+3660-
+3661-        location.href="paginas/serie.html";
+3662-        return;
+3663-    }else{
+3664-        const filmeKey =
+3665-            "filmeSelecionadoHome_" + String(id);
+3666-
+3667-        localStorage.setItem(
+3668-            filmeKey,
+3669-            JSON.stringify({...item})
+--
+3694-        item.tipo === "serie" ||
+3695-        item.tipo === "series"
+3696-            ? "serie"
+3697-            : "filme";
+3698-
+3699:    if(tipo === "serie"){
+3700-        localStorage.removeItem("filmeSelecionado");
+3701-        localStorage.setItem(
+===== FIM =====

@@ -1,0 +1,1214 @@
+===== LUKAFILMES — COMPARAÇÃO REAL DO PLAYER =====
+
+===== 1. PLAYER ATUAL =====
+3277-                id="playCentralFilme"
+3278-                class="play-central-filme">
+3279-                ▶ PLAY
+3280-            </button>
+3281-
+3282:            <iframe id="filmeFrame" src="https://myembed.biz/filme/tt22084616" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:70vh"></iframe>
+3283-        </div>
+3284-
+3285-    </section>
+3286-    
+3287-
+3288-</div>
+3289-
+3290-<script>
+3291-(function () {
+3292-
+3293-    const parametros =
+3294-        new URLSearchParams(window.location.search);
+--
+3608-                            String(filme.id).trim();
+3609-
+3610-                        if (!tmdbId) return;
+3611-
+3612-                        const embedUrl =
+3613:                            "https://myembed.biz/filme/" +
+3614-                            tmdbId;
+3615-
+3616-                        filmeFrame.src =
+3617-                            embedUrl;
+3618-
+3619-                        /* ==========================================
+3620-                           CONTINUAR ASSISTINDO
+3621-                           REGISTRA O FILME + PLAYER 1
+3622-                           ========================================== */
+3623-                        if (window.LukaContinuar) {
+3624-                            LukaContinuar.registrarInicio({
+3625-                                id: filme.id,
+--
+3690-                         * MyEmbed
+3691-                         */
+3692-                        if (numero === "1") {
+3693-
+3694-                            embedUrl =
+3695:                                "https://myembed.biz/filme/" +
+3696-                                tmdbId;
+3697-                        }
+3698-
+3699-                        /*
+3700-                         * PLAYER 2
+3701-                         * Fonte alternativa TMDB
+3702-                         */
+3703-                        else if (numero === "2") {
+3704-
+3705-                            embedUrl =
+3706:                                "https://vidsrc.to/embed/movie/" +
+3707-                                tmdbId;
+3708-                        }
+3709-
+3710-                        /*
+3711-                         * PLAYER 3
+3712-                         * Fonte alternativa
+3713-                         */
+3714-                        else if (numero === "3") {
+3715-
+3716-                            embedUrl =
+3717:                                "https://vidsrc.me/embed/movie/" +
+3718-                                tmdbId;
+3719-                        }
+3720-
+3721-                        /*
+3722-                         * PLAYER 4
+3723-                         * Fonte alternativa
+3724-                         */
+3725-                        else if (numero === "4") {
+3726-
+3727-                            embedUrl =
+3728-                                "";
+3729-                        }
+
+===== 2. PLAYER BACKUP 11:50 =====
+3602-                            String(filme.id).trim();
+3603-
+3604-                        if (!tmdbId) return;
+3605-
+3606-                        const embedUrl =
+3607:                            "https://myembed.biz/filme/" +
+3608-                            tmdbId;
+3609-
+3610-                        filmeFrame.src =
+3611-                            embedUrl;
+3612-
+3613-                        playCentral.classList.add(
+3614-                            "oculto"
+3615-                        );
+3616-
+3617-                        const primeiroPlayer =
+3618-                            document.querySelector(
+3619-                                '.player-btn[data-player="1"]'
+--
+3670-                         * MyEmbed
+3671-                         */
+3672-                        if (numero === "1") {
+3673-
+3674-                            embedUrl =
+3675:                                "https://myembed.biz/filme/" +
+3676-                                tmdbId;
+3677-                        }
+3678-
+3679-                        /*
+3680-                         * PLAYER 2
+3681-                         * Fonte alternativa TMDB
+3682-                         */
+3683-                        else if (numero === "2") {
+3684-
+3685-                            embedUrl =
+3686:                                "https://vidsrc.to/embed/movie/" +
+3687-                                tmdbId;
+3688-                        }
+3689-
+3690-                        /*
+3691-                         * PLAYER 3
+3692-                         * Fonte alternativa
+3693-                         */
+3694-                        else if (numero === "3") {
+3695-
+3696-                            embedUrl =
+3697:                                "https://vidsrc.me/embed/movie/" +
+3698-                                tmdbId;
+3699-                        }
+3700-
+3701-                        /*
+3702-                         * PLAYER 4
+3703-                         * Fonte alternativa
+3704-                         */
+3705-                        else if (numero === "4") {
+3706-
+3707-                            embedUrl =
+3708:                                "https://vidsrc.xyz/embed/movie/" +
+3709-                                tmdbId;
+3710-                        }
+3711-
+3712-                        if (!embedUrl) {
+3713-                            return;
+3714-                        }
+3715-
+3716-                        console.log(
+3717-                            "[PLAYER SELECIONADO]",
+3718-                            numero,
+3719-                            embedUrl
+3720-                        );
+
+===== 3. PLAYER COMMIT 2b08dce =====
+3602-                            String(filme.id).trim();
+3603-
+3604-                        if (!tmdbId) return;
+3605-
+3606-                        const embedUrl =
+3607:                            "https://myembed.biz/filme/" +
+3608-                            tmdbId;
+3609-
+3610-                        filmeFrame.src =
+3611-                            embedUrl;
+3612-
+3613-                        /* =====================================================
+3614-                           CONTINUAR ASSISTINDO
+3615-                           O PLAY CENTRAL também precisa registrar o filme.
+3616-                           ===================================================== */
+3617-                        if (typeof salvarSelecaoPlayer === "function") {
+3618-                            salvarSelecaoPlayer("1");
+3619-                        } else if (
+--
+3719-                         * MyEmbed
+3720-                         */
+3721-                        if (numero === "1") {
+3722-
+3723-                            embedUrl =
+3724:                                "https://myembed.biz/filme/" +
+3725-                                tmdbId;
+3726-                        }
+3727-
+3728-                        /*
+3729-                         * PLAYER 2
+3730-                         * Fonte alternativa TMDB
+3731-                         */
+3732-                        else if (numero === "2") {
+3733-
+3734-                            embedUrl =
+3735:                                "https://vidsrc.to/embed/movie/" +
+3736-                                tmdbId;
+3737-                        }
+3738-
+3739-                        /*
+3740-                         * PLAYER 3
+3741-                         * Fonte alternativa
+3742-                         */
+3743-                        else if (numero === "3") {
+3744-
+3745-                            embedUrl =
+3746:                                "https://vidsrc.me/embed/movie/" +
+3747-                                tmdbId;
+3748-                        }
+3749-
+3750-                        /*
+3751-                         * PLAYER 4
+3752-                         * Fonte alternativa
+3753-                         */
+3754-                        else if (numero === "4") {
+3755-
+3756-                            embedUrl =
+3757:                                "https://vidsrc.xyz/embed/movie/" +
+3758-                                tmdbId;
+3759-                        }
+3760-
+3761-                        if (!embedUrl) {
+3762-                            return;
+3763-                        }
+3764-
+3765-                        console.log(
+3766-                            "[PLAYER SELECIONADO]",
+3767-                            numero,
+3768-                            embedUrl
+3769-                        );
+
+===== 4. BLOCO PLAY CENTRAL ATUAL =====
+3262-            <div class="play-card">
+3263-                <div class="play-numero">PLAY 4</div>
+3264-
+3265-                <button type="button"
+3266-                        class="play-btn player-btn"
+3267-                        data-player="4">
+3268-                    ▶ PLAY
+3269-                </button>
+3270-            </div>
+3271-
+3272-        </div>
+3273-
+3274-        <div class="player-video" id="playerVideoArea">
+3275-            <button
+3276-                type="button"
+3277:                id="playCentralFilme"
+3278-                class="play-central-filme">
+3279-                ▶ PLAY
+3280-            </button>
+3281-
+3282:            <iframe id="filmeFrame" src="https://myembed.biz/filme/tt22084616" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:70vh"></iframe>
+3283-        </div>
+3284-
+3285-    </section>
+3286-    
+3287-
+3288-</div>
+3289-
+3290-<script>
+3291-(function () {
+3292-
+3293-    const parametros =
+3294-        new URLSearchParams(window.location.search);
+3295-
+3296-    const idUrl =
+3297-        parametros.get("id");
+3298-
+3299-    let salvo = null;
+3300-
+3301-    /*
+3302-     * O ID da URL é a fonte principal.
+3303-     * Cada filme possui seu próprio registro,
+3304-     * evitando que um filme anterior seja reutilizado.
+3305-     */
+3306-    if (idUrl) {
+3307-
+3308-        const chaveFilme =
+3309-            "filmeSelecionadoHome_" + String(idUrl);
+3310-
+3311-        const salvoPorId =
+3312-            localStorage.getItem(chaveFilme);
+3313-
+3314-        if (salvoPorId) {
+3315-            salvo = salvoPorId;
+3316-        }
+3317-    }
+3318-
+3319-    /*
+3320-     * Compatibilidade com acessos antigos.
+3321-     */
+3322-    if (!salvo) {
+3323-        salvo =
+3324-            localStorage.getItem("filmeSelecionado");
+3325-    }
+3326-
+3327-    if (!salvo) {
+--
+3557-                console.log(
+3558-                    "[PLAYER TMDB]",
+3559-                    filme.titulo,
+3560-                    tmdbId
+3561-                );
+3562-
+3563-                /* ABRE O PLAYER PRETO */
+3564-                playerFilme.style.display =
+3565-                    "block";
+3566-
+3567-                /* NÃO CARREGA O SERVIDOR AINDA */
+3568-                filmeFrame.src = "";
+3569-
+3570-                const playCentral =
+3571-                    document.getElementById(
+3572:                        "playCentralFilme"
+3573-                    );
+3574-
+3575-                if (playCentral) {
+3576-                    playCentral.classList.remove(
+3577-                        "oculto"
+3578-                    );
+3579-                }
+3580-
+3581-                botao.innerHTML =
+3582-                    "▶ PLAY";
+3583-
+3584-                /* DESLOCAMENTO DIRETO, SEM ANIMAÇÃO */
+3585-                playerFilme.scrollIntoView({
+3586-                    behavior: "auto",
+3587-                    block: "center"
+3588-                });
+3589-
+3590-            });
+3591-
+3592-            /* ==========================================
+3593:               PLAY CENTRAL — CARREGA PLAYER 1
+3594-               ========================================== */
+3595-
+3596-            const playCentral =
+3597-                document.getElementById(
+3598:                    "playCentralFilme"
+3599-                );
+3600-
+3601-            if (playCentral) {
+3602-
+3603-                playCentral.addEventListener(
+3604-                    "click",
+3605-                    function () {
+3606-
+3607-                        const tmdbId =
+3608-                            String(filme.id).trim();
+3609-
+3610-                        if (!tmdbId) return;
+3611-
+3612-                        const embedUrl =
+3613:                            "https://myembed.biz/filme/" +
+3614-                            tmdbId;
+3615-
+3616-                        filmeFrame.src =
+3617-                            embedUrl;
+3618-
+3619-                        /* ==========================================
+3620-                           CONTINUAR ASSISTINDO
+3621-                           REGISTRA O FILME + PLAYER 1
+3622-                           ========================================== */
+3623-                        if (window.LukaContinuar) {
+3624-                            LukaContinuar.registrarInicio({
+3625-                                id: filme.id,
+3626-                                titulo: filme.titulo || "Filme",
+3627-                                capa: filme.capa || "",
+3628-                                tipo: "filme",
+3629-                                player: "1"
+3630-                            });
+3631-                        }
+3632-
+3633-                        playCentral.classList.add(
+3634-                            "oculto"
+3635-                        );
+3636-
+3637-                        const primeiroPlayer =
+3638-                            document.querySelector(
+3639-                                '.player-btn[data-player="1"]'
+3640-                            );
+3641-
+3642-                        if (primeiroPlayer) {
+3643-
+3644-                            document
+3645-                                .querySelectorAll(
+3646-                                    ".player-btn"
+3647-                                )
+3648-                                .forEach(function(btn){
+3649-                                    btn.classList.remove(
+3650-                                        "player-selecionado"
+3651-                                    );
+3652-                                });
+3653-
+3654-                            primeiroPlayer.classList.add(
+3655-                                "player-selecionado"
+3656-                            );
+3657-                        }
+3658-
+--
+3680-                        const numero =
+3681-                            this.dataset.player;
+3682-
+3683-                        const tmdbId =
+3684-                            String(filme.id).trim();
+3685-
+3686-                        let embedUrl = "";
+3687-
+3688-                        /*
+3689-                         * PLAYER 1
+3690-                         * MyEmbed
+3691-                         */
+3692-                        if (numero === "1") {
+3693-
+3694-                            embedUrl =
+3695:                                "https://myembed.biz/filme/" +
+3696-                                tmdbId;
+3697-                        }
+3698-
+3699-                        /*
+3700-                         * PLAYER 2
+3701-                         * Fonte alternativa TMDB
+3702-                         */
+3703-                        else if (numero === "2") {
+3704-
+3705-                            embedUrl =
+3706-                                "https://vidsrc.to/embed/movie/" +
+3707-                                tmdbId;
+3708-                        }
+3709-
+3710-                        /*
+3711-                         * PLAYER 3
+3712-                         * Fonte alternativa
+3713-                         */
+3714-                        else if (numero === "3") {
+3715-
+3716-                            embedUrl =
+3717-                                "https://vidsrc.me/embed/movie/" +
+3718-                                tmdbId;
+3719-                        }
+3720-
+3721-                        /*
+3722-                         * PLAYER 4
+3723-                         * Fonte alternativa
+3724-                         */
+3725-                        else if (numero === "4") {
+3726-
+3727-                            embedUrl =
+3728-                                "";
+3729-                        }
+3730-
+3731-                        if (!embedUrl) {
+3732-                            return;
+3733-                        }
+3734-
+3735-                        console.log(
+3736-                            "[PLAYER SELECIONADO]",
+3737-                            numero,
+3738-                            embedUrl
+3739-                        );
+3740-
+--
+4415-
+4416-#playerFilme > .player-video > #filmeFrame {
+4417-    display: block !important;
+4418-    position: relative !important;
+4419-    width: 100% !important;
+4420-    height: 100% !important;
+4421-    min-width: 100% !important;
+4422-    min-height: 100% !important;
+4423-    border: 0 !important;
+4424-    opacity: 1 !important;
+4425-    visibility: visible !important;
+4426-    pointer-events: auto !important;
+4427-    background: #000 !important;
+4428-}
+4429-
+4430:/* PLAY CENTRAL fica acima do iframe antes do carregamento */
+4431:#playerFilme > .player-video > #playCentralFilme {
+4432-    z-index: 20 !important;
+4433-}
+4434-
+4435-/* Depois de ocultado, não pode bloquear o iframe */
+4436:#playerFilme > .player-video > #playCentralFilme.oculto {
+4437-    display: none !important;
+4438-    pointer-events: none !important;
+4439-}
+4440-
+4441-/* Players */
+4442-#playerFilme .lista-plays {
+4443-    position: relative;
+4444-    z-index: 30 !important;
+4445-}
+4446-
+4447-#playerFilme .player-btn {
+4448-    pointer-events: auto !important;
+4449-}
+4450-
+4451-/* Mobile */
+4452-@media (max-width: 768px) {
+4453-
+4454-    #playerFilme > .player-video {
+4455-        height: 70vh !important;
+4456-        min-height: 360px !important;
+4457-    }
+4458-
+4459-}
+4460-
+4461-</style>
+4462-
+4463-
+4464-<script id="lukafilmes-popup-protecao">
+4465-(function () {
+4466-    "use strict";
+4467-
+4468-    /*
+4469-     * LUKAFILMES — PROTEÇÃO DE NAVEGAÇÃO DO PLAYER
+4470-     *
+4471-     * Mantém a navegação iniciada pelo próprio LUKAFILMES
+4472-     * na página atual e evita que elementos externos do site
+4473-     * sejam transformados em navegação da página principal.
+4474-     */
+4475-
+4476-    const frame = document.getElementById("filmeFrame");
+4477-
+4478-    if (!frame) {
+4479-        console.log("[PLAYER PROTEÇÃO] filmeFrame não encontrado.");
+4480-        return;
+4481-    }
+
+===== 5. BLOCO PLAY CENTRAL BACKUP =====
+3249-            <div class="play-card">
+3250-                <div class="play-numero">PLAY 2</div>
+3251-                
+3252-                <button type="button"
+3253-                        class="play-btn player-btn"
+3254-                        data-player="2">
+3255-                    ▶ PLAY
+3256-                </button>
+3257-            </div>
+3258-
+3259-        </div>
+3260-
+3261-        <div class="player-video" id="playerVideoArea">
+3262-            <button
+3263-                type="button"
+3264:                id="playCentralFilme"
+3265-                class="play-central-filme">
+3266-                ▶ PLAY
+3267-            </button>
+3268-
+3269-            <iframe
+3270-                id="filmeFrame"
+3271-                src=""
+3272-                title="Filme"
+3273-                allow="autoplay; fullscreen; picture-in-picture"
+3274-                sandbox="allow-scripts allow-same-origin"
+3275-                allowfullscreen>
+3276-            </iframe>
+3277-        </div>
+3278-
+3279-    </section>
+3280-    
+3281-
+3282-</div>
+3283-
+3284-<script>
+3285-(function () {
+3286-
+3287-    const parametros =
+3288-        new URLSearchParams(window.location.search);
+3289-
+3290-    const idUrl =
+3291-        parametros.get("id");
+3292-
+3293-    let salvo = null;
+3294-
+3295-    /*
+3296-     * O ID da URL é a fonte principal.
+3297-     * Cada filme possui seu próprio registro,
+3298-     * evitando que um filme anterior seja reutilizado.
+3299-     */
+3300-    if (idUrl) {
+3301-
+3302-        const chaveFilme =
+3303-            "filmeSelecionadoHome_" + String(idUrl);
+3304-
+3305-        const salvoPorId =
+3306-            localStorage.getItem(chaveFilme);
+3307-
+3308-        if (salvoPorId) {
+3309-            salvo = salvoPorId;
+--
+3551-                console.log(
+3552-                    "[PLAYER TMDB]",
+3553-                    filme.titulo,
+3554-                    tmdbId
+3555-                );
+3556-
+3557-                /* ABRE O PLAYER PRETO */
+3558-                playerFilme.style.display =
+3559-                    "block";
+3560-
+3561-                /* NÃO CARREGA O SERVIDOR AINDA */
+3562-                filmeFrame.src = "";
+3563-
+3564-                const playCentral =
+3565-                    document.getElementById(
+3566:                        "playCentralFilme"
+3567-                    );
+3568-
+3569-                if (playCentral) {
+3570-                    playCentral.classList.remove(
+3571-                        "oculto"
+3572-                    );
+3573-                }
+3574-
+3575-                botao.innerHTML =
+3576-                    "▶ PLAY";
+3577-
+3578-                /* DESLOCAMENTO DIRETO, SEM ANIMAÇÃO */
+3579-                playerFilme.scrollIntoView({
+3580-                    behavior: "auto",
+3581-                    block: "center"
+3582-                });
+3583-
+3584-            });
+3585-
+3586-            /* ==========================================
+3587:               PLAY CENTRAL — CARREGA PLAYER 1
+3588-               ========================================== */
+3589-
+3590-            const playCentral =
+3591-                document.getElementById(
+3592:                    "playCentralFilme"
+3593-                );
+3594-
+3595-            if (playCentral) {
+3596-
+3597-                playCentral.addEventListener(
+3598-                    "click",
+3599-                    function () {
+3600-
+3601-                        const tmdbId =
+3602-                            String(filme.id).trim();
+3603-
+3604-                        if (!tmdbId) return;
+3605-
+3606-                        const embedUrl =
+3607:                            "https://myembed.biz/filme/" +
+3608-                            tmdbId;
+3609-
+3610-                        filmeFrame.src =
+3611-                            embedUrl;
+3612-
+3613-                        playCentral.classList.add(
+3614-                            "oculto"
+3615-                        );
+3616-
+3617-                        const primeiroPlayer =
+3618-                            document.querySelector(
+3619-                                '.player-btn[data-player="1"]'
+3620-                            );
+3621-
+3622-                        if (primeiroPlayer) {
+3623-
+3624-                            document
+3625-                                .querySelectorAll(
+3626-                                    ".player-btn"
+3627-                                )
+3628-                                .forEach(function(btn){
+3629-                                    btn.classList.remove(
+3630-                                        "player-selecionado"
+3631-                                    );
+3632-                                });
+3633-
+3634-                            primeiroPlayer.classList.add(
+3635-                                "player-selecionado"
+3636-                            );
+3637-                        }
+3638-
+3639-                        botao.innerHTML =
+3640-                            "▶ REPRODUZINDO";
+3641-                    }
+3642-                );
+3643-            }
+3644-
+3645-            /* ==========================================
+3646-               SELECAO DOS PLAYERS
+3647-               ========================================== */
+3648-
+3649-            const botoesPlayers =
+3650-                document.querySelectorAll(
+3651-                    ".player-btn"
+3652-                );
+--
+3660-                        const numero =
+3661-                            this.dataset.player;
+3662-
+3663-                        const tmdbId =
+3664-                            String(filme.id).trim();
+3665-
+3666-                        let embedUrl = "";
+3667-
+3668-                        /*
+3669-                         * PLAYER 1
+3670-                         * MyEmbed
+3671-                         */
+3672-                        if (numero === "1") {
+3673-
+3674-                            embedUrl =
+3675:                                "https://myembed.biz/filme/" +
+3676-                                tmdbId;
+3677-                        }
+3678-
+3679-                        /*
+3680-                         * PLAYER 2
+3681-                         * Fonte alternativa TMDB
+3682-                         */
+3683-                        else if (numero === "2") {
+3684-
+3685-                            embedUrl =
+3686-                                "https://vidsrc.to/embed/movie/" +
+3687-                                tmdbId;
+3688-                        }
+3689-
+3690-                        /*
+3691-                         * PLAYER 3
+3692-                         * Fonte alternativa
+3693-                         */
+3694-                        else if (numero === "3") {
+3695-
+3696-                            embedUrl =
+3697-                                "https://vidsrc.me/embed/movie/" +
+3698-                                tmdbId;
+3699-                        }
+3700-
+3701-                        /*
+3702-                         * PLAYER 4
+3703-                         * Fonte alternativa
+3704-                         */
+3705-                        else if (numero === "4") {
+3706-
+3707-                            embedUrl =
+3708-                                "https://vidsrc.xyz/embed/movie/" +
+3709-                                tmdbId;
+3710-                        }
+3711-
+3712-                        if (!embedUrl) {
+3713-                            return;
+3714-                        }
+3715-
+3716-                        console.log(
+3717-                            "[PLAYER SELECIONADO]",
+3718-                            numero,
+3719-                            embedUrl
+3720-                        );
+
+===== 6. BLOCO PLAYERS ATUAL =====
+3222-        class="player-filme"
+3223-        id="playerFilme"
+3224-        style="display:none;">
+3225-
+3226-        <h2>🎬 Escolha o Player</h2>
+3227-
+3228-        <div
+3229-            id="listaPlayers"
+3230-            class="lista-plays">
+3231-
+3232-            <div class="play-card">
+3233-                <div class="play-numero">PLAY 1</div>
+3234-                
+3235-                <button type="button"
+3236-                        class="play-btn player-btn"
+3237:                        data-player="1">
+3238-                    ▶ PLAY
+3239-                </button>
+3240-            </div>
+3241-
+3242-            <div class="play-card">
+3243-                <div class="play-numero">PLAY 2</div>
+3244-                
+3245-                <button type="button"
+3246-                        class="play-btn player-btn"
+3247:                        data-player="2">
+3248-                    ▶ PLAY
+3249-                </button>
+3250-            </div>
+3251-
+3252-            <div class="play-card">
+3253-                <div class="play-numero">PLAY 3</div>
+3254-
+3255-                <button type="button"
+3256-                        class="play-btn player-btn"
+3257:                        data-player="3">
+3258-                    ▶ PLAY
+3259-                </button>
+3260-            </div>
+3261-
+3262-            <div class="play-card">
+3263-                <div class="play-numero">PLAY 4</div>
+3264-
+3265-                <button type="button"
+3266-                        class="play-btn player-btn"
+3267:                        data-player="4">
+3268-                    ▶ PLAY
+3269-                </button>
+3270-            </div>
+3271-
+3272-        </div>
+3273-
+3274-        <div class="player-video" id="playerVideoArea">
+3275-            <button
+3276-                type="button"
+3277-                id="playCentralFilme"
+3278-                class="play-central-filme">
+3279-                ▶ PLAY
+3280-            </button>
+3281-
+3282-            <iframe id="filmeFrame" src="https://myembed.biz/filme/tt22084616" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:70vh"></iframe>
+3283-        </div>
+3284-
+3285-    </section>
+3286-    
+3287-
+3288-</div>
+3289-
+3290-<script>
+3291-(function () {
+3292-
+3293-    const parametros =
+3294-        new URLSearchParams(window.location.search);
+3295-
+3296-    const idUrl =
+3297-        parametros.get("id");
+3298-
+3299-    let salvo = null;
+3300-
+3301-    /*
+3302-     * O ID da URL é a fonte principal.
+3303-     * Cada filme possui seu próprio registro,
+3304-     * evitando que um filme anterior seja reutilizado.
+3305-     */
+3306-    if (idUrl) {
+3307-
+3308-        const chaveFilme =
+3309-            "filmeSelecionadoHome_" + String(idUrl);
+3310-
+3311-        const salvoPorId =
+3312-            localStorage.getItem(chaveFilme);
+3313-
+3314-        if (salvoPorId) {
+3315-            salvo = salvoPorId;
+3316-        }
+3317-    }
+3318-
+3319-    /*
+3320-     * Compatibilidade com acessos antigos.
+3321-     */
+3322-    if (!salvo) {
+3323-        salvo =
+3324-            localStorage.getItem("filmeSelecionado");
+3325-    }
+3326-
+3327-    if (!salvo) {
+3328-
+3329-        document.getElementById("titulo")
+3330-            .textContent =
+3331-            "Filme não encontrado";
+3332-
+3333-        document.getElementById("sinopse")
+3334-            .textContent =
+3335-            "Nenhum filme foi selecionado.";
+3336-
+3337-        document.getElementById("poster")
+--
+3624-                            LukaContinuar.registrarInicio({
+3625-                                id: filme.id,
+3626-                                titulo: filme.titulo || "Filme",
+3627-                                capa: filme.capa || "",
+3628-                                tipo: "filme",
+3629-                                player: "1"
+3630-                            });
+3631-                        }
+3632-
+3633-                        playCentral.classList.add(
+3634-                            "oculto"
+3635-                        );
+3636-
+3637-                        const primeiroPlayer =
+3638-                            document.querySelector(
+3639:                                '.player-btn[data-player="1"]'
+3640-                            );
+3641-
+3642-                        if (primeiroPlayer) {
+3643-
+3644-                            document
+3645-                                .querySelectorAll(
+3646-                                    ".player-btn"
+3647-                                )
+3648-                                .forEach(function(btn){
+3649-                                    btn.classList.remove(
+3650-                                        "player-selecionado"
+3651-                                    );
+3652-                                });
+3653-
+3654-                            primeiroPlayer.classList.add(
+3655-                                "player-selecionado"
+3656-                            );
+3657-                        }
+3658-
+3659-                        botao.innerHTML =
+3660-                            "▶ REPRODUZINDO";
+3661-                    }
+3662-                );
+3663-            }
+3664-
+3665-            /* ==========================================
+3666:               SELECAO DOS PLAYERS
+3667-               ========================================== */
+3668-
+3669-            const botoesPlayers =
+3670-                document.querySelectorAll(
+3671-                    ".player-btn"
+3672-                );
+3673-
+3674-            botoesPlayers.forEach(function (botaoPlayer) {
+3675-
+3676-                botaoPlayer.addEventListener(
+3677-                    "click",
+3678-                    function () {
+3679-
+3680-                        const numero =
+3681-                            this.dataset.player;
+3682-
+3683-                        const tmdbId =
+3684-                            String(filme.id).trim();
+3685-
+3686-                        let embedUrl = "";
+3687-
+3688-                        /*
+3689-                         * PLAYER 1
+3690-                         * MyEmbed
+3691-                         */
+3692-                        if (numero === "1") {
+3693-
+3694-                            embedUrl =
+3695-                                "https://myembed.biz/filme/" +
+3696-                                tmdbId;
+3697-                        }
+3698-
+3699-                        /*
+3700-                         * PLAYER 2
+3701-                         * Fonte alternativa TMDB
+3702-                         */
+3703-                        else if (numero === "2") {
+3704-
+3705-                            embedUrl =
+3706-                                "https://vidsrc.to/embed/movie/" +
+3707-                                tmdbId;
+3708-                        }
+3709-
+3710-                        /*
+3711-                         * PLAYER 3
+3712-                         * Fonte alternativa
+3713-                         */
+3714-                        else if (numero === "3") {
+3715-
+3716-                            embedUrl =
+3717-                                "https://vidsrc.me/embed/movie/" +
+3718-                                tmdbId;
+3719-                        }
+3720-
+3721-                        /*
+3722-                         * PLAYER 4
+3723-                         * Fonte alternativa
+3724-                         */
+3725-                        else if (numero === "4") {
+3726-
+3727-                            embedUrl =
+3728-                                "";
+3729-                        }
+3730-
+3731-                        if (!embedUrl) {
+3732-                            return;
+3733-                        }
+3734-
+3735-                        console.log(
+3736-                            "[PLAYER SELECIONADO]",
+
+===== 7. BLOCO PLAYERS BACKUP =====
+3229-        class="player-filme"
+3230-        id="playerFilme"
+3231-        style="display:none;">
+3232-
+3233-        <h2>🎬 Escolha o Player</h2>
+3234-
+3235-        <div
+3236-            id="listaPlayers"
+3237-            class="lista-plays">
+3238-
+3239-            <div class="play-card">
+3240-                <div class="play-numero">PLAY 1</div>
+3241-                
+3242-                <button type="button"
+3243-                        class="play-btn player-btn"
+3244:                        data-player="1">
+3245-                    ▶ PLAY
+3246-                </button>
+3247-            </div>
+3248-
+3249-            <div class="play-card">
+3250-                <div class="play-numero">PLAY 2</div>
+3251-                
+3252-                <button type="button"
+3253-                        class="play-btn player-btn"
+3254:                        data-player="2">
+3255-                    ▶ PLAY
+3256-                </button>
+3257-            </div>
+3258-
+3259-        </div>
+3260-
+3261-        <div class="player-video" id="playerVideoArea">
+3262-            <button
+3263-                type="button"
+3264-                id="playCentralFilme"
+3265-                class="play-central-filme">
+3266-                ▶ PLAY
+3267-            </button>
+3268-
+3269-            <iframe
+3270-                id="filmeFrame"
+3271-                src=""
+3272-                title="Filme"
+3273-                allow="autoplay; fullscreen; picture-in-picture"
+3274-                sandbox="allow-scripts allow-same-origin"
+3275-                allowfullscreen>
+3276-            </iframe>
+3277-        </div>
+3278-
+3279-    </section>
+3280-    
+3281-
+3282-</div>
+3283-
+3284-<script>
+3285-(function () {
+3286-
+3287-    const parametros =
+3288-        new URLSearchParams(window.location.search);
+3289-
+3290-    const idUrl =
+3291-        parametros.get("id");
+3292-
+3293-    let salvo = null;
+3294-
+3295-    /*
+3296-     * O ID da URL é a fonte principal.
+3297-     * Cada filme possui seu próprio registro,
+3298-     * evitando que um filme anterior seja reutilizado.
+3299-     */
+3300-    if (idUrl) {
+3301-
+3302-        const chaveFilme =
+3303-            "filmeSelecionadoHome_" + String(idUrl);
+3304-
+3305-        const salvoPorId =
+3306-            localStorage.getItem(chaveFilme);
+3307-
+3308-        if (salvoPorId) {
+3309-            salvo = salvoPorId;
+3310-        }
+3311-    }
+3312-
+3313-    /*
+3314-     * Compatibilidade com acessos antigos.
+3315-     */
+3316-    if (!salvo) {
+3317-        salvo =
+3318-            localStorage.getItem("filmeSelecionado");
+3319-    }
+3320-
+3321-    if (!salvo) {
+3322-
+3323-        document.getElementById("titulo")
+3324-            .textContent =
+--
+3604-                        if (!tmdbId) return;
+3605-
+3606-                        const embedUrl =
+3607-                            "https://myembed.biz/filme/" +
+3608-                            tmdbId;
+3609-
+3610-                        filmeFrame.src =
+3611-                            embedUrl;
+3612-
+3613-                        playCentral.classList.add(
+3614-                            "oculto"
+3615-                        );
+3616-
+3617-                        const primeiroPlayer =
+3618-                            document.querySelector(
+3619:                                '.player-btn[data-player="1"]'
+3620-                            );
+3621-
+3622-                        if (primeiroPlayer) {
+3623-
+3624-                            document
+3625-                                .querySelectorAll(
+3626-                                    ".player-btn"
+3627-                                )
+3628-                                .forEach(function(btn){
+3629-                                    btn.classList.remove(
+3630-                                        "player-selecionado"
+3631-                                    );
+3632-                                });
+3633-
+3634-                            primeiroPlayer.classList.add(
+3635-                                "player-selecionado"
+3636-                            );
+3637-                        }
+3638-
+3639-                        botao.innerHTML =
+3640-                            "▶ REPRODUZINDO";
+3641-                    }
+3642-                );
+3643-            }
+3644-
+3645-            /* ==========================================
+3646:               SELECAO DOS PLAYERS
+3647-               ========================================== */
+3648-
+3649-            const botoesPlayers =
+3650-                document.querySelectorAll(
+3651-                    ".player-btn"
+3652-                );
+3653-
+3654-            botoesPlayers.forEach(function (botaoPlayer) {
+3655-
+3656-                botaoPlayer.addEventListener(
+3657-                    "click",
+3658-                    function () {
+3659-
+3660-                        const numero =
+3661-                            this.dataset.player;
+3662-
+3663-                        const tmdbId =
+3664-                            String(filme.id).trim();
+3665-
+3666-                        let embedUrl = "";
+3667-
+3668-                        /*
+3669-                         * PLAYER 1
+3670-                         * MyEmbed
+3671-                         */
+3672-                        if (numero === "1") {
+3673-
+3674-                            embedUrl =
+3675-                                "https://myembed.biz/filme/" +
+3676-                                tmdbId;
+3677-                        }
+3678-
+3679-                        /*
+3680-                         * PLAYER 2
+3681-                         * Fonte alternativa TMDB
+3682-                         */
+3683-                        else if (numero === "2") {
+3684-
+3685-                            embedUrl =
+3686-                                "https://vidsrc.to/embed/movie/" +
+3687-                                tmdbId;
+3688-                        }
+3689-
+3690-                        /*
+3691-                         * PLAYER 3
+3692-                         * Fonte alternativa
+3693-                         */
+3694-                        else if (numero === "3") {
+3695-
+3696-                            embedUrl =
+3697-                                "https://vidsrc.me/embed/movie/" +
+3698-                                tmdbId;
+3699-                        }
+3700-
+3701-                        /*
+3702-                         * PLAYER 4
+3703-                         * Fonte alternativa
+3704-                         */
+3705-                        else if (numero === "4") {
+3706-
+3707-                            embedUrl =
+3708-                                "https://vidsrc.xyz/embed/movie/" +
+3709-                                tmdbId;
+3710-                        }
+3711-
+3712-                        if (!embedUrl) {
+3713-                            return;
+3714-                        }
+3715-
+3716-                        console.log(
+
+===== 8. STATUS GIT =====
+ M index.html
+ M js/continuar-assistindo.js
+ M paginas/filme.html
+ M paginas/serie.html
+ M public/login.html
+?? BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/
+?? echo
+?? generosTMDB[id]
+?? paginas/index.html
+?? "p\303\241gina"
+?? {
+?? }
+
+===== FIM =====

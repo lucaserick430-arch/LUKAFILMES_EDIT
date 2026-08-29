@@ -565,7 +565,29 @@ footer strong{
     }
 }
 
+.mobile-menu{
+    position:fixed;
+    top:60px;
+    left:0;
+    right:0;
+    background:rgba(8,8,8,.98);
+    z-index:1100;
+    padding:20px;
+    display:none;
+    border-bottom:1px solid #222;
+}
 
+.mobile-menu.show{
+    display:block;
+}
+
+.mobile-menu a{
+    display:block;
+    color:#fff;
+    text-decoration:none;
+    padding:13px 5px;
+    border-bottom:1px solid #222;
+}
 
 /* =========================================================
    TRAILER AUTOMATICO NO HERO
@@ -1337,37 +1359,6 @@ z-index:2;
 </style>
 
 
-
-
-<style id="lukafilmes-menu-mobile-solto-fix">
-@media (max-width:700px){
-
-    /* Nada do menu principal fica solto no topo do celular */
-    .nav > a,
-    .nav > .lukafilmes-catalogo-menu,
-    .nav > .lukafilmes-continuar-mobile-btn,
-    .nav .continuar-header-btn{
-        display:none !important;
-        visibility:hidden !important;
-    }
-
-    /* O menu ☰ continua funcionando normalmente */
-    .menu-btn{
-        display:block !important;
-    }
-
-    /* O painel verdadeiro só aparece quando recebe .show */
-    #mobileMenu{
-        display:none !important;
-        visibility:hidden !important;
-    }
-
-    #mobileMenu.show{
-        display:block !important;
-        visibility:visible !important;
-    }
-}
-</style>
 
 <style id="lukafilmes-menu-mobile-final">
 
@@ -3124,277 +3115,6 @@ z-index:2;
 }
 </style>
 
-
-<style id="lukafilmes-notificacao-sem-duplicacao">
-/* LUKAFILMES — evita duplicação visual das notificações */
-#lukaNotificationPanel .lukafilmes-notificacao-item + .lukafilmes-notificacao-item{
-    border-top:0;
-}
-</style>
-
-
-
-
-
-
-<style id="lukafilmes-menu-mobile-moderno">
-
-/* ==================================================
-   LUKAFILMES — MENU MOBILE MODERNO
-   ================================================== */
-
-@media (max-width: 800px){
-
-    /* Menu fechado: fica completamente oculto */
-    .mobile-menu{
-        display:none !important;
-    }
-
-    /* Menu aberto somente quando toggleMenu() adiciona .show */
-    .mobile-menu.show{
-        display:block !important;
-    }
-
-    .mobile-menu{
-        top:90px !important;
-        left:12px !important;
-        right:12px !important;
-
-        padding:12px !important;
-
-        background:
-            linear-gradient(
-                145deg,
-                rgba(20,20,20,.98),
-                rgba(7,7,7,.98)
-            ) !important;
-
-        border:1px solid rgba(255,255,255,.08) !important;
-        border-radius:18px !important;
-
-        box-shadow:
-            0 20px 50px rgba(0,0,0,.75),
-            0 0 0 1px rgba(229,9,20,.04) !important;
-
-        overflow:hidden !important;
-
-        transform-origin:top center;
-    }
-
-    .mobile-menu.show{
-        animation:
-            lukaMenuEntrada
-            .22s
-            ease-out;
-    }
-
-    .mobile-menu > a{
-        position:relative;
-
-        display:flex !important;
-        align-items:center !important;
-
-        min-height:54px !important;
-
-        margin:3px 0 !important;
-        padding:0 16px !important;
-
-        border:0 !important;
-        border-radius:12px !important;
-
-        color:#e9e9e9 !important;
-
-        text-decoration:none !important;
-
-        font-size:15px !important;
-        font-weight:600 !important;
-
-        letter-spacing:.1px;
-
-        background:transparent;
-
-        transition:
-            background .2s ease,
-            color .2s ease,
-            transform .2s ease;
-    }
-
-    .mobile-menu > a:hover,
-    .mobile-menu > a:active{
-        background:
-            linear-gradient(
-                90deg,
-                rgba(229,9,20,.18),
-                rgba(229,9,20,.05)
-            ) !important;
-
-        color:#fff !important;
-
-        transform:translateX(3px);
-    }
-
-    .mobile-menu > a::before{
-        content:"";
-        width:3px;
-        height:0;
-
-        position:absolute;
-        left:0;
-        top:50%;
-
-        transform:translateY(-50%);
-
-        border-radius:5px;
-
-        background:#e50914;
-
-        transition:.2s ease;
-    }
-
-    .mobile-menu > a:hover::before,
-    .mobile-menu > a:active::before{
-        height:28px;
-    }
-
-    /*
-     * CONTINUAR ASSISTINDO
-     * Primeiro item e destaque principal.
-     */
-
-    .mobile-menu > a.lukafilmes-menu-continuar{
-        min-height:58px !important;
-
-        margin-bottom:8px !important;
-
-        color:#fff !important;
-
-        background:
-            linear-gradient(
-                135deg,
-                rgba(229,9,20,.22),
-                rgba(229,9,20,.07)
-            ) !important;
-
-        border:1px solid rgba(229,9,20,.20) !important;
-
-        font-weight:700 !important;
-    }
-
-    .mobile-menu > a.lukafilmes-menu-continuar::after{
-        content:"›";
-
-        margin-left:auto;
-
-        font-size:25px;
-        line-height:1;
-
-        color:#e50914;
-    }
-
-    /*
-     * Separador antes de ADMIN.
-     */
-
-    .mobile-menu > a.lukafilmes-menu-admin{
-        margin-top:12px !important;
-        padding-top:10px !important;
-
-        border-top:1px solid rgba(255,255,255,.07) !important;
-
-        border-radius:0 0 12px 12px !important;
-    }
-
-    /*
-     * SAIR
-     */
-
-    .mobile-menu > a.lukafilmes-menu-sair{
-        color:#aaa !important;
-        margin-top:2px !important;
-    }
-
-    .mobile-menu > a.lukafilmes-menu-sair:hover,
-    .mobile-menu > a.lukafilmes-menu-sair:active{
-        color:#ff4b55 !important;
-        background:rgba(229,9,20,.08) !important;
-    }
-
-    /*
-     * Notificações ficam discretas no topo.
-     */
-
-    .mobile-menu .lukafilmes-notificacao-menu-item{
-        display:flex;
-        justify-content:flex-end;
-
-        padding:2px 4px 8px;
-
-        margin-bottom:4px;
-
-        border-bottom:1px solid rgba(255,255,255,.06);
-    }
-
-    .mobile-menu .lukafilmes-notificacao-menu-item button{
-        width:40px;
-        height:40px;
-
-        border:1px solid rgba(255,255,255,.08);
-        border-radius:10px;
-
-        background:rgba(255,255,255,.04);
-
-        color:#fff;
-
-        cursor:pointer;
-    }
-
-}
-
-@keyframes lukaMenuEntrada{
-    from{
-        opacity:0;
-        transform:translateY(-8px) scale(.98);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0) scale(1);
-    }
-}
-
-</style>
-
-
-<style id="lukafilmes-mobile-menu-desktop-hide">
-@media (min-width: 801px){
-    #mobileMenu{
-        display:none !important;
-        visibility:hidden !important;
-    }
-}
-</style>
-
-
-<style id="lukafilmes-sino-esquerda-mobile">
-@media (max-width:768px){
-
-    /* Sininho dentro do painel ☰: alinhado à esquerda */
-    #mobileMenu .lukafilmes-notificacao-menu-item{
-        display:flex !important;
-        align-items:center !important;
-        justify-content:flex-start !important;
-        width:100% !important;
-        text-align:left !important;
-    }
-
-    #mobileMenu .lukafilmes-notificacao-menu-item #lukaNotificationButton{
-        margin-left:0 !important;
-        margin-right:auto !important;
-        justify-content:flex-start !important;
-    }
-}
-</style>
-
 </head>
 
 <body>
@@ -3572,42 +3292,28 @@ z-index:2;
 </div>
 
 <div class="mobile-menu" id="mobileMenu">
-
     <div class="lukafilmes-notificacao-menu-item">
         <button
-            id="lukaNotificationButton"
-            type="button"
-            aria-label="Notificações"
-            aria-expanded="false"
-            title="Notificações"
-        >
-            <span aria-hidden="true">🔔</span>
-            <span id="lukaNotificationBadge"></span>
-        </button>
+    id="lukaNotificationButton"
+    type="button"
+    aria-label="Notificações"
+    aria-expanded="false"
+    title="Notificações">
+    <span aria-hidden="true">🔔</span>
+    <span id="lukaNotificationBadge"></span>
+</button>
     </div>
 
-    <div class="lukafilmes-notificacao-mobile-item"></div>
+    <div class="lukafilmes-notificacao-mobile-item">
+        
+    </div>
 
-    <a
-        href="/paginas/continuar-assistindo.html"
-        class="lukafilmes-menu-continuar"
-    >Continuar Assistindo</a>
-
+    <a href="#">Início</a>
     <a href="paginas/filmes.html">Filmes</a>
-
     <a href="paginas/series.html">Séries</a>
-
-    <a
-        href="/admin.html"
-        class="lukafilmes-menu-admin"
-    >Admin</a>
-
-    <a
-        href="#"
-        class="lukafilmes-menu-sair"
-        onclick="logout(); return false;"
-    >Sair</a>
-
+    <a href="/paginas/continuar-assistindo.html">▶ Continuar Assistindo</a>
+    <a href="/admin.html">⚙️ Admin</a>
+    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
 </div>
 
 <section class="hero">
@@ -6696,22 +6402,6 @@ document.addEventListener("DOMContentLoaded", () => {
             /*
              * Se tocou no próprio menu, não fecha.
              */
-            var painelNotificacao =
-                document.getElementById("lukaNotificationPanel");
-
-            /*
-             * No celular, se a notificação estiver aberta,
-             * qualquer toque/gesto dentro dela pertence à notificação.
-             * Não fechar o menu durante a rolagem dos lançamentos.
-             */
-            if(
-                painelNotificacao &&
-                painelNotificacao.classList.contains("ativo") &&
-                painelNotificacao.contains(alvo)
-            ){
-                return;
-            }
-
             if(menu.contains(alvo)) return;
 
             /*
@@ -8833,7 +8523,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     '</div>' +
                 '</div>' +
             '</div>' +
-            '';
+            '<div class="luka-toast-contador"></div>';
 
         document.body.appendChild(toast);
 
@@ -8918,7 +8608,7 @@ document.addEventListener("DOMContentLoaded", () => {
              */
             if(!window.matchMedia("(max-width: 768px)").matches){
                 abrirPainel();
-                // mostrarNotificacaoTemporaria(filmes[0]);
+                mostrarNotificacaoTemporaria(filmes[0]);
             }
 
         }catch(erro){
@@ -8958,7 +8648,252 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+<script id="lukafilmes-notificacao-automatica">
+(function(){
+    "use strict";
 
+    const CHAVE = "lukafilmes_notificacoes_filmes_v1";
+    const MAX = 10;
+
+    function lerIds(){
+        try {
+            return JSON.parse(localStorage.getItem(CHAVE) || "[]");
+        } catch(e) {
+            return [];
+        }
+    }
+
+    function salvarIds(ids){
+        localStorage.setItem(
+            CHAVE,
+            JSON.stringify(ids.slice(0, MAX))
+        );
+    }
+
+    function atualizarPainel(filmes){
+        const painel = document.getElementById("lukaNotificationPanel");
+        if(!painel) return;
+
+        let lista = painel.querySelector(".luka-notificacoes-lista");
+
+        if(!lista){
+            lista = document.createElement("div");
+            lista.className = "luka-notificacoes-lista";
+            painel.appendChild(lista);
+        }
+
+        lista.innerHTML = "";
+
+        if(!filmes || !filmes.length){
+            const vazio = document.createElement("div");
+            vazio.textContent = "Nenhum filme novo no momento.";
+            vazio.style.cssText =
+                "padding:16px 0;color:#aaa;font-size:14px;";
+            lista.appendChild(vazio);
+            return;
+        }
+
+        filmes.forEach(function(filme){
+
+            const item = document.createElement("a");
+
+            item.href = "#";
+            item.className = "lukafilmes-notificacao-item";
+
+            item.style.cssText =
+                "display:flex;" +
+                "align-items:center;" +
+                "gap:12px;" +
+                "padding:10px 0;" +
+                "border-bottom:1px solid rgba(255,255,255,.10);" +
+                "color:#fff;" +
+                "text-decoration:none;" +
+                "cursor:pointer;";
+
+            item.addEventListener("click", function(event){
+                event.preventDefault();
+
+                const id =
+                    filme.id ||
+                    filme.tmdb_id ||
+                    filme.id_tmdb;
+
+                if(!id) return;
+
+                const dadosFilme = {
+                    id: Number(id),
+                    tmdb_id: Number(id),
+                    titulo: filme.titulo || "",
+                    title: filme.titulo || "",
+                    poster: filme.poster || "",
+                    poster_path: filme.poster
+                        ? filme.poster.replace(
+                            "https://image.tmdb.org/t/p/w500",
+                            ""
+                          )
+                        : "",
+                    release_date: filme.data || "",
+                    data: filme.data || ""
+                };
+
+                try{
+                    localStorage.setItem(
+                        "filmeSelecionado",
+                        JSON.stringify(dadosFilme)
+                    );
+
+                    localStorage.setItem(
+                        "filmeSelecionadoHome_" + String(id),
+                        JSON.stringify(dadosFilme)
+                    );
+                }catch(e){}
+
+                window.location.href =
+                    "/paginas/filme.html?id=" +
+                    encodeURIComponent(id);
+            });
+
+            if(filme.poster){
+
+                const imagem = document.createElement("img");
+
+                imagem.src = filme.poster;
+                imagem.alt =
+                    "Capa de " + (filme.titulo || "filme");
+
+                imagem.loading = "lazy";
+
+                imagem.style.cssText =
+                    "width:58px;" +
+                    "height:82px;" +
+                    "object-fit:cover;" +
+                    "border-radius:7px;" +
+                    "flex:none;" +
+                    "background:#111;";
+
+                item.appendChild(imagem);
+
+            }else{
+
+                const semImagem = document.createElement("div");
+
+                semImagem.textContent = "🎬";
+
+                semImagem.style.cssText =
+                    "width:58px;" +
+                    "height:82px;" +
+                    "display:flex;" +
+                    "align-items:center;" +
+                    "justify-content:center;" +
+                    "border-radius:7px;" +
+                    "background:#151515;" +
+                    "font-size:24px;" +
+                    "flex:none;";
+
+                item.appendChild(semImagem);
+            }
+
+            const texto = document.createElement("div");
+
+            texto.style.cssText =
+                "min-width:0;" +
+                "display:flex;" +
+                "flex-direction:column;" +
+                "gap:5px;";
+
+            const titulo = document.createElement("strong");
+
+            titulo.textContent =
+                "🎬 " + (filme.titulo || "Novo filme");
+
+            titulo.style.cssText =
+                "font-size:14px;" +
+                "line-height:1.3;" +
+                "display:block;";
+
+            texto.appendChild(titulo);
+
+            const descricao = document.createElement("span");
+
+            descricao.textContent =
+                "Novo filme disponível • Toque para assistir";
+
+            descricao.style.cssText =
+                "font-size:11px;" +
+                "color:#aaa;" +
+                "line-height:1.3;";
+
+            texto.appendChild(descricao);
+
+            item.appendChild(texto);
+            lista.appendChild(item);
+        });
+    }
+
+    async function verificarNovidades(){
+        try{
+            const resposta = await fetch(
+                "/api/notificacoes/novos-filmes",
+                { cache:"no-store" }
+            );
+
+            if(!resposta.ok) return;
+
+            const dados = await resposta.json();
+            const filmes = Array.isArray(dados.filmes)
+                ? dados.filmes
+                : [];
+
+            if(!filmes.length) return;
+
+            const vistos = lerIds();
+
+            const novos = filmes.filter(function(filme){
+                return !vistos.includes(Number(filme.id));
+            });
+
+            const badge = document.getElementById(
+                "lukaNotificationBadge"
+            );
+
+            if(badge){
+                if(novos.length){
+                    badge.textContent =
+                        novos.length > 9 ? "9+" : String(novos.length);
+                    badge.style.display = "flex";
+                }else{
+                    badge.textContent = "";
+                    badge.style.display = "none";
+                }
+            }
+
+            atualizarPainel(novos.length ? novos : []);
+
+            if(novos.length){
+                salvarIds(
+                    filmes.map(function(f){ return Number(f.id); })
+                );
+            }
+
+        }catch(e){
+            console.warn(
+                "[LUKAFILMES] Não foi possível verificar novidades.",
+                e
+            );
+        }
+    }
+
+    function iniciar(){
+        verificarNovidades();
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener("DOMContentLoaded", iniciar);
+    }else{
+        iniciar();
+    }
+})();
+</script>
 
 </body>
 

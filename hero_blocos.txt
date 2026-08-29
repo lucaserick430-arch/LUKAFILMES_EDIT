@@ -1,0 +1,805 @@
+===== GITHUB 52e32ed — PLAYER =====
+
+let heroTrailerAtual = null;
+
+async function carregarTrailerHero(item){
+
+    const video =
+        document.getElementById("heroTrailer");
+
+    if(!video) return;
+
+    const id =
+        item && (
+            item.id ||
+            item.tmdb_id
+        );
+
+    if(!id){
+
+        video.classList.remove("ativo");
+        video.src="";
+
+        return;
+    }
+
+    const idAtual =
+        String(id);
+
+    heroTrailerAtual =
+        idAtual;
+
+    try{
+
+        /*
+         * Se a seleção do Hero já encontrou o trailer,
+         * usamos diretamente o resultado.
+         *
+         * Caso contrário, mantemos a busca original.
+         */
+
+        let chave =
+            item.__heroTrailerChave ||
+            null;
+
+        if(!chave){
+
+            const resultado =
+                await buscarTrailerDoHero(item);
+
+            if(
+                resultado &&
+                resultado.chave
+            ){
+
+                chave =
+                    resultado.chave;
+
+            }
+
+        }
+
+        if(heroTrailerAtual !== idAtual){
+            return;
+        }
+
+        if(!chave){
+
+            video.classList.remove("ativo");
+            video.src="";
+
+            console.log(
+                "[HERO TRAILER] Nenhum trailer:",
+                item.titulo || ""
+            );
+
+            /*
+             * Se por algum motivo o trailer não puder
+             * carregar, pula para outro filme.
+             */
+
+            setTimeout(() => {
+
+                if(
+                    destaqueAtual === item &&
+                    !window.__heroTrocaEmAndamento
+                ){
+
+                    proximoHeroTrailer();
+
+                }
+
+            }, 300);
+
+            return;
+        }
+
+        /*
+         * API IFrame do YouTube:
+         *
+         * enablejsapi=1 permite receber o evento
+         * de término do trailer.
+         *
+         * loop=0 é obrigatório aqui, pois queremos
+         * detectar o fim e trocar para outro filme.
+         */
+
+        const origem =
+            encodeURIComponent(
+                window.location.origin
+            );
+
+        const novaUrl =
+            "https://www.youtube.com/embed/" +
+            encodeURIComponent(chave) +
+            "?autoplay=1" +
+            "&mute=1" +
+            "&controls=0" +
+            "&loop=0" +
+            "&playsinline=1" +
+            "&rel=0" +
+            "&enablejsapi=1" +
+            "&origin=" +
+            origem;
+
+        video.classList.remove("ativo");
+
+        video.src =
+            novaUrl;
+
+        video.classList.add("ativo");
+
+        /*
+         * O player precisa ser reinicializado para
+         * que o evento ENDED seja recebido.
+         */
+
+        function configurarPlayerYouTube(){
+
+            if(
+                !window.YT ||
+                !window.YT.Player
+            ){
+                return false;
+            }
+
+            try{
+
+                if(window.__heroYTPlayer){
+
+                    try{
+                        window.__heroYTPlayer.destroy();
+                    }catch(e){}
+
+                    window.__heroYTPlayer =
+                        null;
+                }
+
+                window.__heroYTPlayer =
+                    new YT.Player(
+                        video,
+                        {
+                            events: {
+
+                                onStateChange:
+                                    function(evento){
+
+                                        /*
+                                         * 0 = ENDED
+                                         */
+
+                                        if(
+                                            evento &&
+                                            evento.data === 0
+                                        ){
+
+                                            console.log(
+                                                "[HERO TRAILER] Trailer terminou:",
+                                                item.titulo || ""
+                                            );
+
+                                            proximoHeroTrailer();
+                                        }
+
+                                    },
+
+                                onError:
+                                    function(){
+
+                                        console.warn(
+                                            "[HERO TRAILER] Erro no player:",
+                                            item.titulo || ""
+                                        );
+
+                                        proximoHeroTrailer();
+                                    }
+                            }
+                        }
+                    );
+
+                return true;
+
+            }catch(erro){
+
+                console.warn(
+                    "[HERO TRAILER] Erro ao configurar YouTube:",
+                    erro
+                );
+
+                return false;
+            }
+        }
+
+        /*
+         * Se a API já estiver carregada, configura.
+         * Caso contrário, carregamos a API uma única vez.
+         */
+
+        if(window.YT && window.YT.Player){
+
+            setTimeout(
+                configurarPlayerYouTube,
+                100
+            );
+
+        }else{
+
+            if(!window.__heroYTApiCarregando){
+
+                window.__heroYTApiCarregando =
+                    true;
+
+                const script =
+                    document.createElement("script");
+
+                script.src =
+                    "https://www.youtube.com/iframe_api";
+
+                script.async = true;
+
+                document.head.appendChild(script);
+            }
+
+            const anterior =
+                window.onYouTubeIframeAPIReady;
+
+            window.onYouTubeIframeAPIReady =
+                function(){
+
+                    if(typeof anterior === "function"){
+
+                        try{
+                            anterior();
+                        }catch(e){}
+                    }
+
+                    setTimeout(
+                        configurarPlayerYouTube,
+                        100
+                    );
+                };
+        }
+
+        if(window.__heroAudioLiberado){
+
+            /*
+             * Mantém o comportamento de áudio já existente.
+             */
+
+            try{
+
+                video.src =
+                    novaUrl.replace(
+                        "&mute=1",
+                        "&mute=0"
+                    );
+
+            }catch(e){}
+        }
+
+        console.log(
+            "[HERO TRAILER] Ativo:",
+            item.titulo || "",
+            chave
+        );
+
+    }catch(erro){
+
+        console.warn(
+            "[HERO TRAILER] Erro:",
+            erro
+        );
+
+        video.classList.remove("ativo");
+        video.src="";
+
+        setTimeout(() => {
+
+            if(
+                destaqueAtual === item &&
+                !window.__heroTrocaEmAndamento
+            ){
+
+                proximoHeroTrailer();
+
+            }
+
+        }, 300);
+
+===== ATUAL — PLAYER =====
+
+/* =========================================================
+   TRAILER AUTOMATICO DO HERO
+   ========================================================= */
+
+let heroTrailerAtual = null;
+
+async function carregarTrailerHero(item){
+
+    const video =
+        document.getElementById("heroTrailer");
+
+    if(!video) return;
+
+    const id =
+        item && (
+            item.id ||
+            item.tmdb_id
+        );
+
+    if(!id){
+
+        video.classList.remove("ativo");
+        video.src="";
+
+        return;
+    }
+
+    const idAtual =
+        String(id);
+
+    heroTrailerAtual =
+        idAtual;
+
+    try{
+
+        /*
+         * Se a seleção do Hero já encontrou o trailer,
+         * usamos diretamente o resultado.
+         *
+         * Caso contrário, mantemos a busca original.
+         */
+
+        let chave =
+            item.__heroTrailerChave ||
+            null;
+
+        if(!chave){
+
+            const resultado =
+                await buscarTrailerDoHero(item);
+
+            if(
+                resultado &&
+                resultado.chave
+            ){
+
+                chave =
+                    resultado.chave;
+
+            }
+
+        }
+
+        if(heroTrailerAtual !== idAtual){
+            return;
+        }
+
+        if(!chave){
+
+            video.classList.remove("ativo");
+            video.src="";
+
+            console.log(
+                "[HERO TRAILER] Nenhum trailer:",
+                item.titulo || ""
+            );
+
+            /*
+             * Se por algum motivo o trailer não puder
+             * carregar, pula para outro filme.
+             */
+
+            setTimeout(() => {
+
+                if(
+                    destaqueAtual === item &&
+                    !window.__heroTrocaEmAndamento
+                ){
+
+                    proximoHeroTrailer();
+
+                }
+
+            }, 300);
+
+            return;
+        }
+
+        /*
+         * API IFrame do YouTube:
+         *
+         * enablejsapi=1 permite receber o evento
+         * de término do trailer.
+         *
+         * loop=0 é obrigatório aqui, pois queremos
+         * detectar o fim e trocar para outro filme.
+         */
+
+        const origem =
+            encodeURIComponent(
+                window.location.origin
+            );
+
+        const novaUrl =
+            "https://www.youtube.com/embed/" +
+            encodeURIComponent(chave) +
+            "?autoplay=1" +
+            "&mute=1" +
+            "&controls=0" +
+            "&loop=0" +
+            "&playsinline=1" +
+            "&rel=0" +
+            "&enablejsapi=1" +
+            "&origin=" +
+            origem;
+
+        /*
+         * Mantém a capa do Hero visível enquanto o YouTube
+         * ainda está carregando.
+         *
+         * O trailer só fica visível quando o player informar
+         * que realmente começou a reproduzir.
+         */
+        video.classList.remove("ativo");
+
+        video.src =
+            novaUrl;
+
+        /*
+         * O player precisa ser reinicializado para
+         * que o evento ENDED seja recebido.
+         */
+
+        function configurarPlayerYouTube(){
+
+            if(
+                !window.YT ||
+                !window.YT.Player
+            ){
+                return false;
+            }
+
+            try{
+
+                if(window.__heroYTPlayer){
+
+                    try{
+                        window.__heroYTPlayer.destroy();
+                    }catch(e){}
+
+                    window.__heroYTPlayer =
+                        null;
+                }
+
+                window.__heroYTPlayer =
+                    new YT.Player(
+                        video,
+                        {
+                            events: {
+
+                                onStateChange:
+                                    function(evento){
+
+                                        /*
+                                         * 0 = ENDED
+                                         */
+
+                                        if(
+                                            evento &&
+                                            evento.data === 1
+                                        ){
+
+                                            /*
+                                             * 1 = PLAYING
+                                             *
+                                             * Só agora escondemos a capa
+                                             * e mostramos o trailer.
+                                             */
+                                            video.classList.add("ativo");
+
+                                            /*
+                                             * Se o usuário já tocou na tela antes
+                                             * do player ficar pronto, agora que o
+                                             * YouTube confirmou PLAYING executamos
+                                             * a ação pendente.
+                                             */
+                                            if(
+                                                window.__heroAudioLiberado &&
+                                                window.__heroYTPlayer
+                                            ){
+
+                                                try{
+
+                                                    if(
+                                                        typeof window.__heroYTPlayer.unMute === "function"
+                                                    ){
+                                                        window.__heroYTPlayer.unMute();
+                                                    }
+
+                                                    /*
+                                                     * O toque aconteceu antes
+                                                     * do player ficar pronto.
+                                                     *
+                                                     * Agora que o YouTube entrou
+                                                     * em PLAYING, liberamos o áudio
+                                                     * e pausamos imediatamente.
+                                                     */
+                                                    try{
+
+                                                        if(
+                                                            typeof window.__heroYTPlayer.unMute === "function"
+                                                        ){
+                                                            window.__heroYTPlayer.unMute();
+                                                        }
+
+                                                        if(
+                                                            typeof window.__heroYTPlayer.pauseVideo === "function"
+                                                        ){
+                                                            window.__heroYTPlayer.pauseVideo();
+                                                        }
+
+                                                        console.log(
+                                                            "[HERO TRAILER] Toque pendente: áudio liberado e trailer PAUSADO."
+                                                        );
+
+                                                    }catch(e){
+
+                                                        console.warn(
+                                                            "[HERO TRAILER] Erro ao pausar após PLAYING:",
+                                                            e
+                                                        );
+
+                                                    }
+
+                                                }catch(e){
+
+                                                    console.warn(
+                                                        "[HERO TRAILER] Erro aplicando toque pendente:",
+                                                        e
+                                                    );
+
+                                                }
+
+                                                window.__heroAudioLiberado = false;
+                                            }
+
+
+                                            console.log(
+                                                "[HERO TRAILER] Reprodução iniciada:",
+                                                item.titulo || ""
+                                            );
+                                        }
+
+                                        /*
+                                         * 0 = ENDED
+                                         */
+                                        if(
+                                            evento &&
+                                            evento.data === 0
+                                        ){
+
+                                            console.log(
+                                                "[HERO TRAILER] Trailer terminou:",
+                                                item.titulo || ""
+                                            );
+
+                                            video.classList.remove("ativo");
+
+                                            proximoHeroTrailer();
+                                        }
+
+                                    },
+
+                                onError:
+                                    function(){
+
+                                        console.warn(
+                                            "[HERO TRAILER] Erro no player:",
+                                            item.titulo || ""
+                                        );
+
+                                        proximoHeroTrailer();
+                                    }
+                            }
+                        }
+                    );
+
+                return true;
+
+            }catch(erro){
+
+                console.warn(
+                    "[HERO TRAILER] Erro ao configurar YouTube:",
+                    erro
+                );
+
+                return false;
+            }
+        }
+
+        /*
+         * Se a API já estiver carregada, configura.
+         * Caso contrário, carregamos a API uma única vez.
+         */
+
+        if(window.YT && window.YT.Player){
+
+            setTimeout(
+                configurarPlayerYouTube,
+                100
+            );
+
+        }else{
+
+            if(!window.__heroYTApiCarregando){
+
+                window.__heroYTApiCarregando =
+                    true;
+
+                const script =
+                    document.createElement("script");
+
+                script.src =
+                    "https://www.youtube.com/iframe_api";
+
+                script.async = true;
+
+                document.head.appendChild(script);
+            }
+
+            const anterior =
+                window.onYouTubeIframeAPIReady;
+
+            window.onYouTubeIframeAPIReady =
+                function(){
+
+                    if(typeof anterior === "function"){
+
+                        try{
+                            anterior();
+                        }catch(e){}
+                    }
+
+                    setTimeout(
+                        configurarPlayerYouTube,
+                        100
+                    );
+                };
+        }
+
+        /*
+         * IMPORTANTE:
+         * Não recarregamos mais o iframe trocando o src.
+         *
+         * Trocar src depois que o player foi criado fazia o YouTube
+         * reconstruir o player e exibir a capa/overlay no centro.
+         *
+         * O trailer permanece carregado em mute=1.
+         */
+        console.log(
+            "[HERO TRAILER] Ativo:",
+            item.titulo || "",
+            chave
+        );
+
+    }catch(erro){
+
+        console.warn(
+            "[HERO TRAILER] Erro:",
+            erro
+        );
+
+        video.classList.remove("ativo");
+        video.src="";
+
+
+===== ATUAL — SCRIPTS FINAIS =====
+            e.preventDefault();
+
+            const valor =
+                distancia(row);
+
+            row.scrollLeft +=
+                e.key === "ArrowRight"
+                    ? valor
+                    : -valor;
+
+            atualizar(row);
+        },
+        {passive:false}
+    );
+
+    if(
+        document.readyState ===
+        "loading"
+    ){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            iniciar,
+            {once:true}
+        );
+
+    }else{
+
+        iniciar();
+    }
+
+})();
+</script>
+
+
+
+
+
+
+
+
+<script id="lukafilmes-hero-toque-definitivo">
+(function(){
+
+    window.__heroAudioLiberado = false;
+    window.__heroToquePendente = false;
+
+    function pausarHero(){
+
+        const player = window.__heroYTPlayer;
+
+        if(!player){
+            window.__heroToquePendente = true;
+            return;
+        }
+
+        try{
+
+            if(typeof player.unMute === "function"){
+                player.unMute();
+            }
+
+            if(typeof player.pauseVideo === "function"){
+                player.pauseVideo();
+            }
+
+            window.__heroToquePendente = false;
+
+            console.log(
+                "[HERO TOQUE] Áudio liberado e trailer pausado."
+            );
+
+        }catch(erro){
+
+            console.warn(
+                "[HERO TOQUE] Erro:",
+                erro
+            );
+
+        }
+    }
+
+    function toqueHero(){
+
+        if(window.__heroAudioLiberado){
+            return;
+        }
+
+        window.__heroAudioLiberado = true;
+        window.__heroToquePendente = true;
+
+        pausarHero();
+
+    }
+
+    document.addEventListener(
+        "pointerdown",
+        toqueHero,
+        {
+            once: true,
+            capture: true
+        }
+    );
+
+    window.__aplicarToqueHero = pausarHero;
+
+
+===== FIM =====

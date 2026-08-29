@@ -1,0 +1,315 @@
+============================================================
+LUKAFILMES — DIAGNÓSTICO DA SEÇÃO CONTINUAR NA HOME
+============================================================
+
+===== CONTINUAR NA HOME — HTML =====
+2974-
+2975-    });
+2976-
+2977-    console.log(
+2978-        "[PESQUISA HOME] Sistema ativo."
+2979-    );
+2980-
+2981-})();
+2982-</script>
+2983-
+2984-<script>(function(){window.__heroAudioLiberado=false;document.addEventListener('pointerdown',function(){if(window.__heroAudioLiberado)return;window.__heroAudioLiberado=true;const f=document.getElementById('heroTrailer');if(f&&f.src){f.src=f.src.replace('&mute=1','&mute=0');}}, {once:true});})();</script>
+2985-<script src="/js/continuar-assistindo.js"></script>
+2986-<script>
+2987-document.addEventListener("DOMContentLoaded", () => {
+2988-    if (window.LukaContinuar) {
+2989:        LukaContinuar.renderContinuar("continuarAssistindo");
+2990-    }
+2991-});
+2992-</script>
+2993-
+2994-
+2995-
+2996-</body>
+2997-</html>
+2998-
+2999-
+
+===== CONTINUAR NA HOME — TÍTULOS =====
+1186-
+1187-    <div class="header-right">
+1188-
+1189-        
+1190-        <button
+1191-            class="continuar-header-btn"
+1192-            type="button"
+1193-            onclick="window.location.href='/paginas/continuar-assistindo.html'"
+1194:            aria-label="Continuar assistindo"
+1195:        >▶ Continuar Assistindo</button>
+1196-
+1197-        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+1198-
+1199-        <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
+1200-
+1201-        <div class="profile">L</div>
+1202-    </div>
+1203-</header>
+
+===== SCRIPTS DA HOME RELACIONADOS AO CONTINUAR =====
+            const primeiro =
+                area.querySelector(".busca-home-item");
+
+            if (primeiro) {
+                primeiro.click();
+            }
+        }
+    });
+
+    document.addEventListener("click", function (event) {
+
+        if (!box.contains(event.target)) {
+            esconder();
+        }
+
+    });
+
+    console.log(
+        "[PESQUISA HOME] Sistema ativo."
+    );
+
+})();
+</script>
+
+<script>(function(){window.__heroAudioLiberado=false;document.addEventListener('pointerdown',function(){if(window.__heroAudioLiberado)return;window.__heroAudioLiberado=true;const f=document.getElementById('heroTrailer');if(f&&f.src){f.src=f.src.replace('&mute=1','&mute=0');}}, {once:true});})();</script>
+<script src="/js/continuar-assistindo.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    if (window.LukaContinuar) {
+        LukaContinuar.renderContinuar("continuarAssistindo");
+    }
+});
+</script>
+
+
+
+</body>
+</html>
+
+
+
+===== ESTILOS QUE PODEM ESCONDER A SEÇÃO =====
+1188-
+1189-        
+1190-        <button
+1191-            class="continuar-header-btn"
+1192-            type="button"
+1193:            onclick="window.location.href='/paginas/continuar-assistindo.html'"
+1194-            aria-label="Continuar assistindo"
+1195-        >▶ Continuar Assistindo</button>
+1196-
+1197-        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+1198-
+--
+2980-
+2981-})();
+2982-</script>
+2983-
+2984-<script>(function(){window.__heroAudioLiberado=false;document.addEventListener('pointerdown',function(){if(window.__heroAudioLiberado)return;window.__heroAudioLiberado=true;const f=document.getElementById('heroTrailer');if(f&&f.src){f.src=f.src.replace('&mute=1','&mute=0');}}, {once:true});})();</script>
+2985:<script src="/js/continuar-assistindo.js"></script>
+2986-<script>
+2987-document.addEventListener("DOMContentLoaded", () => {
+2988-    if (window.LukaContinuar) {
+2989:        LukaContinuar.renderContinuar("continuarAssistindo");
+2990-    }
+2991-});
+2992-</script>
+2993-
+2994-
+
+===== FINAL DO CONTINUAR.JS =====
+const CHAVE_CONTINUAR = "lukafilmes_continuar";
+
+function salvarContinuar(item){
+  const lista = JSON.parse(localStorage.getItem(CHAVE_CONTINUAR) || "[]")
+    .filter(x => x.id !== item.id);
+  lista.unshift(item);
+  localStorage.setItem(CHAVE_CONTINUAR, JSON.stringify(lista.slice(0,24)));
+}
+
+function obterContinuar(){
+  return JSON.parse(localStorage.getItem(CHAVE_CONTINUAR) || "[]");
+}
+
+function conectarPlayer(video, dados){
+  if(!video) return;
+
+  video.addEventListener("timeupdate", () => {
+    salvarContinuar({
+      id: dados.id,
+      titulo: dados.titulo,
+      capa: dados.capa,
+      tipo: dados.tipo || "filme",
+      tempo: video.currentTime,
+      duracao: video.duration || 0,
+      progresso: video.duration ? (video.currentTime/video.duration)*100 : 0
+    });
+  });
+
+  const salvo = obterContinuar().find(x => x.id === dados.id);
+
+  if(salvo && salvo.tempo > 15){
+    const ok = confirm("Continuar de onde parou?");
+    if(ok) video.currentTime = salvo.tempo;
+  }
+}
+
+function renderContinuar(idContainer){
+  const c = document.getElementById(idContainer);
+  if(!c) return;
+
+  const lista = obterContinuar();
+
+  if(!lista.length){
+    c.style.display = "none";
+    return;
+  }
+
+  c.style.display = "flex";
+
+  c.innerHTML = lista.map((i) => {
+
+    const dados = encodeURIComponent(JSON.stringify(i));
+
+    return `
+      <div
+        style="
+          width:170px;
+          min-width:170px;
+          position:relative;
+          color:white;
+          flex-shrink:0;
+        "
+      >
+
+        <img
+          src="${i.capa || ""}"
+          alt="${i.titulo || "Conteúdo"}"
+          draggable="false"
+          style="
+            display:block;
+            width:170px;
+            height:255px;
+            object-fit:cover;
+            border-radius:10px;
+            user-select:none;
+            -webkit-user-select:none;
+          "
+        >
+
+        <button
+          type="button"
+          onclick="this.textContent='CLIQUE FUNCIONOU!'; this.style.background='#00a000'; LukaContinuar.abrirPorDados('${dados}')"
+          style="
+            display:block;
+            width:calc(100% - 20px);
+            margin:8px 10px 0;
+            padding:11px 6px;
+            border:0;
+            border-radius:7px;
+            background:#e50914;
+            color:#fff;
+            text-align:center;
+            font-size:14px;
+            font-weight:700;
+            line-height:1.2;
+            cursor:pointer;
+            touch-action:manipulation;
+            -webkit-tap-highlight-color:transparent;
+          "
+        >▶ Continuar</button>
+
+        <div
+          style="
+            height:4px;
+            background:#333;
+            border-radius:4px;
+            overflow:hidden;
+            margin:7px 10px 0;
+          "
+        >
+          <div
+            style="
+              width:${Math.min(100, Number(i.progresso) || 0)}%;
+              height:100%;
+              background:#e50914;
+            "
+          ></div>
+        </div>
+
+        <div
+          style="
+            font-size:14px;
+            margin:8px 10px 0;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            user-select:none;
+            -webkit-user-select:none;
+          "
+        >${i.titulo || "Conteúdo"}</div>
+
+      </div>
+    `;
+  }).join("");
+}
+
+
+
+function abrirPorDados(dados){
+  try{
+    const item = JSON.parse(decodeURIComponent(dados));
+
+    if(!item){
+      console.warn("[CONTINUAR] Item inválido");
+      return;
+    }
+
+    abrir(item);
+
+  }catch(erro){
+    console.error("[CONTINUAR] Erro ao abrir:", erro);
+  }
+}
+
+
+function abrir(item){
+  if(!item || !item.id) return;
+
+  try{
+    localStorage.setItem(
+      "filmeSelecionadoHome_" + String(item.id),
+      JSON.stringify(item)
+    );
+
+    localStorage.setItem(
+      "filmeSelecionado",
+      JSON.stringify(item)
+    );
+  }catch(e){
+    console.warn("[CONTINUAR] Erro ao preparar filme:", e);
+  }
+
+  const pagina =
+    item.tipo === "serie"
+      ? "/paginas/serie.html"
+      : "/paginas/filme.html";
+
+  window.location.href =
+    pagina + "?id=" + encodeURIComponent(item.id);
+}
+
+window.LukaContinuar = {
+  conectarPlayer,
+  renderContinuar,
+  abrir,
+  abrirPorDados
+};
+
+============================================================
+FIM DO DIAGNÓSTICO
+============================================================

@@ -1,0 +1,733 @@
+===== LUKAFILMES — QUEM ALTEROU O IFRAME =====
+
+===== IFRAME ATUAL =====
+                <button type="button"
+                        class="play-btn player-btn"
+                        data-player="4">
+                    ▶ PLAY
+                </button>
+            </div>
+
+        </div>
+
+        <div class="player-video" id="playerVideoArea">
+            <button
+                type="button"
+                id="playCentralFilme"
+                class="play-central-filme">
+                ▶ PLAY
+            </button>
+
+            <iframe id="filmeFrame" src="https://myembed.biz/filme/tt22084616" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:70vh"></iframe>
+        </div>
+
+    </section>
+
+===== IFRAME DO COMMIT 2b08dce =====
+
+        <div class="player-video" id="playerVideoArea">
+            <button
+                type="button"
+                id="playCentralFilme"
+                class="play-central-filme">
+                ▶ PLAY
+            </button>
+
+            <iframe
+                id="filmeFrame"
+                src=""
+                title="Filme"
+                allow="autoplay; fullscreen; picture-in-picture"
+                sandbox="allow-scripts allow-same-origin"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+    </section>
+    
+
+===== HISTÓRICO DA LINHA DO IFRAME =====
+00000000 (Not Committed Yet 2026-08-28 07:04:20 -0300 3270)             </div>
+00000000 (Not Committed Yet 2026-08-28 07:04:20 -0300 3271) 
+^d2f2470 (Lucas Erick       2026-08-22 15:10:30 -0300 3272)         </div>
+^d2f2470 (Lucas Erick       2026-08-22 15:10:30 -0300 3273) 
+2b08dce0 (Lucas Erick       2026-08-26 12:22:31 -0300 3274)         <div class="player-video" id="playerVideoArea">
+2b08dce0 (Lucas Erick       2026-08-26 12:22:31 -0300 3275)             <button
+2b08dce0 (Lucas Erick       2026-08-26 12:22:31 -0300 3276)                 type="button"
+2b08dce0 (Lucas Erick       2026-08-26 12:22:31 -0300 3277)                 id="playCentralFilme"
+2b08dce0 (Lucas Erick       2026-08-26 12:22:31 -0300 3278)                 class="play-central-filme">
+2b08dce0 (Lucas Erick       2026-08-26 12:22:31 -0300 3279)                 ▶ PLAY
+2b08dce0 (Lucas Erick       2026-08-26 12:22:31 -0300 3280)             </button>
+2b08dce0 (Lucas Erick       2026-08-26 12:22:31 -0300 3281) 
+00000000 (Not Committed Yet 2026-08-28 07:04:20 -0300 3282)             <iframe id="filmeFrame" src="https://myembed.biz/filme/tt22084616" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:70vh"></iframe>
+^d2f2470 (Lucas Erick       2026-08-22 15:10:30 -0300 3283)         </div>
+^d2f2470 (Lucas Erick       2026-08-22 15:10:30 -0300 3284) 
+^d2f2470 (Lucas Erick       2026-08-22 15:10:30 -0300 3285)     </section>
+
+===== PLAYER 4 ATUAL =====
+3262-            <div class="play-card">
+3263-                <div class="play-numero">PLAY 4</div>
+3264-
+3265-                <button type="button"
+3266-                        class="play-btn player-btn"
+3267:                        data-player="4">
+3268-                    ▶ PLAY
+3269-                </button>
+3270-            </div>
+3271-
+3272-        </div>
+3273-
+3274-        <div class="player-video" id="playerVideoArea">
+3275-            <button
+3276-                type="button"
+3277-                id="playCentralFilme"
+3278-                class="play-central-filme">
+3279-                ▶ PLAY
+
+===== PLAYER 4 DO COMMIT 2b08dce =====
+
+===== DIFF ATUAL CONTRA 2b08dce =====
+19-         class="trailer"
+20-@@ -3213,8 +3207,7 @@ body{
+21-                 src=""
+22-                 title="Trailer do filme"
+23-                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+24--                allowfullscreen
+25--                referrerpolicy="strict-origin-when-cross-origin">
+26-+                allowfullscreen>
+27:             </iframe>
+28- 
+29-         </div>
+30-@@ -3256,6 +3249,26 @@ body{
+31-                 </button>
+32-             </div>
+33- 
+34-+            <div class="play-card">
+35-+                <div class="play-numero">PLAY 3</div>
+36-+
+37-+                <button type="button"
+38:+                        class="play-btn player-btn"
+39:+                        data-player="3">
+40-+                    ▶ PLAY
+41-+                </button>
+42-+            </div>
+43-+
+44-+            <div class="play-card">
+45-+                <div class="play-numero">PLAY 4</div>
+46-+
+47-+                <button type="button"
+48:+                        class="play-btn player-btn"
+49:+                        data-player="4">
+50-+                    ▶ PLAY
+51-+                </button>
+52-+            </div>
+53-+
+54-         </div>
+55- 
+56:         <div class="player-video" id="playerVideoArea">
+57-@@ -3266,14 +3279,7 @@ body{
+58-                 ▶ PLAY
+59-             </button>
+60- 
+61:-            <iframe
+62:-                id="filmeFrame"
+63--                src=""
+64--                title="Filme"
+65--                allow="autoplay; fullscreen; picture-in-picture"
+66:-                sandbox="allow-scripts allow-same-origin"
+67--                allowfullscreen>
+68:-            </iframe>
+69:+            <iframe id="filmeFrame" src="https://myembed.biz/filme/tt22084616" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:70vh"></iframe>
+70-         </div>
+71- 
+72-     </section>
+73-@@ -3610,53 +3616,18 @@ body{
+74:                         filmeFrame.src =
+75-                             embedUrl;
+76- 
+77--                        /* =====================================================
+78-+                        /* ==========================================
+79-                            CONTINUAR ASSISTINDO
+80--                           O PLAY CENTRAL também precisa registrar o filme.
+81--                           ===================================================== */
+82:-                        if (typeof salvarSelecaoPlayer === "function") {
+83:-                            salvarSelecaoPlayer("1");
+84--                        } else if (
+85--                            window.LukaContinuar &&
+86--                            typeof window.LukaContinuar.obterContinuar === "function"
+87--                        ) {
+88--                            try {
+89--                                const itemAtual = {
+90--                                    id: filme.id,
+91--                                    titulo: filme.titulo || "Filme",
+92--                                    capa: filme.capa || "",
+93--                                    tipo: "filme",
+94--                                    tempo: 0,
+95--                                    duracao: 0,
+96--                                    progresso: 0,
+97:-                                    player: "1",
+98--                                    atualizadoEm: Date.now()
+99--                                };
+100--
+101--                                let lista =
+102--                                    window.LukaContinuar.obterContinuar() || [];
+103--
+104--                                lista = lista.filter(function(x) {
+105--                                    return String(x.id) !== String(itemAtual.id);
+106--                                });
+107--
+108--                                lista.unshift(itemAtual);
+109--
+110--                                localStorage.setItem(
+111--                                    "lukafilmes_continuar",
+112--                                    JSON.stringify(lista.slice(0,24))
+--
+117--                                    itemAtual
+118--                                );
+119--                            } catch(e) {
+120--                                console.warn(
+121--                                    "[CONTINUAR] Erro ao registrar PLAY central:",
+122--                                    e
+123--                                );
+124--                            }
+125:+                           REGISTRA O FILME + PLAYER 1
+126-+                           ========================================== */
+127-+                        if (window.LukaContinuar) {
+128-+                            LukaContinuar.registrarInicio({
+129-+                                id: filme.id,
+130-+                                titulo: filme.titulo || "Filme",
+131-+                                capa: filme.capa || "",
+132-+                                tipo: "filme",
+133:+                                player: "1"
+134-+                            });
+135-                         }
+136- 
+137-                         playCentral.classList.add(
+138-@@ -3754,8 +3725,7 @@ body{
+139-                         else if (numero === "4") {
+140- 
+141-                             embedUrl =
+142:-                                "https://vidsrc.xyz/embed/movie/" +
+143--                                tmdbId;
+144-+                                "";
+145-                         }
+146- 
+147-                         if (!embedUrl) {
+148-@@ -3789,6 +3759,20 @@ body{
+149:                         filmeFrame.src =
+150-                             embedUrl;
+151- 
+152-+                        /* ==========================================
+153-+                           CONTINUAR ASSISTINDO
+154:+                           REGISTRA FILME + PLAYER ESCOLHIDO
+155-+                           ========================================== */
+156-+                        if (window.LukaContinuar) {
+157-+                            LukaContinuar.registrarInicio({
+158-+                                id: filme.id,
+159-+                                titulo: filme.titulo || "Filme",
+160-+                                capa: filme.capa || "",
+161-+                                tipo: "filme",
+162:+                                player: numero
+163-+                            });
+164-+                        }
+165-+
+166:                         playerFilme.scrollIntoView({
+167-                             behavior: "smooth",
+168-                             block: "center"
+169-@@ -3899,40 +3883,8 @@ body{
+170-                     dados.trailer.embed
+171-                 ) {
+172- 
+173--                    /*
+174--                     * LUKAFILMES — TRAILER COM ÁUDIO
+175--                     *
+176--                     * Mantém o embed original, mas remove parâmetros
+177--                     * que possam forçar o trailer a iniciar sem áudio.
+178--                     */
+179--                    let trailerEmbed =
+180--                        String(dados.trailer.embed || "");
+181--
+--
+210-                     frame.title =
+211-                         dados.trailer.nome ||
+212-@@ -4417,237 +4369,303 @@ document.getElementById("voltarFilmes").addEventListener(
+213- <script src="/js/continuar-assistindo.js"></script>
+214- <script>
+215- document.addEventListener("DOMContentLoaded",()=>{
+216-- const v=document.querySelector("video");
+217-- if(v && window.LukaContinuar){
+218:-  LukaContinuar.conectarPlayer(v,{id:new URLSearchParams(location.search).get("id"),titulo:document.querySelector("h1")?.textContent||"Filme",capa:document.querySelector("img")?.src||"",tipo:"filme"});
+219-- }
+220-+ /* ==========================================
+221-+    CONTINUAR ASSISTINDO
+222:+    O player do filme e um iframe externo.
+223-+    Portanto nao tentamos ler currentTime daqui.
+224:+    O registro acontece no clique do player.
+225-+    ========================================== */
+226- });
+227- </script>
+228- 
+229:-<script id="lukafilmes-continuar-iframe-fix">
+230--(function(){
+231--
+232:-    console.log("[CONTINUAR IFRAME] Sistema de integração ativo.");
+233- 
+234--    function obterDadosFilme(){
+235- 
+236--        try{
+237- 
+238--            const id =
+239--                new URLSearchParams(location.search).get("id");
+240- 
+241--            let filme = null;
+242- 
+243--            try{
+244--                filme = JSON.parse(
+245--                    localStorage.getItem(
+246--                        "filmeSelecionadoHome_" + String(id)
+247--                    ) || "null"
+--
+252--
+253--                try{
+254--                    filme = JSON.parse(
+255--                        localStorage.getItem(
+256--                            "filmeSelecionado"
+257--                        ) || "null"
+258--                    );
+259--                }catch(e){}
+260:+<style id="lukafilmes-player-css-final">
+261- 
+262--            }
+263-+/* =========================================================
+264:+   LUKAFILMES — CORREÇÃO FINAL DO PLAYER DE FILME
+265:+   Isola o iframe atual das regras antigas do arquivo.
+266-+   ========================================================= */
+267- 
+268--            if(!filme){
+269--                filme = {};
+270--            }
+271:+#playerFilme {
+272-+    display: none;
+273-+    position: relative;
+274-+    width: 100%;
+275-+    max-width: 1200px;
+276-+    margin-left: auto;
+277-+    margin-right: auto;
+278-+    overflow: visible !important;
+279-+}
+280- 
+281--            filme.id = filme.id || id;
+282:+#playerFilme > .player-video {
+283-+    position: relative !important;
+284-+    display: block !important;
+285-+    width: 100% !important;
+286-+    min-width: 0 !important;
+287-+    height: 70vh !important;
+288-+    min-height: 420px !important;
+289-+    overflow: hidden !important;
+290-+    opacity: 1 !important;
+291-+    visibility: visible !important;
+292-+}
+293- 
+294--            filme.titulo =
+295--                filme.titulo ||
+296--                document.querySelector("h1")?.textContent ||
+297--                "Filme";
+298:+#playerFilme > .player-video > #filmeFrame {
+299-+    display: block !important;
+300-+    position: relative !important;
+301-+    width: 100% !important;
+302-+    height: 100% !important;
+303-+    min-width: 100% !important;
+304-+    min-height: 100% !important;
+305-+    border: 0 !important;
+306-+    opacity: 1 !important;
+307-+    visibility: visible !important;
+308-+    pointer-events: auto !important;
+309-+    background: #000 !important;
+310-+}
+311- 
+312--            filme.capa =
+313--                filme.capa ||
+314--                document.querySelector("img")?.src ||
+315--                "";
+316:+/* PLAY CENTRAL fica acima do iframe antes do carregamento */
+317:+#playerFilme > .player-video > #playCentralFilme {
+318-+    z-index: 20 !important;
+319-+}
+320- 
+321--            filme.tipo = "filme";
+322:+/* Depois de ocultado, não pode bloquear o iframe */
+323:+#playerFilme > .player-video > #playCentralFilme.oculto {
+324-+    display: none !important;
+325-+    pointer-events: none !important;
+326-+}
+327- 
+328--            return filme;
+329:+/* Players */
+330:+#playerFilme .lista-plays {
+331-+    position: relative;
+332-+    z-index: 30 !important;
+333-+}
+334- 
+335--        }catch(e){
+336:+#playerFilme .player-btn {
+337-+    pointer-events: auto !important;
+338-+}
+339- 
+340--            console.warn(
+341:-                "[CONTINUAR IFRAME] Erro ao obter filme:",
+342--                e
+343--            );
+344-+/* Mobile */
+345-+@media (max-width: 768px) {
+346- 
+347--            return null;
+348--        }
+349:+    #playerFilme > .player-video {
+350-+        height: 70vh !important;
+351-+        min-height: 360px !important;
+352-     }
+353- 
+354-+}
+355- 
+356:-    function salvarSelecaoPlayer(numero){
+357-+</style>
+358- 
+359--        const filme = obterDadosFilme();
+360- 
+361--        if(!filme || !filme.id){
+362--            console.warn(
+363:-                "[CONTINUAR IFRAME] Filme sem ID."
+364--            );
+365--            return;
+366--        }
+367-+<script id="lukafilmes-popup-protecao">
+368-+(function () {
+369-+    "use strict";
+370- 
+371--        let lista = [];
+372-+    /*
+373:+     * LUKAFILMES — PROTEÇÃO DE NAVEGAÇÃO DO PLAYER
+374-+     *
+375-+     * Mantém a navegação iniciada pelo próprio LUKAFILMES
+376-+     * na página atual e evita que elementos externos do site
+377-+     * sejam transformados em navegação da página principal.
+378-+     */
+379- 
+380--        try{
+381:+    const frame = document.getElementById("filmeFrame");
+382- 
+383--            lista = JSON.parse(
+384--                localStorage.getItem(
+385--                    "lukafilmes_continuar"
+386--                ) || "[]"
+387--            );
+388-+    if (!frame) {
+389:+        console.log("[PLAYER PROTEÇÃO] filmeFrame não encontrado.");
+390-+        return;
+391-+    }
+392- 
+393--        }catch(e){
+394-+    /*
+395:+     * Garante que o iframe continue sendo o destino do player.
+396-+     */
+397-+    frame.setAttribute("allowfullscreen", "");
+398-+    frame.setAttribute(
+399-+        "allow",
+400-+        "autoplay; encrypted-media; picture-in-picture; fullscreen"
+401-+    );
+402- 
+403--            lista = [];
+404--        }
+405-+    /*
+406-+     * Bloqueia links target=_blank pertencentes à página principal.
+407:+     * Não interfere nos links internos do conteúdo do iframe externo.
+408-+     */
+409-+    document.addEventListener("click", function (evento) {
+410- 
+411--        if(!Array.isArray(lista)){
+412--            lista = [];
+413--        }
+414-+        const alvo = evento.target;
+415- 
+416--        const anterior =
+417--            lista.find(function(x){
+418--                return String(x.id) === String(filme.id);
+419--            });
+420-+        if (!alvo || !alvo.closest) return;
+421- 
+422--        const item = {
+--
+452-+            return null;
+453-+        }
+454- 
+455--            duracao:
+456--                anterior ?
+457--                    Number(anterior.duracao) || 0
+458--                    : 0,
+459-+        console.log(
+460:+            "[PLAYER PROTEÇÃO] tentativa de nova janela bloqueada:",
+461-+            url
+462-+        );
+463- 
+464--            progresso:
+465--                anterior ?
+466--                    Number(anterior.progresso) || 0
+467--                    : 0,
+468-+        return null;
+469-+    };
+470- 
+471:-            player:
+472--                String(numero),
+473:+    console.log("[PLAYER PROTEÇÃO] ativa.");
+474-+})();
+475-+</script>
+476- 
+477--            atualizadoEm:
+478--                Date.now()
+479- 
+480--        };
+481:+<script id="lukafilmes-player-protecao">
+482-+(function () {
+483-+    "use strict";
+484- 
+485--        lista =
+486--            lista.filter(function(x){
+487--                return String(x.id) !== String(filme.id);
+488--            });
+489-+    /*
+490-+     * Proteção da página principal.
+491:+     * O conteúdo dos iframes externos continua isolado.
+492:+     * Não intercepta nem modifica anúncios internos dos players.
+493-+     */
+494- 
+495--        lista.unshift(item);
+496:+    const iframe = document.getElementById("filmeFrame");
+497- 
+498--        localStorage.setItem(
+499--            "lukafilmes_continuar",
+500--            JSON.stringify(lista.slice(0,24))
+501--        );
+502:+    if (!iframe) {
+503:+        console.log("[PLAYER PROTECAO] filmeFrame não encontrado.");
+504-+        return;
+505-+    }
+506-+
+507:+    iframe.setAttribute(
+508-+        "referrerpolicy",
+509-+        "strict-origin-when-cross-origin"
+510-+    );
+511- 
+512-+    /*
+513:+     * Mantém o iframe dentro da área do player.
+514-+     */
+515:+    iframe.addEventListener("load", function () {
+516-         console.log(
+517:-            "[CONTINUAR IFRAME] Filme salvo:",
+518--            item
+519:+            "[PLAYER PROTECAO] iframe carregado:",
+520:+            iframe.src
+521-         );
+522--    }
+523--
+524-+    });
+525- 
+526--    function instalar(){
+527-+    /*
+528:+     * Evita que cliques fora do player sejam usados
+529-+     * para alterar a página principal.
+530-+     */
+531-+    window.addEventListener("beforeunload", function () {
+532:+        console.log("[PLAYER PROTECAO] página principal protegida.");
+533-+    });
+534- 
+535--        const botoes =
+536--            document.querySelectorAll(
+537:-                ".player-btn"
+538--            );
+539-+})();
+540-+</script>
+541- 
+542--        if(!botoes.length){
+543- 
+544--            console.warn(
+545:-                "[CONTINUAR IFRAME] Nenhum botão de player encontrado."
+546--            );
+547-+<script id="lukafilmes-protecao-popup-final">
+548-+(function () {
+549-+    "use strict";
+550- 
+551--            return;
+552--        }
+553-+    /*
+554-+     * LUKAFILMES — BLOQUEIO DE POP-UP / REDIRECIONAMENTO
+555-+     * Protege a página principal sem alterar o funcionamento
+556:+     * do iframe/player.
+557-+     */
+558- 
+559--        botoes.forEach(function(botao){
+560-+    document.addEventListener("click", function (e) {
+561-+        const alvo = e.target;
+562-+        if (!alvo || !alvo.closest) return;
+563- 
+564--            if(botao.dataset.continuarLigado === "1"){
+565--                return;
+566--            }
+567-+        const link = alvo.closest("a");
+568- 
+569--            botao.dataset.continuarLigado = "1";
+570-+        if (link && link.target === "_blank") {
+571-+            link.target = "_self";
+--
+573-+    }, true);
+574- 
+575--            botao.addEventListener(
+576--                "click",
+577--                function(){
+578-+    const openOriginal = window.open;
+579- 
+580--                    const numero =
+581:-                        this.dataset.player ||
+582--                        "";
+583-+    window.open = function () {
+584-+        console.log("[LUKAFILMES] popup externo bloqueado.");
+585-+        return null;
+586-+    };
+587- 
+588--                    console.log(
+589:-                        "[CONTINUAR IFRAME] Player escolhido:",
+590--                        numero
+591--                    );
+592-+    window.addEventListener("beforeunload", function (e) {
+593-+        console.log("[LUKAFILMES] tentativa de saída da página detectada.");
+594-+    }, true);
+595- 
+596:-                    salvarSelecaoPlayer(numero);
+597:+    const frame = document.getElementById("filmeFrame");
+598- 
+599--                },
+600--                true
+601--            );
+602-+    if (frame) {
+603-+        frame.setAttribute(
+604-+            "allow",
+605-+            "autoplay; encrypted-media; picture-in-picture; fullscreen"
+606-+        );
+607- 
+608--        });
+609-+        frame.setAttribute("allowfullscreen", "");
+610- 
+611--        console.log(
+612:-            "[CONTINUAR IFRAME] Botões monitorados:",
+613--            botoes.length
+614-+        frame.setAttribute(
+615-+            "referrerpolicy",
+616-+            "strict-origin-when-cross-origin"
+617-         );
+618-+
+619:+        console.log("[LUKAFILMES] iframe protegido.");
+620-     }
+621- 
+622-+    console.log("[LUKAFILMES] proteção popup/redirecionamento ativa.");
+623-+})();
+624-+</script>
+625- 
+626--    if(document.readyState === "loading"){
+627- 
+628--        document.addEventListener(
+629--            "DOMContentLoaded",
+630--            instalar
+631--        );
+632-+<script id="lukafilmes-protecao-pagina-final">
+633-+(function () {
+634-+    "use strict";
+635- 
+636--    }else{
+637-+    /*
+638-+     * Proteção SOMENTE da página principal.
+639:+     * Não usa sandbox e não altera o iframe dos players.
+640-+     */
+641- 
+642--        instalar();
+643-+    document.addEventListener("click", function (e) {
+644-+        const link = e.target && e.target.closest
+645-+            ? e.target.closest("a")
+646-+            : null;
+647- 
+648--    }
+649-+        if (!link) return;
+650- 
+651--    setTimeout(instalar,1000);
+652--    setTimeout(instalar,2500);
+653-+        /*
+654-+         * Links externos da página principal não podem
+--
+712--        justify-content: flex-end !important;
+713--        align-items: center !important;
+714--        gap: 8px !important;
+715- 
+716--        box-sizing: border-box !important;
+717- 
+718--        z-index: 30 !important;
+719--    }
+720:+<style id="lukafilmes-player-myembed-mobile-final">
+721-+/* =========================================================
+722:+   LUKAFILMES — PLAYER MYEMBED MOBILE FINAL
+723:+   SOMENTE PLAYER
+724-+   ========================================================= */
+725- 
+726--    #filmeFavoritosTopo button,
+727--    #filmeFavoritosTopo a{
+728--        position: relative !important;
+729--        top: auto !important;
+730--        right: auto !important;
+731:+#playerFilme > .player-video {
+732-+    width: 100% !important;
+733-+    max-width: 1100px !important;
+734-+    margin-left: auto !important;
+735-+    margin-right: auto !important;
+736-+    box-sizing: border-box !important;
+737-+}
+738- 
+739--        white-space: nowrap !important;
+740:+#playerFilme > .player-video > #filmeFrame {
+741-+    display: block !important;
+742-+    width: 100% !important;
+743-+    height: 70vh !important;
+744-+    min-height: 420px !important;
+745-+    max-height: 720px !important;
+746-+    margin: 0 auto !important;
+747-+    border: 0 !important;
+748-+    box-sizing: border-box !important;
+749-+}
+750-+
+751-+@media (max-width: 768px) {
+752-+
+753:+    #playerFilme > .player-video {
+754-+        width: 100vw !important;
+755-+        max-width: 100vw !important;
+756-+        margin-left: 50% !important;
+757-+        margin-right: 0 !important;
+758-+        transform: translateX(-50%) !important;
+759-+        padding: 0 !important;
+760-         box-sizing: border-box !important;
+761-     }
+762- 
+763:+    #playerFilme > .player-video > #filmeFrame {
+764-+        display: block !important;
+765-+        width: 100vw !important;
+766-+        max-width: 100vw !important;
+767-+        height: 70vh !important;
+768-+        min-height: 0 !important;
+769-+        max-height: none !important;
+770-+        margin: 0 !important;
+771-+        padding: 0 !important;
+772-+        border: 0 !important;
+773-+        box-sizing: border-box !important;
+774-+    }
+775- }
+776- </style>
+777-+
+
+===== FIM =====

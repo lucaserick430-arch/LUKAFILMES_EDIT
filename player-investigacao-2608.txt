@@ -1,0 +1,188 @@
+===== LUKAFILMES — PLAYER PUBLICADO EM 26/08 =====
+
+===== COMMIT ATUAL =====
+2b08dce (HEAD -> master, origin/master, origin/HEAD) Atualizar LUKAFILMES
+
+===== TODOS OS COMMITS DE 26/08 =====
+2b08dce0f45650ef0357757774a040a0713425a0 | 2b08dce | 2026-08-26 12:22:31 | Atualizar LUKAFILMES
+
+===== MYEMBED / VIP / PLAYERS NO HISTÓRICO =====
+
+########## COMMIT ##########
+2b08dce0f45650ef0357757774a040a0713425a0
+2b08dce
+2026-08-26 12:22:31
+Atualizar LUKAFILMES
+--- URLS / PLAYERS ---
+426:.player-video iframe {
+514:.trailer-video iframe {
+652:    .player-video iframe {
+663:    iframe {
+690:    .trailer-video iframe {
+724:    .player-video iframe {
+765:    .player-video iframe {
+1222:    .player-video iframe{
+1263:#playerFilme {
+1273:#playerFilme > .player-video {
+1287:#playerFilme > .player-video > #filmeFrame {
+1306:    #playerFilme {
+1314:    #playerFilme > .player-video {
+1326:    #playerFilme > .player-video > #filmeFrame {
+1808:.trailer-video iframe {
+1907:.player-video iframe {
+2333:.trailer-video iframe{
+2382:.player-video iframe{
+2566:.botoes-assistir > #trailerContainer .trailer-video iframe{
+2640:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2710:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2783:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2866:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2929:    #trailerContainer iframe#trailerFrame {
+3098:    .botoes-assistir > #trailerContainer .trailer-video iframe,
+3211:            <iframe
+3218:            </iframe>
+3230:        id="playerFilme"
+3243:                        class="play-btn player-btn"
+3253:                        class="play-btn player-btn"
+3269:            <iframe
+3270:                id="filmeFrame"
+3276:            </iframe>
+3527:        const playerFilme =
+3528:            document.getElementById("playerFilme");
+3530:        const filmeFrame =
+3531:            document.getElementById("filmeFrame");
+3533:        if (botao && playerFilme && filmeFrame && filme.id) {
+3558:                playerFilme.style.display =
+3562:                filmeFrame.src = "";
+3579:                playerFilme.scrollIntoView({
+3606:                        const embedUrl =
+3607:                            "https://myembed.biz/filme/" +
+3610:                        filmeFrame.src =
+3611:                            embedUrl;
+3668:                                '.player-btn[data-player="1"]'
+3675:                                    ".player-btn"
+3700:                    ".player-btn"
+3715:                        let embedUrl = "";
+3719:                         * MyEmbed
+3723:                            embedUrl =
+3724:                                "https://myembed.biz/filme/" +
+3734:                            embedUrl =
+3735:                                "https://vidsrc.to/embed/movie/" +
+3745:                            embedUrl =
+3746:                                "https://vidsrc.me/embed/movie/" +
+3756:                            embedUrl =
+3757:                                "https://vidsrc.xyz/embed/movie/" +
+3761:                        if (!embedUrl) {
+3768:                            embedUrl
+3789:                        filmeFrame.src =
+3790:                            embedUrl;
+3792:                        playerFilme.scrollIntoView({
+4333:.players-serie-opcoes .serie-player-btn {
+4351:.players-serie-opcoes .serie-player-btn:hover {
+4357:.players-serie-opcoes .serie-player-btn.ativo {
+4386:    .players-serie-opcoes .serie-player-btn {
+4411:.players-serie-opcoes .serie-player-btn:not(:first-child) {
+4427:<script id="lukafilmes-continuar-iframe-fix">
+4430:    console.log("[CONTINUAR IFRAME] Sistema de integração ativo.");
+4484:                "[CONTINUAR IFRAME] Erro ao obter filme:",
+4499:                "[CONTINUAR IFRAME] Filme sem ID."
+4577:            "[CONTINUAR IFRAME] Filme salvo:",
+4587:                ".player-btn"
+4593:                "[CONTINUAR IFRAME] Nenhum botão de player encontrado."
+4616:                        "[CONTINUAR IFRAME] Player escolhido:",
+4629:            "[CONTINUAR IFRAME] Botões monitorados:",
+5604:.player-video iframe{
+5625:.trailer-video iframe{
+5650:    .player-video iframe{
+5670:    .trailer-video iframe{
+5696:    .trailer-video iframe{
+5743:    .trailer-video iframe{
+5792:    .trailer-video iframe{
+
+===== BACKUP 11:50 — MYEMBED / PLAYERS =====
+426:.player-video iframe {
+514:.trailer-video iframe {
+652:    .player-video iframe {
+663:    iframe {
+690:    .trailer-video iframe {
+724:    .player-video iframe {
+765:    .player-video iframe {
+1222:    .player-video iframe{
+1263:#playerFilme {
+1273:#playerFilme > .player-video {
+1287:#playerFilme > .player-video > #filmeFrame {
+1306:    #playerFilme {
+1314:    #playerFilme > .player-video {
+1326:    #playerFilme > .player-video > #filmeFrame {
+1808:.trailer-video iframe {
+1907:.player-video iframe {
+2333:.trailer-video iframe{
+2382:.player-video iframe{
+2566:.botoes-assistir > #trailerContainer .trailer-video iframe{
+2640:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2710:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2783:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2866:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2929:    #trailerContainer iframe#trailerFrame {
+3098:    .botoes-assistir > #trailerContainer .trailer-video iframe,
+3211:            <iframe
+3218:            </iframe>
+3230:        id="playerFilme"
+3243:                        class="play-btn player-btn"
+3253:                        class="play-btn player-btn"
+3269:            <iframe
+3270:                id="filmeFrame"
+3276:            </iframe>
+3527:        const playerFilme =
+3528:            document.getElementById("playerFilme");
+3530:        const filmeFrame =
+3531:            document.getElementById("filmeFrame");
+3533:        if (botao && playerFilme && filmeFrame && filme.id) {
+3558:                playerFilme.style.display =
+3562:                filmeFrame.src = "";
+3579:                playerFilme.scrollIntoView({
+3606:                        const embedUrl =
+3607:                            "https://myembed.biz/filme/" +
+3610:                        filmeFrame.src =
+3611:                            embedUrl;
+3619:                                '.player-btn[data-player="1"]'
+3626:                                    ".player-btn"
+3651:                    ".player-btn"
+3666:                        let embedUrl = "";
+3670:                         * MyEmbed
+3674:                            embedUrl =
+3675:                                "https://myembed.biz/filme/" +
+3685:                            embedUrl =
+3686:                                "https://vidsrc.to/embed/movie/" +
+3696:                            embedUrl =
+3697:                                "https://vidsrc.me/embed/movie/" +
+3707:                            embedUrl =
+3708:                                "https://vidsrc.xyz/embed/movie/" +
+3712:                        if (!embedUrl) {
+3719:                            embedUrl
+3740:                        filmeFrame.src =
+3741:                            embedUrl;
+3743:                        playerFilme.scrollIntoView({
+4183:.players-serie-opcoes .serie-player-btn {
+4201:.players-serie-opcoes .serie-player-btn:hover {
+4207:.players-serie-opcoes .serie-player-btn.ativo {
+4236:    .players-serie-opcoes .serie-player-btn {
+4261:.players-serie-opcoes .serie-player-btn:not(:first-child) {
+4277:<script id="lukafilmes-continuar-iframe-fix">
+4280:    console.log("[CONTINUAR IFRAME] Sistema de integração ativo.");
+4334:                "[CONTINUAR IFRAME] Erro ao obter filme:",
+4349:                "[CONTINUAR IFRAME] Filme sem ID."
+4427:            "[CONTINUAR IFRAME] Filme salvo:",
+4437:                ".player-btn"
+4443:                "[CONTINUAR IFRAME] Nenhum botão de player encontrado."
+4466:                        "[CONTINUAR IFRAME] Player escolhido:",
+4479:            "[CONTINUAR IFRAME] Botões monitorados:",
+5454:.player-video iframe{
+5475:.trailer-video iframe{
+5500:    .player-video iframe{
+5520:    .trailer-video iframe{
+5546:    .trailer-video iframe{
+5593:    .trailer-video iframe{
+5642:    .trailer-video iframe{
+
+===== FIM =====

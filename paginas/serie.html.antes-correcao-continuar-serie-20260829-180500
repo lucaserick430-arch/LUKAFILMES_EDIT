@@ -2835,52 +2835,6 @@ function criarTemporadaFallback() {
             play1Url;
 
         /*
-         * CONTINUAR ASSISTINDO
-         * Registra imediatamente o episódio clicado.
-         * O episódio começa sempre no PLAY 1.
-         */
-        if (window.LukaRegistrarSerieContinuar) {
-
-            window.LukaRegistrarSerieContinuar({
-
-                id: idSerie,
-
-                titulo:
-                    serie.name ||
-                    serie.titulo ||
-                    nome ||
-                    "Série",
-
-                capa:
-                    serie.poster_path
-                        ? "https://image.tmdb.org/t/p/w500" +
-                          serie.poster_path
-                        : "",
-
-                tipo: "serie",
-
-                player: "1",
-
-                temporada:
-                    temporadaId,
-
-                episodio:
-                    episodioId
-
-            });
-
-            console.log(
-                "[CONTINUAR SÉRIE] Episódio iniciado:",
-                {
-                    id: idSerie,
-                    temporada: temporadaId,
-                    episodio: episodioId,
-                    player: "1"
-                }
-            );
-        }
-
-        /*
          * MARCA PLAY 1
          */
 
@@ -3023,13 +2977,11 @@ function criarTemporadaFallback() {
 
                     /*
                      * CONTINUAR ASSISTINDO
-                     *
-                     * Atualiza somente o episódio/player atual.
-                     * O storage já está isolado por conta.
                      */
-                    if (window.LukaRegistrarSerieContinuar) {
 
-                        window.LukaRegistrarSerieContinuar({
+                    if (window.LukaContinuar) {
+
+                        LukaContinuar.registrarInicio({
 
                             id: idSerie,
 
@@ -3047,33 +2999,58 @@ function criarTemporadaFallback() {
 
                             tipo: "serie",
 
-                            player: String(numero),
+                            player: numero,
 
                             temporada:
-                                String(temporadaId),
+                                temporadaId,
 
                             episodio:
-                                String(episodioId)
+                                episodioId
 
                         });
 
-                        console.log(
-                            "[CONTINUAR SÉRIE] PLAYER ATUALIZADO:",
-                            {
-                                id: idSerie,
-                                temporada: String(temporadaId),
-                                episodio: String(episodioId),
-                                player: String(numero)
-                            }
-                        );
                     }
-
-                    
 
                 }
             );
 
         });
+
+        /*
+         * REGISTRA PLAY 1
+         */
+
+        if (window.LukaContinuar) {
+
+            LukaContinuar.registrarInicio({
+
+                id: idSerie,
+
+                titulo:
+                    serie.name ||
+                    serie.titulo ||
+                    nome ||
+                    "Série",
+
+                capa:
+                    serie.poster_path
+                        ? "https://image.tmdb.org/t/p/w500" +
+                          serie.poster_path
+                        : "",
+
+                tipo: "serie",
+
+                player: "1",
+
+                temporada:
+                    temporadaId,
+
+                episodio:
+                    episodioId
+
+            });
+
+        }
 
         /*
          * DESCE ATÉ O PLAYER
@@ -3752,6 +3729,153 @@ document.addEventListener(
 
 
 
+<script id="lukafilmes-series-player-logica-final">
+
+(function () {
+
+    "use strict";
+
+    function ativarPlayersSerie() {
+
+        const playerSerie =
+            document.getElementById("playerSerie");
+
+        const serieFrame =
+            document.getElementById("serieFrame");
+
+        const botoes =
+            document.querySelectorAll(
+                ".players-serie-opcoes .serie-player-btn"
+            );
+
+        if (!playerSerie || !serieFrame || !botoes.length) {
+            return;
+        }
+
+        if (playerSerie.dataset.playersConfigurados === "1") {
+            return;
+        }
+
+        playerSerie.dataset.playersConfigurados = "1";
+
+        botoes.forEach(function (btn) {
+
+            btn.addEventListener("click", function () {
+
+                const numero =
+                    String(this.dataset.player || "");
+
+                const idSerie =
+                    String(
+                        playerSerie.dataset.serieId ||
+                        localStorage.getItem("seriePlayerId") ||
+                        ""
+                    ).trim();
+
+                const temporada =
+                    String(
+                        playerSerie.dataset.temporada ||
+                        localStorage.getItem("seriePlayerTemporada") ||
+                        ""
+                    ).trim();
+
+                const episodio =
+                    String(
+                        playerSerie.dataset.episodio ||
+                        localStorage.getItem("seriePlayerEpisodio") ||
+                        ""
+                    ).trim();
+
+                let embedUrl = "";
+
+                if (numero === "1") {
+
+                    if (!idSerie || !temporada || !episodio) {
+                        console.warn(
+                            "[SÉRIE] Dados insuficientes para PLAY 1."
+                        );
+                        return;
+                    }
+
+                    embedUrl =
+                        "https://mgeb.top/embed/" +
+                        idSerie +
+                        "/" +
+                        temporada +
+                        "/" +
+                        episodio;
+                }
+
+                else if (numero === "2") {
+
+                    if (!idSerie || !temporada || !episodio) {
+                        console.warn(
+                            "[SÉRIE] Dados insuficientes para PLAY 2."
+                        );
+                        return;
+                    }
+
+                    embedUrl =
+                        "https://myembed.biz/serie/" +
+                        idSerie +
+                        "/" +
+                        temporada +
+                        "/" +
+                        episodio;
+                }
+
+                if (!embedUrl) {
+                    return;
+                }
+
+                botoes.forEach(function (item) {
+                    item.classList.remove("ativo");
+                    item.classList.remove("player-selecionado");
+                });
+
+                this.classList.add("ativo");
+                this.classList.add("player-selecionado");
+
+                serieFrame.src = embedUrl;
+
+                console.log(
+                    "[SÉRIE PLAYER]",
+                    "PLAY " + numero,
+                    embedUrl
+                );
+
+                playerSerie.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+            });
+
+        });
+
+    }
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        ativarPlayersSerie
+    );
+
+    setTimeout(
+        ativarPlayersSerie,
+        500
+    );
+
+    setTimeout(
+        ativarPlayersSerie,
+        1500
+    );
+
+})();
+
+</script>
+
+
+
 <!-- LUKAFILMES-CONTINUAR-SERIE-RESUME -->
 <script>
 (function () {
@@ -4354,125 +4478,6 @@ document.addEventListener(
     }else{
         iniciar();
     }
-})();
-</script>
-
-
-<script>
-/* ============================================================
-   LUKAFILMES-CORRECAO-CONTINUAR-SERIE
-   Garante que séries sejam registradas somente depois que
-   o STORAGE isolado da conta estiver pronto.
-   Filmes não são alterados.
-   ============================================================ */
-(function(){
-
-    "use strict";
-
-    function registrarSerieContinuar(dados){
-
-        if(!dados || !dados.id){
-            console.warn(
-                "[CONTINUAR SÉRIE] Dados inválidos para registro."
-            );
-            return;
-        }
-
-        function executar(){
-
-            if(!window.LukaContinuar ||
-               typeof window.LukaContinuar.registrarInicio !== "function"){
-
-                console.warn(
-                    "[CONTINUAR SÉRIE] LukaContinuar ainda não disponível."
-                );
-
-                setTimeout(executar, 150);
-                return;
-            }
-
-            try{
-
-                window.LukaContinuar.registrarInicio({
-
-                    id: String(dados.id),
-
-                    titulo:
-                        dados.titulo ||
-                        "Série",
-
-                    capa:
-                        dados.capa ||
-                        "",
-
-                    tipo: "serie",
-
-                    player:
-                        dados.player != null
-                            ? String(dados.player)
-                            : "1",
-
-                    temporada:
-                        dados.temporada != null
-                            ? String(dados.temporada)
-                            : null,
-
-                    episodio:
-                        dados.episodio != null
-                            ? String(dados.episodio)
-                            : null
-
-                });
-
-                console.log(
-                    "[CONTINUAR SÉRIE] REGISTRADO:",
-                    {
-                        id: String(dados.id),
-                        temporada: dados.temporada,
-                        episodio: dados.episodio,
-                        player: dados.player
-                    }
-                );
-
-            }catch(e){
-
-                console.error(
-                    "[CONTINUAR SÉRIE] Erro ao registrar:",
-                    e
-                );
-            }
-        }
-
-        /*
-         * O conta-storage pode ainda estar esperando /api/eu.
-         * Neste caso esperamos a conta antes de gravar.
-         */
-        if(
-            window.LukaContaPronta &&
-            typeof window.LukaContaPronta.then === "function"
-        ){
-
-            window.LukaContaPronta
-                .then(function(){
-                    executar();
-                })
-                .catch(function(){
-                    executar();
-                });
-
-        }else{
-
-            executar();
-        }
-    }
-
-    window.LukaRegistrarSerieContinuar =
-        registrarSerieContinuar;
-
-    console.log(
-        "[CONTINUAR SÉRIE] Correção carregada."
-    );
-
 })();
 </script>
 

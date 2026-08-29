@@ -1,0 +1,493 @@
+============================================================
+LUKAFILMES — CONTINUAR ASSISTINDO — PÁGINA OFICIAL
+============================================================
+
+===== LINHAS 1 ATÉ 360 =====
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050505">
+<title>Continuar Assistindo — LUKAFILMES</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html,body{
+    background:#050505;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    min-height:100%;
+}
+
+body{
+    overflow-x:hidden;
+}
+
+.header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:72px;
+    z-index:1000;
+    display:flex;
+    align-items:center;
+    padding:0 4%;
+    background:rgba(5,5,5,.96);
+    box-shadow:0 5px 25px rgba(0,0,0,.45);
+}
+
+.logo{
+    font-size:25px;
+    font-weight:900;
+    letter-spacing:-1px;
+    color:#e50914;
+    margin-right:35px;
+    white-space:nowrap;
+}
+
+.logo span{
+    color:#fff;
+}
+
+.voltar{
+    border:0;
+    background:#222;
+    color:#fff;
+    padding:9px 14px;
+    border-radius:7px;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:700;
+}
+
+main{
+    padding:110px 5% 50px;
+}
+
+h1{
+    font-size:28px;
+    margin-bottom:28px;
+}
+
+#listaContinuar{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+    gap:24px 16px;
+}
+
+.continuar-card{
+    min-width:0;
+    color:#fff;
+}
+
+.continuar-capa{
+    width:100%;
+    aspect-ratio:2 / 3;
+    object-fit:cover;
+    display:block;
+    border-radius:10px;
+    background:#151515;
+}
+
+.continuar-info{
+    padding-top:9px;
+}
+
+.continuar-titulo{
+    font-size:14px;
+    font-weight:700;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.continuar-progresso{
+    width:100%;
+    height:4px;
+    margin-top:8px;
+    background:#333;
+    border-radius:4px;
+    overflow:hidden;
+}
+
+.continuar-progresso > div{
+    height:100%;
+    background:#e50914;
+}
+
+.continuar-btn{
+    display:block;
+    width:100%;
+    margin-top:9px;
+    padding:10px 8px;
+    border:0;
+    border-radius:7px;
+    background:#e50914;
+    color:#fff;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+}
+
+.continuar-btn:active{
+    transform:scale(.98);
+}
+
+.vazio{
+    color:#aaa;
+    font-size:16px;
+    padding:30px 0;
+}
+
+@media(max-width:600px){
+
+    .header{
+        height:60px;
+        padding:0 15px;
+    }
+
+    .logo{
+        font-size:20px;
+        margin-right:15px;
+    }
+
+    .voltar{
+        margin-left:auto;
+        padding:8px 11px;
+        font-size:12px;
+    }
+
+    main{
+        padding:85px 14px 40px;
+    }
+
+    h1{
+        font-size:23px;
+        margin-bottom:22px;
+    }
+
+    #listaContinuar{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:20px 12px;
+    }
+
+    .continuar-btn{
+        padding:11px 6px;
+        font-size:13px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        LUKA<span>FILMES</span>
+    </div>
+
+    <button
+        type="button"
+        class="voltar"
+        id="btnVoltar"
+    >← Voltar</button>
+
+</header>
+
+<main>
+
+    <h1>▶ Continuar Assistindo</h1>
+
+    <div id="listaContinuar"></div>
+
+</main>
+
+<script src="../js/continuar-assistindo.js"></script>
+
+<script>
+(function(){
+
+    const container =
+        document.getElementById("listaContinuar");
+
+    if(!container){
+        return;
+    }
+
+    function escapar(valor){
+        return String(valor || "")
+            .replace(/&/g,"&amp;")
+            .replace(/</g,"&lt;")
+            .replace(/>/g,"&gt;")
+            .replace(/"/g,"&quot;")
+            .replace(/'/g,"&#039;");
+    }
+
+    function carregar(){
+
+        let lista = [];
+
+        try{
+            lista = JSON.parse(
+                localStorage.getItem("lukafilmes_continuar") || "[]"
+            );
+        }catch(e){
+            console.error(
+                "[CONTINUAR PAGINA] Erro ao ler histórico:",
+                e
+            );
+        }
+
+        if(!Array.isArray(lista)){
+            lista = [];
+        }
+
+        if(!lista.length){
+
+            container.innerHTML =
+                '<div class="vazio">' +
+                'Você ainda não tem filmes ou séries para continuar assistindo.' +
+                '</div>';
+
+            return;
+        }
+
+        container.innerHTML = "";
+
+        lista.forEach(function(item){
+
+            if(!item || !item.id){
+                return;
+            }
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "continuar-card";
+
+            const progresso =
+                Math.min(
+                    100,
+                    Math.max(
+                        0,
+                        Number(item.progresso) || 0
+                    )
+                );
+
+            const capa =
+                item.capa || "";
+
+            const titulo =
+                item.titulo || "Conteúdo";
+
+            card.innerHTML = `
+                <img
+                    class="continuar-capa"
+                    src="${escapar(capa)}"
+                    alt="${escapar(titulo)}"
+                    draggable="false"
+                >
+
+                <div class="continuar-info">
+
+                    <div class="continuar-titulo">
+                        ${escapar(titulo)}
+                    </div>
+
+                    <div class="continuar-progresso">
+                        <div style="width:${progresso}%"></div>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="continuar-btn"
+                    >
+                        ▶ Continuar
+                    </button>
+
+                </div>
+            `;
+
+            const botao =
+                card.querySelector(".continuar-btn");
+
+            botao.addEventListener(
+                "click",
+                function(event){
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    console.log(
+                        "[CONTINUAR PAGINA] Abrindo:",
+                        item
+                    );
+
+                    if(
+                        window.LukaContinuar &&
+                        typeof window.LukaContinuar.abrir === "function"
+                    ){
+                        window.LukaContinuar.abrir(item);
+                        return;
+                    }
+
+                    /*
+                     * Fallback caso o JS principal não esteja disponível.
+                     */
+                    const tipo =
+                        item.tipo === "serie" ||
+                        item.tipo === "series" ||
+                        item.media_type === "tv"
+                            ? "serie"
+                            : "filme";
+
+                    const pagina =
+                        tipo === "serie"
+                            ? "/paginas/serie.html"
+                            : "/paginas/filme.html";
+
+                    try{
+                        localStorage.setItem(
+                            "filmeSelecionado",
+                            JSON.stringify(item)
+                        );
+
+
+===== REFERÊNCIAS AOS CARDS E CLIQUES =====
+72-}
+73-
+74-#listaContinuar{
+75-    display:grid;
+76-    grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+77-    gap:24px 16px;
+78-}
+79-
+80:.continuar-card{
+81-    min-width:0;
+82-    color:#fff;
+83-}
+84-
+85-.continuar-capa{
+86-    width:100%;
+87-    aspect-ratio:2 / 3;
+88-    object-fit:cover;
+--
+229-    }
+230-
+231-    function carregar(){
+232-
+233-        let lista = [];
+234-
+235-        try{
+236-            lista = JSON.parse(
+237:                localStorage.getItem("lukafilmes_continuar") || "[]"
+238-            );
+239-        }catch(e){
+240-            console.error(
+241-                "[CONTINUAR PAGINA] Erro ao ler histórico:",
+242-                e
+243-            );
+244-        }
+245-
+--
+264-            if(!item || !item.id){
+265-                return;
+266-            }
+267-
+268-            const card =
+269-                document.createElement("div");
+270-
+271-            card.className =
+272:                "continuar-card";
+273-
+274-            const progresso =
+275-                Math.min(
+276-                    100,
+277-                    Math.max(
+278-                        0,
+279-                        Number(item.progresso) || 0
+280-                    )
+--
+326-
+327-                    console.log(
+328-                        "[CONTINUAR PAGINA] Abrindo:",
+329-                        item
+330-                    );
+331-
+332-                    if(
+333-                        window.LukaContinuar &&
+334:                        typeof window.LukaContinuar.abrir === "function"
+335-                    ){
+336:                        window.LukaContinuar.abrir(item);
+337-                        return;
+338-                    }
+339-
+340-                    /*
+341-                     * Fallback caso o JS principal não esteja disponível.
+342-                     */
+343-                    const tipo =
+344-                        item.tipo === "serie" ||
+--
+348-                            : "filme";
+349-
+350-                    const pagina =
+351-                        tipo === "serie"
+352-                            ? "/paginas/serie.html"
+353-                            : "/paginas/filme.html";
+354-
+355-                    try{
+356:                        localStorage.setItem(
+357:                            "filmeSelecionado",
+358-                            JSON.stringify(item)
+359-                        );
+360-
+361:                        localStorage.setItem(
+362:                            "filmeSelecionadoHome_" +
+363-                            String(item.id),
+364-                            JSON.stringify(item)
+365-                        );
+366-                    }catch(e){
+367-                        console.warn(
+368:                            "[CONTINUAR PAGINA] Erro localStorage:",
+369-                            e
+370-                        );
+371-                    }
+372-
+373:                    window.location.href =
+374-                        pagina +
+375-                        "?id=" +
+376-                        encodeURIComponent(item.id);
+377-                }
+378-            );
+379-
+380-            container.appendChild(card);
+381-        });
+382-    }
+383-
+384-    document
+385-        .getElementById("btnVoltar")
+386-        .addEventListener("click",function(){
+387:            window.location.href = "/";
+388-        });
+389-
+390-    carregar();
+391-
+392-})();
+393-</script>
+394-
+395-</body>
+
+============================================================
+FIM
+============================================================

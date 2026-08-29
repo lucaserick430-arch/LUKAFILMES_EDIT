@@ -1,0 +1,12 @@
+============================================================
+OK — HOME COM NOTIFICAÇÃO AUTOMÁTICA NO COMPUTADOR/TV
+OK — QUADRO COMPLETO COM FILMES DO TMDB
+OK — ABERTURA AUTOMÁTICA SOMENTE PC/TV
+OK — FECHAMENTO AUTOMÁTICO APÓS 15 SEGUNDOS
+OK — CELULAR CONTINUA SEM ABERTURA AUTOMÁTICA
+OK — SINO CONTINUA DISPONÍVEL
+OK — CONTADOR PRESERVADO
+BACKUP: backup_notificacao_home_15s_20260829_122102
+============================================================
+ARQUIVO: index.html
+============================================================

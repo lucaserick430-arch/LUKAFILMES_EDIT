@@ -1,0 +1,29 @@
+===== FIX FINAL — SÉRIES POPULARES =====
+Backup: index.html.backup-series-home-final-20260828-114219
+3599-        let item=lista[i];
+3600-
+3601-        if(!item)
+3602-            continue;
+3603-
+3604:        if(container._lukaTipo==="series"){
+3605-            item={
+3606-                ...item,
+3607-                media_type:"tv",
+3608-                tipo:"serie"
+3609-            };
+3610-        }
+3611-
+3612-        fragmento.appendChild(
+3613-            criarCard(
+3614-                item,
+3615-                container._lukaTop
+3616-                    ? i+1
+3617-                    : null
+3618-            )
+3619-        );
+3620-
+3621-        adicionados++;
+3622-    }
+3623-
+3624-    container.appendChild(fragmento);
+===== FIM =====

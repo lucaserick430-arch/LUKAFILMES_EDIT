@@ -1,0 +1,4129 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LUKAFILMES - Séries</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #050505;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.topo-series {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 20px 80px;
+}
+
+.voltar {
+    display: inline-flex;
+    align-items: center;
+    padding: 11px 18px;
+    color: #fff;
+    text-decoration: none;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 30px;
+    transition: .25s;
+}
+
+.voltar:hover {
+    background: #e50914;
+    transform: translateX(-3px);
+}
+
+.titulo-series {
+    margin: 35px 0 8px;
+    text-align: center;
+    font-size: clamp(36px, 6vw, 60px);
+    font-weight: 900;
+}
+
+.subtitulo-series {
+    margin: 0 auto 35px;
+    text-align: center;
+    color: #aaa;
+    font-size: 16px;
+}
+
+/* ==========================================
+   PESQUISA
+   ========================================== */
+
+.pesquisa-series {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto 50px;
+}
+
+.campo-pesquisa {
+    position: relative;
+    width: 100%;
+}
+
+.campo-pesquisa input {
+    width: 100%;
+    height: 58px;
+    padding: 0 60px 0 22px;
+
+    color: #fff;
+    background: rgba(255,255,255,.08);
+
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 30px;
+
+    outline: none;
+
+    font-size: 16px;
+
+    backdrop-filter: blur(15px);
+
+    transition: .25s;
+}
+
+.campo-pesquisa input:focus {
+    border-color: #e50914;
+    box-shadow: 0 0 25px rgba(229,9,20,.18);
+}
+
+.campo-pesquisa button {
+    position: absolute;
+
+    right: 7px;
+    top: 7px;
+
+    width: 44px;
+    height: 44px;
+
+    border: 0;
+    border-radius: 50%;
+
+    color: #fff;
+    background: #e50914;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    transition: .25s;
+}
+
+.campo-pesquisa button:hover {
+    transform: scale(1.08);
+}
+
+.resultado-pesquisa {
+    display: none;
+
+    margin-top: 35px;
+}
+
+.resultado-pesquisa h2 {
+    margin-bottom: 25px;
+    font-size: 25px;
+}
+
+/* ==========================================
+   CATEGORIAS
+   ========================================== */
+
+.categoria {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto 55px;
+}
+
+.categoria h2 {
+    margin: 0 0 22px;
+    font-size: 25px;
+}
+
+/* ==========================================
+   LISTA
+   ========================================== */
+
+.lista-series {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(170px, 1fr));
+
+    gap: 22px;
+}
+
+/* ==========================================
+   CARD
+   ========================================== */
+
+.card-serie {
+    overflow: hidden;
+
+    background: #101010;
+
+    border-radius: 13px;
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    cursor: pointer;
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+
+    animation: aparecer .45s ease;
+}
+
+.card-serie:hover {
+    transform: translateY(-8px) scale(1.02);
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.7),
+        0 0 25px rgba(229,9,20,.12);
+}
+
+.card-serie img {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+
+    display: block;
+
+    object-fit: cover;
+
+    background: #181818;
+}
+
+.card-serie-info {
+    padding: 12px;
+}
+
+.card-serie-info h3 {
+    margin: 0 0 7px;
+
+    font-size: 15px;
+    line-height: 1.3;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-serie-info p {
+    margin: 0;
+
+    color: #f5c518;
+
+    font-size: 13px;
+}
+
+/* ==========================================
+   CARREGANDO
+   ========================================== */
+
+.carregando {
+    grid-column: 1 / -1;
+
+    padding: 40px;
+
+    text-align: center;
+
+    color: #999;
+}
+
+.sem-resultados {
+    padding: 45px 20px;
+
+    text-align: center;
+
+    color: #aaa;
+
+    font-size: 16px;
+}
+
+@keyframes aparecer {
+
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+/* ==========================================
+   CELULAR
+   ========================================== */
+
+@media (max-width: 700px) {
+
+    .topo-series {
+        padding: 20px 12px 60px;
+    }
+
+    .titulo-series {
+        margin-top: 28px;
+    }
+
+    .lista-series {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
+    }
+
+    .categoria h2 {
+        font-size: 21px;
+    }
+
+}
+
+
+/* ==========================================================
+   PESQUISA MOBILE — COMPACTA
+   ========================================================== */
+@media (max-width: 700px) {
+
+    .pesquisa-series {
+        width: 100% !important;
+        max-width: 320px !important;
+        margin: 0 auto 30px !important;
+    }
+
+    .campo-pesquisa {
+        width: 100% !important;
+        max-width: 320px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+    }
+
+    .campo-pesquisa input {
+        width: 100% !important;
+        max-width: 320px !important;
+        height: 46px !important;
+        box-sizing: border-box !important;
+
+        padding: 0 55px 0 17px !important;
+
+        border-radius: 25px !important;
+        font-size: 14px !important;
+    }
+
+    .campo-pesquisa button {
+        width: 38px !important;
+        height: 38px !important;
+
+        right: 4px !important;
+        top: 4px !important;
+
+        border-radius: 50% !important;
+        font-size: 17px !important;
+    }
+}
+
+</style>
+
+
+<style id="lukafilmes-series-netflix">
+
+/* =========================================================
+   LUKAFILMES — SÉRIES / VISUAL NETFLIX
+   SOMENTE VISUAL
+   NÃO ALTERA API OU CARREGAMENTO
+   ========================================================= */
+
+body {
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(229,9,20,.12),
+            transparent 45%
+        ),
+        #080808 !important;
+}
+
+/* TOPO */
+
+header {
+    background: rgba(5,5,5,.92) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* CONTEÚDO */
+
+.pagina {
+    padding-top: 20px !important;
+}
+
+/* TÍTULO */
+
+.topo {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 10px 5% 25px !important;
+}
+
+.topo h1 {
+    font-size: clamp(28px, 4vw, 48px) !important;
+    font-weight: 800 !important;
+    letter-spacing: -1px;
+}
+
+/* BOTÃO VOLTAR */
+
+.voltar {
+    transition: .25s ease;
+}
+
+.voltar:hover {
+    background: #e50914 !important;
+    transform: translateX(-3px);
+}
+
+/* =========================================================
+   FILEIRAS
+   ========================================================= */
+
+.categoria,
+section {
+    position: relative;
+}
+
+.categoria-header {
+    max-width: 1500px;
+    margin: 0 auto 14px !important;
+    padding: 0 5% !important;
+}
+
+.categoria-header h2,
+.categoria-header h3 {
+    font-size: clamp(20px, 2.2vw, 27px) !important;
+    font-weight: 700 !important;
+}
+
+/* =========================================================
+   CATÁLOGO
+   ========================================================= */
+
+#populares,
+#avaliadas,
+#lancamentos {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 5%;
+}
+
+/* DESKTOP */
+
+.card-serie {
+    position: relative;
+    width: 180px !important;
+    min-width: 180px !important;
+    border-radius: 7px;
+    overflow: hidden;
+    background: #151515;
+    cursor: pointer;
+    transition:
+        transform .28s ease,
+        box-shadow .28s ease,
+        z-index .28s ease;
+}
+
+.card-serie:hover {
+    transform: scale(1.06);
+    z-index: 20;
+    box-shadow:
+        0 18px 45px rgba(0,0,0,.75),
+        0 0 18px rgba(229,9,20,.12);
+}
+
+/* IMAGEM */
+
+.card-serie img {
+    width: 100% !important;
+    height: 270px !important;
+    object-fit: cover !important;
+    display: block;
+}
+
+/* INFORMAÇÕES */
+
+.card-serie h3,
+.card-serie .titulo {
+    padding: 10px 10px 0;
+    margin: 0;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-serie p {
+    padding: 5px 10px 11px;
+    margin: 0;
+    color: #999;
+    font-size: 13px;
+}
+
+/* =========================================================
+   GRADE / FILEIRA
+   ========================================================= */
+
+.series,
+#populares,
+#avaliadas,
+#lancamentos {
+    scrollbar-width: none;
+}
+
+#populares::-webkit-scrollbar,
+#avaliadas::-webkit-scrollbar,
+#lancamentos::-webkit-scrollbar {
+    display: none;
+}
+
+/* =========================================================
+   SETAS
+   ========================================================= */
+
+.seta {
+    width: 42px;
+    height: 42px;
+    padding: 0 !important;
+    border-radius: 50%;
+    background: rgba(255,255,255,.10) !important;
+    border: 1px solid rgba(255,255,255,.08) !important;
+    transition: .25s ease;
+}
+
+.seta:hover {
+    background: #e50914 !important;
+    transform: scale(1.08);
+}
+
+/* =========================================================
+   ESPAÇAMENTO ENTRE FILEIRAS
+   ========================================================= */
+
+.categoria {
+    margin-bottom: 35px;
+}
+
+/* =========================================================
+   EFEITO DE ENTRADA DOS CARDS
+   ========================================================= */
+
+.card-serie {
+    animation: serieEntrada .45s ease both;
+}
+
+@keyframes serieEntrada {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================================
+   MOBILE — ESTILO APP / NETFLIX
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .pagina {
+        padding-top: 5px !important;
+    }
+
+    .topo {
+        padding:
+            10px 14px 18px !important;
+    }
+
+    .topo h1 {
+        font-size: 26px !important;
+    }
+
+    .categoria-header {
+        padding: 0 14px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .categoria-header h2,
+    .categoria-header h3 {
+        font-size: 20px !important;
+    }
+
+    #populares,
+    #avaliadas,
+    #lancamentos {
+        padding: 0 12px !important;
+    }
+
+    .card-serie {
+        width: 140px !important;
+        min-width: 140px !important;
+        border-radius: 8px;
+    }
+
+    .card-serie img {
+        height: 210px !important;
+    }
+
+    .card-serie h3,
+    .card-serie .titulo {
+        font-size: 13px;
+        padding: 8px 8px 0;
+    }
+
+    .card-serie p {
+        font-size: 11px;
+        padding: 4px 8px 9px;
+    }
+
+}
+
+/* =========================================================
+   REDUZ ANIMAÇÃO SE O USUÁRIO PREFERIR
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .card-serie {
+        animation: none !important;
+        transition: none !important;
+    }
+
+}
+
+</style>
+
+
+<style id="series-netflix-final">
+
+/* =========================================================
+   LUKAFILMES — SÉRIES
+   VISUAL STREAMING / NETFLIX
+   ========================================================= */
+
+body {
+    margin: 0 !important;
+    background: #080808 !important;
+    color: #fff !important;
+    overflow-x: hidden;
+}
+
+.topo-series {
+    width: 100%;
+    min-height: 100vh;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.header-series-netflix {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    gap: 35px;
+    padding: 0 4%;
+    background: linear-gradient(
+        180deg,
+        rgba(0,0,0,.95),
+        rgba(0,0,0,.72),
+        transparent
+    );
+    z-index: 1000;
+}
+
+.logo-series-netflix {
+    color: #e50914 !important;
+    font-size: 27px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-decoration: none !important;
+}
+
+.logo-series-netflix span {
+    color: #fff;
+}
+
+.nav-series-netflix {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.nav-series-netflix a {
+    color: #ddd !important;
+    text-decoration: none !important;
+    font-size: 14px;
+    transition: .2s ease;
+}
+
+.nav-series-netflix a:hover,
+.nav-series-netflix a.ativo {
+    color: #fff !important;
+    font-weight: 700;
+}
+
+.voltar-series-netflix {
+    margin-left: auto;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 5px;
+    background: rgba(255,255,255,.10);
+    transition: .2s ease;
+}
+
+.voltar-series-netflix:hover {
+    background: #e50914;
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero-series-netflix {
+    position: relative;
+    min-height: 610px;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 5% 80px;
+    box-sizing: border-box;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.95) 0%,
+            rgba(0,0,0,.72) 38%,
+            rgba(0,0,0,.18) 72%,
+            rgba(0,0,0,.05) 100%
+        ),
+        linear-gradient(
+            0deg,
+            #080808 0%,
+            transparent 38%
+        ),
+        radial-gradient(
+            circle at 75% 35%,
+            rgba(80,80,80,.35),
+            transparent 45%
+        );
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+.hero-series-netflix::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 180px;
+    background: linear-gradient(
+        transparent,
+        #080808
+    );
+    pointer-events: none;
+}
+
+.hero-series-conteudo {
+    position: relative;
+    z-index: 2;
+    max-width: 620px;
+    padding-top: 100px;
+}
+
+.hero-series-tag {
+    color: #e50914;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+.hero-series-conteudo h1 {
+    margin: 0 0 12px;
+    font-size: clamp(38px, 5vw, 68px);
+    line-height: .98;
+    font-weight: 900;
+    letter-spacing: -2px;
+}
+
+.hero-series-meta {
+    display: flex;
+    gap: 18px;
+    color: #ddd;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.hero-series-meta span:empty {
+    display: none;
+}
+
+.hero-series-conteudo p {
+    max-width: 580px;
+    margin: 0 0 25px;
+    color: #ddd;
+    font-size: 16px;
+    line-height: 1.55;
+    text-shadow: 0 2px 4px rgba(0,0,0,.7);
+}
+
+.hero-series-botoes {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-series-assistir,
+.btn-series-lista {
+    border: 0;
+    border-radius: 5px;
+    min-height: 44px;
+    padding: 0 22px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.btn-series-assistir {
+    background: #fff;
+    color: #000;
+}
+
+.btn-series-assistir:hover {
+    background: #ddd;
+    transform: scale(1.03);
+}
+
+.btn-series-lista {
+    background: rgba(109,109,110,.72);
+    color: #fff;
+}
+
+.btn-series-lista:hover {
+    background: rgba(109,109,110,.95);
+    transform: scale(1.03);
+}
+
+/* =========================================================
+   PESQUISA
+   ========================================================= */
+
+.pesquisa-series-netflix {
+    position: relative;
+    z-index: 5;
+    max-width: 1400px;
+    margin: -15px auto 30px;
+    padding: 0 5%;
+}
+
+.pesquisa-series-netflix .campo-pesquisa {
+    max-width: 480px;
+    display: flex;
+}
+
+.pesquisa-series-netflix input {
+    width: 100%;
+    min-height: 44px;
+    box-sizing: border-box;
+    background: rgba(30,30,30,.95);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 4px 0 0 4px;
+    padding: 0 14px;
+    outline: none;
+}
+
+.pesquisa-series-netflix button {
+    width: 52px;
+    border: 0;
+    border-radius: 0 4px 4px 0;
+    background: #e50914;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* =========================================================
+   CATEGORIAS
+   ========================================================= */
+
+#conteudoCategorias {
+    position: relative;
+    z-index: 4;
+    padding-bottom: 50px;
+}
+
+.categoria-netflix {
+    margin: 0 0 38px !important;
+}
+
+.titulo-categoria-netflix {
+    padding: 0 5%;
+    margin-bottom: 12px;
+}
+
+.titulo-categoria-netflix h2 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 700;
+}
+
+/* =========================================================
+   FILEIRAS
+   ========================================================= */
+
+.categoria-netflix .lista-series {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px 5% 25px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+}
+
+.categoria-netflix .lista-series::-webkit-scrollbar {
+    display: none;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.categoria-netflix .card-serie {
+    flex: 0 0 180px !important;
+    width: 180px !important;
+    min-width: 180px !important;
+    border-radius: 5px !important;
+    overflow: hidden;
+    background: #151515;
+    cursor: pointer;
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.categoria-netflix .card-serie:hover {
+    transform: scale(1.07);
+    z-index: 30;
+    box-shadow: 0 18px 40px rgba(0,0,0,.75);
+}
+
+.categoria-netflix .card-serie img {
+    width: 100% !important;
+    height: 270px !important;
+    object-fit: cover !important;
+    display: block;
+}
+
+.categoria-netflix .card-serie-info {
+    padding-bottom: 10px;
+}
+
+.categoria-netflix .card-serie h3,
+.categoria-netflix .card-serie .titulo {
+    margin: 0;
+    padding: 9px 9px 0;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.categoria-netflix .card-serie p {
+    margin: 0;
+    padding: 5px 9px 0;
+    color: #999;
+    font-size: 12px;
+}
+
+/* =========================================================
+   RESULTADO DE PESQUISA
+   ========================================================= */
+
+#resultadoPesquisa {
+    position: relative;
+    z-index: 5;
+    max-width: 1500px;
+    margin: 20px auto 35px;
+    padding: 0 5%;
+}
+
+#resultadoPesquisa h2 {
+    font-size: 22px;
+    margin-bottom: 14px;
+}
+
+#listaResultados {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .header-series-netflix {
+        height: 58px;
+        padding: 0 15px;
+        gap: 15px;
+    }
+
+    .logo-series-netflix {
+        font-size: 21px;
+    }
+
+    .nav-series-netflix {
+        gap: 12px;
+    }
+
+    .nav-series-netflix a {
+        font-size: 12px;
+    }
+
+    .voltar-series-netflix {
+        display: none;
+    }
+
+    .hero-series-netflix {
+        min-height: 500px;
+        padding: 0 18px 48px;
+        background-position: center;
+    }
+
+    .hero-series-conteudo {
+        padding-top: 100px;
+    }
+
+    .hero-series-tag {
+        font-size: 11px;
+        letter-spacing: 1.5px;
+    }
+
+    .hero-series-conteudo h1 {
+        font-size: 38px;
+    }
+
+    .hero-series-conteudo p {
+        font-size: 14px;
+        line-height: 1.45;
+        max-height: 82px;
+        overflow: hidden;
+    }
+
+    .btn-series-assistir,
+    .btn-series-lista {
+        min-height: 40px;
+        padding: 0 16px;
+        font-size: 13px;
+    }
+
+    .pesquisa-series-netflix {
+        margin: -5px auto 25px;
+        padding: 0 15px;
+    }
+
+    .titulo-categoria-netflix {
+        padding: 0 15px;
+    }
+
+    .categoria-netflix .lista-series {
+        gap: 8px;
+        padding: 8px 15px 22px;
+    }
+
+    .categoria-netflix .card-serie {
+        flex-basis: 135px !important;
+        width: 135px !important;
+        min-width: 135px !important;
+        border-radius: 5px !important;
+    }
+
+    .categoria-netflix .card-serie img {
+        height: 202px !important;
+    }
+
+    .categoria-netflix .card-serie h3,
+    .categoria-netflix .card-serie .titulo {
+        font-size: 12px;
+        padding: 7px 7px 0;
+    }
+
+    .categoria-netflix .card-serie p {
+        font-size: 10px;
+        padding: 4px 7px 0;
+    }
+
+    .categoria-netflix {
+        margin-bottom: 25px !important;
+    }
+
+}
+
+</style>
+
+
+<style id="lukafilmes-series-infinito-final">
+
+/* =========================================================
+   CATÁLOGO INFINITO — VISUAL NETFLIX
+   ========================================================= */
+
+#conteudoCategorias {
+    display: block !important;
+    width: 100%;
+}
+
+.categoria-netflix {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 24px 4% 0 !important;
+}
+
+.categoria-netflix:first-child {
+    padding-top: 34px !important;
+}
+
+.titulo-categoria-netflix {
+    width: 100%;
+    margin: 0 0 18px;
+}
+
+.titulo-categoria-netflix h2 {
+    color: #fff;
+    font-size: 1.55rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -.3px;
+}
+
+.categoria-netflix .lista-series {
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    width: 100% !important;
+    overflow: visible !important;
+    padding: 0 0 12px !important;
+    scroll-behavior: auto !important;
+}
+
+.categoria-netflix .card-serie {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    overflow: hidden;
+    border-radius: 7px;
+    background: #141414;
+    position: relative;
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.categoria-netflix .card-serie:hover {
+    transform: scale(1.035);
+    z-index: 5;
+}
+
+.categoria-netflix .card-serie img {
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 7px 7px 0 0;
+}
+
+.categoria-netflix .card-serie-info {
+    padding: 10px 10px 12px !important;
+    min-height: 72px;
+}
+
+.categoria-netflix .card-serie h3,
+.categoria-netflix .card-serie .titulo {
+    color: #fff;
+    font-size: .94rem;
+    line-height: 1.25;
+    margin: 0 0 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.categoria-netflix .card-serie p {
+    color: #aaa;
+    font-size: .78rem;
+    margin: 0;
+}
+
+#populares {
+    min-height: 200px;
+}
+
+/*
+ * As categorias "Mais Bem Avaliadas" e "Lançamentos"
+ * continuam separadas visualmente.
+ * O catálogo infinito principal cresce continuamente
+ * dentro de Séries Populares.
+ */
+
+#populares .carregando {
+    grid-column: 1 / -1;
+}
+
+.carregando {
+    color: #aaa;
+    text-align: center;
+    padding: 28px 10px;
+    width: 100%;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+    .categoria-netflix .lista-series {
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 850px) {
+    .categoria-netflix .lista-series {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 13px !important;
+    }
+
+    .categoria-netflix {
+        padding-left: 3.5% !important;
+        padding-right: 3.5% !important;
+    }
+
+    .titulo-categoria-netflix h2 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .categoria-netflix .lista-series {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+    }
+
+    .categoria-netflix {
+        padding-top: 20px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .titulo-categoria-netflix h2 {
+        font-size: 1.08rem;
+        margin-bottom: 13px;
+    }
+
+    .categoria-netflix .card-serie-info {
+        padding: 7px 7px 9px !important;
+        min-height: 55px;
+    }
+
+    .categoria-netflix .card-serie h3,
+    .categoria-netflix .card-serie .titulo {
+        font-size: .76rem;
+    }
+
+    .categoria-netflix .card-serie p {
+        font-size: .66rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .categoria-netflix .lista-series {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 11px !important;
+    }
+}
+
+</style>
+
+
+<style id="lukafilmes-pesquisa-series-final">
+.pesquisa-series-netflix {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 28px auto 10px !important;
+    padding: 0 15px !important;
+}
+
+.pesquisa-series-netflix .campo-pesquisa {
+    width: min(620px, 92vw) !important;
+    margin: 0 auto !important;
+    position: relative !important;
+}
+
+.pesquisa-series-netflix input {
+    width: 100% !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
+
+.pesquisa-series-netflix input::placeholder {
+    text-align: center !important;
+}
+
+.pesquisa-series-netflix button {
+    display: none !important;
+}
+</style>
+
+
+
+
+
+<style id="pesquisa-series-texto-centro-final">
+.pesquisa-series-netflix .campo-pesquisa {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.pesquisa-series-netflix .campo-pesquisa input {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    padding: 0 20px !important;
+    margin: 0 !important;
+    line-height: normal !important;
+}
+
+.pesquisa-series-netflix .campo-pesquisa input::placeholder {
+    text-align: center !important;
+    opacity: 1 !important;
+}
+
+.pesquisa-series-netflix .campo-pesquisa button {
+    display: none !important;
+}
+</style>
+
+
+<style id="pesquisa-series-autocomplete-css-final">
+
+.pesquisa-series-netflix {
+    position: relative !important;
+    z-index: 9999 !important;
+}
+
+#resultadoPesquisa {
+    position: relative !important;
+    z-index: 9998 !important;
+    display: none;
+    width: min(700px, 92%);
+    margin: -5px auto 30px auto !important;
+}
+
+#resultadoPesquisa h2 {
+    display: none !important;
+}
+
+#listaResultados {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    width: 100% !important;
+    max-height: 430px !important;
+    overflow-y: auto !important;
+    background: rgba(12, 12, 12, .98) !important;
+    border: 1px solid rgba(255,255,255,.10) !important;
+    border-radius: 12px !important;
+    padding: 6px !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 15px 40px rgba(0,0,0,.65) !important;
+}
+
+.sugestao-serie {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    width: 100% !important;
+    min-height: 68px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 8px 12px !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    background: transparent !important;
+    color: #fff !important;
+    text-align: left !important;
+    cursor: pointer !important;
+    font-family: inherit !important;
+}
+
+.sugestao-serie:hover,
+.sugestao-serie:focus {
+    background: rgba(255,255,255,.10) !important;
+    outline: none !important;
+}
+
+.sugestao-serie img,
+.sugestao-serie-sem-imagem {
+    width: 42px !important;
+    height: 58px !important;
+    flex: 0 0 42px !important;
+    object-fit: cover !important;
+    border-radius: 5px !important;
+    background: #222 !important;
+}
+
+.sugestao-serie-info {
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+}
+
+.sugestao-serie-info strong {
+    color: #fff !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.sugestao-serie-info small {
+    color: #aaa !important;
+    font-size: 12px !important;
+}
+
+@media (max-width: 600px) {
+
+    #resultadoPesquisa {
+        width: calc(100% - 24px) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    #listaResultados {
+        max-height: 360px !important;
+    }
+
+    .sugestao-serie {
+        min-height: 62px !important;
+    }
+
+    .sugestao-serie img,
+    .sugestao-serie-sem-imagem {
+        width: 38px !important;
+        height: 52px !important;
+        flex-basis: 38px !important;
+    }
+
+}
+
+</style>
+
+
+<style id="LUKAFILMES-HERO-SERIES-TRAILER-DEFINITIVO">
+
+/* =========================================================
+   LUKAFILMES — HERO SÉRIES
+   TRAILER YOUTUBE COMO FUNDO REAL DO HERO
+   OVERRIDE FINAL
+   ========================================================= */
+
+/* HERO */
+#heroSeries.hero-series-netflix,
+#heroSeries {
+    position: relative !important;
+    height: 610px !important;
+    min-height: 610px !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+    background-color: #050505 !important;
+    background-image: none;
+}
+
+/* =========================================================
+   TRAILER
+   O iframe é criado diretamente dentro do #heroSeries.
+   ========================================================= */
+
+#heroSeries > iframe#trailerSeries,
+#heroSeries iframe#trailerSeries {
+    position: absolute !important;
+
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+
+    width: 100vw !important;
+    height: 56.25vw !important;
+
+    min-width: 177.78vh !important;
+    min-height: 100vh !important;
+
+    max-width: none !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    outline: 0 !important;
+
+    display: block !important;
+
+    transform: translate(-50%, -50%) !important;
+
+    z-index: 0 !important;
+
+    pointer-events: none !important;
+}
+
+/*
+ * CORREÇÃO CRÍTICA:
+ * O CSS antigo "#heroSeries > *" estava tornando
+ * o iframe relativo. Aqui forçamos o posicionamento
+ * correto com seletor mais específico.
+ */
+#heroSeries > iframe#trailerSeries {
+    position: absolute !important;
+    z-index: 0 !important;
+}
+
+/* =========================================================
+   REMOVE A CAPA/FUNDO ANTIGO
+   ========================================================= */
+
+#heroSeries::before {
+    background-image: none !important;
+    background: transparent !important;
+}
+
+/* =========================================================
+   ESCURECIMENTO SOBRE O TRAILER
+   ========================================================= */
+
+#heroSeries::after {
+    content: "" !important;
+
+    position: absolute !important;
+    inset: 0 !important;
+
+    z-index: 1 !important;
+
+    pointer-events: none !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.96) 0%,
+            rgba(0,0,0,.78) 30%,
+            rgba(0,0,0,.40) 62%,
+            rgba(0,0,0,.12) 100%
+        ),
+        linear-gradient(
+            0deg,
+            #080808 0%,
+            rgba(8,8,8,.82) 13%,
+            transparent 55%,
+            rgba(0,0,0,.15) 100%
+        ) !important;
+}
+
+/* =========================================================
+   CONTEÚDO
+   ========================================================= */
+
+#heroSeries .hero-series-conteudo {
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+#heroSeries .hero-series-botoes {
+    position: relative !important;
+    z-index: 6 !important;
+}
+
+#heroSeries .hero-series-conteudo h1,
+#heroSeries .hero-series-conteudo p,
+#heroSeries .hero-series-conteudo > *,
+#heroSeries .hero-series-meta,
+#heroSeries .hero-series-tag {
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
+
+@media (min-width: 769px) {
+
+    #heroSeries.hero-series-netflix,
+    #heroSeries {
+        height: 610px !important;
+        min-height: 610px !important;
+    }
+
+    #heroSeries > iframe#trailerSeries {
+        width: 100vw !important;
+        height: 56.25vw !important;
+
+        min-width: 177.78vh !important;
+        min-height: 100vh !important;
+
+        top: 50% !important;
+        left: 50% !important;
+
+        transform: translate(-50%, -50%) !important;
+    }
+}
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    #heroSeries.hero-series-netflix,
+    #heroSeries {
+        height: 560px !important;
+        min-height: 560px !important;
+    }
+
+    #heroSeries > iframe#trailerSeries {
+        width: 177.78vh !important;
+        height: 100vh !important;
+
+        min-width: 177.78vh !important;
+        min-height: 100vh !important;
+
+        max-width: none !important;
+        max-height: none !important;
+
+        top: 50% !important;
+        left: 50% !important;
+
+        transform: translate(-50%, -50%) !important;
+    }
+}
+
+/* =========================================================
+   CELULAR PEQUENO
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    #heroSeries.hero-series-netflix,
+    #heroSeries {
+        height: 540px !important;
+        min-height: 540px !important;
+    }
+
+    #heroSeries > iframe#trailerSeries {
+        width: 177.78vh !important;
+        height: 100vh !important;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<main class="topo-series">
+
+    <!-- =====================================================
+         HEADER / NAVEGAÇÃO
+         ===================================================== -->
+
+    <header class="header-series-netflix">
+
+        <a href="../index.html" class="logo-series-netflix">
+            LUKA<span>FILMES</span>
+        </a>
+
+        <nav class="nav-series-netflix">
+            <a href="../index.html">Início</a>
+            <a href="filmes.html">Filmes</a>
+            <a href="series.html" class="ativo">Séries</a>
+        </nav>
+
+        <a href="../index.html" class="voltar-series-netflix">
+            ← Voltar
+        </a>
+
+    </header>
+
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="hero-series-netflix" id="heroSeries">
+
+        <div class="hero-series-video-wrap">
+            <iframe
+                id="trailerSeries"
+                class="hero-series-video"
+                src=""
+                title="Trailer da série"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <div class="hero-series-video-overlay"></div>
+
+        <div class="hero-series-conteudo">
+
+            <div class="hero-series-tag">
+                LUKAFILMES ORIGINAL
+            </div>
+
+            <h1 id="heroTituloSeries">
+                Séries
+            </h1>
+
+            <div class="hero-series-meta">
+                <span id="heroAnoSeries"></span>
+                <span id="heroNotaSeries"></span>
+            </div>
+
+            <p id="heroSinopseSeries">
+                Descubra séries populares, novidades e muito mais.
+            </p>
+
+            <div class="hero-series-botoes">
+
+                <button
+                    id="heroAssistirSeries"
+                    class="btn-series-assistir"
+                    type="button">
+                    ▶ Assistir
+                </button>
+
+                <button
+                    id="heroListaSeries"
+                    class="btn-series-lista"
+                    type="button">
+                    ＋ Minha lista
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PESQUISA
+         ===================================================== -->
+
+    <div class="pesquisa-series pesquisa-series-netflix">
+
+        <div class="campo-pesquisa">
+
+            <input
+                type="search"
+                id="pesquisaSeries"
+                placeholder="Pesquisar séries..."
+                autocomplete="off">
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RESULTADOS DA PESQUISA
+         ===================================================== -->
+
+    <section
+        class="resultado-pesquisa"
+        id="resultadoPesquisa">
+
+        <h2>🔎 Resultados da pesquisa</h2>
+
+        <div
+            class="lista-series"
+            id="listaResultados">
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CATEGORIAS
+         ===================================================== -->
+
+    <div id="conteudoCategorias" data-catalogo="infinito" data-maximo="10000">
+
+        <section class="categoria categoria-netflix">
+
+            <div class="titulo-categoria-netflix">
+                
+            </div>
+
+            <div
+                class="lista-series"
+                id="populares">
+
+                
+
+            </div>
+
+        </section>
+
+
+        <section class="categoria categoria-netflix">
+
+            <div class="titulo-categoria-netflix">
+                <h2>⭐ Mais Bem Avaliadas</h2>
+            </div>
+
+            <div
+                class="lista-series"
+                id="avaliadas">
+
+                
+
+            </div>
+
+        </section>
+
+
+        <section class="categoria categoria-netflix">
+
+            <div class="titulo-categoria-netflix">
+                <h2>🆕 Lançamentos</h2>
+            </div>
+
+            <div
+                class="lista-series"
+                id="lancamentos">
+
+                
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<script>
+
+(function () {
+
+    const TMDB_IMAGE =
+        "https://image.tmdb.org/t/p/w500";
+
+
+    /* ==========================================
+       ESCAPAR HTML
+       ========================================== */
+
+    function escaparHTML(texto) {
+
+        const div = document.createElement("div");
+
+        div.textContent = texto || "";
+
+        return div.innerHTML;
+
+    }
+
+
+    /* ==========================================
+       CRIAR CARD
+       ========================================== */
+
+    function criarCard(serie) {const card =
+            document.createElement("div");
+
+        card.className =
+            "card-serie";
+
+
+        const imagem =
+            serie.capa ||
+            (
+                serie.poster_path
+                    ? TMDB_IMAGE + serie.poster_path
+                    : ""
+            );
+
+
+        const titulo =
+            serie.titulo ||
+            serie.name ||
+            serie.original_name ||
+            "Sem título";
+
+
+        const nota =
+            Number(
+                serie.nota ??
+                serie.vote_average ??
+                0
+            ).toFixed(1);
+
+
+        const ano =
+            serie.ano ||
+            (
+                serie.first_air_date
+                    ? serie.first_air_date.substring(0, 4)
+                    : ""
+            );
+
+
+        card.innerHTML = `
+
+            <img
+                src="${imagem}"
+                alt="${escaparHTML(titulo)}"
+                loading="lazy">
+
+            <div class="card-serie-info">
+
+                <h3>
+                    ${escaparHTML(titulo)}
+                </h3>
+
+                <p>
+                    ⭐ ${nota}
+                    ${ano ? " • " + ano : ""}
+                </p>
+
+            </div>
+
+        `;
+
+
+        /* ======================================
+           CLIQUE NA SÉRIE
+           ====================================== */
+
+        card.addEventListener(
+            "click",
+            function () {
+
+                localStorage.setItem(
+                    "serieSelecionada",
+                    JSON.stringify(serie)
+                );
+
+                /*
+                 * Por enquanto abrimos uma página
+                 * própria da série.
+                 *
+                 * Vamos criar serie.html
+                 * no próximo passo.
+                 */
+
+                sessionStorage.setItem(
+                    "lukafilmes_estado_series",
+                    JSON.stringify({
+                        pagina: paginaSeries,
+                        scroll: window.scrollY
+                    })
+                );
+
+                window.location.href =
+                    "serie.html";
+
+            }
+        );
+
+
+        return card;
+
+    }
+
+
+    /* ==========================================
+       MOSTRAR CARDS
+       ========================================== */
+
+    function mostrarSeries(
+        container,
+        series
+    ) {
+
+        container.innerHTML = "";
+
+
+        if (
+            !Array.isArray(series) ||
+            series.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div class="sem-resultados">
+                    Nenhuma série encontrada.
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        series.forEach(function (serie) {
+
+            container.appendChild(
+                criarCard(serie)
+            );
+
+        });
+
+    }
+    /* ==========================================
+       CATÁLOGO INFINITO DE SÉRIES
+       MESMA LÓGICA DOS FILMES
+       ATÉ 10.000 SÉRIES
+       ========================================== */
+
+    let paginaSeries = 1;
+
+    // ==========================================
+    // RESTAURAR ESTADO DA LISTAGEM
+    // ==========================================
+
+    const estadoSeriesSalvo =
+        sessionStorage.getItem("lukafilmes_estado_series");
+
+    let restaurandoSeries =
+        !!estadoSeriesSalvo;
+
+    let estadoSeries = null;
+
+    if (estadoSeriesSalvo) {
+        try {
+            estadoSeries =
+                JSON.parse(estadoSeriesSalvo);
+
+            paginaSeries =
+                Number(estadoSeries.pagina || 1);
+
+        } catch (e) {
+            sessionStorage.removeItem(
+                "lukafilmes_estado_series"
+            );
+
+            restaurandoSeries = false;
+        }
+    }
+    let carregandoSeries = false;
+    let acabouSeries = false;
+
+    const seriesCarregadas = new Set();
+
+
+    async function carregarSeries() {
+
+        if (carregandoSeries || acabouSeries) {
+            return;
+        }
+
+        carregandoSeries = true;
+
+        const grade =
+            document.getElementById("populares");
+
+        try {
+
+            const resposta = await fetch(
+                "/api/catalogo-series?pagina=" +
+                paginaSeries
+            );
+
+            const dados = await resposta.json();
+
+            if (!dados.sucesso) {
+
+                throw new Error(
+                    dados.mensagem ||
+                    "Erro no catálogo de séries"
+                );
+
+            }
+
+            const series =
+                Array.isArray(dados.series)
+                    ? dados.series
+                    : Array.isArray(dados.resultados)
+                        ? dados.resultados
+                        : [];
+
+            let adicionados = 0;
+
+
+            for (const serie of series) {
+
+                /*
+                 * Esconde o Hockey Psychology somente
+                 * no começo do catálogo.
+                 *
+                 * Depois da página 2 ele pode aparecer
+                 * normalmente no carregamento infinito.
+                 */
+                if (
+                    paginaSeries <= 2 &&
+                    serie &&
+                    String(serie.id || "") === "310518"
+                ) {
+                    continue;
+                }
+
+
+                const id = String(
+                    serie.id ||
+                    serie.tmdb_id ||
+                    serie.titulo ||
+                    ""
+                ).trim();
+
+
+                if (
+                    !id ||
+                    seriesCarregadas.has(id)
+                ) {
+                    continue;
+                }
+
+
+                seriesCarregadas.add(id);
+
+
+                /*
+                 * Usa exatamente o criador de cards
+                 * que já existe na página de séries.
+                 */
+
+                const card =
+                    criarCard(serie);
+
+
+                grade.appendChild(card);
+
+                adicionados++;
+
+            }
+
+
+            if (
+                paginaSeries === 1 &&
+                adicionados === 0
+            ) {
+
+                grade.innerHTML =
+                    '<div class="carregando">' +
+                    'Nenhuma série encontrada.' +
+                    '</div>';
+
+            }
+
+
+            if (
+                dados.acabou ||
+                dados.proximaPagina === false ||
+                series.length === 0 ||
+                seriesCarregadas.size >= 10000
+            ) {
+
+                acabouSeries = true;
+
+
+                const fim =
+                    document.createElement("div");
+
+                fim.className =
+                    "carregando";
+
+                fim.textContent =
+                    "Você chegou ao fim do catálogo.";
+
+                grade.appendChild(fim);
+
+
+            } else {
+
+                paginaSeries++;
+
+            }
+
+
+            console.log(
+                "[SERIES] Página:",
+                paginaSeries,
+                "| Total:",
+                seriesCarregadas.size
+            );
+
+
+        } catch (erro) {
+
+            console.error(
+                "[SERIES]",
+                erro
+            );
+
+        } finally {
+
+            carregandoSeries = false;
+
+        }
+
+    }
+
+
+    /*
+     * Primeiras 40 séries:
+     * duas páginas do nosso endpoint.
+     */
+
+    async function carregarPrimeirasSeries() {
+
+        await carregarSeries();
+
+        if (!acabouSeries) {
+            await carregarSeries();
+        }
+
+    }
+
+
+    /*
+     * Carrega mais séries quando o usuário
+     * chega perto do final da página.
+     */
+
+    window.addEventListener(
+        "scroll",
+        function() {
+
+            if (
+                carregandoSeries ||
+                acabouSeries
+            ) {
+                return;
+            }
+
+
+            const distancia =
+                document.documentElement.scrollHeight -
+                (
+                    window.scrollY +
+                    window.innerHeight
+                );
+
+
+            if (distancia < 1000) {
+
+                carregarSeries();
+
+            }
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    /*
+     * Primeira carga.
+     */
+
+    async function iniciarSeriesComEstado() {
+
+        const salvo =
+            sessionStorage.getItem(
+                "lukafilmes_estado_series"
+            );
+
+        // Entrada normal na página de séries
+        if (!salvo) {
+
+            await carregarPrimeirasSeries();
+
+            return;
+        }
+
+        let estado;
+
+        try {
+
+            estado = JSON.parse(salvo);
+
+        } catch (erro) {
+
+            console.warn(
+                "[SÉRIES] Estado inválido:",
+                erro
+            );
+
+            sessionStorage.removeItem(
+                "lukafilmes_estado_series"
+            );
+
+            await carregarPrimeirasSeries();
+
+            return;
+        }
+
+        const paginasSalvas =
+            Math.max(
+                1,
+                Number(estado.pagina || 1)
+            );
+
+        // Começa novamente para reconstruir
+        // exatamente a quantidade de páginas
+        // que o usuário já tinha carregado.
+        paginaSeries = 1;
+
+        for (
+            let i = 0;
+            i < paginasSalvas;
+            i++
+        ) {
+
+            await carregarSeries();
+
+        }
+
+        // O estado já foi utilizado.
+        sessionStorage.removeItem(
+            "lukafilmes_estado_series"
+        );
+
+        // Aguarda o navegador terminar de
+        // montar todos os cards antes de
+        // restaurar a posição.
+        setTimeout(function () {
+
+            const posicao =
+                Number(
+                    estado.scroll || 0
+                );
+
+            window.scrollTo({
+                top: posicao,
+                left: 0,
+                behavior: "instant"
+            });
+
+            // Segunda tentativa para garantir
+            // a posição mesmo em celulares mais lentos.
+            setTimeout(function () {
+
+                window.scrollTo({
+                    top: posicao,
+                    left: 0,
+                    behavior: "instant"
+                });
+
+            }, 400);
+
+        }, 700);
+
+    }
+
+    iniciarSeriesComEstado();
+
+    /* ==========================================
+       PESQUISA
+       ========================================== */
+
+    const campo =
+        document.getElementById(
+            "pesquisaSeries"
+        );
+
+    const botao =
+        document.getElementById(
+            "botaoPesquisa"
+        );
+
+    const resultado =
+        document.getElementById(
+            "resultadoPesquisa"
+        );
+
+    const lista =
+        document.getElementById(
+            "listaResultados"
+        );
+
+    const categorias =
+        document.getElementById(
+            "conteudoCategorias"
+        );
+
+
+    let temporizador = null;
+
+
+    async function pesquisarSeries() {
+
+        const busca =
+            campo.value.trim();
+
+
+        if (!busca) {
+
+            resultado.style.display =
+                "none";
+
+            categorias.style.display =
+                "block";
+
+            return;
+
+        }
+
+
+        resultado.style.display =
+            "block";
+
+        categorias.style.display =
+            "none";
+
+
+        lista.innerHTML = `
+
+            <div class="carregando">
+                🔎 Procurando séries...
+            </div>
+
+        `;
+
+
+        try {
+
+            const resposta =
+                await fetch(
+                    "/api/pesquisar-series?q=" +
+                    encodeURIComponent(busca)
+                );
+
+
+            const dados =
+                await resposta.json();
+
+
+            if (
+                dados &&
+                dados.sucesso &&
+                Array.isArray(dados.resultados)
+            ) {
+
+                mostrarSeries(
+                    lista,
+                    dados.resultados
+                );
+
+            } else {
+
+                lista.innerHTML = `
+
+                    <div class="sem-resultados">
+                        Nenhuma série encontrada.
+                    </div>
+
+                `;
+
+            }
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO PESQUISA SERIES]",
+                erro
+            );
+
+            lista.innerHTML = `
+
+                <div class="sem-resultados">
+                    Erro ao pesquisar séries.
+                </div>
+
+            `;
+
+        }
+
+    }
+
+
+    botao.addEventListener(
+        "click",
+        pesquisarSeries
+    );
+
+
+    campo.addEventListener(
+        "keydown",
+        function (evento) {
+
+            if (
+                evento.key === "Enter"
+            ) {
+
+                pesquisarSeries();
+
+            }
+
+        }
+    );
+
+
+    /* ==========================================
+       PESQUISA AUTOMÁTICA
+       ========================================== */
+
+    campo.addEventListener(
+        "input",
+        function () {
+
+            clearTimeout(
+                temporizador
+            );
+
+
+            const valor =
+                campo.value.trim();
+
+
+            if (!valor) {
+
+                resultado.style.display =
+                    "none";
+
+                categorias.style.display =
+                    "block";
+
+                return;
+
+            }
+
+
+            temporizador =
+                setTimeout(
+                    pesquisarSeries,
+                    500
+                );
+
+        }
+    );
+
+})();
+
+</script>
+
+<script id="pesquisa-series-autocomplete-final">
+(function () {
+
+    const input = document.getElementById("pesquisaSeries");
+    const resultados = document.getElementById("listaResultados");
+    const blocoResultados = document.getElementById("resultadoPesquisa");
+
+    if (!input || !resultados || !blocoResultados) {
+        console.error("[PESQUISA SÉRIES] Elementos não encontrados");
+        return;
+    }
+
+    let timer = null;
+    let controlador = null;
+
+    function escapar(texto) {
+        const div = document.createElement("div");
+        div.textContent = texto || "";
+        return div.innerHTML;
+    }
+
+    function obterTitulo(serie) {
+        return (
+            serie.titulo ||
+            serie.name ||
+            serie.original_name ||
+            "Série"
+        );
+    }
+
+    function obterImagem(serie) {
+        if (serie.capa) {
+            return serie.capa;
+        }
+
+        if (serie.poster_path) {
+            return "https://image.tmdb.org/t/p/w300" +
+                   serie.poster_path;
+        }
+
+        return "";
+    }
+
+    function abrirSerie(serie) {
+
+        try {
+            localStorage.setItem(
+                "serieSelecionada",
+                JSON.stringify(serie)
+            );
+        } catch (e) {
+            console.error("[PESQUISA SÉRIES] Erro localStorage:", e);
+        }
+
+        window.location.href = "serie.html";
+    }
+
+    function limparResultados() {
+        resultados.innerHTML = "";
+        blocoResultados.style.display = "none";
+    }
+
+    function mostrarResultados(lista) {
+
+        resultados.innerHTML = "";
+
+        if (!Array.isArray(lista) || lista.length === 0) {
+            blocoResultados.style.display = "none";
+            return;
+        }
+
+        blocoResultados.style.display = "block";
+
+        lista.slice(0, 8).forEach(function (serie) {
+
+            const titulo = obterTitulo(serie);
+
+            const ano =
+                serie.ano ||
+                (
+                    serie.first_air_date
+                        ? String(serie.first_air_date).substring(0, 4)
+                        : ""
+                );
+
+            const nota =
+                Number(
+                    serie.nota ??
+                    serie.vote_average ??
+                    0
+                ).toFixed(1);
+
+            const imagem = obterImagem(serie);
+
+            const item = document.createElement("button");
+
+            item.type = "button";
+            item.className = "sugestao-serie";
+
+            item.innerHTML =
+                (imagem
+                    ? '<img src="' +
+                      escapar(imagem) +
+                      '" alt="" loading="lazy">'
+                    : '<div class="sugestao-serie-sem-imagem"></div>') +
+
+                '<span class="sugestao-serie-info">' +
+                    '<strong>' +
+                        escapar(titulo) +
+                    '</strong>' +
+
+                    '<small>' +
+                        (ano ? escapar(String(ano)) : "") +
+                        (ano && nota !== "0.0" ? " • " : "") +
+                        (nota !== "0.0"
+                            ? "⭐ " + escapar(nota)
+                            : "") +
+                    '</small>' +
+                '</span>';
+
+            item.addEventListener("click", function () {
+                abrirSerie(serie);
+            });
+
+            resultados.appendChild(item);
+
+        });
+    }
+
+    async function pesquisar(texto) {
+
+        const termo = texto.trim();
+
+        if (termo.length < 2) {
+            limparResultados();
+            return;
+        }
+
+        if (controlador) {
+            controlador.abort();
+        }
+
+        controlador = new AbortController();
+
+        try {
+
+            const resposta = await fetch(
+                "/api/pesquisar-series?q=" +
+                encodeURIComponent(termo),
+                {
+                    signal: controlador.signal
+                }
+            );
+
+            if (!resposta.ok) {
+                throw new Error(
+                    "HTTP " + resposta.status
+                );
+            }
+
+            const dados = await resposta.json();
+
+            const lista =
+                Array.isArray(dados.series)
+                    ? dados.series
+                    : Array.isArray(dados.resultados)
+                        ? dados.resultados
+                        : [];
+
+            mostrarResultados(lista);
+
+        } catch (erro) {
+
+            if (erro.name === "AbortError") {
+                return;
+            }
+
+            console.error(
+                "[PESQUISA SÉRIES]",
+                erro
+            );
+
+            limparResultados();
+        }
+    }
+
+    input.addEventListener("input", function () {
+
+        clearTimeout(timer);
+
+        const texto = input.value;
+
+        if (texto.trim().length < 2) {
+            limparResultados();
+            return;
+        }
+
+        timer = setTimeout(function () {
+            pesquisar(texto);
+        }, 250);
+
+    });
+
+    input.addEventListener("keydown", function (event) {
+
+        if (event.key === "Escape") {
+            input.value = "";
+            limparResultados();
+            input.blur();
+        }
+
+    });
+
+    document.addEventListener("click", function (event) {
+
+        if (
+            !input.contains(event.target) &&
+            !resultados.contains(event.target)
+        ) {
+            limparResultados();
+        }
+
+    });
+
+    console.log(
+        "[PESQUISA SÉRIES] AUTOCOMPLETE ATIVO"
+    );
+
+})();
+</script>
+
+
+
+
+<style id="hero-series-trailer-ajuste-final">
+
+/* =========================================================
+   LUKAFILMES — AJUSTE FINAL DO TRAILER NO HERO
+   SOMENTE ENCAIXE DO IFRAME
+   ========================================================= */
+
+.hero-series-netflix {
+    position: relative !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+}
+
+/* Camada do trailer */
+#trailerSeries {
+    position: absolute !important;
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 100% !important;
+    min-height: 100% !important;
+
+    border: 0 !important;
+    outline: 0 !important;
+
+    display: block !important;
+
+    object-fit: cover !important;
+
+    pointer-events: none !important;
+
+    z-index: 0 !important;
+}
+
+/*
+ * O iframe do YouTube mantém proporção 16:9.
+ * Esta camada faz o vídeo preencher completamente
+ * o Hero sem deixar barras.
+ */
+.hero-series-netflix > iframe#trailerSeries,
+.hero-series-netflix iframe#trailerSeries {
+    width: 100vw !important;
+    height: 56.25vw !important;
+
+    min-width: 177.78vh !important;
+    min-height: 100% !important;
+
+    position: absolute !important;
+
+    top: 50% !important;
+    left: 50% !important;
+
+    transform: translate(-50%, -50%) !important;
+}
+
+/* Conteúdo fica SEMPRE acima do trailer */
+.hero-series-conteudo {
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+/* Escurecimento sobre o trailer */
+.hero-series-netflix::after {
+    z-index: 2 !important;
+    pointer-events: none !important;
+}
+
+/* Conteúdo acima da camada escura */
+.hero-series-netflix .hero-series-conteudo {
+    z-index: 5 !important;
+}
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    #trailerSeries {
+        width: 177.78vh !important;
+        height: 100vh !important;
+
+        min-width: 177.78vh !important;
+        min-height: 100% !important;
+
+        max-width: none !important;
+        max-height: none !important;
+
+        top: 50% !important;
+        left: 50% !important;
+
+        transform: translate(-50%, -50%) !important;
+    }
+
+    .hero-series-netflix {
+        overflow: hidden !important;
+    }
+
+}
+
+/* =========================================================
+   CELULARES MUITO ESTREITOS
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    #trailerSeries {
+        width: 177.78vh !important;
+        height: 100vh !important;
+
+        min-width: 177.78vh !important;
+        min-height: 100% !important;
+    }
+
+}
+
+</style>
+
+
+<script id="hero-series-dinamico">
+
+/* =========================================================
+   LUKAFILMES — HERO AUTOMÁTICO DE SÉRIES
+   =========================================================
+
+   A cada atualização da página:
+
+   1. Busca séries automaticamente.
+   2. Escolhe uma série aleatória.
+   3. Consulta os vídeos dessa série.
+   4. Procura trailer oficial / trailer / teaser.
+   5. Se uma série não tiver trailer, tenta outra.
+   6. Coloca o vídeo do YouTube no HERO.
+   7. Autoplay + mute + loop.
+   8. Mantém título, nota, sinopse e Assistir.
+   9. Assistir leva para serie.html.
+
+   NÃO altera:
+   - catálogo infinito
+   - pesquisa/autocomplete
+   - cards
+   - categorias
+   - Minha Lista
+   ========================================================= */
+
+let serieHeroAtual = null;
+
+const cacheTrailerHeroSeries = new Map();
+
+
+function nomeHeroSerie(serie) {
+
+    return (
+        serie?.titulo ||
+        serie?.name ||
+        serie?.original_name ||
+        "Série"
+    );
+
+}
+
+
+function idHeroSerie(serie) {
+
+    return String(
+        serie?.tmdb_id ||
+        serie?.id ||
+        ""
+    ).trim();
+
+}
+
+
+function anoHeroSerie(serie) {
+
+    return (
+        serie?.ano ||
+        (
+            serie?.first_air_date
+                ? String(serie.first_air_date).substring(0, 4)
+                : ""
+        )
+    );
+
+}
+
+
+function imagemHeroSerie(serie) {
+
+    return (
+        serie?.backdrop ||
+        (
+            serie?.backdrop_path
+                ? "https://image.tmdb.org/t/p/original" +
+                  serie.backdrop_path
+                : ""
+        ) ||
+        serie?.capa ||
+        (
+            serie?.poster_path
+                ? "https://image.tmdb.org/t/p/original" +
+                  serie.poster_path
+                : ""
+        )
+    );
+
+}
+
+
+/* =========================================================
+   GARANTE O IFRAME DO HERO
+   ========================================================= */
+
+function obterIframeHeroSerie() {
+
+    const hero =
+        document.getElementById("heroSeries");
+
+    if (!hero) {
+        return null;
+    }
+
+    let iframe =
+        hero.querySelector("iframe");
+
+    if (!iframe) {
+
+        iframe =
+            document.createElement("iframe");
+
+        iframe.id = "trailerSeries";
+
+        iframe.setAttribute(
+            "title",
+            "Trailer da série"
+        );
+
+        iframe.setAttribute(
+            "allow",
+            "autoplay; encrypted-media; picture-in-picture"
+        );
+
+        iframe.setAttribute(
+            "allowfullscreen",
+            ""
+        );
+
+        hero.insertBefore(
+            iframe,
+            hero.firstChild
+        );
+
+    }
+
+    /*
+     * Garante que o iframe esteja atrás
+     * do conteúdo do HERO.
+     */
+
+    iframe.style.position = "absolute";
+    iframe.style.inset = "0";
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+    iframe.style.border = "0";
+    iframe.style.zIndex = "0";
+    iframe.style.pointerEvents = "none";
+    iframe.style.objectFit = "cover";
+
+    return iframe;
+
+}
+
+
+/* =========================================================
+   BUSCA TRAILER DE UMA SÉRIE
+   ========================================================= */
+
+async function buscarTrailerHeroSerie(serie) {
+
+    const id =
+        idHeroSerie(serie);
+
+    if (!id) {
+        return null;
+    }
+
+    if (
+        cacheTrailerHeroSeries.has(id)
+    ) {
+        return cacheTrailerHeroSeries.get(id);
+    }
+
+    try {
+
+        const resposta =
+            await fetch(
+                "/api/serie/" +
+                encodeURIComponent(id) +
+                "/videos",
+                {
+                    cache: "no-store"
+                }
+            );
+
+        if (!resposta.ok) {
+            return null;
+        }
+
+        const dados =
+            await resposta.json();
+
+        const trailer =
+            dados &&
+            dados.sucesso
+                ? dados.trailer
+                : null;
+
+        cacheTrailerHeroSeries.set(
+            id,
+            trailer || null
+        );
+
+        return trailer || null;
+
+    } catch (erro) {
+
+        console.warn(
+            "[HERO SÉRIES] Falha trailer:",
+            id,
+            erro
+        );
+
+        return null;
+
+    }
+
+}
+
+
+/* =========================================================
+   COLOCA O TRAILER NO HERO
+   ========================================================= */
+
+function colocarTrailerHeroSerie(trailer) {
+
+    if (!trailer || !trailer.key) {
+        return false;
+    }
+
+    const iframe =
+        obterIframeHeroSerie();
+
+    if (!iframe) {
+        return false;
+    }
+
+    const key =
+        String(trailer.key).trim();
+
+    if (!key) {
+        return false;
+    }
+
+    /*
+     * playlist=KEY é necessário para o
+     * loop funcionar no YouTube.
+     */
+
+    iframe.src =
+        "https://www.youtube.com/embed/" +
+        encodeURIComponent(key) +
+        "?autoplay=1" +
+        "&mute=1" +
+        "&controls=0" +
+        "&loop=1" +
+        "&playlist=" +
+        encodeURIComponent(key) +
+        "&rel=0" +
+        "&modestbranding=1" +
+        "&playsinline=1" +
+        "&iv_load_policy=3";
+
+    return true;
+
+}
+
+
+/* =========================================================
+   TEXTO DO HERO
+   ========================================================= */
+
+function configurarTextoHeroSerie(serie) {
+
+    serieHeroAtual =
+        serie;
+
+    const titulo =
+        nomeHeroSerie(serie);
+
+    const ano =
+        anoHeroSerie(serie);
+
+    const notaNumero =
+        Number(
+            serie?.nota ??
+            serie?.vote_average ??
+            0
+        );
+
+    const sinopse =
+        serie?.sinopse ||
+        serie?.overview ||
+        serie?.descricao ||
+        "Descubra esta série no LUKAFILMES.";
+
+
+    const tituloEl =
+        document.getElementById(
+            "heroTituloSeries"
+        );
+
+    const anoEl =
+        document.getElementById(
+            "heroAnoSeries"
+        );
+
+    const notaEl =
+        document.getElementById(
+            "heroNotaSeries"
+        );
+
+    const sinopseEl =
+        document.getElementById(
+            "heroSinopseSeries"
+        );
+
+
+    if (tituloEl) {
+        tituloEl.textContent =
+            titulo;
+    }
+
+
+    if (anoEl) {
+        anoEl.textContent =
+            ano || "";
+    }
+
+
+    if (notaEl) {
+
+        notaEl.textContent =
+            notaNumero > 0
+                ? "⭐ " +
+                  notaNumero.toFixed(1)
+                : "";
+
+    }
+
+
+    if (sinopseEl) {
+        sinopseEl.textContent =
+            sinopse;
+    }
+
+}
+
+
+/* =========================================================
+   BOTÃO ASSISTIR
+   ========================================================= */
+
+function configurarBotaoAssistirHeroSerie() {
+
+    const botao =
+        document.getElementById(
+            "heroAssistirSeries"
+        );
+
+    if (!botao) {
+        return;
+    }
+
+    botao.onclick =
+        function() {
+
+            if (!serieHeroAtual) {
+                return;
+            }
+
+            localStorage.setItem(
+                "serieSelecionada",
+                JSON.stringify(
+                    serieHeroAtual
+                )
+            );
+
+            window.location.href =
+                "serie.html";
+
+        };
+
+}
+
+
+/* =========================================================
+   MINHA LISTA
+   ========================================================= */
+
+function configurarMinhaListaHeroSerie() {
+
+    const botao =
+        document.getElementById(
+            "heroListaSeries"
+        );
+
+    if (!botao) {
+        return;
+    }
+
+    botao.onclick =
+        function() {
+
+            if (!serieHeroAtual) {
+                return;
+            }
+
+            try {
+
+                const lista =
+                    JSON.parse(
+                        localStorage.getItem(
+                            "lukafilmes_minhalista"
+                        ) || "[]"
+                    );
+
+                const id =
+                    idHeroSerie(
+                        serieHeroAtual
+                    ) ||
+                    nomeHeroSerie(
+                        serieHeroAtual
+                    );
+
+
+                const existe =
+                    lista.some(
+                        function(item) {
+
+                            return String(
+                                item?.tmdb_id ||
+                                item?.id ||
+                                item?.titulo ||
+                                item?.name ||
+                                ""
+                            ) === String(id);
+
+                        }
+                    );
+
+
+                if (!existe) {
+
+                    lista.push(
+                        serieHeroAtual
+                    );
+
+                    localStorage.setItem(
+                        "lukafilmes_minhalista",
+                        JSON.stringify(lista)
+                    );
+
+                }
+
+
+                botao.textContent =
+                    existe
+                        ? "✓ Na minha lista"
+                        : "✓ Adicionada";
+
+            } catch (erro) {
+
+                console.warn(
+                    "[HERO SÉRIES] Minha lista:",
+                    erro
+                );
+
+            }
+
+        };
+
+}
+
+
+/* =========================================================
+   CARREGA SÉRIES E ENCONTRA UMA COM TRAILER
+   ========================================================= */
+
+async function carregarHeroSerieAutomatico() {
+
+    try {
+
+        console.log(
+            "[HERO SÉRIES] Buscando muitos trailers no TMDB..."
+        );
+
+        /*
+         * Várias páginas do catálogo.
+         * Isso aumenta enormemente a quantidade
+         * de séries disponíveis para o Hero.
+         */
+
+        const paginas = [];
+
+        for (let pagina = 1; pagina <= 20; pagina++) {
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        "/api/catalogo-series?pagina=" +
+                        pagina,
+                        {
+                            cache: "no-store"
+                        }
+                    );
+
+                if (!resposta.ok) {
+                    continue;
+                }
+
+                const dados =
+                    await resposta.json();
+
+                const lista =
+                    Array.isArray(dados?.series)
+                        ? dados.series
+                        : Array.isArray(dados?.resultados)
+                            ? dados.resultados
+                            : [];
+
+                paginas.push(
+                    ...lista
+                );
+
+            } catch (erro) {
+
+                console.warn(
+                    "[HERO SÉRIES] Falha página:",
+                    pagina,
+                    erro
+                );
+
+            }
+
+        }
+
+
+        /*
+         * Remove duplicadas.
+         */
+
+        const unicas = [];
+
+        const ids = new Set();
+
+        for (const serie of paginas) {
+
+            const id =
+                idHeroSerie(serie);
+
+            if (!id) {
+                continue;
+            }
+
+            if (ids.has(id)) {
+                continue;
+            }
+
+            ids.add(id);
+
+            unicas.push(
+                serie
+            );
+
+        }
+
+
+        if (!unicas.length) {
+
+            throw new Error(
+                "Nenhuma série encontrada no TMDB."
+            );
+
+        }
+
+
+        /*
+         * Histórico de trailers utilizados.
+         *
+         * Isso impede que a mesma sequência
+         * apareça novamente a cada atualização.
+         */
+
+        let usados = [];
+
+        try {
+
+            usados =
+                JSON.parse(
+                    localStorage.getItem(
+                        "lukafilmes_hero_series_trailers_usados"
+                    ) || "[]"
+                );
+
+            if (!Array.isArray(usados)) {
+                usados = [];
+            }
+
+        } catch {
+
+            usados = [];
+
+        }
+
+
+        const usadosSet =
+            new Set(
+                usados.map(
+                    x => String(x)
+                )
+            );
+
+
+        /*
+         * Embaralha todas as séries.
+         */
+
+        for (
+            let i = unicas.length - 1;
+            i > 0;
+            i--
+        ) {
+
+            const j =
+                Math.floor(
+                    Math.random() * (i + 1)
+                );
+
+            [
+                unicas[i],
+                unicas[j]
+            ] =
+            [
+                unicas[j],
+                unicas[i]
+            ];
+
+        }
+
+
+        /*
+         * Primeira rodada:
+         * tenta somente séries cujo trailer
+         * ainda não foi usado.
+         */
+
+        let candidatos =
+            unicas.filter(
+                serie => {
+
+                    const id =
+                        idHeroSerie(serie);
+
+                    return !usadosSet.has(
+                        id
+                    );
+
+                }
+            );
+
+
+        /*
+         * Se já usamos todos os trailers
+         * disponíveis, inicia novo ciclo.
+         */
+
+        if (!candidatos.length) {
+
+            console.log(
+                "[HERO SÉRIES] ♻️ Novo ciclo de trailers."
+            );
+
+            usados = [];
+
+            usadosSet.clear();
+
+            localStorage.removeItem(
+                "lukafilmes_hero_series_trailers_usados"
+            );
+
+            candidatos =
+                unicas.slice();
+
+        }
+
+
+        /*
+         * Tenta muitas séries.
+         *
+         * Quanto maior esse número,
+         * maior a chance de encontrar trailer.
+         */
+
+        const quantidadeTentativas =
+            Math.min(
+                candidatos.length,
+                80
+            );
+
+
+        for (
+            let i = 0;
+            i < quantidadeTentativas;
+            i++
+        ) {
+
+            const serie =
+                candidatos[i];
+
+            const id =
+                idHeroSerie(serie);
+
+            console.log(
+                "[HERO SÉRIES] Trailer:",
+                i + 1,
+                "/",
+                quantidadeTentativas,
+                nomeHeroSerie(serie),
+                "ID:",
+                id
+            );
+
+
+            const trailer =
+                await buscarTrailerHeroSerie(
+                    serie
+                );
+
+
+            if (
+                !trailer ||
+                !trailer.key
+            ) {
+
+                continue;
+
+            }
+
+
+            /*
+             * Identificador único do trailer.
+             *
+             * O ID principal é a chave do YouTube.
+             */
+
+            const trailerId =
+                String(
+                    trailer.key
+                ).trim();
+
+
+            if (!trailerId) {
+                continue;
+            }
+
+
+            /*
+             * Evita repetir exatamente
+             * o mesmo vídeo.
+             */
+
+            if (
+                usadosSet.has(
+                    trailerId
+                )
+            ) {
+
+                continue;
+
+            }
+
+
+            configurarTextoHeroSerie(
+                serie
+            );
+
+            configurarBotaoAssistirHeroSerie();
+
+            configurarMinhaListaHeroSerie();
+
+
+            if (
+                colocarTrailerHeroSerie(
+                    trailer
+                )
+            ) {
+
+                /*
+                 * Salva o trailer como utilizado.
+                 */
+
+                usados.push(
+                    trailerId
+                );
+
+                /*
+                 * Limita o histórico para
+                 * não crescer infinitamente.
+                 */
+
+                if (
+                    usados.length > 1000
+                ) {
+
+                    usados =
+                        usados.slice(
+                            -1000
+                        );
+
+                }
+
+
+                localStorage.setItem(
+                    "lukafilmes_hero_series_trailers_usados",
+                    JSON.stringify(
+                        usados
+                    )
+                );
+
+
+                console.log(
+                    "[HERO SÉRIES] ✅ TRAILER NOVO:",
+                    nomeHeroSerie(serie),
+                    trailerId
+                );
+
+                return;
+
+            }
+
+        }
+
+
+        /*
+         * Se não conseguiu encontrar um trailer
+         * novo nesta rodada, limpa o histórico
+         * e tenta novamente.
+         */
+
+        console.warn(
+            "[HERO SÉRIES] Nenhum trailer novo encontrado. Reiniciando ciclo."
+        );
+
+
+        localStorage.removeItem(
+            "lukafilmes_hero_series_trailers_usados"
+        );
+
+
+        /*
+         * Escolhe uma série qualquer como fallback.
+         */
+
+        const fallback =
+            unicas[
+                Math.floor(
+                    Math.random() *
+                    unicas.length
+                )
+            ];
+
+
+        if (fallback) {
+
+            serieHeroAtual =
+                fallback;
+
+            configurarTextoHeroSerie(
+                fallback
+            );
+
+            configurarBotaoAssistirHeroSerie();
+
+            configurarMinhaListaHeroSerie();
+
+        }
+
+
+    } catch (erro) {
+
+        console.error(
+            "[HERO SÉRIES] ERRO:",
+            erro
+        );
+
+    }
+
+}
+
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+
+function iniciarHeroTrailerSeries() {
+
+    obterIframeHeroSerie();
+
+    configurarBotaoAssistirHeroSerie();
+
+    configurarMinhaListaHeroSerie();
+
+    carregarHeroSerieAutomatico();
+
+}
+
+
+/*
+ * Não dependemos mais do evento
+ * series-primeiro-lote.
+ *
+ * Isso elimina o problema de o catálogo
+ * carregar antes deste script.
+ */
+
+if (
+    document.readyState === "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        iniciarHeroTrailerSeries,
+        {
+            once: true
+        }
+    );
+
+} else {
+
+    iniciarHeroTrailerSeries();
+
+}
+
+
+/*
+ * Mantém compatibilidade caso o catálogo
+ * também envie o evento.
+ *
+ * Não recarrega o trailer se já houver
+ * uma série configurada.
+ */
+
+window.addEventListener(
+    "series-primeiro-lote",
+    function(event) {
+
+        if (serieHeroAtual) {
+            return;
+        }
+
+        const lista =
+            event.detail || [];
+
+        if (
+            Array.isArray(lista) &&
+            lista.length
+        ) {
+
+            carregarHeroSerieAutomatico();
+
+        }
+
+    }
+);
+
+</script>
+
+<script src="../js/navegacao.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style id="series-hero-trailer-final">
+
+.hero-series-netflix {
+    position: relative !important;
+    min-height: 610px !important;
+    height: 610px !important;
+
+    display: flex !important;
+    align-items: flex-end !important;
+
+    overflow: hidden !important;
+
+    background: #050505 !important;
+    background-image: none !important;
+
+    isolation: isolate !important;
+}
+
+/* TRAILER É O FUNDO DO HERO */
+.hero-series-video-wrap {
+    position: absolute !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    overflow: hidden !important;
+
+    z-index: 0 !important;
+}
+
+.hero-series-video-wrap iframe#trailerSeries {
+    position: absolute !important;
+
+    top: 50% !important;
+    left: 50% !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: translate(-50%, -50%) !important;
+
+    z-index: 0 !important;
+}
+
+/* ESCURECIMENTO DO TRAILER */
+.hero-series-video-overlay {
+    position: absolute !important;
+
+    inset: 0 !important;
+
+    z-index: 1 !important;
+
+    pointer-events: none !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(5,5,5,.95) 0%,
+            rgba(5,5,5,.72) 35%,
+            rgba(5,5,5,.25) 72%,
+            rgba(5,5,5,.08) 100%
+        ),
+        linear-gradient(
+            to bottom,
+            rgba(5,5,5,.05) 0%,
+            rgba(5,5,5,.20) 50%,
+            #080808 100%
+        ) !important;
+}
+
+/* CONTEÚDO POR CIMA DO TRAILER */
+.hero-series-conteudo {
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+.hero-series-botoes {
+    position: relative !important;
+    z-index: 6 !important;
+}
+
+@media (max-width: 700px) {
+
+    .hero-series-netflix {
+        min-height: 560px !important;
+        height: 560px !important;
+    }
+
+    .hero-series-video-wrap iframe#trailerSeries {
+        width: 177.78vh !important;
+        height: 100vh !important;
+
+        max-width: none !important;
+        max-height: none !important;
+    }
+}
+
+</style>
+
+
+<style id="hero-series-sem-faixa-preta-final">
+.hero-series-netflix {
+    overflow: hidden;
+    background-color: #080808;
+}
+
+.hero-series-netflix::after {
+    display: none;
+    content: none;
+}
+
+.hero-series-video-overlay {
+    background: linear-gradient(
+        90deg,
+        rgba(0,0,0,.72) 0%,
+        rgba(0,0,0,.42) 32%,
+        rgba(0,0,0,.10) 72%,
+        rgba(0,0,0,.03) 100%
+    );
+}
+
+.hero-series-video-wrap {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.hero-series-video-wrap iframe#trailerSeries {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 56.25vw;
+    min-width: 177.78vh;
+    min-height: 100%;
+    max-width: none;
+    max-height: none;
+    border: 0;
+    transform: translate(-50%,-50%);
+    z-index: 0;
+}
+
+.hero-series-conteudo {
+    position: relative;
+    z-index: 5;
+}
+
+.hero-series-botoes {
+    position: relative;
+    z-index: 6;
+}
+
+@media (max-width:700px) {
+    .hero-series-video-wrap iframe#trailerSeries {
+        width: 177.78vh;
+        height: 100vh;
+        min-width: 177.78vh;
+        min-height: 100%;
+    }
+}
+</style>
+</body>
+
+
+
+
+
+
+
+
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,372 @@
+===== PROTECAO ATUAL COMPLETA =====
+}
+
+</style>
+
+
+<script id="lukafilmes-popup-protecao">
+(function () {
+    "use strict";
+
+    /*
+     * LUKAFILMES — PROTEÇÃO DE NAVEGAÇÃO DO PLAYER
+     *
+     * Mantém a navegação iniciada pelo próprio LUKAFILMES
+     * na página atual e evita que elementos externos do site
+     * sejam transformados em navegação da página principal.
+     */
+
+    const frame = document.getElementById("filmeFrame");
+
+    if (!frame) {
+        console.log("[PLAYER PROTEÇÃO] filmeFrame não encontrado.");
+        return;
+    }
+
+    /*
+     * Garante que o iframe continue sendo o destino do player.
+     */
+    frame.setAttribute("allowfullscreen", "");
+    frame.setAttribute(
+        "allow",
+        "autoplay; encrypted-media; picture-in-picture; fullscreen"
+    );
+
+    /*
+     * Bloqueia links target=_blank pertencentes à página principal.
+     * Não interfere nos links internos do conteúdo do iframe externo.
+     */
+    document.addEventListener("click", function (evento) {
+
+        const alvo = evento.target;
+
+        if (!alvo || !alvo.closest) return;
+
+        const link = alvo.closest("a");
+
+        if (!link) return;
+
+        if (link.target === "_blank") {
+            link.target = "_self";
+        }
+    }, true);
+
+    /*
+     * Evita window.open disparado diretamente pelo código
+     * da página principal.
+     */
+    const abrirOriginal = window.open;
+
+    window.open = function (url, target, features) {
+
+        if (!url) {
+            return null;
+        }
+
+        console.log(
+            "[PLAYER PROTEÇÃO] tentativa de nova janela bloqueada:",
+            url
+        );
+
+        return null;
+    };
+
+    console.log("[PLAYER PROTEÇÃO] ativa.");
+})();
+</script>
+
+
+<script id="lukafilmes-player-protecao">
+(function () {
+    "use strict";
+
+    /*
+     * Proteção da página principal.
+     * O conteúdo dos iframes externos continua isolado.
+     * Não intercepta nem modifica anúncios internos dos players.
+     */
+
+    const iframe = document.getElementById("filmeFrame");
+
+    if (!iframe) {
+        console.log("[PLAYER PROTECAO] filmeFrame não encontrado.");
+        return;
+    }
+
+    iframe.setAttribute(
+        "referrerpolicy",
+        "strict-origin-when-cross-origin"
+    );
+
+    /*
+     * Mantém o iframe dentro da área do player.
+     */
+    iframe.addEventListener("load", function () {
+        console.log(
+            "[PLAYER PROTECAO] iframe carregado:",
+            iframe.src
+        );
+    });
+
+    /*
+     * Evita que cliques fora do player sejam usados
+     * para alterar a página principal.
+     */
+    window.addEventListener("beforeunload", function () {
+        console.log("[PLAYER PROTECAO] página principal protegida.");
+    });
+
+})();
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+===== PROTECAO NOS BACKUPS =====
+
+### ./paginas/filme.html
+4470-}
+4471-
+4472-</style>
+4473-
+4474-
+4475:<script id="lukafilmes-popup-protecao">
+4476-(function () {
+4477-    "use strict";
+4478-
+4479-    /*
+4480-     * LUKAFILMES — PROTEÇÃO DE NAVEGAÇÃO DO PLAYER
+4481-     *
+4482-     * Mantém a navegação iniciada pelo próprio LUKAFILMES
+4483-     * na página atual e evita que elementos externos do site
+4484-     * sejam transformados em navegação da página principal.
+4485-     */
+4486-
+4487-    const frame = document.getElementById("filmeFrame");
+4488-
+4489-    if (!frame) {
+4490-        console.log("[PLAYER PROTEÇÃO] filmeFrame não encontrado.");
+4491-        return;
+4492-    }
+4493-
+4494-    /*
+4495-     * Garante que o iframe continue sendo o destino do player.
+4496-     */
+4497-    frame.setAttribute("allowfullscreen", "");
+4498-    frame.setAttribute(
+4499-        "allow",
+4500-        "autoplay; encrypted-media; picture-in-picture; fullscreen"
+4501-    );
+4502-
+4503-    /*
+4504-     * Bloqueia links target=_blank pertencentes à página principal.
+4505-     * Não interfere nos links internos do conteúdo do iframe externo.
+4506-     */
+4507-    document.addEventListener("click", function (evento) {
+4508-
+4509-        const alvo = evento.target;
+4510-
+4511-        if (!alvo || !alvo.closest) return;
+4512-
+4513-        const link = alvo.closest("a");
+4514-
+4515-        if (!link) return;
+4516-
+4517-        if (link.target === "_blank") {
+4518-            link.target = "_self";
+4519-        }
+4520-    }, true);
+4521-
+4522-    /*
+4523-     * Evita window.open disparado diretamente pelo código
+4524-     * da página principal.
+4525-     */
+4526-    const abrirOriginal = window.open;
+4527-
+4528-    window.open = function (url, target, features) {
+4529-
+4530-        if (!url) {
+4531-            return null;
+4532-        }
+4533-
+4534-        console.log(
+4535-            "[PLAYER PROTEÇÃO] tentativa de nova janela bloqueada:",
+4536-            url
+4537-        );
+4538-
+4539-        return null;
+4540-    };
+4541-
+4542-    console.log("[PLAYER PROTEÇÃO] ativa.");
+4543-})();
+4544-</script>
+4545-
+4546-
+4547-<script id="lukafilmes-player-protecao">
+4548-(function () {
+4549-    "use strict";
+4550-
+4551-    /*
+4552-     * Proteção da página principal.
+4553-     * O conteúdo dos iframes externos continua isolado.
+4554-     * Não intercepta nem modifica anúncios internos dos players.
+4555-     */
+4556-
+4557-    const iframe = document.getElementById("filmeFrame");
+4558-
+4559-    if (!iframe) {
+4560-        console.log("[PLAYER PROTECAO] filmeFrame não encontrado.");
+4561-        return;
+4562-    }
+4563-
+4564-    iframe.setAttribute(
+4565-        "referrerpolicy",
+4566-        "strict-origin-when-cross-origin"
+4567-    );
+4568-
+4569-    /*
+4570-     * Mantém o iframe dentro da área do player.
+4571-     */
+4572-    iframe.addEventListener("load", function () {
+4573-        console.log(
+4574-            "[PLAYER PROTECAO] iframe carregado:",
+4575-            iframe.src
+4576-        );
+4577-    });
+4578-
+4579-    /*
+4580-     * Evita que cliques fora do player sejam usados
+4581-     * para alterar a página principal.
+4582-     */
+4583-    window.addEventListener("beforeunload", function () {
+4584-        console.log("[PLAYER PROTECAO] página principal protegida.");
+4585-    });
+
+### ./paginas/filme.html.backup-protecao-navegacao-20260827-135446.html
+4470-}
+4471-
+4472-</style>
+4473-
+4474-
+4475:<script id="lukafilmes-popup-protecao">
+4476-(function () {
+4477-    "use strict";
+4478-
+4479-    /*
+4480-     * LUKAFILMES — PROTEÇÃO DE NAVEGAÇÃO DO PLAYER
+4481-     *
+4482-     * Mantém a navegação iniciada pelo próprio LUKAFILMES
+4483-     * na página atual e evita que elementos externos do site
+4484-     * sejam transformados em navegação da página principal.
+4485-     */
+4486-
+4487-    const frame = document.getElementById("filmeFrame");
+4488-
+4489-    if (!frame) {
+4490-        console.log("[PLAYER PROTEÇÃO] filmeFrame não encontrado.");
+4491-        return;
+4492-    }
+4493-
+4494-    /*
+4495-     * Garante que o iframe continue sendo o destino do player.
+4496-     */
+4497-    frame.setAttribute("allowfullscreen", "");
+4498-    frame.setAttribute(
+4499-        "allow",
+4500-        "autoplay; encrypted-media; picture-in-picture; fullscreen"
+4501-    );
+4502-
+4503-    /*
+4504-     * Bloqueia links target=_blank pertencentes à página principal.
+4505-     * Não interfere nos links internos do conteúdo do iframe externo.
+4506-     */
+4507-    document.addEventListener("click", function (evento) {
+4508-
+4509-        const alvo = evento.target;
+4510-
+4511-        if (!alvo || !alvo.closest) return;
+4512-
+4513-        const link = alvo.closest("a");
+4514-
+4515-        if (!link) return;
+4516-
+4517-        if (link.target === "_blank") {
+4518-            link.target = "_self";
+4519-        }
+4520-    }, true);
+4521-
+4522-    /*
+4523-     * Evita window.open disparado diretamente pelo código
+4524-     * da página principal.
+4525-     */
+4526-    const abrirOriginal = window.open;
+4527-
+4528-    window.open = function (url, target, features) {
+4529-
+4530-        if (!url) {
+4531-            return null;
+4532-        }
+4533-
+4534-        console.log(
+4535-            "[PLAYER PROTEÇÃO] tentativa de nova janela bloqueada:",
+4536-            url
+4537-        );
+4538-
+4539-        return null;
+4540-    };
+4541-
+4542-    console.log("[PLAYER PROTEÇÃO] ativa.");
+4543-})();
+4544-</script>
+4545-
+4546-</body>
+4547-</html>
+4548-
+4549-
+4550-
+4551-
+4552-
+4553-
+4554-
+4555-
+4556-
+4557-
+4558-
+4559-
+4560-
+4561-
+4562-
+4563-
+4564-<style id="lukafilmes-netflix-hero-final">
+4565-
+4566-/* =========================================================
+4567-   LUKAFILMES — HERO CINEMATOGRÁFICO
+4568-   ESTILO NETFLIX
+4569-   SOMENTE VISUAL
+4570-   ========================================================= */
+4571-
+4572-body{
+4573-    background:#050505 !important;
+4574-}
+4575-
+4576-/* HERO PRINCIPAL */
+4577-.pagina-filme{
+4578-    min-height:100vh !important;
+4579-    background:#050505 !important;
+4580-    overflow-x:hidden !important;
+4581-}
+4582-
+4583-/* IMAGEM DO FILME */
+4584-.pagina-filme::before{
+4585-    content:"" !important;
+
+===== FIM =====
