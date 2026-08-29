@@ -155,6 +155,122 @@
 </style>
 
 
+
+<style id="lukafilmes-login-loader-premium">
+#lukafilmesLoginLoader{
+    position:fixed;
+    inset:0;
+    z-index:9999999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.94);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    opacity:0;
+    transition:opacity .25s ease;
+}
+
+#lukafilmesLoginLoader.ativo{
+    display:flex;
+    opacity:1;
+}
+
+#lukafilmesLoginLoaderBox{
+    width:min(540px,88vw);
+    min-height:340px;
+    box-sizing:border-box;
+    border:1px solid #292929;
+    border-radius:18px;
+    background:#030303;
+    box-shadow:0 25px 80px rgba(0,0,0,.8);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:42px 30px;
+    text-align:center;
+}
+
+#lukafilmesLoginLoaderLogo{
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:34px;
+    font-weight:900;
+    letter-spacing:-1.8px;
+    margin-bottom:32px;
+    line-height:1;
+    text-transform:uppercase;
+}
+
+#lukafilmesLoginLoaderLogo .luka{
+    color:#fff;
+}
+
+#lukafilmesLoginLoaderLogo .filmes{
+    color:#e50914;
+}
+
+#lukafilmesLoginLoaderSpinner{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    border:7px solid #242424;
+    border-top-color:#e50914;
+    border-right-color:#e50914;
+    box-sizing:border-box;
+    animation:lukafilmesLoginLoaderSpin .85s linear infinite;
+    margin-bottom:27px;
+}
+
+#lukafilmesLoginLoaderTitle{
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:20px;
+    font-weight:700;
+    margin:0 0 10px;
+}
+
+#lukafilmesLoginLoaderText{
+    color:#858585;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:16px;
+    margin:0;
+}
+
+@keyframes lukafilmesLoginLoaderSpin{
+    to{transform:rotate(360deg)}
+}
+
+@media(max-width:600px){
+    #lukafilmesLoginLoaderBox{
+        width:88vw;
+        min-height:300px;
+        padding:35px 22px;
+        border-radius:16px;
+    }
+
+    #lukafilmesLoginLoaderLogo{
+        font-size:30px;
+        margin-bottom:28px;
+    }
+
+    #lukafilmesLoginLoaderSpinner{
+        width:52px;
+        height:52px;
+        border-width:6px;
+        margin-bottom:24px;
+    }
+
+    #lukafilmesLoginLoaderTitle{
+        font-size:18px;
+    }
+
+    #lukafilmesLoginLoaderText{
+        font-size:14px;
+    }
+}
+</style>
+
 </head>
 
 <body>
@@ -282,6 +398,53 @@
         });
 </script>
 
+
+
+<div id="lukafilmesLoginLoader" aria-hidden="true">
+    <div id="lukafilmesLoginLoaderBox">
+        <div id="lukafilmesLoginLoaderLogo">
+            <span class="luka">LUKA</span><span class="filmes">FILMES</span>
+        </div>
+        <div id="lukafilmesLoginLoaderSpinner"></div>
+        <h2 id="lukafilmesLoginLoaderTitle">Entrando no LUKAFILMES...</h2>
+        <p id="lukafilmesLoginLoaderText">Preparando sua sessão...</p>
+    </div>
+</div>
+
+
+<script id="lukafilmes-login-loader-js">
+(function(){
+
+    var loader = document.getElementById("lukafilmesLoginLoader");
+    var form = document.getElementById("loginForm");
+
+    function mostrarLoginLoader(){
+        if(!loader)return;
+        loader.classList.add("ativo");
+        loader.setAttribute("aria-hidden","false");
+    }
+
+    function esconderLoginLoader(){
+        if(!loader)return;
+        loader.classList.remove("ativo");
+        loader.setAttribute("aria-hidden","true");
+    }
+
+    window.lukafilmesMostrarLoginLoader = mostrarLoginLoader;
+    window.lukafilmesEsconderLoginLoader = esconderLoginLoader;
+
+    if(form){
+        form.addEventListener("submit",function(){
+            mostrarLoginLoader();
+        },true);
+    }
+
+    window.addEventListener("pageshow",function(){
+        esconderLoginLoader();
+    });
+
+})();
+</script>
 
 </body>
 </html>

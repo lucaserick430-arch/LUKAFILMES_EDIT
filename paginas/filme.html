@@ -3117,9 +3117,52 @@ body{
 }
 </style>
 
+
+
+
+
+<style id="luka-notificacao-card-style">
+.lukafilmes-notificacao-item{
+    transition:background .18s ease,transform .18s ease;
+    border-radius:8px;
+    padding:10px !important;
+    margin:2px 0;
+}
+
+.lukafilmes-notificacao-item:hover{
+    background:rgba(255,255,255,.07);
+    transform:translateX(2px);
+}
+
+.lukafilmes-notificacao-item:active{
+    transform:scale(.98);
+}
+
+.luka-notificacoes-lista img{
+    display:block;
+}
+
+@media(max-width:600px){
+    .luka-notificacoes-lista{
+        width:100%;
+    }
+
+    .lukafilmes-notificacao-item{
+        padding:10px 4px !important;
+    }
+}
+</style>
+
 </head>
 
 <body>
+
+
+
+
+</div>
+
+
 
 <div class="pagina-filme">
 
@@ -4710,6 +4753,258 @@ document.addEventListener("DOMContentLoaded",()=>{
         }
     }, true);
 
+})();
+</script>
+
+
+
+
+
+
+<script id="lukafilmes-notificacao-automatica">
+(function(){
+    "use strict";
+
+    const CHAVE = "lukafilmes_notificacoes_filmes_v1";
+    const MAX = 10;
+
+    function lerIds(){
+        try {
+            return JSON.parse(localStorage.getItem(CHAVE) || "[]");
+        } catch(e) {
+            return [];
+        }
+    }
+
+    function salvarIds(ids){
+        localStorage.setItem(
+            CHAVE,
+            JSON.stringify(ids.slice(0, MAX))
+        );
+    }
+
+    function atualizarPainel(filmes){
+        const painel = document.getElementById("lukaNotificationPanel");
+        if(!painel) return;
+
+        let lista = painel.querySelector(".luka-notificacoes-lista");
+
+        if(!lista){
+            lista = document.createElement("div");
+            lista.className = "luka-notificacoes-lista";
+            painel.appendChild(lista);
+        }
+
+        lista.innerHTML = "";
+
+        if(!filmes || !filmes.length){
+            const vazio = document.createElement("div");
+            vazio.textContent = "Nenhum filme novo no momento.";
+            vazio.style.cssText =
+                "padding:16px 0;color:#aaa;font-size:14px;";
+            lista.appendChild(vazio);
+            return;
+        }
+
+        filmes.forEach(function(filme){
+
+            const item = document.createElement("a");
+
+            item.href = "#";
+            item.className = "lukafilmes-notificacao-item";
+
+            item.style.cssText =
+                "display:flex;" +
+                "align-items:center;" +
+                "gap:12px;" +
+                "padding:10px 0;" +
+                "border-bottom:1px solid rgba(255,255,255,.10);" +
+                "color:#fff;" +
+                "text-decoration:none;" +
+                "cursor:pointer;";
+
+            item.addEventListener("click", function(event){
+                event.preventDefault();
+
+                const id =
+                    filme.id ||
+                    filme.tmdb_id ||
+                    filme.id_tmdb;
+
+                if(!id) return;
+
+                const dadosFilme = {
+                    id: Number(id),
+                    tmdb_id: Number(id),
+                    titulo: filme.titulo || "",
+                    title: filme.titulo || "",
+                    poster: filme.poster || "",
+                    poster_path: filme.poster
+                        ? filme.poster.replace(
+                            "https://image.tmdb.org/t/p/w500",
+                            ""
+                          )
+                        : "",
+                    release_date: filme.data || "",
+                    data: filme.data || ""
+                };
+
+                try{
+                    localStorage.setItem(
+                        "filmeSelecionado",
+                        JSON.stringify(dadosFilme)
+                    );
+
+                    localStorage.setItem(
+                        "filmeSelecionadoHome_" + String(id),
+                        JSON.stringify(dadosFilme)
+                    );
+                }catch(e){}
+
+                window.location.href =
+                    "/paginas/filme.html?id=" +
+                    encodeURIComponent(id);
+            });
+
+            if(filme.poster){
+
+                const imagem = document.createElement("img");
+
+                imagem.src = filme.poster;
+                imagem.alt =
+                    "Capa de " + (filme.titulo || "filme");
+
+                imagem.loading = "lazy";
+
+                imagem.style.cssText =
+                    "width:58px;" +
+                    "height:82px;" +
+                    "object-fit:cover;" +
+                    "border-radius:7px;" +
+                    "flex:none;" +
+                    "background:#111;";
+
+                item.appendChild(imagem);
+
+            }else{
+
+                const semImagem = document.createElement("div");
+
+                semImagem.textContent = "🎬";
+
+                semImagem.style.cssText =
+                    "width:58px;" +
+                    "height:82px;" +
+                    "display:flex;" +
+                    "align-items:center;" +
+                    "justify-content:center;" +
+                    "border-radius:7px;" +
+                    "background:#151515;" +
+                    "font-size:24px;" +
+                    "flex:none;";
+
+                item.appendChild(semImagem);
+            }
+
+            const texto = document.createElement("div");
+
+            texto.style.cssText =
+                "min-width:0;" +
+                "display:flex;" +
+                "flex-direction:column;" +
+                "gap:5px;";
+
+            const titulo = document.createElement("strong");
+
+            titulo.textContent =
+                "🎬 " + (filme.titulo || "Novo filme");
+
+            titulo.style.cssText =
+                "font-size:14px;" +
+                "line-height:1.3;" +
+                "display:block;";
+
+            texto.appendChild(titulo);
+
+            const descricao = document.createElement("span");
+
+            descricao.textContent =
+                "Novo filme disponível • Toque para assistir";
+
+            descricao.style.cssText =
+                "font-size:11px;" +
+                "color:#aaa;" +
+                "line-height:1.3;";
+
+            texto.appendChild(descricao);
+
+            item.appendChild(texto);
+            lista.appendChild(item);
+        });
+    }
+
+    async function verificarNovidades(){
+        try{
+            const resposta = await fetch(
+                "/api/notificacoes/novos-filmes",
+                { cache:"no-store" }
+            );
+
+            if(!resposta.ok) return;
+
+            const dados = await resposta.json();
+            const filmes = Array.isArray(dados.filmes)
+                ? dados.filmes
+                : [];
+
+            if(!filmes.length) return;
+
+            const vistos = lerIds();
+
+            const novos = filmes.filter(function(filme){
+                return !vistos.includes(Number(filme.id));
+            });
+
+            const badge = document.getElementById(
+                "lukaNotificationBadge"
+            );
+
+            if(badge){
+                if(novos.length){
+                    badge.textContent =
+                        novos.length > 9 ? "9+" : String(novos.length);
+                    badge.style.display = "flex";
+                }else{
+                    badge.textContent = "";
+                    badge.style.display = "none";
+                }
+            }
+
+            atualizarPainel(novos.length ? novos : []);
+
+            if(novos.length){
+                salvarIds(
+                    filmes.map(function(f){ return Number(f.id); })
+                );
+            }
+
+        }catch(e){
+            console.warn(
+                "[LUKAFILMES] Não foi possível verificar novidades.",
+                e
+            );
+        }
+    }
+
+    function iniciar(){
+        verificarNovidades();
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener("DOMContentLoaded", iniciar);
+    }else{
+        iniciar();
+    }
 })();
 </script>
 

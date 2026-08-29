@@ -620,9 +620,144 @@ input,select,textarea{
 }
 </style>
 
+
+<style id="lukafilmes-loader-global">
+#lukaLoaderOverlay{
+    position:fixed;
+    inset:0;
+    z-index:9999999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.94);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transition:
+        opacity .28s ease,
+        visibility .28s ease;
+}
+
+#lukaLoaderOverlay.luka-loader-oculto{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+}
+
+#lukaLoaderBox{
+    width:min(540px,88vw);
+    min-height:340px;
+    box-sizing:border-box;
+    border:1px solid #292929;
+    border-radius:18px;
+    background:#030303;
+    box-shadow:0 25px 80px rgba(0,0,0,.8);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:42px 30px;
+    text-align:center;
+}
+
+#lukaLoaderLogo{
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:34px;
+    font-weight:900;
+    letter-spacing:-1.8px;
+    margin-bottom:32px;
+    line-height:1;
+    text-transform:uppercase;
+}
+
+#lukaLoaderLogo .luka{
+    color:#fff;
+}
+
+#lukaLoaderLogo .filmes{
+    color:#e50914;
+}
+
+#lukaLoaderSpinner{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    border:7px solid #242424;
+    border-top-color:#e50914;
+    border-right-color:#e50914;
+    box-sizing:border-box;
+    animation:lukaLoaderSpin .85s linear infinite;
+    margin-bottom:27px;
+}
+
+#lukaLoaderTitle{
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:20px;
+    font-weight:700;
+    margin:0 0 10px;
+}
+
+#lukaLoaderText{
+    color:#858585;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:16px;
+    margin:0;
+}
+
+@keyframes lukaLoaderSpin{
+    to{transform:rotate(360deg)}
+}
+
+@media(max-width:600px){
+    #lukaLoaderBox{
+        width:88vw;
+        min-height:300px;
+        padding:35px 22px;
+        border-radius:16px;
+    }
+
+    #lukaLoaderLogo{
+        font-size:30px;
+        margin-bottom:28px;
+    }
+
+    #lukaLoaderSpinner{
+        width:52px;
+        height:52px;
+        border-width:6px;
+        margin-bottom:24px;
+    }
+
+    #lukaLoaderTitle{
+        font-size:18px;
+    }
+
+    #lukaLoaderText{
+        font-size:14px;
+    }
+}
+</style>
+
 </head>
 
 <body>
+
+
+<div id="lukaLoaderOverlay" aria-hidden="false">
+    <div id="lukaLoaderBox">
+        <div id="lukaLoaderLogo">
+            <span class="luka">LUKA</span><span class="filmes">FILMES</span>
+        </div>
+        <div id="lukaLoaderSpinner"></div>
+        <h2 id="lukaLoaderTitle">Preparando sua sessão...</h2>
+        <p id="lukaLoaderText">Isso pode levar alguns segundos</p>
+    </div>
+</div>
+
+
 
 <div class="app">
 
@@ -1617,6 +1752,155 @@ function voltarDashboardAdmin(){
 
 
 
+
+
+<script id="lukafilmes-loader-global-js">
+(function(){
+
+    var loaderPronto = false;
+
+    function loader(){
+        return document.getElementById("lukaLoaderOverlay");
+    }
+
+    function mostrarLukaLoader(){
+        var overlay = loader();
+        if(!overlay) return;
+
+        overlay.classList.remove("luka-loader-oculto");
+        overlay.setAttribute("aria-hidden","false");
+    }
+
+    function esconderLukaLoader(){
+        var overlay = loader();
+        if(!overlay) return;
+
+        overlay.classList.add("luka-loader-oculto");
+        overlay.setAttribute("aria-hidden","true");
+    }
+
+    window.mostrarLukaLoader = mostrarLukaLoader;
+
+    window.LukaLoader = {
+        show: mostrarLukaLoader,
+        hide: esconderLukaLoader
+    };
+
+    /*
+     * Qualquer navegação interna mostra o Loader.
+     */
+    function prepararNavegacao(){
+
+        document.addEventListener("click",function(event){
+
+            var link = event.target.closest
+                ? event.target.closest("a[href]")
+                : null;
+
+            if(!link) return;
+
+            if(
+                link.target === "_blank" ||
+                link.hasAttribute("download") ||
+                link.getAttribute("href").startsWith("#") ||
+                link.getAttribute("href").startsWith("javascript:")
+            ){
+                return;
+            }
+
+            var href = link.href;
+
+            if(!href) return;
+
+            try{
+                var destino = new URL(href, location.href);
+
+                if(destino.origin !== location.origin){
+                    return;
+                }
+
+                if(
+                    destino.pathname === location.pathname &&
+                    destino.search === location.search &&
+                    destino.hash !== ""
+                ){
+                    return;
+                }
+
+                mostrarLukaLoader();
+
+            }catch(e){}
+
+        },true);
+
+        /*
+         * Botões que normalmente iniciam player/navegação.
+         */
+        document.addEventListener("click",function(event){
+
+            var botao = event.target.closest
+                ? event.target.closest("button")
+                : null;
+
+            if(!botao) return;
+
+            var texto = (botao.textContent || "")
+                .trim()
+                .toLowerCase();
+
+            if(
+                texto.includes("assistir") ||
+                botao.matches("#playCentralFilme") ||
+                botao.matches("#playCentralSerie") ||
+                botao.matches(".btn-watch")
+            ){
+                mostrarLukaLoader();
+            }
+
+        },true);
+    }
+
+    /*
+     * Voltar/avançar pelo navegador:
+     * nunca deixar o Loader preso.
+     */
+    window.addEventListener("pageshow",function(event){
+
+        if(event.persisted){
+            esconderLukaLoader();
+        }
+
+    });
+
+    /*
+     * A própria página já terminou de carregar.
+     * Para páginas normais, isso libera o Loader.
+     *
+     * A Home possui controle próprio abaixo.
+     */
+    window.addEventListener("load",function(){
+
+        setTimeout(function(){
+
+            if(!window.__LUKAFILMES_HOME_LOADER_CONTROLLED__){
+                esconderLukaLoader();
+            }
+
+        },80);
+
+    });
+
+    if(document.readyState === "loading"){
+        document.addEventListener(
+            "DOMContentLoaded",
+            prepararNavegacao
+        );
+    }else{
+        prepararNavegacao();
+    }
+
+})();
+</script>
 
 </body>
 </html>

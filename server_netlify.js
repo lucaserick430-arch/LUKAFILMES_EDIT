@@ -926,6 +926,48 @@ app.get('/api/serie/:id', async (req, res) => {
 
 });
 
+
+// ============================================================
+// LUKAFILMES — NOTIFICAÇÕES AUTOMÁTICAS DE FILMES
+// ============================================================
+
+
+
+// ============================================================
+// LUKAFILMES — NOTIFICAÇÕES AUTOMÁTICAS
+// ROTA PÚBLICA PARA O SINO
+// ============================================================
+app.get("/api/notificacoes/novos-filmes", async (req, res) => {
+    try {
+        const dados = await tmdb(
+            "/movie/now_playing?language=pt-BR&region=BR&page=1"
+        );
+
+        const filmes = (dados.results || [])
+            .filter(f => f && f.id && f.title)
+            .slice(0, 10)
+            .map(f => ({
+                id: Number(f.id),
+                titulo: f.title,
+                data: f.release_date || "",
+                poster: f.poster_path
+                    ? TMDB_IMAGE + f.poster_path
+                    : ""
+            }));
+
+        res.json({
+            sucesso: true,
+            filmes
+        });
+    } catch (erro) {
+        console.error("[NOTIFICACOES TMDB]", erro);
+        res.status(500).json({
+            sucesso: false,
+            filmes: []
+        });
+    }
+});
+
 // SÉRIES — TMDB
 // ==========================================
 
