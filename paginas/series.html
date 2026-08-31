@@ -952,234 +952,187 @@ listaSeries.innerHTML=`
 const gradeSeries=document.getElementById("listaSeries");
 const campoPesquisa=document.getElementById("pesquisaSeries");
 
-const TOTAL_PAGINAS_CATALOGO_SERIES = 1000;
+const TOTAL_PAGINAS_CATALOGO_SERIES = 500;
 
 /*
  * =========================================================
- * LUKAFILMES — CATÁLOGO DE SÉRIES REALMENTE MISTURADO
+ * LUKAFILMES — SÉRIES COM INFINITE SCROLL REAL
  * =========================================================
  *
- * A API organiza as páginas em sequência.
+ * Paginação sequencial:
+ * 1 → 2 → 3 → 4 → 5...
  *
- * Para evitar:
+ * A próxima página só é buscada quando o usuário
+ * chega perto do final da página.
  *
- * 2026 → 2025 → 2024 → 2023...
+ * Se uma página vier vazia, ela é ignorada e a
+ * próxima é buscada automaticamente.
  *
- * criamos uma fila contendo todas as páginas disponíveis
- * e embaralhamos essa fila antes do primeiro carregamento.
- *
- * Cada página é usada no máximo uma vez durante a abertura.
- *
- * O infinite scroll continua normalmente:
- *
- * página aleatória → página aleatória → página aleatória...
- *
- * Quando uma página estiver vazia, a próxima da fila é
- * consultada imediatamente.
+ * A categoria permanece ativa durante toda a
+ * paginação.
  */
 
-function criarFilaPaginasSeries(){
+let paginaSeries = 1;
+let carregandoSeries = false;
+let fimSeries = false;
 
-    const paginas =
-        Array.from(
-            {
-                length:
-                    TOTAL_PAGINAS_CATALOGO_SERIES
-            },
-            (_, indice) =>
-                indice + 1
-        );
+const idsSeries = new Set();
 
-    for(
-        let i = paginas.length - 1;
-        i > 0;
-        i--
-    ){
-
-        const j =
-            Math.floor(
-                Math.random() * (i + 1)
-            );
-
-        [
-            paginas[i],
-            paginas[j]
-        ] = [
-            paginas[j],
-            paginas[i]
-        ];
-    }
-
-    return paginas;
-}
-
-const filaPaginasSeries =
-    criarFilaPaginasSeries();
-
-let indiceFilaPaginasSeries = 0;
-
-function proximaPaginaSeries(){
-
-    if(
-        indiceFilaPaginasSeries >=
-        filaPaginasSeries.length
-    ){
-        return null;
-    }
-
-    const pagina =
-        filaPaginasSeries[
-            indiceFilaPaginasSeries
-        ];
-
-    indiceFilaPaginasSeries++;
-
-    return pagina;
-}
-
-/*
- * Primeira página também é aleatória.
- */
-let paginaSeries =
-    proximaPaginaSeries();
-
-console.log(
-    "[SÉRIES] Página inicial aleatória:",
-    paginaSeries,
-    "/",
-    TOTAL_PAGINAS_CATALOGO_SERIES
-);
-
-let carregandoSeries=false;
-let fimSeries=false;
-let idsSeries=new Set();
+/* =========================================================
+   CRIAÇÃO DO CARD
+   ========================================================= */
 
 function criarCardSerie(serie){
 
-    const card=document.createElement("article");
+    const card = document.createElement("article");
 
-    card.className="card-serie";
+    card.className = "card-serie";
 
-    const imagem=
-        serie.capa||
-        serie.poster_path||
+    const imagem =
+        serie.capa ||
+        serie.poster_path ||
         "";
 
-    const titulo=
-        serie.titulo||
-        serie.name||
+    const titulo =
+        serie.titulo ||
+        serie.name ||
         "Sem título";
 
-    const nota=
-        serie.nota?
-        "⭐ "+Number(serie.nota).toFixed(1):
+    const nota =
+        serie.nota
+        ? "⭐ " + Number(serie.nota).toFixed(1)
+        : "";
+
+    const ano =
+        serie.ano ||
         "";
 
-    const ano=
-        serie.ano||
-        "";
-
-    card.innerHTML=`
+    card.innerHTML = `
         <img
             src="${imagem}"
-            alt="${titulo.replace(/"/g,"&quot;")}"
-            loading="lazy">
+            alt="${String(titulo).replace(/"/g,"&quot;")}"
+            loading="lazy"
+            decoding="async">
 
         <div class="card-info">
             <h3>${titulo}</h3>
-            <p>${nota}${ano?" • "+ano:""}</p>
+            <p>${nota}${ano ? " • " + ano : ""}</p>
         </div>
     `;
 
-    card.onclick=function(){
+    card.onclick = function(){
 
         localStorage.setItem(
             "serieSelecionada",
             JSON.stringify(serie)
         );
 
-        window.location.href="serie.html";
+        window.location.href = "serie.html";
     };
 
     return card;
 }
 
+/* =========================================================
+   CATEGORIA
+   ========================================================= */
+
+const categoriaSeries =
+    new URLSearchParams(window.location.search)
+        .get("categoria") || "";
+
+/* =========================================================
+   CARREGAR MAIS SÉRIES
+   ========================================================= */
+
 async function carregarCatalogoSeries(){
 
-    if(carregandoSeries||fimSeries){
+    if(
+        carregandoSeries ||
+        fimSeries
+    ){
         return;
     }
 
-    carregandoSeries=true;
+    carregandoSeries = true;
 
     try{
 
         /*
-         * LUKAFILMES — BUSCA DE PÁGINAS VÁLIDAS
-         *
-         * A página inicial continua aleatória entre 1 e 1000.
-         * Se uma página estiver vazia, ela é ignorada e a próxima
-         * página é consultada automaticamente.
+         * Continua procurando até encontrar
+         * uma página com conteúdo.
          */
+        while(
+            !fimSeries &&
+            paginaSeries <= TOTAL_PAGINAS_CATALOGO_SERIES
+        ){
 
-        while(!fimSeries){
-
-            if(paginaSeries > TOTAL_PAGINAS_CATALOGO_SERIES){
-                fimSeries=true;
-                break;
-            }
-
-            const paginaAtual=paginaSeries;
+            const paginaAtual = paginaSeries;
 
             console.log(
-                "[SÉRIES] Consultando página:",
+                "[SÉRIES] Carregando página:",
                 paginaAtual,
                 "/",
                 TOTAL_PAGINAS_CATALOGO_SERIES
             );
 
-            const resposta=
-                await fetch(
-                    "/api/catalogo-series?pagina="+
+            let url =
+                "/api/catalogo-series?pagina=" +
+                paginaAtual;
+
+            if(categoriaSeries){
+
+                url +=
+                    "&categoria=" +
+                    encodeURIComponent(
+                        categoriaSeries
+                    );
+
+            }
+
+            const resposta =
+                await fetch(url);
+
+            if(!resposta.ok){
+
+                throw new Error(
+                    "HTTP " +
+                    resposta.status +
+                    " na página " +
                     paginaAtual
                 );
 
-            if(!resposta.ok){
-                throw new Error(
-                    "HTTP "+resposta.status+
-                    " na página "+paginaAtual
-                );
             }
 
-            const dados=
+            const dados =
                 await resposta.json();
 
-            const series=
-                Array.isArray(dados.series)?
-                dados.series:
-                [];
+            const series =
+                Array.isArray(dados)
+                    ? dados
+                    : Array.isArray(dados.series)
+                        ? dados.series
+                        : Array.isArray(dados.resultados)
+                            ? dados.resultados
+                            : [];
 
-            /*
-             * A página 1 limpa o estado inicial.
-             * Nas páginas aleatórias, o catálogo existente é preservado.
-             */
-            if(paginaAtual===1){
-                gradeSeries.innerHTML="";
-            }
-
-            let adicionadas=0;
+            let adicionadas = 0;
 
             for(const serie of series){
 
-                const id=
+                const id =
                     String(
-                        serie.id||
-                        serie.tmdb_id||
-                        serie.titulo||
+                        serie.id ||
+                        serie.tmdb_id ||
+                        serie.titulo ||
+                        serie.name ||
                         ""
-                    );
+                    ).trim();
 
-                if(!id||idsSeries.has(id)){
+                if(
+                    !id ||
+                    idsSeries.has(id)
+                ){
                     continue;
                 }
 
@@ -1190,24 +1143,13 @@ async function carregarCatalogoSeries(){
                 );
 
                 adicionadas++;
+
             }
 
             /*
-             * IMPORTANTE:
-             *
-             * A próxima página NÃO é paginaSeries + 1.
-             *
-             * A próxima página vem da fila embaralhada.
-             *
-             * Isso mantém o catálogo realmente misturado
-             * e impede a sequência cronológica da API.
+             * SEMPRE avança para a próxima página.
              */
-            paginaSeries =
-                proximaPaginaSeries();
-
-            if(paginaSeries === null){
-                fimSeries=true;
-            }
+            paginaSeries++;
 
             console.log(
                 "[SÉRIES] Página:",
@@ -1221,19 +1163,28 @@ async function carregarCatalogoSeries(){
             );
 
             /*
-             * Encontrou conteúdo: encerra esta execução.
-             * O infinite scroll continuará quando o usuário rolar.
+             * Se encontrou séries, termina esta execução.
+             * O scroll chama novamente quando necessário.
              *
-             * Se estava vazia, o while continua imediatamente
-             * procurando outra página.
+             * Se não encontrou nenhuma, o while continua
+             * imediatamente para a próxima página.
              */
-            if(adicionadas>0){
+            if(adicionadas > 0){
                 break;
             }
 
-            if(fimSeries){
-                break;
-            }
+        }
+
+        if(
+            paginaSeries >
+            TOTAL_PAGINAS_CATALOGO_SERIES
+        ){
+
+            fimSeries = true;
+
+            console.log(
+                "[SÉRIES] Fim real do catálogo."
+            );
 
         }
 
@@ -1246,21 +1197,26 @@ async function carregarCatalogoSeries(){
 
         if(!idsSeries.size){
 
-            gradeSeries.innerHTML=
-                '<div class="estado-series">'+
-                'Erro ao carregar séries.'+
+            gradeSeries.innerHTML =
+                '<div class="estado-series">' +
+                'Erro ao carregar séries.' +
                 '</div>';
 
         }
 
     }finally{
 
-        carregandoSeries=false;
+        carregandoSeries = false;
 
     }
+
 }
 
-let timerPesquisaSeries=null;
+/* =========================================================
+   PESQUISA
+   ========================================================= */
+
+let timerPesquisaSeries = null;
 
 campoPesquisa.addEventListener(
     "input",
@@ -1270,7 +1226,7 @@ campoPesquisa.addEventListener(
             timerPesquisaSeries
         );
 
-        timerPesquisaSeries=
+        timerPesquisaSeries =
             setTimeout(
                 function(){
 
@@ -1289,44 +1245,49 @@ async function pesquisarSeries(texto){
 
     if(!texto){
 
-        gradeSeries.innerHTML="";
-        paginaSeries=1;
-        fimSeries=false;
+        gradeSeries.innerHTML = "";
+
         idsSeries.clear();
+
+        paginaSeries = 1;
+
+        fimSeries = false;
 
         carregarCatalogoSeries();
 
         return;
+
     }
 
     try{
 
-        const resposta=
+        const resposta =
             await fetch(
-                "/api/pesquisar-series?q="+
+                "/api/pesquisar-series?q=" +
                 encodeURIComponent(texto)
             );
 
-        const dados=
+        const dados =
             await resposta.json();
 
-        const series=
-            Array.isArray(dados.series)?
-            dados.series:
-            Array.isArray(dados.resultados)?
-            dados.resultados:
-            [];
+        const series =
+            Array.isArray(dados.series)
+                ? dados.series
+                : Array.isArray(dados.resultados)
+                    ? dados.resultados
+                    : [];
 
-        gradeSeries.innerHTML="";
+        gradeSeries.innerHTML = "";
 
         if(!series.length){
 
-            gradeSeries.innerHTML=
-                '<div class="estado-series">'+
-                'Nenhuma série encontrada.'+
+            gradeSeries.innerHTML =
+                '<div class="estado-series">' +
+                'Nenhuma série encontrada.' +
                 '</div>';
 
             return;
+
         }
 
         series.forEach(
@@ -1347,24 +1308,43 @@ async function pesquisarSeries(texto){
         );
 
     }
+
 }
+
+/* =========================================================
+   INFINITE SCROLL
+   ========================================================= */
 
 window.addEventListener(
     "scroll",
     function(){
 
-        if(
-            window.innerHeight+
-            window.scrollY>=
-            document.body.offsetHeight-700
-        ){
+        const distancia =
+            document.documentElement.scrollHeight -
+            (
+                window.innerHeight +
+                window.scrollY
+            );
+
+        /*
+         * Quando faltar aproximadamente 700px,
+         * já busca a próxima página.
+         */
+        if(distancia <= 700){
 
             carregarCatalogoSeries();
 
         }
 
+    },
+    {
+        passive: true
     }
 );
+
+/* =========================================================
+   PRIMEIRO CARREGAMENTO
+   ========================================================= */
 
 carregarCatalogoSeries();
 </script>

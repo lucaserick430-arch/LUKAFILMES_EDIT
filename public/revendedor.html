@@ -1,2222 +1,306 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-
-<title>Painel Revendedor - LUKAFILMES</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LUKAFILMES — Painel de Revenda</title>
 
 <style>
-
-* {
-    box-sizing: border-box;
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#050505;
+    color:#fff;
 }
-
-body {
-    margin: 0;
-    min-height: 100vh;
-    padding: 25px;
-    font-family: Arial, Helvetica, sans-serif;
-    background:
-        radial-gradient(circle at top left, rgba(229,9,20,.16), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(120,0,255,.10), transparent 35%),
-        #070707;
-    color: #fff;
-}
-
-.container {
-    width: min(1250px, 100%);
-    margin: auto;
-}
-
-.topo {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.logo {
-    color: #fff;
-    text-decoration: none;
-    font-size: 28px;
-    font-weight: 900;
-}
-
-.logo span {
-    color: #e50914;
-}
-
-.subtitulo {
-    color: #888;
-    margin-top: 6px;
-    font-size: 14px;
-}
-
-button {
-    font-family: inherit;
-}
-
-.btn-sair {
-    border: 1px solid #333;
-    background: #151515;
-    color: #fff;
-    padding: 11px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.btn-sair:hover {
-    background: #e50914;
-}
-
-.dashboard {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.card {
-    background: rgba(18,18,18,.92);
-    border: 1px solid #292929;
-    border-radius: 18px;
-    padding: 25px;
-    margin-bottom: 22px;
-}
-
-.numero {
-    font-size: 30px;
-    font-weight: 900;
-    margin-top: 8px;
-}
-
-.label {
-    color: #888;
-    font-size: 12px;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 140px auto;
-    gap: 10px;
-    align-items: end;
-}
-
-.campo label {
-    display: block;
-    color: #aaa;
-    font-size: 12px;
-    margin-bottom: 5px;
-}
-
-input {
-    width: 100%;
-    padding: 13px;
-    border-radius: 10px;
-    border: 1px solid #333;
-    background: #101010;
-    color: white;
-}
-
-.btn {
-    border: 0;
-    background: linear-gradient(135deg,#9333ea,#6d28d9);
-    color: white;
-    padding: 13px 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 800;
-}
-
-.tabela-wrapper {
-    width: 100%;
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-    min-width: 700px;
-    border-collapse: collapse;
-}
-
-th, td {
-    padding: 13px 10px;
-    text-align: left;
-    border-bottom: 1px solid #222;
-}
-
-th {
-    color: #777;
-    font-size: 12px;
-}
-
-.badge {
-    display: inline-flex;
-    padding: 6px 10px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: bold;
-}
-
-.ativo {
-    background: rgba(0,210,106,.12);
-    color: #00d26a;
-}
-
-.suspenso {
-    background: rgba(229,9,20,.12);
-    color: #ff555f;
-}
-
-.acoes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.acao-btn {
-    border: 0;
-    padding: 7px 9px;
-    border-radius: 7px;
-    cursor: pointer;
-    font-size: 10px;
-    font-weight: 800;
-    color: #fff;
-}
-
-.acao-btn.editar {
-    background: #2563eb;
-}
-
-.acao-btn.suspender {
-    background: #b45309;
-}
-
-.acao-btn.ativar {
-    background: #059669;
-}
-
-.acao-btn.renovar {
-    background: #7c3aed;
-}
-
-.acao-btn.excluir {
-    background: #dc2626;
-}
-
-.acao-btn:hover {
-    opacity: .82;
-}
-
-.mensagem {
-    display: none;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-}
-
-@media(max-width:900px) {
-
-    .dashboard {
-        grid-template-columns: 1fr;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .topo {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .btn-sair {
-        width: 100%;
-    }
-}
-
-
-.badge.online {
-    color: #00ff88;
-    background: rgba(0,255,136,.10);
-    border: 1px solid rgba(0,255,136,.30);
-}
-
-.badge.offline {
-    color: #9ca3af;
-    background: rgba(156,163,175,.10);
-    border: 1px solid rgba(156,163,175,.20);
-}
-
-
-/* ============================================================
-   LUKAFILMES • CARDS CLICÁVEIS DO REVENDEDOR
-   ============================================================ */
-
-.card-clicavel{
-    cursor:pointer !important;
-    position:relative;
-    transition:
-        transform .22s ease,
-        border-color .22s ease,
-        box-shadow .22s ease,
-        background .22s ease;
-}
-
-.card-clicavel::after{
-    content:"Clique para visualizar →";
-    position:absolute;
-    right:18px;
-    bottom:15px;
-    color:#777;
-    font-size:11px;
-    font-weight:700;
-    opacity:0;
-    transform:translateY(5px);
-    transition:.22s ease;
-}
-
-.card-clicavel:hover{
-    transform:translateY(-4px);
-    border-color:#e50914;
-    box-shadow:
-        0 12px 35px rgba(229,9,20,.16),
-        0 4px 18px rgba(0,0,0,.35);
-}
-
-.card-clicavel:hover::after{
-    opacity:1;
-    transform:none;
-}
-
-.card-clicavel:active{
-    transform:scale(.98);
-}
-
-.clientes-topo{
+header{
+    padding:18px 20px;
+    background:#0b0b0b;
+    border-bottom:1px solid #222;
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    gap:15px;
-    margin-bottom:20px;
-}
-
-.clientes-subtitulo{
-    color:#777;
-    font-size:13px;
-    margin-top:5px;
-}
-
-.btn-voltar-clientes{
-    border:1px solid #303030;
-    background:#151515;
-    color:#fff;
-    padding:10px 15px;
-    border-radius:10px;
-    font-weight:800;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.btn-voltar-clientes:hover{
-    background:#e50914;
-    border-color:#e50914;
-}
-
-#clientesCard{
-    transition:.25s ease;
-}
-
-body.modo-clientes .dashboard{
-    display:none !important;
-}
-
-body.modo-clientes #criarClienteCard{
-    display:none !important;
-}
-
-body.modo-clientes #clientesCard{
-    display:block !important;
-    animation:revendedorEntrada .28s ease;
-}
-
-body:not(.modo-clientes) #btnVoltarDashboard{
-    display:none;
-}
-
-@keyframes revendedorEntrada{
-    from{
-        opacity:0;
-        transform:translateY(12px);
-    }
-    to{
-        opacity:1;
-        transform:none;
-    }
-}
-
-.filtro-atual{
-    display:inline-flex;
     align-items:center;
-    gap:7px;
-    margin-bottom:15px;
-    padding:7px 11px;
-    border-radius:999px;
-    background:rgba(229,9,20,.10);
-    border:1px solid rgba(229,9,20,.25);
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+.logo{
+    font-size:23px;
+    font-weight:900;
+}
+.logo span{color:#e50914}
+.sair{
+    background:#e50914;
+    border:0;
     color:#fff;
-    font-size:12px;
-    font-weight:800;
+    padding:10px 16px;
+    border-radius:8px;
+    font-weight:bold;
+}
+main{
+    max-width:1100px;
+    margin:auto;
+    padding:22px;
+}
+h1{margin:0 0 5px}
+.sub{color:#aaa;margin-bottom:25px}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+}
+.card{
+    background:#111;
+    border:1px solid #252525;
+    border-radius:14px;
+    padding:20px;
+}
+.card small{color:#999}
+.card strong{
+    display:block;
+    font-size:32px;
+    margin-top:8px;
+}
+
+.box{
+    background:#101010;
+    border:1px solid #252525;
+    border-radius:14px;
+    padding:20px;
+    margin-top:20px;
+}
+.box h2{margin-top:0}
+
+form{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+input{
+    width:100%;
+    padding:13px;
+    border-radius:8px;
+    border:1px solid #333;
+    background:#080808;
+    color:#fff;
+}
+button{
+    cursor:pointer;
+}
+.criar{
+    grid-column:1/-1;
+    padding:14px;
+    border:0;
+    border-radius:8px;
+    background:#e50914;
+    color:#fff;
+    font-weight:bold;
+}
+
+.lista{
+    display:grid;
+    gap:10px;
+}
+.usuario{
+    background:#080808;
+    border:1px solid #242424;
+    border-radius:10px;
+    padding:15px;
+}
+.usuario-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+.online{color:#20d46b}
+.offline{color:#777}
+.meta{
+    color:#aaa;
+    font-size:13px;
+    margin-top:8px;
+}
+
+#msg{
+    margin-top:12px;
+    color:#aaa;
 }
 
 @media(max-width:700px){
-    .clientes-topo{
-        align-items:flex-start;
-        flex-direction:column;
-    }
-
-    .btn-voltar-clientes{
-        width:100%;
-    }
-
-    .card-clicavel::after{
-        opacity:1;
-        transform:none;
-    }
-}
-
-</style>
-
-
-<style id="luka-trailer-bg">
-body{background:#050505!important}
-
-
-#lukaTrailerOverlay{
-position:fixed;
-inset:0;
-z-index:-2;
-pointer-events:none;
-background:
-linear-gradient(rgba(0,0,0,.82),rgba(0,0,0,.88)),
-radial-gradient(circle at top,rgba(180,0,20,.18),transparent 45%);
-backdrop-filter:blur(1px);
-}
-main,header,.container,.content,section{
-position:relative;
-z-index:1;
+    main{padding:14px}
+    .cards{grid-template-columns:1fr}
+    form{grid-template-columns:1fr}
 }
 </style>
-
-
-<style id="no-zoom-panel">
-html,body{
-    touch-action:pan-x pan-y;
-    overscroll-behavior-x:none;
-}
-*{
-    -webkit-tap-highlight-color:transparent;
-}
-input,select,textarea{
-    font-size:16px!important;
-}
-</style>
-
-
-<style id="lukafilmes-revendedor-visual-upgrade">
-
-:root{
-    --lf-red:#e50914;
-    --lf-red-dark:#a5070e;
-    --lf-black:#050505;
-    --lf-card:#101010;
-    --lf-card2:#151515;
-    --lf-line:#292929;
-    --lf-text:#fff;
-    --lf-muted:#929292;
-}
-
-html{
-    width:100%;
-    min-height:100%;
-    overflow-x:hidden;
-    -webkit-text-size-adjust:100%;
-}
-
-body{
-    background:
-        radial-gradient(circle at 85% -10%,rgba(229,9,20,.18),transparent 32%),
-        radial-gradient(circle at -10% 100%,rgba(229,9,20,.10),transparent 32%),
-        #050505!important;
-    color:#fff!important;
-    padding:
-        max(16px,env(safe-area-inset-top))
-        max(16px,env(safe-area-inset-right))
-        max(16px,env(safe-area-inset-bottom))
-        max(16px,env(safe-area-inset-left))!important;
-    overflow-x:hidden!important;
-    overscroll-behavior-x:none;
-}
-
-.container{
-    width:min(1280px,100%)!important;
-    margin:0 auto!important;
-}
-
-/* TOPO */
-
-.topo{
-    position:sticky;
-    top:0;
-    z-index:50;
-    margin:0 -16px 24px!important;
-    padding:14px 16px!important;
-    background:rgba(5,5,5,.92);
-    border-bottom:1px solid #242424;
-    backdrop-filter:blur(18px);
-    box-shadow:0 12px 35px rgba(0,0,0,.28);
-}
-
-.logo{
-    font-size:26px!important;
-    letter-spacing:-1.2px;
-    text-shadow:0 0 25px rgba(229,9,20,.18);
-}
-
-.logo span{
-    color:var(--lf-red)!important;
-}
-
-.subtitulo{
-    font-size:12px!important;
-    font-weight:700;
-    letter-spacing:.2px;
-}
-
-/* SAIR */
-
-.btn-sair{
-    border:1px solid #303030!important;
-    background:#111!important;
-    transition:.2s;
-}
-
-.btn-sair:hover{
-    background:var(--lf-red)!important;
-    border-color:var(--lf-red)!important;
-    transform:translateY(-2px);
-}
-
-/* CARDS */
-
-.dashboard{
-    gap:14px!important;
-}
-
-.dashboard .card{
-    position:relative;
-    overflow:hidden;
-    background:
-        linear-gradient(145deg,rgba(22,22,22,.98),rgba(9,9,9,.98))!important;
-    border:1px solid #292929!important;
-    border-radius:20px!important;
-    box-shadow:
-        0 15px 40px rgba(0,0,0,.28),
-        inset 0 1px 0 rgba(255,255,255,.025);
-    transition:
-        transform .22s ease,
-        border-color .22s ease,
-        box-shadow .22s ease;
-}
-
-.dashboard .card:before{
-    content:"";
-    position:absolute;
-    width:130px;
-    height:130px;
-    right:-65px;
-    bottom:-65px;
-    border-radius:50%;
-    background:rgba(229,9,20,.09);
-    pointer-events:none;
-}
-
-.dashboard .card:hover{
-    transform:translateY(-4px);
-    border-color:rgba(229,9,20,.55)!important;
-    box-shadow:
-        0 20px 45px rgba(0,0,0,.38),
-        0 0 25px rgba(229,9,20,.08);
-}
-
-.label{
-    color:#888!important;
-    font-size:10px!important;
-    font-weight:900;
-    letter-spacing:.8px;
-}
-
-.numero{
-    font-size:34px!important;
-    font-weight:1000!important;
-    letter-spacing:-1px;
-}
-
-/* PAINÉIS */
-
-.card:not(.dashboard .card){
-    background:
-        linear-gradient(145deg,#121212,#0b0b0b)!important;
-    border:1px solid #292929!important;
-    border-radius:20px!important;
-    box-shadow:0 15px 40px rgba(0,0,0,.30);
-}
-
-/* TÍTULOS */
-
-.card h2{
-    font-size:19px;
-    letter-spacing:-.4px;
-}
-
-/* CAMPOS */
-
-input,select,textarea{
-    background:#080808!important;
-    color:#fff!important;
-    border:1px solid #2d2d2d!important;
-    border-radius:12px!important;
-    outline:none!important;
-    transition:.2s;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-    border-color:var(--lf-red)!important;
-    box-shadow:0 0 0 3px rgba(229,9,20,.09);
-}
-
-/* BOTÃO PRINCIPAL */
-
-.btn{
-    background:linear-gradient(135deg,var(--lf-red),var(--lf-red-dark))!important;
-    border:0!important;
-    color:#fff!important;
-    border-radius:12px!important;
-    font-weight:900!important;
-    box-shadow:0 8px 22px rgba(229,9,20,.16);
-    transition:.2s;
-}
-
-.btn:hover{
-    transform:translateY(-2px);
-    box-shadow:0 12px 28px rgba(229,9,20,.24);
-}
-
-/* TABELA */
-
-.tabela-wrapper{
-    border-radius:15px;
-    border:1px solid #242424;
-    background:#090909;
-    overflow:auto;
-    -webkit-overflow-scrolling:touch;
-}
-
-table{
-    border-collapse:separate!important;
-    border-spacing:0!important;
-}
-
-thead th{
-    background:#111!important;
-    color:#888!important;
-    font-size:10px!important;
-    font-weight:900!important;
-    letter-spacing:.7px;
-    border-bottom:1px solid #292929!important;
-}
-
-tbody tr{
-    transition:.18s;
-}
-
-tbody tr:hover{
-    background:rgba(229,9,20,.035);
-}
-
-tbody td{
-    border-bottom:1px solid #202020;
-}
-
-/* BADGES */
-
-.badge{
-    border-radius:999px!important;
-    font-weight:900!important;
-}
-
-.badge.online{
-    background:rgba(229,9,20,.10)!important;
-    color:#ff5962!important;
-    border:1px solid rgba(229,9,20,.22);
-}
-
-.badge.offline{
-    background:#151515!important;
-    color:#777!important;
-}
-
-/* AÇÕES */
-
-.acoes{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-}
-
-.acao-btn{
-    border:1px solid #303030!important;
-    background:#151515!important;
-    color:#fff!important;
-    border-radius:9px!important;
-    transition:.18s;
-}
-
-.acao-btn:hover{
-    transform:translateY(-2px);
-}
-
-.acao-btn.editar:hover{
-    border-color:#777!important;
-}
-
-.acao-btn.renovar:hover,
-.acao-btn.ativar:hover{
-    border-color:var(--lf-red)!important;
-    color:#ff5962!important;
-}
-
-.acao-btn.suspender:hover,
-.acao-btn.excluir:hover{
-    background:var(--lf-red)!important;
-    border-color:var(--lf-red)!important;
-}
-
-/* MENSAGEM */
-
-.mensagem{
-    border-radius:12px;
-}
-
-/* MOBILE */
-
-@media(max-width:800px){
-
-    body{
-        padding:10px!important;
-    }
-
-    .topo{
-        margin:0 -10px 18px!important;
-        padding:12px 10px!important;
-    }
-
-    .logo{
-        font-size:21px!important;
-    }
-
-    .subtitulo{
-        font-size:10px!important;
-    }
-
-    .btn-sair{
-        padding:9px 13px!important;
-        font-size:11px;
-    }
-
-    .dashboard{
-        grid-template-columns:1fr 1fr!important;
-        gap:10px!important;
-    }
-
-    .dashboard .card{
-        padding:17px!important;
-        margin-bottom:0!important;
-        border-radius:17px!important;
-    }
-
-    .numero{
-        font-size:27px!important;
-    }
-
-    .card:not(.dashboard .card){
-        padding:17px!important;
-        border-radius:17px!important;
-    }
-
-    .form-grid{
-        grid-template-columns:1fr!important;
-    }
-
-    .tabela-wrapper{
-        margin:0 -3px;
-    }
-
-    table{
-        min-width:850px;
-    }
-
-    .acoes{
-        flex-direction:column;
-        align-items:stretch;
-    }
-
-    .acao-btn{
-        width:100%;
-    }
-}
-
-@media(max-width:420px){
-
-    .dashboard{
-        grid-template-columns:1fr 1fr!important;
-    }
-
-    .label{
-        font-size:9px!important;
-    }
-
-    .numero{
-        font-size:24px!important;
-    }
-
-    .card:not(.dashboard .card){
-        padding:14px!important;
-    }
-}
-
-</style>
-
-
-<style id="lf-cards-clicaveis">
-
-.dashboard .card{
-    cursor:pointer!important;
-    user-select:none;
-}
-
-.dashboard .card.card-selecionado{
-    border-color:#e50914!important;
-    box-shadow:
-        0 0 0 1px rgba(229,9,20,.35),
-        0 15px 40px rgba(229,9,20,.10)!important;
-}
-
-.dashboard .card .card-indicador{
-    display:block;
-    margin-top:10px;
-    font-size:10px;
-    color:#666;
-    font-weight:800;
-    transition:.2s;
-}
-
-.dashboard .card:hover .card-indicador{
-    color:#e50914;
-}
-
-#filtroClientesAtivo{
-    display:none;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom:15px;
-    padding:11px 14px;
-    border:1px solid #292929;
-    border-radius:12px;
-    background:#101010;
-    color:#aaa;
-    font-size:12px;
-    font-weight:800;
-}
-
-#filtroClientesAtivo.show{
-    display:flex;
-}
-
-#filtroClientesAtivo strong{
-    color:#fff;
-}
-
-#limparFiltroClientes{
-    background:#1a1a1a;
-    border:1px solid #303030;
-    color:#fff;
-    border-radius:8px;
-    padding:7px 10px;
-    cursor:pointer;
-    font-weight:800;
-}
-
-#limparFiltroClientes:hover{
-    background:#e50914;
-    border-color:#e50914;
-}
-
-</style>
-
-
-<style id="revendedor-resumo-cards">
-.resumo-card{
-    cursor:pointer;
-    position:relative;
-    overflow:hidden;
-    transition:
-        transform .2s ease,
-        border-color .2s ease,
-        box-shadow .2s ease;
-}
-
-.resumo-card:hover{
-    transform:translateY(-4px);
-    border-color:#e50914;
-    box-shadow:0 14px 35px rgba(229,9,20,.16);
-}
-
-.resumo-card:active{
-    transform:scale(.98);
-}
-
-.card-link{
-    margin-top:10px;
-    color:#e50914;
-    font-size:12px;
-    font-weight:800;
-}
-
-@media(max-width:900px){
-    .dashboard{
-        grid-template-columns:1fr 1fr!important;
-    }
-}
-
-@media(max-width:560px){
-    .dashboard{
-        grid-template-columns:1fr 1fr!important;
-        gap:10px;
-    }
-
-    .resumo-card{
-        padding:17px;
-    }
-
-    .resumo-card .numero{
-        font-size:25px;
-    }
-}
-</style>
-
-
-<style id="revendedor-resumo-modal-css">
-.resumo-modal{
-    position:fixed;
-    inset:0;
-    z-index:9999;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:18px;
-    background:rgba(0,0,0,.78);
-    backdrop-filter:blur(8px);
-}
-
-.resumo-modal.show{
-    display:flex;
-}
-
-.resumo-modal-box{
-    width:min(560px,100%);
-    max-height:80vh;
-    overflow:hidden;
-    background:#101010;
-    border:1px solid #292929;
-    border-radius:20px;
-    box-shadow:0 25px 80px rgba(0,0,0,.65);
-    animation:resumoEntrada .2s ease;
-}
-
-.resumo-modal-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    padding:18px 20px;
-    border-bottom:1px solid #292929;
-}
-
-.resumo-titulo{
-    font-size:20px;
-    font-weight:900;
-}
-
-.resumo-subtitulo{
-    margin-top:4px;
-    color:#888;
-    font-size:12px;
-}
-
-.resumo-fechar{
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    background:#202020;
-    color:#fff;
-    font-size:25px;
-    cursor:pointer;
-}
-
-.resumo-fechar:hover{
-    background:#e50914;
-}
-
-.resumo-lista{
-    padding:14px;
-    max-height:60vh;
-    overflow:auto;
-}
-
-.resumo-cliente{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    padding:14px;
-    margin-bottom:8px;
-    background:#171717;
-    border:1px solid #292929;
-    border-radius:14px;
-}
-
-.resumo-cliente-info{
-    min-width:0;
-}
-
-.resumo-cliente-nome{
-    font-weight:900;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-.resumo-cliente-validade{
-    margin-top:4px;
-    color:#888;
-    font-size:11px;
-}
-
-.resumo-badge{
-    flex-shrink:0;
-    padding:6px 9px;
-    border-radius:999px;
-    font-size:10px;
-    font-weight:900;
-}
-
-.resumo-online{
-    color:#20d49a;
-    background:rgba(32,212,154,.10);
-}
-
-.resumo-offline{
-    color:#888;
-    background:rgba(255,255,255,.06);
-}
-
-.resumo-ativo{
-    color:#20d49a;
-}
-
-.resumo-suspenso{
-    color:#ff5575;
-}
-
-.resumo-vazio{
-    text-align:center;
-    padding:35px 15px;
-    color:#888;
-}
-
-@keyframes resumoEntrada{
-    from{
-        opacity:0;
-        transform:translateY(10px) scale(.97);
-    }
-    to{
-        opacity:1;
-        transform:none;
-    }
-}
-</style>
-
 </head>
 
 <body>
 
+<header>
+    <div class="logo">LUKA<span>FILMES</span></div>
+    <button class="sair" onclick="sair()">Sair</button>
+</header>
 
+<main>
 
+    <h1>🤝 Painel de Revenda</h1>
+    <div class="sub">Gerencie suas contas e clientes.</div>
 
-<div class="container">
-
-    <div class="topo">
-
-        <div>
-            <a href="/" class="logo">
-                LUKA<span>FILMES</span>
-            </a>
-
-            <div class="subtitulo">
-                Painel do revendedor
-            </div>
+    <div class="cards">
+        <div class="card">
+            <small>CLIENTES</small>
+            <strong id="total">0</strong>
         </div>
 
-        <button
-            class="btn-sair"
-            onclick="sair()"
-        >
-            SAIR
-        </button>
+        <div class="card">
+            <small>ONLINE</small>
+            <strong id="online">0</strong>
+        </div>
 
+        <div class="card">
+            <small>LIMITE</small>
+            <strong id="limite">0</strong>
+        </div>
     </div>
 
-    
+    <div class="box">
+        <h2>➕ Criar cliente</h2>
 
-<div class="dashboard">
-
-    <div class="card resumo-card" onclick="abrirResumoRevendedor('todos')">
-        <div class="label">CLIENTES</div>
-        <div class="numero" id="clientesNumero">0 / 0</div>
-        <div class="card-link">Ver clientes →</div>
-    </div>
-
-    <div class="card resumo-card" onclick="abrirResumoRevendedor('ativos')">
-        <div class="label">CLIENTES ATIVOS</div>
-        <div class="numero" id="clientesAtivos">0</div>
-        <div class="card-link">Ver ativos →</div>
-    </div>
-
-    <div class="card resumo-card" onclick="abrirResumoRevendedor('suspensos')">
-        <div class="label">CLIENTES SUSPENSOS</div>
-        <div class="numero" id="clientesSuspensos">0</div>
-        <div class="card-link">Ver suspensos →</div>
-    </div>
-
-    <div class="card resumo-card" onclick="abrirResumoRevendedor('online')">
-        <div class="label">ONLINE AGORA</div>
-        <div class="numero" id="clientesOnline">0</div>
-        <div class="card-link">Ver online →</div>
-    </div>
-
-</div>
-
-<div class="card">
-
-        <h2>Criar novo cliente</h2>
-
-        <div id="mensagem" class="mensagem"></div>
-
-        <form id="formCliente">
-
-            <div class="form-grid">
-
-                <div class="campo">
-                    <label>Usuário</label>
-                    <input id="clienteUsuario" required>
-                </div>
-
-                <div class="campo">
-                    <label>Senha</label>
-                    <input id="clienteSenha" type="password" required>
-                </div>
-
-                <div class="campo">
-                    <label>Dias</label>
-                    <input id="clienteDias" type="number" min="1" value="30" required>
-                </div>
-
-                <button class="btn" type="submit">
-                    CRIAR CLIENTE
-                </button>
-
-            </div>
-
+        <form id="formCriar">
+            <input id="usuario" placeholder="Usuário" required>
+            <input id="senha" placeholder="Senha" required>
+            <input id="dias" type="number" min="1" value="30" placeholder="Dias">
+            <button class="criar" type="submit">CRIAR CLIENTE</button>
         </form>
 
+        <div id="msg"></div>
     </div>
 
-    <div class="card" id="clientesCard">
-
-        <div class="clientes-topo">
-            <div>
-                <h2 id="tituloClientes">Meus clientes</h2>
-                <div id="subtituloClientes" class="clientes-subtitulo">Todos os clientes deste revendedor</div>
-            </div>
-            <button id="btnVoltarDashboard" class="btn-voltar-clientes" onclick="fecharListaClientes()">← Voltar ao Dashboard</button>
+    <div class="box">
+        <h2>👥 Meus clientes</h2>
+        <div id="lista" class="lista">
+            Carregando...
         </div>
-
-        
-<div id="filtroClientesAtivo">
-    <span>Filtro: <strong id="filtroClientesNome">Todos os clientes</strong></span>
-    <button id="limparFiltroClientes" type="button" onclick="filtrarClientes('todos')">LIMPAR</button>
-</div>
-
-<div class="tabela-wrapper">
-
-
-            <table>
-
-                <thead>
-
-                    <tr>
-                        <th>ID</th>
-                        <th>USUÁRIO</th>
-                        <th>STATUS</th>
-<th>ONLINE</th>
-                        <th>VALIDADE</th>
-                        <th>AÇÕES</th>
-                    </tr>
-
-                </thead>
-
-                <tbody id="clientes">
-                    <tr>
-                        <td colspan="6">
-                            Carregando...
-                        </td>
-                    </tr>
-                </tbody>
-
-            </table>
-
-        </div>
-
     </div>
 
-</div>
-
-
-<script id="lf-filtro-clientes">
-
-let filtroClientesAtual = "todos";
-let clientesCacheFiltro = [];
-
-function marcarCardFiltro(tipo){
-
-    document.querySelectorAll(".dashboard .card").forEach(c=>{
-        c.classList.remove("card-selecionado");
-    });
-
-    const mapa={
-        todos:"cardTodos",
-        ativos:"cardAtivos",
-        suspensos:"cardSuspensos",
-        online:"cardOnline"
-    };
-
-    const card=document.getElementById(mapa[tipo]);
-
-    if(card){
-        card.classList.add("card-selecionado");
-    }
-}
-
-function filtrarClientes(tipo){
-
-    filtroClientesAtual=tipo;
-
-    marcarCardFiltro(tipo);
-
-    const nomes={
-        todos:"Todos os clientes",
-        ativos:"Clientes ativos",
-        suspensos:"Clientes suspensos",
-        online:"Usuários online"
-    };
-
-    const filtro=document.getElementById("filtroClientesAtivo");
-    const nome=document.getElementById("filtroClientesNome");
-
-    if(tipo==="todos"){
-        filtro.classList.remove("show");
-    }else{
-        nome.textContent=nomes[tipo] || "Clientes";
-        filtro.classList.add("show");
-    }
-
-    renderizarClientesFiltro();
-}
-
-function renderizarClientesFiltro(){
-
-    const tbody=document.getElementById("clientes");
-
-    if(!tbody) return;
-
-    let lista=[...clientesCacheFiltro];
-
-    if(filtroClientesAtual==="ativos"){
-        lista=lista.filter(c=>c.status==="ativo");
-    }
-
-    if(filtroClientesAtual==="suspensos"){
-        lista=lista.filter(c=>c.status!=="ativo");
-    }
-
-    if(filtroClientesAtual==="online"){
-        lista=lista.filter(c=>c.online===true);
-    }
-
-    if(!lista.length){
-
-        tbody.innerHTML=`
-            <tr>
-                <td colspan="6" style="text-align:center;padding:35px;color:#777">
-                    Nenhum cliente encontrado neste filtro.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    tbody.innerHTML=lista.map(cliente=>{
-
-        const status=
-            cliente.status==="ativo"
-            ? "ativo"
-            : "suspenso";
-
-        const botaoStatus=
-            cliente.status==="ativo"
-            ? `<button class="acao-btn suspender"
-                onclick="alterarStatus(${cliente.id},'suspenso')">
-                SUSPENDER
-               </button>`
-            : `<button class="acao-btn ativar"
-                onclick="alterarStatus(${cliente.id},'ativo')">
-                ATIVAR
-               </button>`;
-
-        return `
-        <tr>
-
-            <td>${cliente.id}</td>
-
-            <td>
-                ${escapeHtml(cliente.usuario)}
-            </td>
-
-            <td>
-                <span class="badge ${status}">
-                    ${cliente.status==="ativo" ? "ATIVO" : "SUSPENSO"}
-                </span>
-            </td>
-
-            <td>
-                <span class="badge ${cliente.online ? "online" : "offline"}">
-                    ${cliente.online ? "● ONLINE" : "● OFFLINE"}
-                </span>
-            </td>
-
-            <td>
-                ${cliente.validade
-                    ? new Date(cliente.validade).toLocaleString("pt-BR")
-                    : "—"}
-            </td>
-
-            <td>
-                <div class="acoes">
-
-                    <button class="acao-btn editar"
-                        onclick="editarCliente(${cliente.id},'${escapeJs(cliente.usuario)}')">
-                        EDITAR
-                    </button>
-
-                    ${botaoStatus}
-
-                    <button class="acao-btn renovar"
-                        onclick="renovarCliente(${cliente.id})">
-                        RENOVAR
-                    </button>
-
-                    <button class="acao-btn excluir"
-                        onclick="excluirCliente(${cliente.id},'${escapeJs(cliente.usuario)}')">
-                        EXCLUIR
-                    </button>
-
-                </div>
-            </td>
-
-        </tr>
-        `;
-
-    }).join("");
-
-        renderizarClientesFiltro();
-}
-
-function atualizarFiltroDepoisDoCarregamento(lista){
-
-    clientesCacheFiltro=Array.isArray(lista) ? lista : [];
-
-    const online=clientesCacheFiltro.filter(c=>c.online===true).length;
-
-    const el=document.getElementById("clientesOnline");
-
-    if(el){
-        el.textContent=online;
-    }
-
-    renderizarClientesFiltro();
-}
-
-</script>
+</main>
 
 <script>
+async function carregar(){
 
-async function carregar() {
+    try{
 
-    try {
+        const r = await fetch("/api/revendedor/clientes", {
+            credentials:"include",
+            cache:"no-store"
+        });
 
-        const resposta =
-            await fetch(
-                "/api/revendedor/clientes",
-                {
-                    credentials: "same-origin"
-                }
-            );
-
-        if (resposta.status === 403) {
-            window.location.href = "/login";
+        if(!r.ok){
+            document.getElementById("lista").innerHTML =
+                "<div class='usuario'>Não foi possível carregar os clientes.</div>";
             return;
         }
 
-        const dados = await resposta.json();
-        window.__clientesRevendedor = Array.isArray(dados.clientes) ? dados.clientes : [];
+        const d = await r.json();
 
-        if (!dados.sucesso) {
-            throw new Error(dados.mensagem || "Erro");
-        }
+        const clientes = Array.isArray(d.clientes) ? d.clientes : [];
 
-        document.getElementById("clientesNumero")
-            .textContent =
-            dados.utilizados +
-            " / " +
-            dados.limite;
+        document.getElementById("total").textContent = clientes.length;
+        document.getElementById("online").textContent =
+            clientes.filter(x => x.online).length;
 
-        const ativos =
-            dados.clientes.filter(
-                u => u.status === "ativo"
-            ).length;
+        document.getElementById("limite").textContent =
+            Number(d.limite || 0) || "∞";
 
-        const suspensos =
-            dados.clientes.filter(
-                u => u.status !== "ativo"
-            ).length;
+        const lista = document.getElementById("lista");
 
-        document.getElementById("clientesAtivos")
-            .textContent = ativos;
-
-        document.getElementById("clientesSuspensos")
-            .textContent = suspensos;
-
-        clientesCacheFiltro = Array.isArray(dados.clientes) ? dados.clientes : [];
-
-        const onlineCount = clientesCacheFiltro.filter(c => c.online === true).length;
-        const onlineEl = document.getElementById("clientesOnline");
-        if (onlineEl) onlineEl.textContent = onlineCount;
-
-        const tbody =
-            document.getElementById("clientes");
-
-        if (!dados.clientes.length) {
-
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6">
-                        Nenhum cliente cadastrado.
-                    </td>
-                </tr>
-            `;
-
+        if(!clientes.length){
+            lista.innerHTML =
+                "<div class='usuario'>Nenhum cliente cadastrado.</div>";
             return;
         }
 
-        tbody.innerHTML =
-            dados.clientes.map(cliente => {
+        lista.innerHTML = clientes.map(u => `
+            <div class="usuario">
+                <div class="usuario-top">
+                    <strong>${esc(u.usuario || "—")}</strong>
+                    <span class="${u.online ? "online":"offline"}">
+                        ${u.online ? "● ONLINE":"○ OFFLINE"}
+                    </span>
+                </div>
 
-                const status =
-                    cliente.status === "ativo"
-                        ? "ativo"
-                        : "suspenso";
+                <div class="meta">
+                    Status: ${esc(u.status || "ativo")}<br>
+                    Validade: ${u.validade ? esc(new Date(u.validade).toLocaleString("pt-BR")) : "—"}
+                </div>
+            </div>
+        `).join("");
 
-                const botaoStatus =
-                    cliente.status === "ativo"
-                        ? `<button class="acao-btn suspender"
-                                onclick="alterarStatus(${cliente.id}, 'suspenso')">
-                                SUSPENDER
-                           </button>`
-                        : `<button class="acao-btn ativar"
-                                onclick="alterarStatus(${cliente.id}, 'ativo')">
-                                ATIVAR
-                           </button>`;
-
-                return `
-                    <tr>
-                        <td>${cliente.id}</td>
-
-                        <td>
-                            ${escapeHtml(cliente.usuario)}
-                        </td>
-
-                        <td>
-                            <span class="badge ${cliente.online ? "online" : "offline"}">
-                                ${cliente.online ? "● ONLINE" : "● OFFLINE"}
-                            </span>
-                        </td>
-
-                        <td>
-                            <span class="badge ${status}">
-                                ${cliente.status === "ativo"
-                                    ? "ATIVO"
-                                    : "SUSPENSO"}
-                            </span>
-                        </td>
-
-                        <td>
-                            ${cliente.validade
-                                ? new Date(cliente.validade).toLocaleString("pt-BR")
-                                : "—"}
-                        </td>
-
-                        <td>
-                            <div class="acoes">
-
-                                <button
-                                    class="acao-btn editar"
-                                    onclick="editarCliente(${cliente.id}, '${escapeJs(cliente.usuario)}')">
-                                    EDITAR
-                                </button>
-
-                                ${botaoStatus}
-
-                                <button
-                                    class="acao-btn renovar"
-                                    onclick="renovarCliente(${cliente.id})">
-                                    RENOVAR
-                                </button>
-
-                                <button
-                                    class="acao-btn excluir"
-                                    onclick="excluirCliente(${cliente.id}, '${escapeJs(cliente.usuario)}')">
-                                    EXCLUIR
-                                </button>
-
-                            </div>
-                        </td>
-                    </tr>
-                `;
-
-            }).join("");
-
-        if(typeof aplicarFiltroClientes === "function") aplicarFiltroClientes();
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        document.getElementById("clientes")
-            .innerHTML = `
-                <tr>
-                    <td colspan="6">
-                        Erro ao carregar clientes.
-                    </td>
-                </tr>
-            `;
+    }catch(e){
+        document.getElementById("lista").innerHTML =
+            "<div class='usuario'>Erro ao carregar painel.</div>";
     }
 }
 
+document.getElementById("formCriar").addEventListener("submit", async e => {
 
-// Atualiza clientes e presença automaticamente
-setInterval(carregar, 15000);
+    e.preventDefault();
 
-carregar();
+    const msg = document.getElementById("msg");
+    msg.textContent = "Criando cliente...";
 
+    try{
 
-document
-.getElementById("formCliente")
-.addEventListener("submit", async function(event) {
+        const r = await fetch("/api/revendedor/clientes", {
+            method:"POST",
+            credentials:"include",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                usuario:document.getElementById("usuario").value.trim(),
+                senha:document.getElementById("senha").value,
+                dias:Number(document.getElementById("dias").value)
+            })
+        });
 
-    event.preventDefault();
+        const d = await r.json();
 
-    const usuario =
-        document.getElementById("clienteUsuario")
-            .value.trim();
+        msg.textContent = d.mensagem || "Operação concluída.";
 
-    const senha =
-        document.getElementById("clienteSenha")
-            .value;
-
-    const dias =
-        Number(
-            document.getElementById("clienteDias")
-                .value
-        );
-
-    try {
-
-        const resposta =
-            await fetch(
-                "/api/revendedor/clientes",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    credentials: "same-origin",
-                    body: JSON.stringify({
-                        usuario,
-                        senha,
-                        dias
-                    })
-                }
-            );
-
-        const dados =
-            await resposta.json();
-
-        mostrarMensagem(
-            dados.mensagem,
-            dados.sucesso
-        );
-
-        if (dados.sucesso) {
-
-            document.getElementById("clienteUsuario").value = "";
-            document.getElementById("clienteSenha").value = "";
-            document.getElementById("clienteDias").value = "30";
-
+        if(d.sucesso){
+            document.getElementById("formCriar").reset();
+            document.getElementById("dias").value = 30;
             carregar();
         }
 
-    } catch (erro) {
-
-        mostrarMensagem(
-            "Erro de comunicação com o servidor.",
-            false
-        );
+    }catch(e){
+        msg.textContent = "Erro de comunicação com o servidor.";
     }
-
 });
 
-
-function mostrarMensagem(texto, sucesso) {
-
-    const el =
-        document.getElementById("mensagem");
-
-    el.textContent = texto;
-    el.style.display = "block";
-
-    el.style.background =
-        sucesso
-            ? "rgba(0,210,106,.15)"
-            : "rgba(229,9,20,.15)";
-
-    el.style.color =
-        sucesso
-            ? "#00d26a"
-            : "#ff5b64";
+function esc(v){
+    return String(v ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
 }
 
-
-async function sair() {
-
-    await fetch(
-        "/logout",
-        {
-            credentials: "same-origin"
-        }
-    );
-
-    window.location.href = "/login";
+async function sair(){
+    try{
+        await fetch("/logout",{
+            method:"POST",
+            credentials:"include"
+        });
+    }catch(e){}
+    location.href="/";
 }
-
-
-function escapeJs(valor) {
-
-    return String(valor || "")
-        .replace(/\\/g, "\\\\")
-        .replace(/'/g, "\\'")
-        .replace(/"/g, '\\"')
-        .replace(/\r?\n/g, "\\n");
-
-}
-
-
-async function editarCliente(id, usuarioAtual) {
-
-    const usuario =
-        prompt("Novo usuário:", usuarioAtual);
-
-    if (usuario === null) return;
-
-    const novoUsuario = usuario.trim();
-
-    if (!novoUsuario) {
-        alert("Informe um usuário válido.");
-        return;
-    }
-
-    const senha =
-        prompt("Nova senha (deixe vazio para manter a atual):");
-
-    if (senha === null) return;
-
-    const resposta =
-        await fetch(
-            "/api/revendedor/clientes/editar",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "same-origin",
-                body: JSON.stringify({
-                    id,
-                    usuario: novoUsuario,
-                    senha
-                })
-            }
-        );
-
-    const dados = await resposta.json();
-        window.__clientesRevendedor = Array.isArray(dados.clientes) ? dados.clientes : [];
-
-    mostrarMensagem(
-        dados.mensagem,
-        dados.sucesso
-    );
-
-    if (dados.sucesso) {
-        carregar();
-    }
-
-}
-
-
-async function alterarStatus(id, status) {
-
-    const acao =
-        status === "ativo"
-            ? "ativar"
-            : "suspender";
-
-    if (!confirm(`Deseja ${acao} este cliente?`)) {
-        return;
-    }
-
-    const resposta =
-        await fetch(
-            "/api/revendedor/clientes/status",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "same-origin",
-                body: JSON.stringify({
-                    id,
-                    status
-                })
-            }
-        );
-
-    const dados = await resposta.json();
-        window.__clientesRevendedor = Array.isArray(dados.clientes) ? dados.clientes : [];
-
-    mostrarMensagem(
-        dados.mensagem,
-        dados.sucesso
-    );
-
-    if (dados.sucesso) {
-        carregar();
-    }
-
-}
-
-
-async function renovarCliente(id) {
-
-    const valor =
-        prompt(
-            "Quantos dias deseja adicionar?",
-            "30"
-        );
-
-    if (valor === null) return;
-
-    const dias = Number(valor);
-
-    if (
-        !Number.isInteger(dias) ||
-        dias < 1
-    ) {
-        alert("Informe uma quantidade válida de dias.");
-        return;
-    }
-
-    const resposta =
-        await fetch(
-            "/api/revendedor/clientes/renovar",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "same-origin",
-                body: JSON.stringify({
-                    id,
-                    dias
-                })
-            }
-        );
-
-    const dados = await resposta.json();
-        window.__clientesRevendedor = Array.isArray(dados.clientes) ? dados.clientes : [];
-
-    mostrarMensagem(
-        dados.mensagem,
-        dados.sucesso
-    );
-
-    if (dados.sucesso) {
-        carregar();
-    }
-
-}
-
-
-async function excluirCliente(id, usuario) {
-
-    if (
-        !confirm(
-            `Tem certeza que deseja excluir o cliente "${usuario}"?`
-        )
-    ) {
-        return;
-    }
-
-    const resposta =
-        await fetch(
-            "/api/revendedor/clientes/excluir",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "same-origin",
-                body: JSON.stringify({
-                    id
-                })
-            }
-        );
-
-    const dados = await resposta.json();
-        window.__clientesRevendedor = Array.isArray(dados.clientes) ? dados.clientes : [];
-
-    mostrarMensagem(
-        dados.mensagem,
-        dados.sucesso
-    );
-
-    if (dados.sucesso) {
-        carregar();
-    }
-
-}
-
-function escapeHtml(valor) {
-
-    return String(valor || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
 
 carregar();
-
-</script>
-
-<script src="../js/navegacao.js"></script>
-
-<script id="lukafilmes-presenca">
-(function () {
-
-    let timer = null;
-
-    async function enviarPresenca() {
-
-        try {
-
-            await fetch("/api/presenca", {
-                method: "POST",
-                credentials: "same-origin",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: "{}",
-                cache: "no-store"
-            });
-
-        } catch (erro) {
-            console.warn("[PRESENÇA]", erro);
-        }
-    }
-
-    enviarPresenca();
-
-    timer = setInterval(
-        enviarPresenca,
-        20000
-    );
-
-    document.addEventListener(
-        "visibilitychange",
-        function () {
-
-            if (!document.hidden) {
-                enviarPresenca();
-            }
-
-        }
-    );
-
-    window.addEventListener(
-        "pageshow",
-        enviarPresenca
-    );
-
-})();
-</script>
-
-
-<script id="LUKA-REVENDEDOR-HEARTBEAT-2026">
-(function(){
-
-    async function lukaRevendedorHeartbeat(){
-        try{
-            await fetch(
-                "/api/presenca",
-                {
-                    method:"POST",
-                    credentials:"same-origin",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:"{}",
-                    cache:"no-store"
-                }
-            );
-        }catch(e){}
-    }
-
-    lukaRevendedorHeartbeat();
-
-    setInterval(
-        lukaRevendedorHeartbeat,
-        15000
-    );
-
-})();
-
-
-/* ============================================================
-   LUKAFILMES • NAVEGAÇÃO DOS CARDS DO REVENDEDOR
-   ============================================================ */
-
-let filtroClientesAtual = "todos";
-
-function abrirListaClientes(filtro){
-    filtroClientesAtual = filtro || "todos";
-
-    document.body.classList.add("modo-clientes");
-
-    const titulo = document.getElementById("tituloClientes");
-    const subtitulo = document.getElementById("subtituloClientes");
-
-    const nomes = {
-        todos: ["Meus clientes", "Todos os clientes deste revendedor"],
-        ativo: ["Clientes ativos", "Somente clientes com acesso ativo"],
-        suspenso: ["Clientes suspensos", "Somente clientes suspensos"],
-        online: ["Online agora", "Clientes conectados neste momento"]
-    };
-
-    const dados = nomes[filtroClientesAtual] || nomes.todos;
-
-    if(titulo) titulo.textContent = dados[0];
-    if(subtitulo) subtitulo.textContent = dados[1];
-
-    aplicarFiltroClientes();
-
-    const card = document.getElementById("clientesCard");
-    if(card){
-        setTimeout(() => {
-            card.scrollIntoView({
-                behavior:"smooth",
-                block:"start"
-            });
-        }, 50);
-    }
-
-    // Atualiza os dados para refletir online/status imediatamente.
-    if(typeof carregar === "function"){
-        carregar();
-    }
-}
-
-function fecharListaClientes(){
-    document.body.classList.remove("modo-clientes");
-    filtroClientesAtual = "todos";
-
-    const titulo = document.getElementById("tituloClientes");
-    const subtitulo = document.getElementById("subtituloClientes");
-
-    if(titulo) titulo.textContent = "Meus clientes";
-    if(subtitulo) subtitulo.textContent = "Todos os clientes deste revendedor";
-
-    const topo = document.querySelector(".topo");
-    if(topo){
-        topo.scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-        });
-    }
-
-    if(typeof carregar === "function"){
-        carregar();
-    }
-}
-
-function aplicarFiltroClientes(){
-    const tbody = document.getElementById("clientes");
-    if(!tbody) return;
-
-    const linhas = tbody.querySelectorAll("tr");
-
-    linhas.forEach(tr => {
-        const texto = (tr.textContent || "").toUpperCase();
-
-        if(
-            texto.includes("NENHUM CLIENTE") ||
-            texto.includes("CARREGANDO") ||
-            texto.includes("ERRO AO CARREGAR")
-        ){
-            tr.style.display = "";
-            return;
-        }
-
-        const statusAtivo =
-            texto.includes("ATIVO") &&
-            !texto.includes("SUSPENSO");
-
-        const statusSuspenso =
-            texto.includes("SUSPENSO");
-
-        const online =
-            texto.includes("● ONLINE") ||
-            texto.includes("ONLINE");
-
-        let mostrar = true;
-
-        if(filtroClientesAtual === "ativo"){
-            mostrar = statusAtivo;
-        }
-
-        if(filtroClientesAtual === "suspenso"){
-            mostrar = statusSuspenso;
-        }
-
-        if(filtroClientesAtual === "online"){
-            mostrar = online;
-        }
-
-        tr.style.display = mostrar ? "" : "none";
-    });
-}
-
-</script>
-
-
-<div id="resumoRevendedorModal" class="resumo-modal">
-    <div class="resumo-modal-box">
-
-        <div class="resumo-modal-top">
-            <div>
-                <div id="resumoTitulo" class="resumo-titulo">Clientes</div>
-                <div id="resumoSubtitulo" class="resumo-subtitulo">
-                    Lista dos clientes
-                </div>
-            </div>
-
-            <button class="resumo-fechar" onclick="fecharResumoRevendedor()">×</button>
-        </div>
-
-        <div id="resumoLista" class="resumo-lista"></div>
-
-    </div>
-</div>
-
-
-<script id="revendedor-resumo-js">
-function abrirResumoRevendedor(tipo){
-
-    const clientes = Array.isArray(window.__clientesRevendedor)
-        ? window.__clientesRevendedor
-        : [];
-
-    let lista = clientes;
-    let titulo = "Clientes";
-    let subtitulo = "Todos os clientes do revendedor";
-
-    if(tipo === "ativos"){
-        lista = clientes.filter(c => c.status === "ativo");
-        titulo = "Clientes ativos";
-        subtitulo = lista.length + " cliente(s) ativo(s)";
-    }
-
-    if(tipo === "suspensos"){
-        lista = clientes.filter(c => c.status !== "ativo");
-        titulo = "Clientes suspensos";
-        subtitulo = lista.length + " cliente(s) suspenso(s)";
-    }
-
-    if(tipo === "online"){
-        lista = clientes.filter(c => c.online === true);
-        titulo = "Online agora";
-        subtitulo = lista.length + " cliente(s) online";
-    }
-
-    if(tipo === "todos"){
-        subtitulo = lista.length + " cliente(s) cadastrado(s)";
-    }
-
-    document.getElementById("resumoTitulo").textContent = titulo;
-    document.getElementById("resumoSubtitulo").textContent = subtitulo;
-
-    const el = document.getElementById("resumoLista");
-
-    if(!lista.length){
-        el.innerHTML = `
-            <div class="resumo-vazio">
-                <div style="font-size:32px;margin-bottom:10px">👥</div>
-                <strong>Nenhum cliente encontrado</strong>
-                <div style="margin-top:5px;font-size:12px">
-                    Não há clientes nesta categoria.
-                </div>
-            </div>
-        `;
-    }else{
-        el.innerHTML = lista.map(cliente => {
-
-            const nome = escapeHtml(
-                String(cliente.usuario || "Sem usuário")
-            );
-
-            const validade = cliente.validade
-                ? new Date(cliente.validade).toLocaleString("pt-BR")
-                : "Sem validade";
-
-            const statusAtivo = cliente.status === "ativo";
-
-            return `
-                <div class="resumo-cliente">
-
-                    <div class="resumo-cliente-info">
-                        <div class="resumo-cliente-nome">
-                            ${nome}
-                        </div>
-
-                        <div class="resumo-cliente-validade">
-                            Validade: ${validade}
-                        </div>
-                    </div>
-
-                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
-
-                        <span class="resumo-badge ${
-                            cliente.online
-                                ? "resumo-online"
-                                : "resumo-offline"
-                        }">
-                            ${cliente.online ? "● ONLINE" : "● OFFLINE"}
-                        </span>
-
-                        <span class="${
-                            statusAtivo
-                                ? "resumo-ativo"
-                                : "resumo-suspenso"
-                        }" style="font-size:10px;font-weight:900">
-                            ${statusAtivo ? "ATIVO" : "SUSPENSO"}
-                        </span>
-
-                    </div>
-
-                </div>
-            `;
-
-        }).join("");
-    }
-
-    document
-        .getElementById("resumoRevendedorModal")
-        .classList.add("show");
-}
-
-function fecharResumoRevendedor(){
-    document
-        .getElementById("resumoRevendedorModal")
-        .classList.remove("show");
-}
-
-document.addEventListener("click", function(e){
-
-    const modal = document.getElementById("resumoRevendedorModal");
-
-    if(e.target === modal){
-        fecharResumoRevendedor();
-    }
-
-});
-
-document.addEventListener("keydown", function(e){
-
-    if(e.key === "Escape"){
-        fecharResumoRevendedor();
-    }
-
-});
+setInterval(carregar,15000);
 </script>
 
 </body>
 </html>
-
-
-

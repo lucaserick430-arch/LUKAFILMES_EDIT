@@ -4403,6 +4403,26 @@ app.get("/favicon/lukafilmes.svg", (req, res) => {
 });
 
 // ==========================================
+ // LUKAFILMES — ÍCONE OFICIAL ORIGINAL
+ // ==========================================
+ app.get("/favicon/file_000000006768820e93d46c5d164e8bd9.png", (req, res) => {
+     res.sendFile(
+         require("path").join(
+             __dirname,
+             "public",
+             "favicon",
+             "file_000000006768820e93d46c5d164e8bd9.png"
+         ),
+         {
+             headers: {
+                 "Content-Type": "image/png",
+                 "Cache-Control": "no-store, no-cache, must-revalidate"
+             }
+         }
+     );
+ });
+
+// ==========================================
 // PROTEÇÃO DAS PÁGINAS
 // ==========================================
 
@@ -4421,6 +4441,8 @@ app.use(
 
             req.path === "/login" ||
             req.path === "/favicon/lukafilmes.svg" ||
+            req.path === "/favicon/lukafilmes.png" ||
+            req.path === "/favicon/file_000000006768820e93d46c5d164e8bd9.png" ||
 
             req.path === "/admin.html" ||
 

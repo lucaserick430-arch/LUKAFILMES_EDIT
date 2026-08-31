@@ -82,13 +82,36 @@ function criarBotaoAdmin() {
 
         } else if (dados.usuario.tipo === "revendedor") {
 
-            texto = "PAINEL";
+            texto = "REVENDEDOR";
             destino = "/revendedor.html";
 
         } else {
 
             return;
 
+        }
+
+        /*
+         * O botão já existe no menu mobile da Home.
+         * Reutiliza o botão existente para não criar duplicado.
+         */
+        const painel = document.getElementById("lukafilmesMenuPainel");
+
+        if (painel) {
+
+            painel.href = destino;
+            painel.textContent = texto;
+
+            return;
+
+        }
+
+        /*
+         * Fallback: caso alguma página não possua
+         * o botão fixo, cria o botão dinamicamente.
+         */
+        if (document.querySelector(".lukafilmes-admin")) {
+            return;
         }
 
         const botao = document.createElement("a");
@@ -105,6 +128,7 @@ function criarBotaoAdmin() {
         document.body.appendChild(botao);
 
     })
+
     .catch(function(erro) {
 
         console.warn(
@@ -700,5 +724,81 @@ window.addEventListener(
         enviarPresenca,
         15000
     );
+
+})();
+
+
+
+// LUKAFILMES — ROTA EXCLUSIVA DO REVENDEDOR
+(function(){
+
+    function ehRevendedor(){
+        try{
+            const dados =
+                window.usuarioLogado ||
+                window.usuario ||
+                window.usuarioAtual ||
+                null;
+
+            if(dados && String(dados.tipo || "").toLowerCase()==="revendedor"){
+                return true;
+            }
+
+            return document.body.dataset.tipoUsuario === "revendedor";
+        }catch(e){
+            return false;
+        }
+    }
+
+    function interceptarAdminRevenda(){
+
+        document.addEventListener("click", function(ev){
+
+            const alvo = ev.target.closest(
+                'a,button,[onclick]'
+            );
+
+            if(!alvo) return;
+
+            const texto = String(
+                alvo.textContent || ""
+            ).trim().toLowerCase();
+
+            const onclick = String(
+                alvo.getAttribute("onclick") || ""
+            ).toLowerCase();
+
+            const href = String(
+                alvo.getAttribute("href") || ""
+            ).toLowerCase();
+
+            const ehAdmin =
+                texto === "admin" ||
+                texto.includes("admin") ||
+                onclick.includes("admin") ||
+                href.includes("admin.html");
+
+            if(!ehAdmin) return;
+
+            if(!ehRevendedor()) return;
+
+            ev.preventDefault();
+            ev.stopPropagation();
+            ev.stopImmediatePropagation();
+
+            window.location.href="/revendedor.html";
+
+        }, true);
+    }
+
+    if(document.readyState==="loading"){
+        document.addEventListener(
+            "DOMContentLoaded",
+            interceptarAdminRevenda,
+            {once:true}
+        );
+    }else{
+        interceptarAdminRevenda();
+    }
 
 })();

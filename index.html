@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<!-- LUKAFILMES — CONEXÕES ANTECIPADAS -->
+<link rel="preconnect" href="https://image.tmdb.org" crossorigin>
+<link rel="dns-prefetch" href="//image.tmdb.org">
+<link rel="preconnect" href="https://www.youtube.com" crossorigin>
+<link rel="dns-prefetch" href="//www.youtube.com">
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#050505">
 <title>LUKAFILMES — Filmes e Séries</title>
 
@@ -630,6 +636,15 @@ position:relative;
 z-index:2;
 }
 
+
+/* LUKAFILMES — ÍCONE OFICIAL NO PERFIL DO HEADER */
+.profile img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:50%;
+    display:block;
+}
 </style>
 
 <style id="pc-hero-trailer-fix">
@@ -1270,9 +1285,9 @@ z-index:2;
 
 
 <!-- LUKAFILMES — IDENTIDADE DO NAVEGADOR -->
-<link rel="icon" type="image/svg+xml" href="/favicon/lukafilmes.svg">
-<link rel="shortcut icon" href="/favicon/lukafilmes.svg">
-<link rel="apple-touch-icon" href="/favicon/lukafilmes.svg">
+<link rel="icon" type="image/png" href="/favicon/file_000000006768820e93d46c5d164e8bd9.png">
+<link rel="shortcut icon" href="/favicon/file_000000006768820e93d46c5d164e8bd9.png">
+<link rel="apple-touch-icon" href="/favicon/file_000000006768820e93d46c5d164e8bd9.png">
 
 
 
@@ -3395,6 +3410,177 @@ z-index:2;
 }
 </style>
 
+
+<style id="lukafilmes-mobile-categorias-moderno">
+/* =========================================================
+   LUKAFILMES — CATEGORIAS MOBILE MODERNO
+   Visual limpo e integrado ao menu principal.
+   ========================================================= */
+
+.lukafilmes-mobile-categorias{
+    width:100%;
+    margin:0;
+    padding:0;
+    position:relative;
+}
+
+.lukafilmes-mobile-categorias-btn{
+    width:100%;
+    min-height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 16px;
+
+    border:0;
+    border-top:1px solid rgba(255,255,255,.07);
+    border-bottom:1px solid rgba(255,255,255,.07);
+
+    background:transparent;
+    color:#fff;
+
+    font-family:inherit;
+    font-size:15px;
+    font-weight:600;
+
+    cursor:pointer;
+    text-align:left;
+
+    transition:
+        background .18s ease,
+        color .18s ease;
+}
+
+.lukafilmes-mobile-categorias-btn:hover,
+.lukafilmes-mobile-categorias-btn:active{
+    background:rgba(255,255,255,.06);
+}
+
+.lukafilmes-mobile-categorias-seta{
+    font-size:12px;
+    opacity:.65;
+    transition:transform .2s ease;
+}
+
+.lukafilmes-mobile-categorias.aberto
+.lukafilmes-mobile-categorias-seta{
+    transform:rotate(180deg);
+}
+
+.lukafilmes-mobile-categorias-lista{
+    display:none;
+    width:100%;
+    padding:4px 8px 8px;
+
+    background:rgba(255,255,255,.025);
+
+    border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.lukafilmes-mobile-categorias.aberto
+.lukafilmes-mobile-categorias-lista{
+    display:block;
+}
+
+.lukafilmes-mobile-categorias-lista a{
+    display:flex;
+    align-items:center;
+
+    min-height:42px;
+    padding:0 16px;
+
+    color:rgba(255,255,255,.88);
+    text-decoration:none;
+
+    border-radius:7px;
+
+    font-size:14px;
+    font-weight:500;
+
+    transition:
+        background .16s ease,
+        color .16s ease,
+        padding-left .16s ease;
+}
+
+.lukafilmes-mobile-categorias-lista a:hover,
+.lukafilmes-mobile-categorias-lista a:active{
+    background:rgba(255,255,255,.07);
+    color:#fff;
+    padding-left:20px;
+}
+
+@media(max-width:768px){
+    .lukafilmes-mobile-categorias{
+        display:block !important;
+    }
+}
+</style>
+
+
+<!-- LUKAFILMES — BLOQUEIO DE ZOOM MOBILE -->
+<script id="lukafilmes-bloqueio-zoom-mobile">
+(function(){
+
+    function ehMobile(){
+        return window.matchMedia("(max-width: 768px)").matches ||
+               /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    }
+
+    if(!ehMobile()) return;
+
+    /* iPhone/iPad — impede gesto de pinch-zoom */
+    document.addEventListener(
+        "gesturestart",
+        function(event){
+            event.preventDefault();
+        },
+        {passive:false}
+    );
+
+    document.addEventListener(
+        "gesturechange",
+        function(event){
+            event.preventDefault();
+        },
+        {passive:false}
+    );
+
+    document.addEventListener(
+        "gestureend",
+        function(event){
+            event.preventDefault();
+        },
+        {passive:false}
+    );
+
+    /* Android/iOS — impede zoom com dois dedos */
+    document.addEventListener(
+        "touchmove",
+        function(event){
+            if(event.touches && event.touches.length > 1){
+                event.preventDefault();
+            }
+        },
+        {passive:false}
+    );
+
+    /* Impede zoom por Ctrl + movimento do mouse em dispositivos
+       que apresentem comportamento de navegador desktop. */
+    document.addEventListener(
+        "wheel",
+        function(event){
+            if(event.ctrlKey){
+                event.preventDefault();
+            }
+        },
+        {passive:false}
+    );
+
+})();
+</script>
+
 </head>
 
 <body>
@@ -3529,6 +3715,7 @@ z-index:2;
             class="lukafilmes-continuar-mobile-btn"
             aria-label="Continuar Assistindo"
         >▶ Continuar Assistindo</a>
+
 </nav>
 
     <div class="header-right">
@@ -3539,7 +3726,7 @@ z-index:2;
 
         <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
 
-        <div class="profile">L</div>
+        <div class="profile"><img src="/favicon/file_000000006768820e93d46c5d164e8bd9.png" alt="LUKAFILMES"></div>
     </div>
 </header>
 
@@ -3557,7 +3744,9 @@ z-index:2;
 </button>
     </div>
 
-    <div id="desktopUserOptions"></div>
+    <div id="desktopUserOptions">
+        <a href="/admin.html" class="lukafilmes-menu-admin">ADMIN</a>
+    </div>
     <a href="#" onclick="logout(); return false;">🚪 Sair</a>
 </div>
 
@@ -3597,10 +3786,40 @@ z-index:2;
 
     <a href="paginas/series.html">Séries</a>
 
+    <div class="lukafilmes-mobile-categorias">
+
+        <button
+            type="button"
+            class="lukafilmes-mobile-categorias-btn"
+            aria-expanded="false"
+            onclick="toggleCategoriasMobile(this)"
+        >
+            <span>📂 Categorias</span>
+            <span class="lukafilmes-mobile-categorias-seta">▾</span>
+        </button>
+
+        <div class="lukafilmes-mobile-categorias-lista">
+
+            <a href="/paginas/filmes.html?categoria=acao">Ação</a>
+            <a href="/paginas/filmes.html?categoria=ficcao-cientifica">Ficção científica</a>
+            <a href="/paginas/filmes.html?categoria=comedia">Comédia</a>
+            <a href="/paginas/filmes.html?categoria=terror">Terror</a>
+            <a href="/paginas/filmes.html?categoria=aventura">Aventura</a>
+            <a href="/paginas/filmes.html?categoria=fantasia">Fantasia</a>
+            <a href="/paginas/filmes.html?categoria=suspense">Suspense</a>
+            <a href="/paginas/filmes.html?categoria=drama">Drama</a>
+            <a href="/paginas/filmes.html?categoria=romance">Romance</a>
+            <a href="/paginas/filmes.html?categoria=animacao">Animação</a>
+
+        </div>
+
+    </div>
+
     <a
         href="/admin.html"
         class="lukafilmes-menu-admin"
-    >Admin</a>
+        id="lukafilmesMenuPainel"
+    >ADMIN</a>
 
     <a
         href="#"
@@ -3693,56 +3912,56 @@ z-index:2;
     </section>
 
     <section class="section">
-        <h2 class="section-title">🚀 Ficção científica</h2>
+        <h2 class="section-title">Ficção científica</h2>
         <div class="row" id="ficcao">
             <div class="loading">Carregando...</div>
         </div>
     </section>
 
     <section class="section">
-        <h2 class="section-title">😂 Comédia</h2>
+        <h2 class="section-title">Comédia</h2>
         <div class="row" id="comedia">
             <div class="loading">Carregando...</div>
         </div>
     </section>
 
     <section class="section">
-        <h2 class="section-title">👻 Terror</h2>
+        <h2 class="section-title">Terror</h2>
         <div class="row" id="terror">
             <div class="loading">Carregando...</div>
         </div>
     </section>
 
     <section class="section">
-        <h2 class="section-title">🗺️ Aventura</h2>
+        <h2 class="section-title">Aventura</h2>
         <div class="row" id="aventura">
             <div class="loading">Carregando...</div>
         </div>
     </section>
 
     <section class="section">
-        <h2 class="section-title">🐉 Fantasia</h2>
+        <h2 class="section-title">Fantasia</h2>
         <div class="row" id="fantasia">
             <div class="loading">Carregando...</div>
         </div>
     </section>
 
     <section class="section">
-        <h2 class="section-title">🔎 Suspense</h2>
+        <h2 class="section-title">Suspense</h2>
         <div class="row" id="suspense">
             <div class="loading">Carregando...</div>
         </div>
     </section>
 
     <section class="section">
-        <h2 class="section-title">🎭 Drama</h2>
+        <h2 class="section-title">Drama</h2>
         <div class="row" id="drama">
             <div class="loading">Carregando...</div>
         </div>
     </section>
 
     <section class="section">
-        <h2 class="section-title">❤️ Romance</h2>
+        <h2 class="section-title">Romance</h2>
         <div class="row" id="romance">
             <div class="loading">Carregando...</div>
         </div>
@@ -3762,9 +3981,15 @@ let destaqueAtual = null;
 
 window.addEventListener("scroll",()=>{
     const header=document.getElementById("header");
+    const searchBox=document.getElementById("searchBox");
 
     if(window.scrollY>30){
         header.classList.add("scrolled");
+
+        /* Ao descer a Home, a barra de pesquisa desaparece. */
+        if(searchBox){
+            searchBox.classList.remove("show");
+        }
     }else{
         header.classList.remove("scrolled");
     }
@@ -3868,7 +4093,7 @@ async function carregarMenuUsuarioDesktop(){
         if(tipo === "admin"){
 
             opcoes.innerHTML =
-                '<a href="/admin.html">⚙️ Admin</a>';
+                '<a href="/admin.html" class="lukafilmes-menu-admin">ADMIN</a>';
 
         }else if(tipo === "revendedor"){
 
@@ -4654,6 +4879,26 @@ async function carregarTrailerHero(item){
             window.location.origin
         );
 
+        /*
+         * =====================================================
+         * LUKAFILMES — TRAILER HERO PC / QUALIDADE MÁXIMA
+         * =====================================================
+         *
+         * Solicita ao YouTube a maior qualidade disponível.
+         * O YouTube ainda pode adaptar automaticamente conforme
+         * conexão, dispositivo e qualidade disponível no vídeo.
+         */
+
+        urlTrailer.searchParams.set(
+            "vq",
+            "hd2160"
+        );
+
+        urlTrailer.searchParams.set(
+            "quality",
+            "highres"
+        );
+
         video.classList.remove("ativo");
 
         video.src =
@@ -4960,8 +5205,15 @@ function montarHero(item){
         item.sinopse ||
         "Assista agora no LUKAFILMES.";
 
-    document.getElementById("heroYear").textContent=
-        ano(item) || "2026";
+    const anoHero =
+        item.release_date ||
+        item.first_air_date ||
+        item.data_lancamento ||
+        item.ano ||
+        "";
+
+    document.getElementById("heroYear").textContent =
+        String(anoHero).slice(0,4) || "—";
 
     const fundo=
         item.backdrop_path ||
@@ -8960,6 +9212,105 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
+
+<script id="lukafilmes-notificacao-auto-5s">
+(function(){
+    /*
+     * LUKAFILMES — NOTIFICAÇÃO AUTOMÁTICA
+     * Fecha somente a abertura automática da Home após 5 segundos.
+     * Aberturas manuais pelo sino continuam normais.
+     */
+
+    var painel = null;
+    var primeiraAbertura = true;
+    var timer = null;
+
+    function iniciar(){
+        painel = document.getElementById("lukaNotificationPanel");
+
+        if(!painel){
+            setTimeout(iniciar, 300);
+            return;
+        }
+
+        var observador = new MutationObserver(function(mudancas){
+
+            for(var i = 0; i < mudancas.length; i++){
+
+                var mudanca = mudancas[i];
+
+                if(
+                    mudanca.type === "attributes" &&
+                    mudanca.attributeName === "class" &&
+                    painel.classList.contains("ativo") &&
+                    primeiraAbertura
+                ){
+
+                    primeiraAbertura = false;
+
+                    if(timer){
+                        clearTimeout(timer);
+                    }
+
+                    timer = setTimeout(function(){
+
+                        if(
+                            painel &&
+                            painel.classList.contains("ativo")
+                        ){
+
+                            painel.classList.remove("ativo");
+                            painel.setAttribute(
+                                "aria-hidden",
+                                "true"
+                            );
+
+                            document
+                                .querySelectorAll(
+                                    '[id="lukaNotificationButton"]'
+                                )
+                                .forEach(function(botao){
+                                    botao.setAttribute(
+                                        "aria-expanded",
+                                        "false"
+                                    );
+                                });
+
+                            console.log(
+                                "[LUKAFILMES] Notificação automática fechada após 5 segundos."
+                            );
+                        }
+
+                    },5000);
+
+                    break;
+                }
+            }
+        });
+
+        observador.observe(painel,{
+            attributes:true,
+            attributeFilter:["class"]
+        });
+
+        console.log(
+            "[LUKAFILMES] Controle de notificação automática 5s ativado."
+        );
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener(
+            "DOMContentLoaded",
+            iniciar
+        );
+    }else{
+        iniciar();
+    }
+
+})();
+</script>
+
 </body>
 
 
@@ -9149,7 +9500,7 @@ document.addEventListener("DOMContentLoaded", () => {
     width:100%;
     background:rgba(255,255,255,.65);
     transform-origin:left;
-    animation:lukaNotificacao15s 15s linear forwards;
+    animation:lukaNotificacao5s 5s linear forwards;
 }
 
 @keyframes lukaNotificacaoEntrada{
@@ -9163,7 +9514,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 }
 
-@keyframes lukaNotificacao15s{
+@keyframes lukaNotificacao5s{
     from{width:100%}
     to{width:0}
 }
@@ -9203,5 +9554,141 @@ document.addEventListener("DOMContentLoaded", () => {
         display:flex !important;
         visibility:visible !important;
     }
+}
+</style>
+
+
+<style id="lukafilmes-categorias-menu-mobile">
+/* =========================================================
+   LUKAFILMES — CATEGORIAS DENTRO DO MENU MOBILE
+   Desktop permanece inalterado.
+   ========================================================= */
+
+.lukafilmes-mobile-categorias{
+    display:block;
+    width:100%;
+}
+
+.lukafilmes-mobile-categorias-btn{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+
+    padding:12px 14px;
+
+    border:0;
+    border-radius:8px;
+
+    background:transparent;
+    color:#fff;
+
+    font:inherit;
+    font-size:15px;
+    font-weight:600;
+
+    text-align:left;
+    cursor:pointer;
+}
+
+.lukafilmes-mobile-categorias-btn:hover,
+.lukafilmes-mobile-categorias-btn:active{
+    background:rgba(255,255,255,.10);
+}
+
+.lukafilmes-mobile-categorias-seta{
+    transition:transform .2s ease;
+}
+
+.lukafilmes-mobile-categorias.aberto
+.lukafilmes-mobile-categorias-seta{
+    transform:rotate(180deg);
+}
+
+.lukafilmes-mobile-categorias-lista{
+    display:none;
+    padding:4px 0 6px 12px;
+}
+
+.lukafilmes-mobile-categorias.aberto
+.lukafilmes-mobile-categorias-lista{
+    display:block;
+}
+
+.lukafilmes-mobile-categorias-lista a{
+    display:block !important;
+    padding:10px 14px !important;
+    border-radius:7px;
+
+    color:rgba(255,255,255,.88) !important;
+    text-decoration:none;
+
+    font-size:14px !important;
+    font-weight:500 !important;
+}
+
+.lukafilmes-mobile-categorias-lista a:hover,
+.lukafilmes-mobile-categorias-lista a:active{
+    background:rgba(255,255,255,.08);
+    color:#fff !important;
+}
+
+@media(min-width:769px){
+    .lukafilmes-mobile-categorias{
+        display:none !important;
+    }
+}
+</style>
+
+<script id="lukafilmes-categorias-menu-mobile-js">
+function toggleCategoriasMobile(botao){
+
+    const grupo =
+        botao.closest(".lukafilmes-mobile-categorias");
+
+    if(!grupo){
+        return;
+    }
+
+    const aberto =
+        grupo.classList.toggle("aberto");
+
+    botao.setAttribute(
+        "aria-expanded",
+        aberto ? "true" : "false"
+    );
+}
+</script>
+
+<style id="lukafilmes-profile-imagem-oficial-final">
+/* ============================================================
+   LUKAFILMES — PERFIL DIREITO COM IMAGEM OFICIAL
+   Substitui completamente o antigo L vermelho
+   ============================================================ */
+
+.header .profile{
+    background:none !important;
+    background-color:transparent !important;
+    border:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+}
+
+.header .profile img{
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+    min-width:100% !important;
+    min-height:100% !important;
+    max-width:none !important;
+    max-height:none !important;
+    object-fit:cover !important;
+    border-radius:5px !important;
+    margin:0 !important;
+    padding:0 !important;
 }
 </style>
