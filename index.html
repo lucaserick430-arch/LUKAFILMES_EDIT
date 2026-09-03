@@ -12818,3 +12818,169 @@ main::after {
     }
 }
 </style>
+
+<style id="lukafilmes-hero-trailer-qualidade">
+/* ============================================================
+   LUKAFILMES — HERO TRAILER PREMIUM
+   Melhora nitidez, preenchimento e estabilidade visual
+   ============================================================ */
+
+.hero-trailer-bg,
+.hero-trailer-background,
+.hero-video-bg,
+#heroTrailer,
+#trailerHero,
+.hero iframe {
+    image-rendering: auto !important;
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+    transform: translateZ(0) !important;
+    -webkit-transform: translateZ(0) !important;
+}
+
+/* Iframe do trailer */
+#heroTrailer,
+.hero-trailer-bg iframe,
+.hero-trailer-background iframe,
+.hero-video-bg iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: 0 !important;
+    display: block !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+}
+
+/* Mantém o vídeo preenchendo o Hero sem deformar */
+.hero-trailer-bg,
+.hero-trailer-background,
+.hero-video-bg {
+    overflow: hidden !important;
+    background: #000 !important;
+}
+
+/* Evita filtros que deixam o trailer artificialmente borrado */
+.hero-trailer-bg iframe,
+.hero-trailer-background iframe,
+.hero-video-bg iframe {
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+/* Suaviza apenas a transição, sem reduzir qualidade */
+.hero-trailer-bg,
+.hero-trailer-background,
+.hero-video-bg {
+    transition: opacity .25s ease !important;
+}
+
+/* Celular */
+@media (max-width: 768px) {
+    #heroTrailer,
+    .hero-trailer-bg iframe,
+    .hero-trailer-background iframe,
+    .hero-video-bg iframe {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-hero-home-igual-filmes-final">
+/* =========================================================
+   LUKAFILMES — HERO HOME
+   MESMO ENQUADRAMENTO DO HERO DA PÁGINA DE FILMES
+   ========================================================= */
+
+.hero {
+    position: relative !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+}
+
+#heroTrailer {
+    position: absolute !important;
+
+    top: 50% !important;
+    left: 50% !important;
+
+    width: 100vw !important;
+    height: 56.25vw !important;
+
+    min-width: 177.78vh !important;
+    min-height: 100vh !important;
+
+    max-width: none !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    outline: 0 !important;
+
+    /* EXATAMENTE COMO NA PÁGINA DE FILMES */
+    transform: translate(-50%, -50%) !important;
+    transform-origin: center center !important;
+
+    display: block !important;
+
+    pointer-events: none !important;
+
+    opacity: 1 !important;
+}
+
+/* Mantém a transição sem alterar o tamanho do vídeo */
+#heroTrailer.ativo {
+    opacity: 1 !important;
+}
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
+
+@media (min-width: 769px) {
+    #heroTrailer {
+        width: 100vw !important;
+        height: 56.25vw !important;
+
+        min-width: 177.78vh !important;
+        min-height: 100vh !important;
+
+        transform: translate(-50%, -50%) !important;
+    }
+}
+
+/* =========================================================
+   CELULAR
+   MESMA REGRA USADA PELO TRAILER DA PÁGINA DE FILMES
+   ========================================================= */
+
+@media (max-width: 768px) {
+    #heroTrailer {
+        width: 177.78vh !important;
+        height: 100vh !important;
+
+        min-width: 177.78vh !important;
+        min-height: 100vh !important;
+
+        transform: translate(-50%, -50%) !important;
+    }
+}
+
+/* Celulares muito pequenos */
+@media (max-width: 420px) {
+    #heroTrailer {
+        width: 177.78vh !important;
+        height: 100vh !important;
+
+        min-width: 177.78vh !important;
+        min-height: 100vh !important;
+
+        transform: translate(-50%, -50%) !important;
+    }
+}
+</style>
+
