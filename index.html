@@ -1717,7 +1717,7 @@ z-index:2;
 
 #heroTrailer,
 #heroTrailer.ativo{
-    touch-action:none !important;
+    touch-action:pan-y !important;
 }
 
 .hero,
@@ -3560,7 +3560,7 @@ z-index:2;
         "touchmove",
         function(event){
             if(event.touches && event.touches.length > 1){
-                event.preventDefault();
+                // event.preventDefault(); - liberado para scroll
             }
         },
         {passive:false}
@@ -3580,6 +3580,285 @@ z-index:2;
 
 })();
 </script>
+
+<style id="lukafilmes-hero-touch-fix">
+#heroTrailer {
+    pointer-events: none !important;
+}
+
+#lukafilmesHeroTouchLayer {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 20 !important;
+    background: transparent !important;
+    pointer-events: auto !important;
+
+    /* O navegador continua dono do deslize vertical */
+    touch-action: pan-y !important;
+
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.hero,
+.hero-section,
+.hero-banner {
+    position: relative;
+}
+
+.hero > .hero-content,
+.hero .hero-content,
+.hero .hero-actions,
+.hero button,
+.hero a,
+.hero input,
+.hero [role="button"] {
+    position: relative;
+    z-index: 30 !important;
+}
+</style>
+
+
+<style id="luka-home-sem-sombra-titulos">
+/* LUKAFILMES — remover sombra/fundo escuro dos títulos dos cards da HOME */
+.movie-card h3,
+.movie-card h4,
+.filme-card h3,
+.filme-card h4,
+.serie-card h3,
+.serie-card h4,
+.card h3,
+.card h4,
+.movie-title,
+.filme-title,
+.serie-title,
+.titulo-filme,
+.titulo-serie,
+.titulo-card {
+    text-shadow: none !important;
+    filter: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Caso o título esteja dentro de uma camada/overlay do card */
+.movie-card .title,
+.filme-card .title,
+.serie-card .title,
+.card .title,
+.movie-card .overlay,
+.filme-card .overlay,
+.serie-card .overlay {
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+
+/* Mantém somente o texto, sem faixa preta atrás */
+.movie-card .title::before,
+.movie-card .title::after,
+.filme-card .title::before,
+.filme-card .title::after,
+.serie-card .title::before,
+.serie-card .title::after {
+    display: none !important;
+    content: none !important;
+}
+</style>
+
+
+<style id="luka-home-sombra-zero-final">
+/* REMOÇÃO TOTAL DA SOMBRA DOS TÍTULOS DOS CARDS */
+.movie-card h3,
+.movie-card h4,
+.movie-card .title,
+.filme-card h3,
+.filme-card h4,
+.filme-card .title,
+.serie-card h3,
+.serie-card h4,
+.serie-card .title,
+.card h3,
+.card h4,
+.card .title,
+.movie-title,
+.filme-title,
+.serie-title,
+.titulo-filme,
+.titulo-serie,
+.titulo-card,
+[class*="title"],
+[class*="titulo"] {
+    text-shadow: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+
+/* Remove qualquer camada criada atrás do título */
+.movie-card h3::before,
+.movie-card h3::after,
+.movie-card h4::before,
+.movie-card h4::after,
+.movie-card .title::before,
+.movie-card .title::after,
+.filme-card h3::before,
+.filme-card h3::after,
+.filme-card .title::before,
+.filme-card .title::after,
+.serie-card h3::before,
+.serie-card h3::after,
+.serie-card .title::before,
+.serie-card .title::after,
+.card h3::before,
+.card h3::after,
+.card h4::before,
+.card h4::after,
+.card .title::before,
+.card .title::after {
+    content: none !important;
+    display: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+</style>
+
+
+<style id="luka-card-title-sem-fundo">
+/* =========================================================
+   LUKAFILMES — TÍTULO DOS CARDS SEM FUNDO / SEM SOMBRA
+   ========================================================= */
+
+.card-title {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+
+    border: none !important;
+}
+
+/* Remove qualquer pseudo-elemento que possa formar a
+   pequena faixa preta atrás do título */
+.card-title::before,
+.card-title::after {
+    content: none !important;
+    display: none !important;
+
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+
+    box-shadow: none !important;
+    filter: none !important;
+}
+
+/* Elementos internos do título */
+.card-title *,
+.card-title span,
+.card-title strong,
+.card-title b {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+}
+</style>
+
+
+<style id="luka-botoes-continuar-series">
+/* =========================================================
+   LUKAFILMES — CONTINUAR ASSISTINDO
+   AO LADO DE SÉRIES POPULARES
+   ========================================================= */
+
+.luka-series-titulo-linha{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:18px;
+    width:100%;
+}
+
+.luka-series-titulo-linha .section-title{
+    margin:0;
+}
+
+.luka-series-continuar-acoes{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    justify-content:center;
+    gap:3px;
+    flex-shrink:0;
+}
+
+.luka-btn-continuar,
+.luka-btn-ver-todos{
+    text-decoration:none !important;
+    white-space:nowrap;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+}
+
+.luka-btn-continuar{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:7px 12px;
+    border-radius:7px;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.16);
+    color:#fff !important;
+    font-size:12px;
+    font-weight:700;
+    line-height:1.2;
+}
+
+.luka-btn-ver-todos{
+    display:inline-block;
+    padding:2px 4px;
+    color:#aaa !important;
+    font-size:11px;
+    font-weight:600;
+    line-height:1.2;
+}
+
+.luka-btn-continuar:hover{
+    background:rgba(255,255,255,.17);
+}
+
+.luka-btn-ver-todos:hover{
+    color:#fff !important;
+    text-decoration:underline !important;
+}
+
+/* CELULAR */
+@media(max-width:700px){
+    .luka-series-titulo-linha{
+        gap:8px;
+    }
+
+    .luka-series-continuar-acoes{
+        gap:2px;
+        margin-top:-4px;
+    }
+
+    .luka-btn-continuar{
+        padding:7px 9px;
+        font-size:11px;
+    }
+
+    .luka-btn-ver-todos{
+        font-size:10px;
+        padding-right:3px;
+    }
+}
+</style>
 
 </head>
 
@@ -3726,7 +4005,7 @@ z-index:2;
 
         <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
 
-        <div class="profile"><img src="/favicon/file_000000006768820e93d46c5d164e8bd9.png" alt="LUKAFILMES"></div>
+        <div class="profile"><img loading="lazy" decoding="async" src="/favicon/file_000000006768820e93d46c5d164e8bd9.png" alt="LUKAFILMES"></div>
     </div>
 </header>
 
@@ -3754,7 +4033,7 @@ z-index:2;
     <input
         id="searchInput"
         type="search"
-        placeholder="Buscar filmes e séries..."
+        placeholder="Pesquisar filmes"
         autocomplete="off"
         onkeydown="if(event.key==='Enter') pesquisar()"
     >
@@ -3883,8 +4162,17 @@ z-index:2;
 
     
 
-    <section class="section">
-        <h2 class="section-title">📺 Séries populares</h2>
+    <section class="section luka-series-continuar-section">
+        <div class="luka-series-titulo-linha">
+            <h2 class="section-title">📺 Séries populares</h2>
+
+            <div class="luka-series-continuar-acoes">
+
+
+
+            </div>
+        </div>
+
         <div class="row" id="series">
             <div class="loading">Carregando...</div>
         </div>
@@ -4219,7 +4507,7 @@ function criarCard(item,numero){
 
         ${
             poster
-            ? `<img src="${poster}" loading="lazy" decoding="async" fetchpriority="low" alt="${titulo(item)}">`
+            ? `<img loading="lazy" decoding="async" src="${poster}" loading="lazy" decoding="async" fetchpriority="low" alt="${titulo(item)}">`
             : `<div style="
                 width:100%;
                 height:100%;
@@ -6740,7 +7028,7 @@ function logout(){
 
                 item.innerHTML = `
                     ${capa
-                        ? `<img src="${escapar(capa)}" loading="lazy" decoding="async" fetchpriority="low" alt="">`
+                        ? `<img loading="lazy" decoding="async" src="${escapar(capa)}" loading="lazy" decoding="async" fetchpriority="low" alt="">`
                         : ""
                     }
                     <div class="busca-home-info">
@@ -7064,11 +7352,83 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function distancia(row){
 
-        const largura = row.clientWidth;
+        if(!row){
+            return 360;
+        }
+
+        /*
+         * AVANÇO REAL DO CARROSSEL
+         * --------------------------------
+         * Usa o tamanho real dos cards existentes
+         * dentro do catálogo, em vez de uma distância
+         * fixa baseada em 78% da largura.
+         */
+
+        const primeiro = row.firstElementChild;
+
+        if(!primeiro){
+            return Math.max(
+                280,
+                Math.floor(row.clientWidth * 0.82)
+            );
+        }
+
+        const estilo = window.getComputedStyle(row);
+
+        let gap =
+            parseFloat(estilo.columnGap || estilo.gap || "0") || 0;
+
+        /*
+         * Alguns layouts antigos usam margin-right
+         * no próprio card.
+         */
+        if(!gap){
+            const cardStyle =
+                window.getComputedStyle(primeiro);
+
+            gap =
+                parseFloat(cardStyle.marginRight || "0") || 0;
+        }
+
+        const larguraCard =
+            primeiro.getBoundingClientRect().width;
+
+        /*
+         * Avança aproximadamente a quantidade de cards
+         * que cabe na área visível.
+         */
+        const larguraVisivel =
+            row.clientWidth;
+
+        const unidade =
+            Math.max(
+                1,
+                larguraCard + gap
+            );
+
+        let quantidade =
+            Math.floor(
+                larguraVisivel / unidade
+            );
+
+        /*
+         * Não deixa o botão avançar uma distância
+         * pequena demais em telas grandes.
+         */
+        if(quantidade < 1){
+            quantidade = 1;
+        }
+
+        /*
+         * Avança 1 card além da quantidade visível.
+         * Isso deixa o movimento natural tanto no notebook
+         * quanto na TV e no celular.
+         */
+        quantidade += 1;
 
         return Math.max(
-            360,
-            Math.floor(largura * 0.78)
+            Math.floor(unidade * quantidade),
+            280
         );
     }
 
@@ -7491,6 +7851,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 })();
 </script>
+
+
 
 
 
@@ -8909,7 +9271,7 @@ document.addEventListener("DOMContentLoaded", () => {
             botao.dataset.lukaInicializado = "1";
 
             botao.addEventListener("click", function(event){
-                event.preventDefault();
+                // event.preventDefault(); - liberado para scroll
                 event.stopPropagation();
 
                 var painel = obterPainel();
@@ -9075,7 +9437,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         toast.innerHTML =
             '<div class="luka-toast-conteudo">' +
-                '<img src="' + capa.replace(/"/g,"&quot;") + '" alt="">' +
+                '<img loading="lazy" decoding="async" src="' + capa.replace(/"/g,"&quot;") + '" alt="">' +
                 '<div class="luka-toast-texto">' +
                     '<div class="luka-toast-titulo">' +
                         titulo.replace(/</g,"&lt;").replace(/>/g,"&gt;") +
@@ -9311,6 +9673,461 @@ document.addEventListener("DOMContentLoaded", () => {
 })();
 </script>
 
+
+
+<script id="lukafilmes-aviso-vencimento">
+(function () {
+    "use strict";
+
+    if (window.__LUKA_AVISO_VENCIMENTO__) return;
+    window.__LUKA_AVISO_VENCIMENTO__ = true;
+
+    const DIAS_AVISO = [10, 5, 3, 2, 1];
+    const TEMPO_EXIBICAO = 10000;
+
+    function criarAviso(dias) {
+        if (document.getElementById("luka-aviso-vencimento")) return;
+
+        const aviso = document.createElement("div");
+        aviso.id = "luka-aviso-vencimento";
+
+        aviso.innerHTML = `
+            <div class="luka-aviso-vencimento-icone">⚠️</div>
+            <div class="luka-aviso-vencimento-conteudo">
+                <strong>Ei! Seu acesso está prestes a vencer.</strong>
+                <span>Faltam <b>${dias} ${dias === 1 ? "dia" : "dias"}</b> para sua assinatura expirar.</span>
+                <small>Efetue o pagamento quanto antes para permanecer conectado.</small>
+            </div>
+            <button type="button" aria-label="Fechar">×</button>
+        `;
+
+        const estilo = document.createElement("style");
+        estilo.id = "luka-aviso-vencimento-style";
+        estilo.textContent = `
+            #luka-aviso-vencimento {
+                position: fixed;
+                top: 22px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 999999;
+                width: min(520px, calc(100vw - 28px));
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                padding: 16px 17px;
+                border: 1px solid rgba(255,190,70,.35);
+                border-radius: 16px;
+                background: rgba(15,15,20,.96);
+                box-shadow: 0 18px 55px rgba(0,0,0,.45);
+                backdrop-filter: blur(14px);
+                color: #fff;
+                font-family: Arial, sans-serif;
+                animation: lukaAvisoEntrada .35s ease;
+            }
+
+            #luka-aviso-vencimento .luka-aviso-vencimento-icone {
+                font-size: 27px;
+                flex: 0 0 auto;
+            }
+
+            #luka-aviso-vencimento .luka-aviso-vencimento-conteudo {
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            #luka-aviso-vencimento strong {
+                font-size: 14px;
+                line-height: 1.25;
+            }
+
+            #luka-aviso-vencimento span {
+                font-size: 13px;
+                color: #f5f5f5;
+            }
+
+            #luka-aviso-vencimento span b {
+                color: #ffd166;
+            }
+
+            #luka-aviso-vencimento small {
+                font-size: 11px;
+                color: #aaa;
+                line-height: 1.35;
+            }
+
+            #luka-aviso-vencimento button {
+                margin-left: auto;
+                flex: 0 0 auto;
+                border: 0;
+                background: transparent;
+                color: #aaa;
+                font-size: 24px;
+                line-height: 1;
+                cursor: pointer;
+                padding: 2px 4px;
+            }
+
+            #luka-aviso-vencimento button:hover {
+                color: #fff;
+            }
+
+            @keyframes lukaAvisoEntrada {
+                from {
+                    opacity: 0;
+                    transform: translate(-50%, -15px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translate(-50%, 0);
+                }
+            }
+
+            @keyframes lukaAvisoSaida {
+                from {
+                    opacity: 1;
+                    transform: translate(-50%, 0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translate(-50%, -15px);
+                }
+            }
+
+            @media (max-width: 600px) {
+                #luka-aviso-vencimento {
+                    top: 12px;
+                    width: calc(100vw - 20px);
+                    padding: 13px 12px;
+                    gap: 9px;
+                    border-radius: 14px;
+                }
+
+                #luka-aviso-vencimento .luka-aviso-vencimento-icone {
+                    font-size: 23px;
+                }
+
+                #luka-aviso-vencimento strong {
+                    font-size: 12px;
+                }
+
+                #luka-aviso-vencimento span {
+                    font-size: 12px;
+                }
+
+                #luka-aviso-vencimento small {
+                    font-size: 10px;
+                }
+            }
+        `;
+
+        document.head.appendChild(estilo);
+        document.body.appendChild(aviso);
+
+        const fechar = () => {
+            if (!aviso.isConnected) return;
+            aviso.style.animation = "lukaAvisoSaida .3s ease forwards";
+            setTimeout(() => {
+                aviso.remove();
+                estilo.remove();
+            }, 300);
+        };
+
+        aviso.querySelector("button").addEventListener("click", fechar);
+        setTimeout(fechar, TEMPO_EXIBICAO);
+    }
+
+    async function verificarVencimento() {
+        try {
+            const resposta = await fetch("/api/eu", {
+                credentials: "same-origin",
+                cache: "no-store"
+            });
+
+            if (!resposta.ok) return;
+
+            const dados = await resposta.json();
+            const usuario = dados && dados.usuario;
+
+            if (!dados.logado || !usuario) return;
+            if (usuario.tipo === "admin") return;
+            if (!usuario.validade) return;
+
+            const validade = new Date(usuario.validade);
+            if (!Number.isFinite(validade.getTime())) return;
+
+            const agora = new Date();
+
+            if (validade <= agora) return;
+
+            const diferenca = validade.getTime() - agora.getTime();
+            const diasRestantes = Math.ceil(
+                diferenca / (1000 * 60 * 60 * 24)
+            );
+
+            if (DIAS_AVISO.includes(diasRestantes)) {
+                criarAviso(diasRestantes);
+            }
+
+        } catch (erro) {
+            console.warn("[LUKAFILMES] Não foi possível verificar validade:", erro);
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", verificarVencimento, {
+            once: true
+        });
+    } else {
+        verificarVencimento();
+    }
+})();
+</script>
+
+<script id="lukafilmes-hero-touch-fix">
+(function () {
+    function obterHero() {
+        return document.querySelector(".hero, .hero-section, .hero-banner") || document.getElementById("hero");
+    }
+
+    function aplicarFixHeroTouch() {
+        var hero = obterHero();
+        if (!hero) return;
+
+        var camada = document.getElementById("lukafilmesHeroTouchLayer");
+        if (!camada) {
+            camada = document.createElement("div");
+            camada.id = "lukafilmesHeroTouchLayer";
+            hero.appendChild(camada);
+        }
+
+        var startX = 0;
+        var startY = 0;
+        var isScrolling = false;
+
+        function chamarLiberacao() {
+            if (typeof window.liberarAudioHero === "function") {
+                window.liberarAudioHero();
+            } else if (typeof window.liberarAudioHeroDireto === "function") {
+                window.liberarAudioHeroDireto();
+            }
+        }
+
+        // Eventos para Desktop (mouse)
+        camada.addEventListener("click", function (e) {
+            if (e.pointerType === "touch") return;
+            chamarLiberacao();
+        });
+
+        // Eventos para Mobile (preserva scroll nativo)
+        camada.addEventListener("touchstart", function (e) {
+            if (e.touches && e.touches.length > 0) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            }
+            isScrolling = false;
+        }, { passive: true });
+
+        camada.addEventListener("touchmove", function (e) {
+            if (!e.touches || e.touches.length === 0) return;
+            var diffX = Math.abs(e.touches[0].clientX - startX);
+            var diffY = Math.abs(e.touches[0].clientY - startY);
+
+            if (diffX > 8 || diffY > 8) {
+                isScrolling = true;
+            }
+        }, { passive: true });
+
+        camada.addEventListener("touchend", function (e) {
+            if (isScrolling) return; // Se arrastou a tela, nao faz nada e permite o scroll
+            chamarLiberacao();
+        }, { passive: true });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", aplicarFixHeroTouch);
+    } else {
+        aplicarFixHeroTouch();
+    }
+})();
+</script>
+
+
+
+
+
+<style id="lukafilmes-hero-scroll-definitivo">
+.hero, .hero-overlay, .hero-bg, #heroBg, #heroTrailer, #lukafilmesHeroTouchLayer {
+    touch-action: pan-y !important;
+}
+#heroTrailer iframe, .hero-bg iframe, #heroBg iframe {
+    pointer-events: none !important;
+    touch-action: pan-y !important;
+}
+</style>
+
+<script id="lukafilmes-hero-touch-guard">
+(function() {
+    let startX = 0;
+    let startY = 0;
+    let eScroll = false;
+
+    function initHeroTouchGuard() {
+        const target = document.querySelector('.hero') || document.body;
+
+        target.addEventListener('touchstart', function(e) {
+            if (e.touches && e.touches.length > 0) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            }
+            eScroll = false;
+        }, { passive: true });
+
+        target.addEventListener('touchmove', function(e) {
+            if (!e.touches || e.touches.length === 0) return;
+            const diffX = Math.abs(e.touches[0].clientX - startX);
+            const diffY = Math.abs(e.touches[0].clientY - startY);
+
+            // Deslocamento maior que 6px = intenção do usuario em ROLAR A PÁGINA
+            if (diffX > 6 || diffY > 6) {
+                eScroll = true;
+            }
+        }, { passive: true });
+
+        target.addEventListener('touchend', function(e) {
+            // Se foi gesto de scroll, ignora e permite a rolagem fluida
+            if (eScroll) return;
+
+            // Se clicou em algum elemento interativo (botes), ignora
+            if (e.target && e.target.closest('button, a, .btn')) return;
+
+            // Toque simples (TAP) - aciona o audio sem interferir na reprodução
+            if (typeof window.liberarAudioHero === 'function') {
+                window.liberarAudioHero();
+            } else if (typeof window.liberarAudioHeroDireto === 'function') {
+                window.liberarAudioHeroDireto();
+            }
+        }, { passive: true });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHeroTouchGuard);
+    } else {
+        initHeroTouchGuard();
+    }
+})();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<style id="lukafilmes-hero-gestos-css">
+.hero, #hero, #heroTrailer {
+    touch-action: pan-y !important;
+}
+</style>
+
+<script id="lukafilmes-hero-gestos-js">
+(function() {
+    function unMuteHero() {
+        if (window.playerHero) {
+            try {
+                if (typeof window.playerHero.unMute === 'function') window.playerHero.unMute();
+                if (typeof window.playerHero.setVolume === 'function') window.playerHero.setVolume(100);
+            } catch(e) {}
+        }
+        const iframes = document.querySelectorAll('#heroTrailer iframe, .hero iframe, #heroBg iframe');
+        iframes.forEach(iframe => {
+            try {
+                iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                iframe.contentWindow.postMessage('{"event":"command","func":"setVolume","args":[100]}', '*');
+            } catch(e) {}
+        });
+        if (typeof window.liberarAudioHero === 'function') window.liberarAudioHero();
+        if (typeof window.liberarAudioHeroDireto === 'function') window.liberarAudioHeroDireto();
+    }
+
+    function alternarPausePlayHero() {
+        if (window.playerHero && typeof window.playerHero.getPlayerState === 'function') {
+            try {
+                const state = window.playerHero.getPlayerState();
+                if (state === 1) { // Tocando -> Pausa
+                    window.playerHero.pauseVideo();
+                } else { // Pausado -> Toca e desmuta
+                    window.playerHero.unMute();
+                    window.playerHero.playVideo();
+                }
+                return;
+            } catch(e) {}
+        }
+
+        // Fallback via postMessage
+        const iframes = document.querySelectorAll('#heroTrailer iframe, .hero iframe, #heroBg iframe');
+        iframes.forEach(iframe => {
+            try {
+                iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            } catch(e) {}
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const hero = document.querySelector('.hero, #hero, .hero-section');
+        if (!hero) return;
+
+        let startY = 0;
+        let startX = 0;
+        let deslizou = false;
+        let audioJaLiberado = false;
+
+        hero.addEventListener('touchstart', function(e) {
+            if (e.touches && e.touches.length > 0) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            }
+            deslizou = false;
+        }, { passive: true });
+
+        hero.addEventListener('touchmove', function(e) {
+            if (!e.touches || e.touches.length === 0) return;
+            const diffY = Math.abs(e.touches[0].clientY - startY);
+            const diffX = Math.abs(e.touches[0].clientX - startX);
+
+            // Se deslizou mais de 5px (arrastou o dedo na tela):
+            if (diffY > 5 || diffX > 5) {
+                deslizou = true;
+                
+                // Ativa o áudio imediatamente ao deslizar!
+                if (!audioJaLiberado) {
+                    unMuteHero();
+                    audioJaLiberado = true;
+                }
+            }
+        }, { passive: true });
+
+        hero.addEventListener('touchend', function(e) {
+            // Se foi deslize/arrasto: NÃO PAUSA, deixa a página rolar normalmente com som
+            if (deslizou) return;
+
+            // Se clicou em algum botão do HERO, deixa o botão responder
+            if (e.target && e.target.closest('button, a, .btn')) return;
+
+            // Se foi apenas um toque/clique parado (TAP seco): altera Pause / Play
+            unMuteHero();
+            alternarPausePlayHero();
+        }, { passive: true });
+    });
+})();
+</script>
+
 </body>
 
 
@@ -9401,6 +10218,1372 @@ document.addEventListener("DOMContentLoaded", () => {
         height:max(56.25vw, 100vh) !important;
     }
 }
+</style>
+
+
+
+
+
+
+<style id="lukafilmes-home-redesign-v2">
+/* =========================================================
+   LUKAFILMES — HOME REDESIGN V2
+   Somente visual. Não altera APIs, players ou lógica.
+   ========================================================= */
+
+:root{
+  --luka-red:#e50914;
+  --luka-red-2:#b20710;
+  --luka-bg:#070707;
+  --luka-card:#111111;
+  --luka-text:#f5f5f5;
+  --luka-muted:#a7a7a7;
+}
+
+/* FUNDO GERAL */
+html{
+  background:#070707 !important;
+}
+
+body{
+  background:
+    radial-gradient(circle at 50% -10%,rgba(229,9,20,.10),transparent 34%),
+    #070707 !important;
+  color:var(--luka-text) !important;
+}
+
+/* HEADER */
+header,
+.header,
+nav{
+  backdrop-filter:blur(18px) saturate(140%) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(140%) !important;
+}
+
+.header{
+  background:linear-gradient(
+    180deg,
+    rgba(5,5,5,.96),
+    rgba(5,5,5,.78),
+    rgba(5,5,5,.42)
+  ) !important;
+  border-bottom:1px solid rgba(255,255,255,.07) !important;
+}
+
+/* HERO */
+.hero{
+  min-height:clamp(590px,78vh,820px) !important;
+  height:auto !important;
+  isolation:isolate !important;
+  background:#050505 !important;
+}
+
+.hero::after{
+  content:"" !important;
+  position:absolute !important;
+  inset:0 !important;
+  z-index:2 !important;
+  pointer-events:none !important;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,.96) 0%,
+      rgba(0,0,0,.78) 28%,
+      rgba(0,0,0,.28) 58%,
+      rgba(0,0,0,.08) 100%
+    ),
+    linear-gradient(
+      0deg,
+      #070707 0%,
+      rgba(7,7,7,.76) 8%,
+      transparent 31%
+    ) !important;
+}
+
+.hero-overlay{
+  z-index:3 !important;
+  background:linear-gradient(
+    180deg,
+    rgba(0,0,0,.10),
+    transparent 55%,
+    rgba(0,0,0,.88)
+  ) !important;
+}
+
+.hero-content{
+  position:relative !important;
+  z-index:5 !important;
+  max-width:680px !important;
+  padding-top:clamp(100px,15vh,165px) !important;
+  padding-bottom:80px !important;
+  transform:none !important;
+}
+
+.hero-content h1,
+.hero-title{
+  font-size:clamp(42px,6vw,78px) !important;
+  line-height:.98 !important;
+  font-weight:900 !important;
+  letter-spacing:-2px !important;
+  text-shadow:
+    0 3px 20px rgba(0,0,0,.9),
+    0 0 40px rgba(0,0,0,.55) !important;
+}
+
+.hero-content p,
+.hero-description{
+  max-width:620px !important;
+  font-size:clamp(15px,1.5vw,19px) !important;
+  line-height:1.55 !important;
+  color:#dedede !important;
+  text-shadow:0 2px 10px rgba(0,0,0,.9) !important;
+}
+
+/* BOTÕES DO HERO */
+.hero-buttons{
+  display:flex !important;
+  gap:12px !important;
+  flex-wrap:wrap !important;
+  margin-top:24px !important;
+}
+
+.hero-buttons button,
+.hero-buttons a{
+  min-height:48px !important;
+  padding:13px 22px !important;
+  border-radius:7px !important;
+  font-weight:800 !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    filter .2s ease !important;
+}
+
+.hero-buttons button:first-child,
+.hero-buttons a:first-child{
+  background:var(--luka-red) !important;
+  box-shadow:0 8px 30px rgba(229,9,20,.28) !important;
+}
+
+.hero-buttons button:first-child:hover,
+.hero-buttons a:first-child:hover{
+  transform:translateY(-2px) scale(1.02) !important;
+  filter:brightness(1.1) !important;
+  box-shadow:0 12px 38px rgba(229,9,20,.40) !important;
+}
+
+/* BUSCA */
+#searchBox,
+.search-box,
+.search-container{
+  border:1px solid rgba(255,255,255,.10) !important;
+  background:rgba(20,20,20,.82) !important;
+  box-shadow:
+    0 14px 45px rgba(0,0,0,.32),
+    inset 0 1px rgba(255,255,255,.04) !important;
+  backdrop-filter:blur(18px) !important;
+  -webkit-backdrop-filter:blur(18px) !important;
+}
+
+#searchBox input,
+.search-box input,
+.search-container input{
+  background:transparent !important;
+  color:#fff !important;
+}
+
+#searchBox:focus-within,
+.search-box:focus-within,
+.search-container:focus-within{
+  border-color:rgba(229,9,20,.55) !important;
+  box-shadow:
+    0 0 0 3px rgba(229,9,20,.10),
+    0 14px 45px rgba(0,0,0,.35) !important;
+}
+
+/* RESULTADOS DA BUSCA */
+#resultadosBuscaHome{
+  background:rgba(12,12,12,.97) !important;
+  border:1px solid rgba(255,255,255,.09) !important;
+  border-radius:12px !important;
+  box-shadow:0 22px 55px rgba(0,0,0,.55) !important;
+  backdrop-filter:blur(20px) !important;
+  -webkit-backdrop-filter:blur(20px) !important;
+  overflow:hidden !important;
+}
+
+#resultadosBuscaHome > *{
+  transition:background .18s ease !important;
+}
+
+#resultadosBuscaHome > *:hover{
+  background:rgba(229,9,20,.10) !important;
+}
+
+/* SEÇÕES */
+.section{
+  position:relative !important;
+  margin-top:42px !important;
+  margin-bottom:28px !important;
+}
+
+.section-title{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:11px !important;
+  font-size:clamp(20px,2.1vw,28px) !important;
+  font-weight:850 !important;
+  letter-spacing:-.4px !important;
+  margin-bottom:17px !important;
+}
+
+.section-title::before{
+  content:"" !important;
+  display:block !important;
+  width:4px !important;
+  height:25px !important;
+  border-radius:5px !important;
+  background:linear-gradient(
+    180deg,
+    #ff2734,
+    #b20710
+  ) !important;
+  box-shadow:0 0 16px rgba(229,9,20,.28) !important;
+}
+
+/* CARDS */
+.card{
+  border-radius:9px !important;
+  overflow:hidden !important;
+  background:#111 !important;
+  box-shadow:
+    0 5px 18px rgba(0,0,0,.30) !important;
+  border:1px solid rgba(255,255,255,.045) !important;
+  transition:
+    transform .25s cubic-bezier(.2,.7,.2,1),
+    box-shadow .25s ease,
+    border-color .25s ease !important;
+}
+
+.card:hover{
+  transform:translateY(-7px) scale(1.025) !important;
+  border-color:rgba(255,255,255,.13) !important;
+  box-shadow:
+    0 18px 38px rgba(0,0,0,.58),
+    0 0 22px rgba(229,9,20,.08) !important;
+  z-index:4 !important;
+}
+
+.card img{
+  display:block !important;
+  transition:filter .25s ease,transform .35s ease !important;
+}
+
+.card:hover img{
+  filter:brightness(1.08) saturate(1.05) !important;
+}
+
+/* CARROSSEIS */
+.luka-carousel-wrapper{
+  position:relative !important;
+}
+
+.luka-carousel-arrow{
+  width:48px !important;
+  height:76px !important;
+  border-radius:8px !important;
+  background:rgba(8,8,8,.86) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  box-shadow:0 10px 30px rgba(0,0,0,.45) !important;
+  backdrop-filter:blur(8px) !important;
+  -webkit-backdrop-filter:blur(8px) !important;
+  transition:
+    transform .2s ease,
+    background .2s ease !important;
+}
+
+.luka-carousel-arrow:hover{
+  background:rgba(229,9,20,.88) !important;
+  transform:scale(1.06) !important;
+}
+
+/* CONTINUAR ASSISTINDO */
+#continuarAssistindo{
+  position:relative !important;
+}
+
+#continuarAssistindo .card{
+  box-shadow:
+    0 8px 28px rgba(0,0,0,.45),
+    inset 0 -2px rgba(229,9,20,.30) !important;
+}
+
+/* ESPAÇAMENTO DO CONTEÚDO */
+main{
+  position:relative !important;
+}
+
+main > section{
+  scroll-margin-top:90px !important;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width:768px){
+
+  body{
+    overflow-x:hidden !important;
+  }
+
+  .hero{
+    min-height:650px !important;
+    height:78vh !important;
+    max-height:760px !important;
+  }
+
+  .hero::after{
+    background:
+      linear-gradient(
+        180deg,
+        rgba(0,0,0,.18) 0%,
+        rgba(0,0,0,.08) 30%,
+        rgba(0,0,0,.70) 61%,
+        #070707 100%
+      ) !important;
+  }
+
+  .hero-content{
+    width:100% !important;
+    max-width:none !important;
+    padding:0 20px 54px !important;
+    position:absolute !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+  }
+
+  .hero-content h1,
+  .hero-title{
+    font-size:clamp(34px,10vw,52px) !important;
+    letter-spacing:-1.2px !important;
+    max-width:100% !important;
+  }
+
+  .hero-content p,
+  .hero-description{
+    font-size:14px !important;
+    line-height:1.45 !important;
+    max-width:100% !important;
+    display:-webkit-box !important;
+    -webkit-box-orient:vertical !important;
+    -webkit-line-clamp:3 !important;
+    overflow:hidden !important;
+  }
+
+  .hero-buttons{
+    width:100% !important;
+    margin-top:17px !important;
+    gap:9px !important;
+  }
+
+  .hero-buttons button,
+  .hero-buttons a{
+    min-height:45px !important;
+    padding:11px 16px !important;
+    flex:1 1 auto !important;
+    font-size:14px !important;
+  }
+
+  .section{
+    margin-top:29px !important;
+    margin-bottom:20px !important;
+  }
+
+  .section-title{
+    font-size:20px !important;
+    margin-bottom:13px !important;
+  }
+
+  .section-title::before{
+    height:21px !important;
+    width:3px !important;
+  }
+
+  .row{
+    gap:10px !important;
+  }
+
+  .card{
+    border-radius:8px !important;
+  }
+
+  .card:hover{
+    transform:none !important;
+  }
+
+  .luka-carousel-arrow{
+    width:38px !important;
+    height:62px !important;
+  }
+
+  #resultadosBuscaHome{
+    max-height:60vh !important;
+    overflow-y:auto !important;
+    border-radius:10px !important;
+  }
+}
+
+/* TELAS GRANDES */
+@media (min-width:1200px){
+  .hero-content{
+    margin-left:max(5vw,60px) !important;
+  }
+
+  .section{
+    margin-top:52px !important;
+  }
+}
+</style>
+
+
+<style id="lukafilmes-home-hero-continuar-v3">
+
+/* =========================================================
+   LUKAFILMES HOME — HERO + CONTINUAR ASSISTINDO V3
+   Alteração exclusivamente visual.
+   ========================================================= */
+
+/* ---------- HERO ---------- */
+
+.hero{
+    min-height:clamp(620px,82vh,850px) !important;
+    position:relative !important;
+    isolation:isolate !important;
+}
+
+.hero-content{
+    max-width:700px !important;
+    padding-top:clamp(115px,16vh,180px) !important;
+    padding-bottom:90px !important;
+}
+
+/* Etiqueta acima do título */
+.hero-label{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:7px !important;
+    padding:7px 12px !important;
+    margin-bottom:14px !important;
+    border-radius:999px !important;
+    background:rgba(229,9,20,.14) !important;
+    border:1px solid rgba(229,9,20,.38) !important;
+    color:#fff !important;
+    font-size:12px !important;
+    font-weight:800 !important;
+    letter-spacing:.8px !important;
+    text-transform:uppercase !important;
+    backdrop-filter:blur(12px) !important;
+    -webkit-backdrop-filter:blur(12px) !important;
+    box-shadow:0 5px 25px rgba(0,0,0,.25) !important;
+}
+
+.hero-content h1,
+.hero-title{
+    font-size:clamp(46px,6.7vw,86px) !important;
+    line-height:.94 !important;
+    font-weight:950 !important;
+    letter-spacing:-3px !important;
+    margin-bottom:18px !important;
+    text-shadow:
+        0 4px 25px rgba(0,0,0,.95),
+        0 0 60px rgba(0,0,0,.65) !important;
+}
+
+.hero-content p,
+.hero-description{
+    max-width:650px !important;
+    font-size:clamp(15px,1.45vw,19px) !important;
+    line-height:1.6 !important;
+    color:#e4e4e4 !important;
+    margin-bottom:20px !important;
+    text-shadow:0 3px 15px rgba(0,0,0,.95) !important;
+}
+
+/* Área dos botões */
+.hero-buttons{
+    display:flex !important;
+    align-items:center !important;
+    gap:11px !important;
+    margin-top:20px !important;
+}
+
+.hero-buttons button,
+.hero-buttons a{
+    min-height:50px !important;
+    padding:13px 24px !important;
+    border-radius:8px !important;
+    font-size:15px !important;
+    font-weight:850 !important;
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        background .22s ease !important;
+}
+
+.hero-buttons button:first-child,
+.hero-buttons a:first-child{
+    background:#fff !important;
+    color:#080808 !important;
+    border:0 !important;
+    box-shadow:0 8px 28px rgba(0,0,0,.35) !important;
+}
+
+.hero-buttons button:first-child:hover,
+.hero-buttons a:first-child:hover{
+    transform:translateY(-3px) scale(1.025) !important;
+    box-shadow:0 14px 35px rgba(0,0,0,.48) !important;
+}
+
+.hero-buttons button:nth-child(2),
+.hero-buttons a:nth-child(2){
+    background:rgba(60,60,60,.82) !important;
+    color:#fff !important;
+    border:1px solid rgba(255,255,255,.13) !important;
+    backdrop-filter:blur(12px) !important;
+    -webkit-backdrop-filter:blur(12px) !important;
+}
+
+.hero-buttons button:nth-child(2):hover,
+.hero-buttons a:nth-child(2):hover{
+    background:rgba(95,95,95,.86) !important;
+    transform:translateY(-3px) !important;
+}
+
+/* ---------- CONTINUAR ASSISTINDO ---------- */
+
+#continuarAssistindo{
+    position:relative !important;
+    margin-top:8px !important;
+    padding-top:5px !important;
+}
+
+#continuarAssistindo::before{
+    content:"" !important;
+    position:absolute !important;
+    left:0 !important;
+    top:-5px !important;
+    width:100% !important;
+    height:1px !important;
+    background:linear-gradient(
+        90deg,
+        rgba(229,9,20,.65),
+        rgba(255,255,255,.08),
+        transparent
+    ) !important;
+}
+
+#continuarAssistindo .section-title{
+    font-size:clamp(21px,2.2vw,29px) !important;
+}
+
+#continuarAssistindo .card{
+    position:relative !important;
+    border-radius:10px !important;
+    overflow:hidden !important;
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.45),
+        0 0 0 1px rgba(255,255,255,.045) !important;
+}
+
+/* Linha de progresso visual */
+#continuarAssistindo .card::after{
+    content:"" !important;
+    position:absolute !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    height:4px !important;
+    background:linear-gradient(
+        90deg,
+        #e50914 0%,
+        #e50914 62%,
+        rgba(255,255,255,.16) 62%,
+        rgba(255,255,255,.16) 100%
+    ) !important;
+    z-index:10 !important;
+    box-shadow:0 -2px 8px rgba(229,9,20,.22) !important;
+}
+
+/* Pequeno selo */
+#continuarAssistindo .card::before{
+    content:"CONTINUAR" !important;
+    position:absolute !important;
+    top:9px !important;
+    left:9px !important;
+    z-index:11 !important;
+    padding:5px 8px !important;
+    border-radius:5px !important;
+    background:rgba(0,0,0,.78) !important;
+    border:1px solid rgba(255,255,255,.10) !important;
+    color:#fff !important;
+    font-size:9px !important;
+    font-weight:900 !important;
+    letter-spacing:.6px !important;
+    opacity:0 !important;
+    transform:translateY(-4px) !important;
+    transition:opacity .2s ease,transform .2s ease !important;
+    pointer-events:none !important;
+}
+
+#continuarAssistindo .card:hover::before{
+    opacity:1 !important;
+    transform:translateY(0) !important;
+}
+
+/* ---------- SEÇÕES NORMAIS ---------- */
+
+.section{
+    margin-top:48px !important;
+}
+
+.section-title{
+    font-weight:900 !important;
+    letter-spacing:-.6px !important;
+}
+
+.section-title::before{
+    width:4px !important;
+    height:27px !important;
+    border-radius:4px !important;
+    background:#e50914 !important;
+    box-shadow:0 0 18px rgba(229,9,20,.32) !important;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:768px){
+
+    .hero{
+        min-height:680px !important;
+        height:82vh !important;
+        max-height:790px !important;
+    }
+
+    .hero-content{
+        padding:0 18px 48px !important;
+        bottom:0 !important;
+    }
+
+    .hero-label{
+        font-size:10px !important;
+        padding:6px 10px !important;
+        margin-bottom:11px !important;
+    }
+
+    .hero-content h1,
+    .hero-title{
+        font-size:clamp(35px,11vw,54px) !important;
+        line-height:.98 !important;
+        letter-spacing:-1.5px !important;
+        margin-bottom:12px !important;
+    }
+
+    .hero-content p,
+    .hero-description{
+        font-size:13.5px !important;
+        line-height:1.45 !important;
+        margin-bottom:14px !important;
+        -webkit-line-clamp:3 !important;
+        display:-webkit-box !important;
+        -webkit-box-orient:vertical !important;
+        overflow:hidden !important;
+    }
+
+    .hero-buttons{
+        display:grid !important;
+        grid-template-columns:1fr 1fr !important;
+        width:100% !important;
+        gap:8px !important;
+        margin-top:13px !important;
+    }
+
+    .hero-buttons button,
+    .hero-buttons a{
+        min-height:46px !important;
+        padding:10px 12px !important;
+        font-size:13px !important;
+        width:100% !important;
+    }
+
+    #continuarAssistindo{
+        margin-top:22px !important;
+    }
+
+    #continuarAssistindo .card::before{
+        opacity:1 !important;
+        transform:none !important;
+    }
+
+    .section{
+        margin-top:34px !important;
+    }
+
+    .section-title{
+        font-size:20px !important;
+        margin-bottom:14px !important;
+    }
+
+    .section-title::before{
+        width:3px !important;
+        height:22px !important;
+    }
+}
+
+/* ---------- DESKTOP ---------- */
+
+@media(min-width:1200px){
+
+    .hero-content{
+        margin-left:max(5vw,60px) !important;
+    }
+
+    #continuarAssistindo{
+        margin-top:15px !important;
+    }
+}
+
+</style>
+
+
+<style id="lukafilmes-home-desktop-v4">
+
+/* =========================================================
+   LUKAFILMES — DESKTOP V4
+   Apenas visual — não altera lógica, API ou players.
+   ========================================================= */
+
+@media (min-width: 769px) {
+
+    /* HOME MAIS CINEMATOGRÁFICA */
+    body{
+        background:
+            radial-gradient(
+                circle at 50% -15%,
+                rgba(229,9,20,.14),
+                transparent 42%
+            ),
+            #070707 !important;
+    }
+
+    /* HERO */
+    .hero{
+        min-height:760px !important;
+        height:82vh !important;
+        max-height:900px !important;
+        overflow:hidden !important;
+    }
+
+    .hero::after{
+        content:"" !important;
+        position:absolute !important;
+        inset:0 !important;
+        z-index:2 !important;
+        pointer-events:none !important;
+        background:
+            linear-gradient(
+                90deg,
+                rgba(0,0,0,.92) 0%,
+                rgba(0,0,0,.70) 28%,
+                rgba(0,0,0,.22) 62%,
+                rgba(0,0,0,.08) 100%
+            ),
+            linear-gradient(
+                0deg,
+                #070707 0%,
+                rgba(7,7,7,.72) 9%,
+                transparent 32%
+            ) !important;
+    }
+
+    .hero-content{
+        position:relative !important;
+        z-index:4 !important;
+        width:min(700px,52vw) !important;
+        max-width:700px !important;
+        margin-left:clamp(55px,7vw,120px) !important;
+        padding-top:190px !important;
+        padding-bottom:110px !important;
+    }
+
+    .hero-label{
+        padding:8px 14px !important;
+        font-size:12px !important;
+        letter-spacing:1px !important;
+        box-shadow:
+            0 8px 30px rgba(0,0,0,.35),
+            0 0 22px rgba(229,9,20,.12) !important;
+    }
+
+    .hero-content h1,
+    .hero-title{
+        font-size:clamp(58px,6vw,94px) !important;
+        line-height:.92 !important;
+        letter-spacing:-4px !important;
+        margin:14px 0 22px !important;
+    }
+
+    .hero-content p,
+    .hero-description{
+        max-width:620px !important;
+        font-size:17px !important;
+        line-height:1.65 !important;
+        color:#ddd !important;
+    }
+
+    .hero-buttons{
+        gap:13px !important;
+        margin-top:26px !important;
+    }
+
+    .hero-buttons button,
+    .hero-buttons a{
+        min-height:54px !important;
+        padding:14px 28px !important;
+        border-radius:7px !important;
+        font-size:15px !important;
+    }
+
+    /* SEÇÕES */
+    .section{
+        position:relative !important;
+        margin-top:58px !important;
+        padding-left:clamp(25px,3.5vw,65px) !important;
+        padding-right:clamp(25px,3.5vw,65px) !important;
+    }
+
+    .section-title{
+        display:flex !important;
+        align-items:center !important;
+        gap:12px !important;
+        font-size:27px !important;
+        line-height:1.2 !important;
+        margin-bottom:20px !important;
+        letter-spacing:-.8px !important;
+    }
+
+    .section-title::before{
+        content:"" !important;
+        display:block !important;
+        flex:0 0 4px !important;
+        width:4px !important;
+        height:29px !important;
+        border-radius:5px !important;
+        background:#e50914 !important;
+        box-shadow:0 0 20px rgba(229,9,20,.35) !important;
+    }
+
+    /* CARDS */
+    .section .card{
+        border-radius:9px !important;
+        overflow:hidden !important;
+        transition:
+            transform .25s ease,
+            box-shadow .25s ease,
+            filter .25s ease !important;
+        box-shadow:
+            0 8px 25px rgba(0,0,0,.35),
+            0 0 0 1px rgba(255,255,255,.035) !important;
+    }
+
+    .section .card:hover{
+        transform:translateY(-7px) scale(1.025) !important;
+        z-index:8 !important;
+        box-shadow:
+            0 20px 45px rgba(0,0,0,.65),
+            0 0 25px rgba(229,9,20,.10) !important;
+        filter:brightness(1.08) !important;
+    }
+
+    /* CONTINUAR ASSISTINDO */
+    #continuarAssistindo{
+        margin-top:35px !important;
+        padding-top:24px !important;
+        padding-bottom:10px !important;
+        border-top:1px solid rgba(255,255,255,.06) !important;
+        border-bottom:1px solid rgba(255,255,255,.035) !important;
+    }
+
+    #continuarAssistindo .section-title{
+        font-size:29px !important;
+    }
+
+    #continuarAssistindo .card{
+        box-shadow:
+            0 12px 35px rgba(0,0,0,.50),
+            0 0 0 1px rgba(229,9,20,.08) !important;
+    }
+
+    /* CARROSSEL */
+    .luka-carousel-wrapper{
+        position:relative !important;
+    }
+
+    .luka-carousel-arrow{
+        width:48px !important;
+        height:72px !important;
+        border-radius:8px !important;
+        background:rgba(0,0,0,.78) !important;
+        border:1px solid rgba(255,255,255,.10) !important;
+        backdrop-filter:blur(10px) !important;
+        -webkit-backdrop-filter:blur(10px) !important;
+        box-shadow:0 8px 25px rgba(0,0,0,.35) !important;
+        transition:
+            background .2s ease,
+            transform .2s ease,
+            opacity .2s ease !important;
+    }
+
+    .luka-carousel-arrow:hover{
+        background:#e50914 !important;
+        transform:scale(1.05) !important;
+    }
+
+    /* BUSCA */
+    #searchBox{
+        border:1px solid rgba(255,255,255,.10) !important;
+        background:rgba(20,20,20,.82) !important;
+        box-shadow:
+            0 10px 35px rgba(0,0,0,.35),
+            inset 0 1px 0 rgba(255,255,255,.035) !important;
+        backdrop-filter:blur(18px) !important;
+        -webkit-backdrop-filter:blur(18px) !important;
+    }
+
+    #searchBox:focus-within{
+        border-color:rgba(229,9,20,.55) !important;
+        box-shadow:
+            0 0 0 3px rgba(229,9,20,.08),
+            0 12px 40px rgba(0,0,0,.45) !important;
+    }
+
+    #resultadosBuscaHome{
+        border:1px solid rgba(255,255,255,.08) !important;
+        background:rgba(12,12,12,.96) !important;
+        box-shadow:0 25px 60px rgba(0,0,0,.65) !important;
+        backdrop-filter:blur(18px) !important;
+        -webkit-backdrop-filter:blur(18px) !important;
+    }
+
+    /* ESPAÇO ENTRE CARDS */
+    .section .row{
+        gap:14px !important;
+    }
+
+}
+
+/* Nunca altera o mobile */
+@media (max-width:768px){
+    #continuarAssistindo .card::after{
+        height:4px !important;
+    }
+}
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+<style id="lukafilmes-menu-v1">
+
+/* =========================================================
+   LUKAFILMES — MENU V1
+   SOMENTE MENU / NAVEGAÇÃO
+   ========================================================= */
+
+header nav a,
+nav a,
+.mobile-menu a,
+#mobileMenu a{
+    position:relative !important;
+    transition:
+        color .20s ease,
+        background .20s ease,
+        transform .20s ease !important;
+}
+
+/* Menu desktop */
+header nav a,
+nav a{
+    border-radius:9px !important;
+    padding:9px 13px !important;
+    font-weight:650 !important;
+    letter-spacing:.1px !important;
+}
+
+/* Hover */
+header nav a:hover,
+nav a:hover{
+    color:#fff !important;
+    background:rgba(255,255,255,.065) !important;
+    transform:translateY(-1px) !important;
+}
+
+/* Item ativo */
+header nav a.active,
+nav a.active,
+header nav a[aria-current="page"],
+nav a[aria-current="page"]{
+    color:#fff !important;
+    background:rgba(229,9,20,.12) !important;
+}
+
+/* Indicador vermelho do item ativo */
+header nav a.active::after,
+nav a.active::after,
+header nav a[aria-current="page"]::after,
+nav a[aria-current="page"]::after{
+    content:"" !important;
+    position:absolute !important;
+    left:50% !important;
+    bottom:3px !important;
+    width:18px !important;
+    height:2px !important;
+    transform:translateX(-50%) !important;
+    border-radius:99px !important;
+    background:#e50914 !important;
+}
+
+/* =========================================================
+   MENU MOBILE
+   ========================================================= */
+
+.mobile-menu,
+#mobileMenu{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16,16,18,.98),
+            rgba(6,6,7,.98)
+        ) !important;
+
+    border:1px solid rgba(255,255,255,.09) !important;
+
+    box-shadow:
+        0 24px 70px rgba(0,0,0,.72),
+        inset 0 1px 0 rgba(255,255,255,.045) !important;
+
+    backdrop-filter:blur(22px) !important;
+    -webkit-backdrop-filter:blur(22px) !important;
+
+    border-radius:14px !important;
+    overflow:hidden !important;
+}
+
+/* Itens do menu mobile */
+.mobile-menu a,
+#mobileMenu a{
+    display:flex !important;
+    align-items:center !important;
+    min-height:48px !important;
+    margin:4px 8px !important;
+    padding:12px 14px !important;
+
+    border-radius:10px !important;
+
+    color:rgba(255,255,255,.86) !important;
+    font-weight:650 !important;
+    font-size:15px !important;
+
+    border:1px solid transparent !important;
+}
+
+/* Hover / toque */
+.mobile-menu a:hover,
+.mobile-menu a:active,
+#mobileMenu a:hover,
+#mobileMenu a:active{
+    color:#fff !important;
+    background:rgba(255,255,255,.065) !important;
+    border-color:rgba(255,255,255,.07) !important;
+    transform:translateX(2px) !important;
+}
+
+/* Item ativo mobile */
+.mobile-menu a.active,
+#mobileMenu a.active,
+.mobile-menu a[aria-current="page"],
+#mobileMenu a[aria-current="page"]{
+    color:#fff !important;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(229,9,20,.17),
+            rgba(229,9,20,.035)
+        ) !important;
+    border-color:rgba(229,9,20,.18) !important;
+}
+
+/* =========================================================
+   ÍCONES, CASO O MENU JÁ POSSUA ÍCONES
+   ========================================================= */
+
+header nav a i,
+header nav a svg,
+nav a i,
+nav a svg,
+.mobile-menu a i,
+.mobile-menu a svg,
+#mobileMenu a i,
+#mobileMenu a svg{
+    transition:transform .2s ease, opacity .2s ease !important;
+}
+
+header nav a:hover i,
+header nav a:hover svg,
+nav a:hover i,
+nav a:hover svg,
+.mobile-menu a:hover i,
+.mobile-menu a:hover svg,
+#mobileMenu a:hover i,
+#mobileMenu a:hover svg{
+    transform:scale(1.08) !important;
+}
+
+/* =========================================================
+   BOTÃO HAMBÚRGUER
+   ========================================================= */
+
+#menuToggle,
+.menu-toggle,
+.mobile-menu-toggle,
+button[aria-label*="menu" i],
+button[aria-label*="Menu"]{
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        border-color .2s ease !important;
+}
+
+#menuToggle:hover,
+.menu-toggle:hover,
+.mobile-menu-toggle:hover{
+    background:rgba(255,255,255,.07) !important;
+    border-color:rgba(255,255,255,.12) !important;
+}
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media(max-width:768px){
+
+    .mobile-menu,
+    #mobileMenu{
+        top:72px !important;
+        max-height:calc(100vh - 86px) !important;
+        overflow-y:auto !important;
+        -webkit-overflow-scrolling:touch !important;
+    }
+
+    .mobile-menu a,
+    #mobileMenu a{
+        min-height:50px !important;
+        font-size:15px !important;
+    }
+
+}
+
+/* Desktop não recebe estilo de menu mobile */
+@media(min-width:769px){
+
+    .mobile-menu,
+    #mobileMenu{
+        max-height:none !important;
+    }
+
+}
+
+</style>
+
+
+<style id="lukafilmes-ambient-light">
+
+/* =========================================================
+   LUKAFILMES — LUZ AMBIENTE
+   Fundo suave: vermelho quente <-> roxo
+   NÃO interfere no HERO/TRAILER
+   ========================================================= */
+
+body{
+    position:relative !important;
+    isolation:isolate !important;
+}
+
+/* Camada independente do conteúdo */
+body::before{
+    content:"" !important;
+    position:fixed !important;
+    z-index:-1 !important;
+    pointer-events:none !important;
+
+    width:75vw !important;
+    height:75vw !important;
+
+    left:50% !important;
+    top:45% !important;
+
+    transform:translate(-50%,-50%) !important;
+
+    border-radius:50% !important;
+
+    background:
+        radial-gradient(
+            circle at 35% 40%,
+            rgba(145,18,35,.16) 0%,
+            rgba(105,18,75,.12) 28%,
+            rgba(65,18,75,.07) 48%,
+            transparent 72%
+        ) !important;
+
+    filter:blur(70px) !important;
+
+    opacity:.58 !important;
+
+    animation:
+        lukaAmbientGlow 18s ease-in-out infinite alternate !important;
+}
+
+/* Segunda luz, menor e mais quente */
+body::after{
+    content:"" !important;
+    position:fixed !important;
+    z-index:-1 !important;
+    pointer-events:none !important;
+
+    width:42vw !important;
+    height:42vw !important;
+
+    right:-12vw !important;
+    bottom:8vh !important;
+
+    border-radius:50% !important;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(180,32,45,.10) 0%,
+            rgba(112,24,80,.07) 35%,
+            transparent 72%
+        ) !important;
+
+    filter:blur(75px) !important;
+
+    opacity:.48 !important;
+
+    animation:
+        lukaAmbientGlow2 23s ease-in-out infinite alternate !important;
+}
+
+/* Movimento MUITO lento */
+@keyframes lukaAmbientGlow{
+
+    0%{
+        transform:translate(-58%,-48%) scale(.88);
+        opacity:.40;
+        filter:blur(75px);
+    }
+
+    25%{
+        transform:translate(-44%,-53%) scale(1.00);
+        opacity:.52;
+        filter:blur(82px);
+    }
+
+    50%{
+        transform:translate(-52%,-42%) scale(.94);
+        opacity:.46;
+        filter:blur(70px);
+    }
+
+    75%{
+        transform:translate(-42%,-48%) scale(1.04);
+        opacity:.55;
+        filter:blur(85px);
+    }
+
+    100%{
+        transform:translate(-50%,-55%) scale(.90);
+        opacity:.42;
+        filter:blur(78px);
+    }
+}
+
+@keyframes lukaAmbientGlow2{
+
+    0%{
+        transform:translate(0,0) scale(.82);
+        opacity:.30;
+    }
+
+    33%{
+        transform:translate(-5vw,-3vh) scale(1);
+        opacity:.42;
+    }
+
+    66%{
+        transform:translate(-2vw,2vh) scale(.90);
+        opacity:.34;
+    }
+
+    100%{
+        transform:translate(4vw,-2vh) scale(1.05);
+        opacity:.40;
+    }
+}
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media(max-width:768px){
+
+    body::before{
+        width:125vw !important;
+        height:125vw !important;
+        filter:blur(55px) !important;
+        opacity:.42 !important;
+    }
+
+    body::after{
+        width:70vw !important;
+        height:70vw !important;
+        filter:blur(55px) !important;
+        opacity:.32 !important;
+    }
+
+}
+
+/* =========================================================
+   ACESSIBILIDADE
+   ========================================================= */
+
+@media(prefers-reduced-motion:reduce){
+
+    body::before,
+    body::after{
+        animation:none !important;
+    }
+
+}
+
 </style>
 
 </html>
@@ -9690,5 +11873,948 @@ function toggleCategoriasMobile(botao){
     border-radius:5px !important;
     margin:0 !important;
     padding:0 !important;
+}
+</style>
+
+<style id="lukafilmes-hero-audio-interacao-final">
+/*
+============================================================
+LUKAFILMES — HERO / ÁUDIO DO TRAILER
+CORREÇÃO FINAL DE INTERAÇÃO
+O toque precisa chegar ao iframe para o player
+poder ativar o áudio.
+============================================================
+*/
+
+#heroTrailer{
+    pointer-events:auto !important;
+    touch-action:manipulation !important;
+    z-index:1 !important;
+}
+
+/*
+O overlay é somente visual.
+Não pode bloquear o toque no trailer.
+*/
+.hero-overlay{
+    pointer-events:none !important;
+}
+
+/*
+O conteúdo continua visível, mas não bloqueia
+o player. Os botões recebem interação abaixo.
+*/
+.hero-content{
+    pointer-events:none !important;
+    z-index:3 !important;
+}
+
+.hero-buttons,
+.hero-buttons *,
+.hero-actions,
+.hero-actions *{
+    pointer-events:auto !important;
+}
+
+/*
+O botão Assistir continua acima do trailer.
+*/
+.hero-buttons,
+.hero-actions{
+    position:relative !important;
+    z-index:5 !important;
+}
+
+</style>
+
+<style id="lukafilmes-hero-trailer-nao-interativo-final">
+
+/* ============================================================
+   LUKAFILMES — HERO
+   TRAILER AUTOMÁTICO E NÃO INTERATIVO
+   ============================================================ */
+
+#heroTrailer,
+#heroTrailer.ativo{
+    pointer-events:none !important;
+    touch-action:pan-y !important;
+    -webkit-user-select:none !important;
+    user-select:none !important;
+    cursor:default !important;
+}
+
+/* O trailer nunca recebe clique/toque */
+.hero-overlay{
+    pointer-events:none !important;
+}
+
+/* O conteúdo do Hero permanece visual */
+.hero-content{
+    pointer-events:none !important;
+}
+
+/* Somente os controles reais continuam clicáveis */
+.hero-buttons,
+.hero-buttons *,
+.hero-actions,
+.hero-actions *{
+    pointer-events:auto !important;
+}
+
+/* O botão Assistir fica acima do trailer */
+.hero-buttons,
+.hero-actions{
+    position:relative !important;
+    z-index:5 !important;
+}
+
+</style>
+
+
+<style id="lukafilmes-hero-fullscreen-final">
+/* =========================================================
+   LUKAFILMES — HERO / TRAILER 100% DA ÁREA
+   Não altera player, API ou lógica do trailer.
+   ========================================================= */
+
+.hero {
+  position: relative !important;
+  width: 100% !important;
+  height: clamp(620px, 86vh, 900px) !important;
+  min-height: 620px !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+}
+
+/* Fundo ocupa absolutamente todo o Hero */
+#heroBg {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  z-index: 0 !important;
+}
+
+/* Trailer cobre TODO o quadro */
+#heroTrailer {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+
+  /*
+     O iframe fica propositalmente maior que o Hero
+     quando necessário, eliminando barras pretas.
+  */
+  width: 100vw !important;
+  height: 56.25vw !important;
+
+  min-width: 177.78vh !important;
+  min-height: 100vh !important;
+
+  max-width: none !important;
+  max-height: none !important;
+
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  transform: translate(-50%, -50%) !important;
+  z-index: 1 !important;
+
+  pointer-events: none !important;
+  opacity: 0 !important;
+  transition: opacity .8s ease !important;
+}
+
+#heroTrailer.ativo {
+  opacity: 1 !important;
+}
+
+/* Conteúdo continua por cima do trailer */
+.hero-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+}
+
+.hero-content {
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+/* COMPUTADOR */
+@media (min-width: 769px) {
+  .hero {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: clamp(700px, 88vh, 920px) !important;
+    min-height: 700px !important;
+  }
+
+  #heroTrailer {
+    width: 100vw !important;
+    height: 56.25vw !important;
+    min-width: 177.78vh !important;
+    min-height: 100vh !important;
+  }
+}
+
+/* CELULAR — o trailer também toma o quadro inteiro */
+@media (max-width: 768px) {
+  .hero {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 78vh !important;
+    min-height: 560px !important;
+  }
+
+  #heroTrailer {
+    width: 100vw !important;
+    height: 56.25vw !important;
+
+    /*
+      Força cobertura vertical no celular.
+      As laterais podem ser cortadas, mas não aparece
+      uma faixa preta separando o trailer.
+    */
+    min-width: 177.78vh !important;
+    min-height: 100% !important;
+
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+}
+
+/* Telas muito pequenas */
+@media (max-width: 420px) {
+  .hero {
+    height: 76vh !important;
+    min-height: 540px !important;
+  }
+
+  #heroTrailer {
+    min-height: 100% !important;
+  }
+}
+</style>
+
+
+
+<style id="lukafilmes-hero-top-full-final">
+
+/* =========================================================
+   LUKAFILMES — HERO COLADO NO TOPO
+   O trailer sobe até a linha vermelha da navegação.
+   ========================================================= */
+
+.hero {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+
+  /*
+    Remove a sensação de faixa preta entre menu e trailer.
+    O Hero sobe visualmente até a navegação.
+  */
+  margin-top: -14px !important;
+
+  height: clamp(680px, 89vh, 940px) !important;
+  min-height: 680px !important;
+
+  overflow: hidden !important;
+  isolation: isolate !important;
+}
+
+/* Fundo do Hero */
+#heroBg {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  z-index: 0 !important;
+}
+
+/* =========================================================
+   TRAILER — COBRE O HERO INTEIRO
+   ========================================================= */
+
+#heroTrailer {
+  position: absolute !important;
+
+  top: 50% !important;
+  left: 50% !important;
+
+  /*
+    Escala grande para impedir barras pretas.
+    O excesso fica escondido pelo overflow do Hero.
+  */
+  width: 100vw !important;
+  height: 56.25vw !important;
+
+  min-width: 177.78vh !important;
+  min-height: 100vh !important;
+
+  max-width: none !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  border: 0 !important;
+  outline: 0 !important;
+
+  transform: translate(-50%, -50%) scale(1.06) !important;
+
+  transform-origin: center center !important;
+
+  z-index: 1 !important;
+
+  pointer-events: none !important;
+
+  opacity: 0 !important;
+  transition: opacity .8s ease !important;
+}
+
+#heroTrailer.ativo {
+  opacity: 1 !important;
+}
+
+/* Conteúdo continua acima do trailer */
+.hero-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+}
+
+.hero-content {
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+/* =========================================================
+   COMPUTADOR
+   ========================================================= */
+
+@media (min-width: 769px) {
+
+  .hero {
+    width: 100vw !important;
+    max-width: 100vw !important;
+
+    /*
+      Faz o trailer chegar visualmente na linha vermelha.
+    */
+    margin-top: -16px !important;
+
+    height: clamp(720px, 90vh, 960px) !important;
+    min-height: 720px !important;
+  }
+
+  #heroTrailer {
+    width: 100vw !important;
+    height: 56.25vw !important;
+
+    min-width: 177.78vh !important;
+    min-height: 100vh !important;
+
+    transform: translate(-50%, -50%) scale(1.08) !important;
+  }
+}
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  .hero {
+    width: 100vw !important;
+    max-width: 100vw !important;
+
+    /*
+      Sobe mais no celular para não deixar faixa preta
+      entre o menu e o trailer.
+    */
+    margin-top: -10px !important;
+
+    height: 80vh !important;
+    min-height: 570px !important;
+  }
+
+  #heroTrailer {
+    width: 100vw !important;
+    height: 56.25vw !important;
+
+    min-width: 177.78vh !important;
+    min-height: 100% !important;
+
+    transform: translate(-50%, -50%) scale(1.10) !important;
+  }
+}
+
+/* Celulares menores */
+@media (max-width: 420px) {
+
+  .hero {
+    margin-top: -8px !important;
+    height: 78vh !important;
+    min-height: 550px !important;
+  }
+
+  #heroTrailer {
+    min-height: 100% !important;
+    transform: translate(-50%, -50%) scale(1.12) !important;
+  }
+}
+
+
+/* =========================================================
+   DECORAÇÃO ENTRE O HERO E AS SEÇÕES
+   Linha extremamente discreta, transparente e elegante.
+   ========================================================= */
+
+.hero + section,
+.hero ~ section:first-of-type {
+  position: relative !important;
+}
+
+/*
+   Não é uma faixa preta.
+   É apenas um brilho muito sutil atravessando a página.
+*/
+.hero::after {
+  content: "" !important;
+
+  position: absolute !important;
+
+  left: 4% !important;
+  right: 4% !important;
+  bottom: 0 !important;
+
+  height: 1px !important;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,.00) 10%,
+      rgba(255,255,255,.10) 35%,
+      rgba(255,255,255,.16) 50%,
+      rgba(255,255,255,.10) 65%,
+      rgba(255,255,255,.00) 90%,
+      transparent 100%
+    ) !important;
+
+  opacity: .45 !important;
+
+  box-shadow:
+    0 0 12px rgba(130,80,180,.10) !important;
+
+  pointer-events: none !important;
+
+  z-index: 4 !important;
+}
+
+
+/* =========================================================
+   DECORAÇÃO NO FUNDO DA PÁGINA
+   Muito transparente — não cria uma faixa preta.
+   ========================================================= */
+
+main::after {
+  content: "" !important;
+
+  display: block !important;
+
+  width: 86% !important;
+  height: 1px !important;
+
+  margin: 34px auto 8px !important;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.08),
+      rgba(170,80,190,.12),
+      rgba(255,255,255,.08),
+      transparent
+    ) !important;
+
+  opacity: .55 !important;
+
+  pointer-events: none !important;
+}
+
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  #heroTrailer {
+    transition: none !important;
+  }
+}
+
+</style>
+
+
+
+<style id="lukafilmes-black-background-final">
+
+/* =========================================================
+   LUKAFILMES — FUNDO CINEMATOGRÁFICO PRETO
+   Preto dominante + brilho vermelho extremamente discreto.
+   ========================================================= */
+
+html,
+body {
+  background: #000 !important;
+  background-color: #000 !important;
+}
+
+/* O conteúdo inteiro da página permanece preto */
+body {
+  position: relative !important;
+  overflow-x: hidden !important;
+}
+
+/* Remove o vermelho forte do fundo geral */
+body::before {
+  content: "" !important;
+  position: fixed !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+
+  background:
+    radial-gradient(
+      ellipse 70% 35% at 50% 0%,
+      rgba(110, 0, 20, .12) 0%,
+      rgba(40, 0, 10, .055) 35%,
+      transparent 70%
+    ) !important;
+
+  opacity: 1 !important;
+  filter: blur(35px) !important;
+
+  z-index: -2 !important;
+}
+
+/* Pequena luz cinematográfica inferior */
+body::after {
+  content: "" !important;
+  position: fixed !important;
+  left: 50% !important;
+  bottom: -180px !important;
+
+  width: 80vw !important;
+  height: 360px !important;
+
+  transform: translateX(-50%) !important;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(90, 0, 35, .07) 0%,
+      rgba(40, 0, 20, .035) 40%,
+      transparent 72%
+    ) !important;
+
+  filter: blur(55px) !important;
+  pointer-events: none !important;
+
+  z-index: -2 !important;
+}
+
+/* =========================================================
+   ÁREAS DE CONTEÚDO
+   ========================================================= */
+
+main,
+section,
+.container,
+.content,
+.catalogo,
+.secao,
+.movies-section,
+.series-section {
+  background-color: transparent !important;
+}
+
+/* O preto abaixo do Hero emenda diretamente com a página */
+.hero + section,
+.hero ~ section {
+  background:
+    linear-gradient(
+      180deg,
+      #000 0%,
+      #000 85%,
+      rgba(0,0,0,.98) 100%
+    ) !important;
+}
+
+/* =========================================================
+   DECORAÇÃO ENTRE TRAILER E CONTEÚDO
+   ========================================================= */
+
+.hero::after {
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,0) 18%,
+      rgba(150,30,60,.10) 40%,
+      rgba(255,255,255,.08) 50%,
+      rgba(150,30,60,.10) 60%,
+      rgba(255,255,255,0) 82%,
+      transparent 100%
+    ) !important;
+
+  opacity: .28 !important;
+  box-shadow: 0 0 14px rgba(120,0,35,.06) !important;
+}
+
+/* Linha decorativa do conteúdo também quase invisível */
+main::after {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.035),
+      rgba(120,20,70,.055),
+      rgba(255,255,255,.035),
+      transparent
+    ) !important;
+
+  opacity: .35 !important;
+}
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  html,
+  body {
+    background: #000 !important;
+  }
+
+  body::before {
+    background:
+      radial-gradient(
+        ellipse 100% 30% at 50% 0%,
+        rgba(110,0,20,.08),
+        transparent 72%
+      ) !important;
+
+    filter: blur(28px) !important;
+  }
+
+  body::after {
+    width: 110vw !important;
+    opacity: .7 !important;
+  }
+}
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none !important;
+  }
+}
+
+</style>
+
+
+<!-- ============================================================
+     LUKAFILMES — CAPAS GRANDES / NOTEBOOK / TV
+     ============================================================ -->
+<style id="lukafilmes-capas-grandes-home">
+
+/* ============================================================
+   BASE — APROVEITAR A LARGURA DISPONÍVEL
+   ============================================================ */
+
+.carousel,
+.movies-grid,
+.series-grid,
+.catalog-grid {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    gap: 16px !important;
+}
+
+/* ============================================================
+   NOTEBOOK / DESKTOP
+   Capas grandes e responsivas
+   ============================================================ */
+
+@media (min-width: 1025px) {
+
+    .carousel .movie-card,
+    .carousel .serie-card,
+    .carousel .card,
+    .movies-grid .movie-card,
+    .movies-grid .serie-card,
+    .movies-grid .card,
+    .series-grid .movie-card,
+    .series-grid .serie-card,
+    .series-grid .card,
+    .catalog-grid .movie-card,
+    .catalog-grid .serie-card,
+    .catalog-grid .card {
+        flex: 0 0 clamp(250px, 17vw, 320px) !important;
+        width: clamp(250px, 17vw, 320px) !important;
+        max-width: clamp(250px, 17vw, 320px) !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+}
+
+/* ============================================================
+   TELAS GRANDES / TV
+   ============================================================ */
+
+@media (min-width: 1600px) {
+
+    .carousel,
+    .movies-grid,
+    .series-grid,
+    .catalog-grid {
+        gap: 20px !important;
+    }
+
+    .carousel .movie-card,
+    .carousel .serie-card,
+    .carousel .card,
+    .movies-grid .movie-card,
+    .movies-grid .serie-card,
+    .movies-grid .card,
+    .series-grid .movie-card,
+    .series-grid .serie-card,
+    .series-grid .card,
+    .catalog-grid .movie-card,
+    .catalog-grid .serie-card,
+    .catalog-grid .card {
+        flex: 0 0 clamp(290px, 18vw, 360px) !important;
+        width: clamp(290px, 18vw, 360px) !important;
+        max-width: clamp(290px, 18vw, 360px) !important;
+        min-width: 0 !important;
+    }
+
+}
+
+/* ============================================================
+   CAPAS — PROPORÇÃO DE PÔSTER
+   ============================================================ */
+
+.carousel .movie-card img,
+.carousel .serie-card img,
+.carousel .card img,
+.movies-grid .movie-card img,
+.movies-grid .serie-card img,
+.movies-grid .card img,
+.series-grid .movie-card img,
+.series-grid .serie-card img,
+.series-grid .card img,
+.catalog-grid .movie-card img,
+.catalog-grid .serie-card img,
+.catalog-grid .card img {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 2 / 3 !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    display: block !important;
+    border-radius: 10px !important;
+}
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (min-width: 601px) and (max-width: 1024px) {
+
+    .carousel,
+    .movies-grid,
+    .series-grid,
+    .catalog-grid {
+        gap: 12px !important;
+    }
+
+    .carousel .movie-card,
+    .carousel .serie-card,
+    .carousel .card,
+    .movies-grid .movie-card,
+    .movies-grid .serie-card,
+    .movies-grid .card,
+    .series-grid .movie-card,
+    .series-grid .serie-card,
+    .series-grid .card,
+    .catalog-grid .movie-card,
+    .catalog-grid .serie-card,
+    .catalog-grid .card {
+        flex: 0 0 230px !important;
+        width: 230px !important;
+        max-width: 230px !important;
+        min-width: 0 !important;
+    }
+
+}
+
+/* ============================================================
+   CELULAR
+   Duas capas grandes ocupando praticamente toda a tela
+   ============================================================ */
+
+@media (max-width: 600px) {
+
+    .carousel,
+    .movies-grid,
+    .series-grid,
+    .catalog-grid {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 7px !important;
+        padding-right: 7px !important;
+        gap: 7px !important;
+        box-sizing: border-box !important;
+    }
+
+    .carousel .movie-card,
+    .carousel .serie-card,
+    .carousel .card,
+    .movies-grid .movie-card,
+    .movies-grid .serie-card,
+    .movies-grid .card,
+    .series-grid .movie-card,
+    .series-grid .serie-card,
+    .series-grid .card,
+    .catalog-grid .movie-card,
+    .catalog-grid .serie-card,
+    .catalog-grid .card {
+        flex: 0 0 calc((100vw - 21px) / 2) !important;
+        width: calc((100vw - 21px) / 2) !important;
+        max-width: calc((100vw - 21px) / 2) !important;
+        min-width: 0 !important;
+    }
+
+    .carousel .movie-card img,
+    .carousel .serie-card img,
+    .carousel .card img,
+    .movies-grid .movie-card img,
+    .movies-grid .serie-card img,
+    .movies-grid .card img,
+    .series-grid .movie-card img,
+    .series-grid .serie-card img,
+    .series-grid .card img,
+    .catalog-grid .movie-card img,
+    .catalog-grid .serie-card img,
+    .catalog-grid .card img {
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 2 / 3 !important;
+        min-height: 0 !important;
+        object-fit: cover !important;
+    }
+
+}
+
+/* ============================================================
+   CARROSSEL
+   ============================================================ */
+
+.carousel {
+    display: flex !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+    scrollbar-width: none !important;
+}
+
+.carousel::-webkit-scrollbar {
+    display: none !important;
+}
+
+</style>
+
+
+<style id="luka-hero-titulo-sem-quadrado-final">
+.hero-title,
+#heroTitle {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    filter: none !important;
+}
+
+.hero-title::before,
+.hero-title::after,
+#heroTitle::before,
+#heroTitle::after {
+    content: none !important;
+    display: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+</style>
+
+<style id="luka-hero-conteudo-esquerda-final">
+/* HERO — conteúdo mais próximo da lateral esquerda */
+.hero-content {
+    left: 2.5% !important;
+    right: auto !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    text-align: left !important;
+}
+
+.hero-content .hero-badge,
+.hero-content .hero-title,
+.hero-content .hero-info,
+.hero-content .hero-description,
+.hero-content .hero-buttons {
+    margin-left: 0 !important;
+    text-align: left !important;
+}
+
+/* PC */
+@media (min-width: 769px) {
+    .hero-content {
+        left: 3% !important;
+        max-width: 620px !important;
+    }
+}
+
+/* CELULAR */
+@media (max-width: 768px) {
+    .hero-content {
+        left: 3% !important;
+        right: 3% !important;
+        max-width: none !important;
+        width: auto !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
 }
 </style>

@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LUKAFILMES • Central Administrativa</title>
+</head>
+<body>
+
+
+
+
+<style id="LUKA-PREMIUM">
+:root{
+--lk-bg:#03050a;
+--lk-bg2:#070b12;
+--lk-panel:rgba(12,17,27,.72);
+--lk-panel2:rgba(255,255,255,.045);
+--lk-line:rgba(255,255,255,.085);
+--lk-text:#f7f9ff;
+--lk-muted:#7f8ba3;
+--lk-red:#e50914;
+--lk-red2:#ff3344;
+--lk-green:#27e889;
+--lk-blue:#5ba7ff;
+--lk-purple:#a879ff;
+--lk-shadow:0 25px 90px rgba(0,0,0,.38);
+}
+
+*{box-sizing:border-box}
+
+html,body{
+margin:0!important;
+min-height:100%!important;
+background:
+radial-gradient(circle at 8% 8%,rgba(229,9,20,.13),transparent 25%),
+radial-gradient(circle at 90% 5%,rgba(91,167,255,.10),transparent 24%),
+radial-gradient(circle at 55% 90%,rgba(168,121,255,.08),transparent 30%),
+var(--lk-bg)!important;
+color:var(--lk-text)!important;
+font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+
+body:before,
+body:after{
+content:"";
+position:fixed;
+width:420px;
+height:420px;
+border-radius:50%;
+pointer-events:none;
+filter:blur(100px);
+opacity:.10;
+z-index:-1;
+animation:lkOrb 13s ease-in-out infinite alternate;
+}
+body:before{background:#e50914;left:-180px;top:20%}
+body:after{background:#5b8dff;right:-180px;bottom:5%;animation-delay:-6s}
+
+@keyframes lkOrb{
+from{transform:translate3d(0,0,0) scale(.85)}
+to{transform:translate3d(80px,-45px,0) scale(1.15)}
+}
+
+#LUKA-CENTRAL{
+position:fixed!important;
+inset:0!important;
+z-index:2147483000!important;
+overflow:auto!important;
+padding:0 24px 40px!important;
+background:
+linear-gradient(180deg,rgba(3,5,10,.28),rgba(3,5,10,.72))!important;
+}
+
+#LUKA-CENTRAL:before{
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+background:
+linear-gradient(90deg,transparent 49.8%,rgba(255,255,255,.012) 50%,transparent 50.2%);
+background-size:80px 80px;
+mask-image:linear-gradient(to bottom,rgba(0,0,0,.7),transparent 85%);
+opacity:.22;
+z-index:-1;
+}
+
+.lc-top{
+position:sticky!important;
+top:0!important;
+z-index:100!important;
+display:flex!important;
+align-items:center!important;
+justify-content:space-between!important;
+gap:20px!important;
+margin:0 -24px 30px!important;
+padding:17px 24px!important;
+background:rgba(4,7,13,.74)!important;
+border-bottom:1px solid var(--lk-line)!important;
+backdrop-filter:blur(28px)!important;
+-webkit-backdrop-filter:blur(28px)!important;
+box-shadow:0 10px 45px rgba(0,0,0,.25)!important;
+}
+
+.lc-brand{
+font-size:25px!important;
+font-weight:950!important;
+letter-spacing:-1px!important;
+text-shadow:0 0 25px rgba(229,9,20,.25)!important;
+}
+
+.lc-brand:before{
+content:"●";
+color:var(--lk-red);
+font-size:11px;
+margin-right:9px;
+vertical-align:middle;
+animation:lkBlink 1.6s infinite;
+}
+
+@keyframes lkBlink{
+50%{opacity:.35;text-shadow:0 0 0 transparent}
+}
+
+.lc-brand span{
+color:var(--lk-muted)!important;
+font-size:10px!important;
+letter-spacing:2px!important;
+font-weight:800!important;
+}
+
+.lc-actions{
+display:flex!important;
+gap:9px!important;
+align-items:center!important;
+}
+
+.lc-btn{
+position:relative!important;
+overflow:hidden!important;
+border:1px solid var(--lk-line)!important;
+border-radius:13px!important;
+padding:11px 15px!important;
+background:rgba(255,255,255,.045)!important;
+color:#fff!important;
+font-weight:850!important;
+cursor:pointer!important;
+transition:.22s cubic-bezier(.2,.8,.2,1)!important;
+box-shadow:0 5px 18px rgba(0,0,0,.15)!important;
+}
+
+.lc-btn:before{
+content:"";
+position:absolute;
+inset:0;
+background:linear-gradient(100deg,transparent,rgba(255,255,255,.12),transparent);
+transform:translateX(-120%);
+transition:.45s;
+}
+
+.lc-btn:hover:before{transform:translateX(120%)}
+.lc-btn:hover{
+transform:translateY(-3px)!important;
+border-color:rgba(255,255,255,.2)!important;
+box-shadow:0 12px 30px rgba(0,0,0,.3)!important;
+}
+
+.lc-primary{
+border:0!important;
+background:linear-gradient(135deg,#c90712,#ff3344)!important;
+box-shadow:0 10px 35px rgba(229,9,20,.27)!important;
+}
+
+.lc-primary:hover{
+box-shadow:0 15px 45px rgba(229,9,20,.4)!important;
+}
+
+.lc-grid{
+display:grid!important;
+grid-template-columns:repeat(5,minmax(0,1fr))!important;
+gap:15px!important;
+margin-bottom:20px!important;
+}
+
+.lc-card{
+position:relative!important;
+overflow:hidden!important;
+min-height:132px!important;
+padding:20px!important;
+border:1px solid var(--lk-line)!important;
+border-radius:22px!important;
+background:
+linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.018))!important;
+backdrop-filter:blur(24px)!important;
+-webkit-backdrop-filter:blur(24px)!important;
+box-shadow:var(--lk-shadow)!important;
+transition:.28s cubic-bezier(.2,.8,.2,1)!important;
+}
+
+.lc-card:before{
+content:"";
+position:absolute;
+width:150px;
+height:150px;
+right:-70px;
+top:-80px;
+border-radius:50%;
+background:rgba(229,9,20,.14);
+filter:blur(18px);
+transition:.4s;
+}
+
+.lc-card:after{
+content:"";
+position:absolute;
+inset:0;
+border-radius:inherit;
+background:linear-gradient(125deg,rgba(255,255,255,.08),transparent 30%);
+pointer-events:none;
+}
+
+.lc-card:hover{
+transform:translateY(-6px) scale(1.012)!important;
+border-color:rgba(255,255,255,.17)!important;
+box-shadow:0 28px 90px rgba(0,0,0,.48)!important;
+}
+
+.lc-card:hover:before{
+transform:scale(1.5);
+opacity:.75;
+}
+
+.lc-card small{
+display:block!important;
+font-size:9px!important;
+color:var(--lk-muted)!important;
+font-weight:950!important;
+letter-spacing:1.6px!important;
+text-transform:uppercase!important;
+}
+
+.lc-number{
+font-size:38px!important;
+font-weight:950!important;
+letter-spacing:-1.8px!important;
+line-height:1!important;
+margin-top:12px!important;
+text-shadow:0 8px 25px rgba(0,0,0,.3)!important;
+}
+
+.lc-live{
+display:flex!important;
+align-items:center!important;
+gap:9px!important;
+}
+
+.lc-dot{
+width:9px!important;
+height:9px!important;
+border-radius:50%!important;
+background:var(--lk-green)!important;
+box-shadow:0 0 0 5px rgba(39,232,137,.08),0 0 22px var(--lk-green)!important;
+animation:lkLive 1.5s infinite!important;
+}
+
+@keyframes lkLive{
+50%{transform:scale(.72);opacity:.42}
+}
+
+.lc-panel{
+position:relative!important;
+overflow:hidden!important;
+border:1px solid var(--lk-line)!important;
+border-radius:24px!important;
+background:rgba(10,15,24,.70)!important;
+backdrop-filter:blur(25px)!important;
+-webkit-backdrop-filter:blur(25px)!important;
+box-shadow:var(--lk-shadow)!important;
+padding:19px!important;
+}
+
+.lc-panel:before{
+content:"";
+position:absolute;
+top:0;
+left:0;
+right:0;
+height:1px;
+background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
+}
+
+.lc-toolbar{
+display:flex!important;
+align-items:center!important;
+gap:10px!important;
+margin-bottom:17px!important;
+}
+
+.lc-input,.lc-select{
+border:1px solid var(--lk-line)!important;
+background:rgba(3,6,11,.72)!important;
+color:#fff!important;
+border-radius:13px!important;
+padding:12px 14px!important;
+outline:none!important;
+box-shadow:inset 0 1px rgba(255,255,255,.025)!important;
+transition:.2s!important;
+}
+
+.lc-input:focus,.lc-select:focus{
+border-color:rgba(229,9,20,.62)!important;
+box-shadow:0 0 0 3px rgba(229,9,20,.08)!important;
+}
+
+.lc-table{
+width:100%!important;
+border-collapse:separate!important;
+border-spacing:0 6px!important;
+}
+
+.lc-table th{
+padding:9px 10px!important;
+color:#657087!important;
+font-size:9px!important;
+text-transform:uppercase!important;
+letter-spacing:1.3px!important;
+font-weight:950!important;
+}
+
+.lc-table td{
+padding:14px 10px!important;
+background:rgba(255,255,255,.025)!important;
+border-top:1px solid rgba(255,255,255,.045)!important;
+border-bottom:1px solid rgba(255,255,255,.045)!important;
+transition:.18s!important;
+}
+
+.lc-table tr:hover td{
+background:rgba(255,255,255,.055)!important;
+transform:translateY(-1px);
+}
+
+.lc-table td:first-child{
+border-left:1px solid rgba(255,255,255,.045)!important;
+border-radius:13px 0 0 13px!important;
+}
+
+.lc-table td:last-child{
+border-right:1px solid rgba(255,255,255,.045)!important;
+border-radius:0 13px 13px 0!important;
+}
+
+.lc-badge{
+display:inline-flex!important;
+align-items:center!important;
+gap:6px!important;
+padding:6px 10px!important;
+border-radius:999px!important;
+background:rgba(255,255,255,.065)!important;
+font-size:9px!important;
+font-weight:950!important;
+border:1px solid rgba(255,255,255,.05)!important;
+}
+
+.lc-online{
+color:var(--lk-green)!important;
+background:rgba(39,232,137,.07)!important;
+border-color:rgba(39,232,137,.12)!important;
+}
+
+.lc-modal{
+position:fixed!important;
+inset:0!important;
+background:rgba(0,0,0,.80)!important;
+display:none;
+align-items:center!important;
+justify-content:center!important;
+padding:18px!important;
+backdrop-filter:blur(20px)!important;
+-webkit-backdrop-filter:blur(20px)!important;
+z-index:2147483001!important;
+}
+
+.lc-box{
+width:min(650px,100%)!important;
+max-height:91vh!important;
+overflow:auto!important;
+padding:27px!important;
+border:1px solid rgba(255,255,255,.11)!important;
+border-radius:27px!important;
+background:
+radial-gradient(circle at 100% 0%,rgba(229,9,20,.10),transparent 35%),
+rgba(8,12,20,.97)!important;
+box-shadow:0 40px 120px #000!important;
+animation:lkModal .28s cubic-bezier(.2,.8,.2,1)!important;
+}
+
+@keyframes lkModal{
+from{opacity:0;transform:translateY(25px) scale(.96);filter:blur(5px)}
+to{opacity:1;transform:none;filter:none}
+}
+
+.lc-close{
+float:right!important;
+border:1px solid var(--lk-line)!important;
+background:rgba(255,255,255,.04)!important;
+color:#fff!important;
+width:36px!important;
+height:36px!important;
+border-radius:11px!important;
+font-size:21px!important;
+cursor:pointer!important;
+}
+
+.lc-box h2{
+margin:0 0 7px!important;
+font-size:27px!important;
+font-weight:950!important;
+letter-spacing:-1px!important;
+}
+
+.lc-box p{
+color:var(--lk-muted)!important;
+}
+
+.lc-fields{
+display:grid!important;
+grid-template-columns:1fr 1fr!important;
+gap:11px!important;
+}
+
+.lc-fields input,.lc-fields select{
+width:100%!important;
+padding:13px!important;
+border-radius:13px!important;
+border:1px solid var(--lk-line)!important;
+background:#05080e!important;
+color:#fff!important;
+outline:none!important;
+}
+
+.lc-hours{
+display:grid!important;
+grid-template-columns:repeat(4,1fr)!important;
+gap:8px!important;
+margin:17px 0!important;
+}
+
+.lc-hour{
+border:1px solid var(--lk-line)!important;
+border-radius:12px!important;
+padding:11px 8px!important;
+background:#0d131d!important;
+color:#fff!important;
+font-weight:950!important;
+cursor:pointer!important;
+transition:.18s!important;
+}
+
+.lc-hour:hover{
+background:rgba(229,9,20,.16)!important;
+border-color:rgba(229,9,20,.5)!important;
+transform:translateY(-3px)!important;
+box-shadow:0 8px 25px rgba(229,9,20,.12)!important;
+}
+
+.lc-footer{
+display:flex!important;
+justify-content:flex-end!important;
+gap:9px!important;
+margin-top:21px!important;
+}
+
+@media(max-width:1200px){
+.lc-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+
+@media(max-width:800px){
+#LUKA-CENTRAL{padding:0 12px 30px!important}
+.lc-top{margin:0 -12px 20px!important;padding:13px!important}
+.lc-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.lc-fields{grid-template-columns:1fr!important}
+.lc-hours{grid-template-columns:repeat(2,1fr)!important}
+.lc-table{min-width:900px!important}
+.lc-panel{overflow:auto!important}
+}
+
+@media(max-width:480px){
+.lc-grid{grid-template-columns:1fr!important}
+.lc-brand{font-size:19px!important}
+.lc-actions .lc-btn{padding:9px!important;font-size:11px!important}
+}
+</style>
+
+<style id="LUKA-NAV-FIX">
+.lk-navigation{
+display:flex;
+align-items:center;
+gap:8px;
+margin-right:auto;
+}
+.lk-navigation button{
+border:1px solid rgba(255,255,255,.09);
+background:rgba(255,255,255,.045);
+color:#fff;
+border-radius:12px;
+padding:10px 14px;
+font-weight:850;
+cursor:pointer;
+transition:.2s;
+}
+.lk-navigation button:hover,
+.lk-navigation button:active{
+background:rgba(229,9,20,.18);
+border-color:rgba(229,9,20,.5);
+transform:translateY(-2px);
+}
+.lk-navigation .lk-filmes{
+background:linear-gradient(135deg,#e50914,#ff3344);
+border:0;
+box-shadow:0 8px 25px rgba(229,9,20,.22);
+}
+.lk-navigation .lk-sair{
+color:#ff7180;
+}
+.lc-card[data-filter]{
+cursor:pointer!important;
+user-select:none;
+-webkit-tap-highlight-color:transparent;
+}
+.lc-card[data-filter]:active{
+transform:scale(.975)!important;
+}
+.lk-filter-active{
+outline:2px solid rgba(229,9,20,.55)!important;
+box-shadow:0 0 0 5px rgba(229,9,20,.07),0 25px 80px rgba(0,0,0,.4)!important;
+}
+.lk-filter-label{
+display:inline-flex;
+align-items:center;
+gap:8px;
+margin-left:4px;
+padding:7px 11px;
+border-radius:999px;
+background:rgba(229,9,20,.10);
+border:1px solid rgba(229,9,20,.2);
+color:#ff6672;
+font-size:10px;
+font-weight:900;
+}
+.lk-empty{
+padding:45px 20px;
+text-align:center;
+color:#7f8ba3;
+font-weight:800;
+}
+</style>
+
+<style id="LUKA-MINI-PANELS">
+#lk-mini-overlay{
+position:fixed;
+inset:0;
+z-index:2147483645;
+display:none;
+align-items:center;
+justify-content:center;
+padding:20px;
+background:rgba(0,0,0,.68);
+backdrop-filter:blur(16px);
+-webkit-backdrop-filter:blur(16px);
+}
+
+#lk-mini-overlay.lk-show{
+display:flex;
+}
+
+.lk-mini-box{
+width:min(720px,96vw);
+max-height:82vh;
+overflow:hidden;
+display:flex;
+flex-direction:column;
+border:1px solid rgba(255,255,255,.12);
+border-radius:26px;
+background:
+radial-gradient(circle at 100% 0%,rgba(229,9,20,.12),transparent 35%),
+linear-gradient(145deg,rgba(18,24,36,.97),rgba(7,10,16,.98));
+box-shadow:
+0 35px 120px rgba(0,0,0,.65),
+0 0 70px rgba(229,9,20,.08);
+animation:lkMiniIn .25s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes lkMiniIn{
+from{
+opacity:0;
+transform:translateY(18px) scale(.96);
+filter:blur(5px);
+}
+to{
+opacity:1;
+transform:none;
+filter:none;
+}
+}
+
+.lk-mini-head{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+padding:20px 22px;
+border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.lk-mini-title{
+display:flex;
+align-items:center;
+gap:12px;
+font-size:21px;
+font-weight:950;
+}
+
+.lk-mini-icon{
+width:42px;
+height:42px;
+display:grid;
+place-items:center;
+border-radius:14px;
+background:rgba(229,9,20,.12);
+border:1px solid rgba(229,9,20,.2);
+font-size:20px;
+}
+
+.lk-mini-close{
+width:38px;
+height:38px;
+border:1px solid rgba(255,255,255,.09);
+border-radius:12px;
+background:rgba(255,255,255,.045);
+color:#fff;
+font-size:22px;
+cursor:pointer;
+transition:.18s;
+}
+
+.lk-mini-close:hover{
+background:rgba(229,9,20,.18);
+border-color:rgba(229,9,20,.4);
+transform:rotate(4deg) scale(1.04);
+}
+
+.lk-mini-sub{
+padding:0 22px 15px;
+color:#7f8ba3;
+font-size:12px;
+}
+
+.lk-mini-body{
+overflow:auto;
+padding:0 18px 20px;
+}
+
+.lk-mini-stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+margin-bottom:14px;
+}
+
+.lk-mini-stat{
+padding:13px;
+border:1px solid rgba(255,255,255,.07);
+border-radius:15px;
+background:rgba(255,255,255,.035);
+}
+
+.lk-mini-stat small{
+display:block;
+color:#778399;
+font-size:9px;
+font-weight:900;
+text-transform:uppercase;
+letter-spacing:1px;
+}
+
+.lk-mini-stat strong{
+display:block;
+font-size:23px;
+margin-top:6px;
+}
+
+.lk-user{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:14px;
+padding:13px;
+margin-bottom:7px;
+border:1px solid rgba(255,255,255,.055);
+border-radius:15px;
+background:rgba(255,255,255,.028);
+transition:.18s;
+}
+
+.lk-user:hover{
+background:rgba(255,255,255,.055);
+transform:translateX(3px);
+}
+
+.lk-user-left{
+display:flex;
+align-items:center;
+gap:11px;
+min-width:0;
+}
+
+.lk-avatar{
+width:39px;
+height:39px;
+flex:none;
+display:grid;
+place-items:center;
+border-radius:13px;
+background:linear-gradient(135deg,#242c3c,#10151e);
+font-weight:950;
+}
+
+.lk-user-name{
+font-weight:900;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.lk-user-meta{
+margin-top:3px;
+font-size:10px;
+color:#7f8ba3;
+}
+
+.lk-status{
+display:inline-flex;
+align-items:center;
+gap:6px;
+padding:6px 9px;
+border-radius:999px;
+font-size:9px;
+font-weight:950;
+white-space:nowrap;
+}
+
+.lk-status.online{
+color:#38ed91;
+background:rgba(56,237,145,.08);
+border:1px solid rgba(56,237,145,.13);
+}
+
+.lk-status.active{
+color:#68adff;
+background:rgba(104,173,255,.08);
+border:1px solid rgba(104,173,255,.13);
+}
+
+.lk-status.expired{
+color:#ff6673;
+background:rgba(255,70,85,.08);
+border:1px solid rgba(255,70,85,.13);
+}
+
+.lk-test-time{
+color:#caa8ff;
+font-weight:950;
+font-size:11px;
+}
+
+.lk-empty-mini{
+padding:45px 15px;
+text-align:center;
+color:#7f8ba3;
+font-size:12px;
+font-weight:800;
+}
+
+@media(max-width:600px){
+#lk-mini-overlay{padding:10px}
+.lk-mini-box{
+width:100%;
+max-height:88vh;
+border-radius:22px;
+}
+.lk-mini-stats{grid-template-columns:1fr 1fr}
+.lk-mini-head{padding:17px}
+.lk-mini-sub{padding:0 17px 13px}
+.lk-mini-body{padding:0 12px 15px}
+}
+</style>
+<div id="LUKA-CENTRAL">
+<div class="lc-top">
+<div class="lc-brand">LUKAFILMES <span>• CENTRAL ADMIN</span></div>
+<div class="lc-actions">
+<button class="lc-btn lc-primary" onclick="LC.openUser()">＋ Novo Usuário</button>
+<button class="lc-btn" onclick="LC.openTest()">⚡ Criar Teste</button>
+<button class="lc-btn" onclick="LC.load()">↻ Atualizar</button>
+</div>
+</div>
+
+<div class="lc-grid">
+<div class="lc-card"><small>USUÁRIOS</small><div class="lc-number" id="lc-total">0</div></div>
+<div class="lc-card"><small>ATIVOS</small><div class="lc-number" id="lc-active">0</div></div>
+<div class="lc-card"><small>TESTES</small><div class="lc-number" id="lc-tests">0</div></div>
+<div class="lc-card"><small>EXPIRADOS</small><div class="lc-number" id="lc-expired">0</div></div>
+<div class="lc-card"><small>ONLINE AGORA</small><div class="lc-number lc-live"><i class="lc-dot"></i><span id="lc-online">0</span></div></div>
+</div>
+
+<div class="lc-panel">
+<div class="lc-toolbar">
+<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+<select id="lc-filter" class="lc-select" onchange="LC.render()">
+<option value="">Todos</option>
+<option value="ativo">Ativos</option>
+<option value="inativo">Inativos</option>
+<option value="teste">Testes</option>
+<option value="revendedor">Revendedores</option>
+</select>
+</div>
+
+<table class="lc-table">
+<thead><tr>
+<th>Usuário</th><th>Status</th><th>Validade</th><th>Conexões</th><th>Tipo</th><th>Ações</th>
+</tr></thead>
+<tbody id="lc-body"></tbody>
+</table>
+</div>
+</div>
+
+<div id="lc-user-modal" class="lc-modal">
+<div class="lc-box">
+<button class="lc-close" onclick="LC.close('lc-user-modal')">×</button>
+<h2 id="lc-user-title">Novo Usuário</h2>
+<div class="lc-fields">
+<input id="lc-u" placeholder="Usuário">
+<input id="lc-p" placeholder="Senha">
+<input id="lc-days" type="number" value="30" min="1" placeholder="Dias">
+<input id="lc-limit" type="number" value="1" min="1" placeholder="Limite de conexões">
+<input id="lc-phone" placeholder="Telefone / WhatsApp">
+<input id="lc-value" type="number" step="0.01" placeholder="Valor">
+<select id="lc-type">
+<option value="usuario">Usuário</option>
+<option value="teste">Teste</option>
+</select>
+</div>
+<div class="lc-footer">
+<button class="lc-btn" onclick="LC.close('lc-user-modal')">Cancelar</button>
+<button class="lc-btn lc-primary" onclick="LC.saveUser()">Salvar Usuário</button>
+</div>
+</div>
+</div>
+
+<div id="lc-test-modal" class="lc-modal">
+<div class="lc-box">
+<button class="lc-close" onclick="LC.close('lc-test-modal')">×</button>
+<h2>⚡ Criar Teste Automático</h2>
+<p style="opacity:.65">Escolha quantas horas o teste ficará ativo.</p>
+<div class="lc-hours">
+<button class="lc-hour" onclick="LC.setHours(1)">1h</button>
+<button class="lc-hour" onclick="LC.setHours(2)">2h</button>
+<button class="lc-hour" onclick="LC.setHours(3)">3h</button>
+<button class="lc-hour" onclick="LC.setHours(5)">5h</button>
+<button class="lc-hour" onclick="LC.setHours(10)">10h</button>
+<button class="lc-hour" onclick="LC.setHours(24)">24h</button>
+<button class="lc-hour" onclick="LC.setHours(48)">48h</button>
+<button class="lc-hour" onclick="LC.setHours(72)">72h</button>
+</div>
+<input id="lc-test-hours" class="lc-input" type="number" min="1" value="1" placeholder="Quantidade personalizada de horas">
+<input id="lc-test-limit" class="lc-input" type="number" min="1" value="1" placeholder="Limite de conexões" style="margin-top:10px">
+<div class="lc-footer">
+<button class="lc-btn" onclick="LC.close('lc-test-modal')">Cancelar</button>
+<button class="lc-btn lc-primary" onclick="LC.createTest()">⚡ Criar Teste</button>
+</div>
+</div>
+</div>
+
+<script>
+window.LC=(function(){
+let users=[],editing=null;
+
+async function load(){
+try{
+const r=await fetch('/api/admin/usuarios',{credentials:'same-origin'});
+const j=await r.json();
+users=Array.isArray(j)?j:(j.usuarios||j.users||[]);
+render();
+}catch(e){console.error(e)}
+}
+
+function render(){
+const q=(document.getElementById('lc-search').value||'').toLowerCase();
+const f=document.getElementById('lc-filter').value;
+let list=users.filter(x=>{
+const text=JSON.stringify(x).toLowerCase();
+if(q&&!text.includes(q))return false;
+const tipo=String(x.tipo||x.role||'usuario').toLowerCase();
+const status=String(x.status||'').toLowerCase();
+if(f==='revendedor'&&!tipo.includes('revendedor'))return false;
+if(f==='teste'&&!tipo.includes('teste'))return false;
+if(f==='ativo'&&!['ativo','active','1'].includes(status)&&x.ativo!==1&&x.ativo!==true)return false;
+if(f==='inativo'&&(['ativo','active','1'].includes(status)||x.ativo===1||x.ativo===true))return false;
+return true;
+});
+
+document.getElementById('lc-total').textContent=users.length;
+document.getElementById('lc-active').textContent=users.filter(x=>['ativo','active','1'].includes(String(x.status).toLowerCase())||x.ativo===1||x.ativo===true).length;
+document.getElementById('lc-tests').textContent=users.filter(x=>String(x.tipo||'').toLowerCase().includes('teste')).length;
+document.getElementById('lc-expired').textContent=users.filter(x=>String(x.status||'').toLowerCase().includes('expir')).length;
+document.getElementById('lc-online').textContent=users.filter(x=>x.online||x.conectado||Number(x.conexoes_utilizadas||0)>0).length;
+
+document.getElementById('lc-body').innerHTML=list.map(x=>{
+const tipo=String(x.tipo||x.role||'usuario');
+const rev=tipo.toLowerCase().includes('revendedor');
+const online=x.online||x.conectado||Number(x.conexoes_utilizadas||0)>0;
+return `<tr>
+<td><b>${esc(x.usuario||x.username||'-')}</b><br><small style="opacity:.45">${esc(x.telefone||x.whatsapp||'')}</small></td>
+<td><span class="lc-badge ${online?'lc-online':''}">${online?'● ONLINE':esc(x.status||'ATIVO')}</span></td>
+<td>${esc(x.validade||x.data_expiracao||x.expira_em||'-')}</td>
+<td>${x.conexoes_utilizadas||0}/${x.limite_conexoes||1}</td>
+<td>${esc(tipo)}</td>
+<td style="white-space:nowrap">
+${rev?'<span class="lc-badge">PROTEGIDO</span>':`
+<button class="lc-btn" onclick='LC.edit(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Editar</button>
+<button class="lc-btn" onclick="LC.renew(${Number(x.id)||0})">Renovar</button>
+<button class="lc-btn" onclick="LC.status(${Number(x.id)||0})">Ativar/Desativar</button>
+<button class="lc-btn" onclick="LC.del(${Number(x.id)||0})">Excluir</button>`}
+</td></tr>`;
+}).join('');
+}
+
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+function openUser(){editing=null;document.getElementById('lc-user-title').textContent='Novo Usuário';['lc-u','lc-p','lc-phone','lc-value'].forEach(id=>document.getElementById(id).value='');document.getElementById('lc-days').value=30;document.getElementById('lc-limit').value=1;document.getElementById('lc-type').value='usuario';show('lc-user-modal')}
+function edit(x){editing=x;document.getElementById('lc-user-title').textContent='Editar Usuário';document.getElementById('lc-u').value=x.usuario||x.username||'';document.getElementById('lc-p').value='';document.getElementById('lc-phone').value=x.telefone||x.whatsapp||'';document.getElementById('lc-value').value=x.valor||x.valor_mensal||'';document.getElementById('lc-limit').value=x.limite_conexoes||1;document.getElementById('lc-type').value=String(x.tipo||'usuario').toLowerCase().includes('teste')?'teste':'usuario';show('lc-user-modal')}
+async function saveUser(){
+const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+if(editing)body.id=editing.id;
+const url=editing?'/api/admin/usuarios/editar':'/api/admin/usuarios';
+const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)});
+const j=await r.json().catch(()=>({}));
+if(!r.ok||j.sucesso===false)alert(j.mensagem||'Não foi possível salvar.');
+else{close('lc-user-modal');await load()}
+}
+function openTest(){document.getElementById('lc-test-hours').value=1;show('lc-test-modal')}
+function setHours(h){document.getElementById('lc-test-hours').value=h}
+async function createTest(){
+const horas=Math.max(1,Number(document.getElementById('lc-test-hours').value)||1);
+const limite=Math.max(1,Number(document.getElementById('lc-test-limit').value)||1);
+const r=await fetch('/api/admin/usuarios/teste',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({horas,limite_conexoes:limite,valor:0})});
+const j=await r.json().catch(()=>({}));
+if(!r.ok||j.sucesso===false)alert(j.mensagem||'Não foi possível criar o teste.');
+else{close('lc-test-modal');await load()}
+}
+async function renew(id){if(!id)return;const dias=Number(prompt('Quantos dias deseja renovar?',30));if(!dias)return;await fetch('/api/admin/usuarios/renovar',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({id,dias})});await load()}
+async function status(id){if(!id)return;await fetch('/api/admin/usuarios/status',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({id})});await load()}
+async function del(id){if(!id||!confirm('Excluir este usuário permanentemente?'))return;await fetch('/api/admin/usuarios/excluir',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({id})});await load()}
+function show(id){document.getElementById(id).style.display='flex'}
+function close(id){document.getElementById(id).style.display='none'}
+load();setInterval(load,15000);
+return{load,render,openUser,edit,saveUser,openTest,setHours,createTest,renew,status,del,show,close}
+})();
+</script>
+
+
+<script id="LUKA-ULTRA">
+(function(){
+  function animateNumbers(){
+    document.querySelectorAll('#LUKA-CENTRAL .lc-number').forEach(el=>{
+      if(el.dataset.lkAnimated==='1') return;
+      const raw=el.textContent.trim();
+      const n=parseInt(raw.replace(/\D/g,''),10);
+      if(!Number.isFinite(n)) return;
+      el.dataset.lkAnimated='1';
+      const start=performance.now();
+      const duration=650;
+      function frame(t){
+        const p=Math.min(1,(t-start)/duration);
+        const e=1-Math.pow(1-p,3);
+        el.textContent=Math.round(n*e).toLocaleString('pt-BR');
+        if(p<1) requestAnimationFrame(frame);
+      }
+      el.textContent='0';
+      requestAnimationFrame(frame);
+    });
+  }
+
+  function addLiveIndicator(){
+    const top=document.querySelector('#LUKA-CENTRAL .lc-top');
+    if(!top || top.querySelector('.lk-live-system')) return;
+    const d=document.createElement('div');
+    d.className='lk-live-system';
+    d.innerHTML='<span></span> SISTEMA ONLINE';
+    d.style.cssText='display:flex;align-items:center;gap:7px;font-size:9px;font-weight:950;letter-spacing:1.2px;color:#7f8ba3;margin-left:auto;margin-right:8px';
+    d.querySelector('span').style.cssText='width:7px;height:7px;border-radius:50%;background:#27e889;box-shadow:0 0 14px #27e889;animation:lkLive 1.5s infinite';
+    top.appendChild(d);
+  }
+
+  function reveal(){
+    document.querySelectorAll('#LUKA-CENTRAL .lc-card,#LUKA-CENTRAL .lc-panel').forEach((el,i)=>{
+      if(el.dataset.lkReveal==='1') return;
+      el.dataset.lkReveal='1';
+      el.style.opacity='0';
+      el.style.transform='translateY(12px)';
+      setTimeout(()=>{
+        el.style.transition='opacity .45s ease,transform .45s ease';
+        el.style.opacity='1';
+        el.style.transform='none';
+      },60+i*45);
+    });
+  }
+
+  setTimeout(()=>{
+    addLiveIndicator();
+    reveal();
+    animateNumbers();
+  },120);
+
+  new MutationObserver(()=>{
+    addLiveIndicator();
+    animateNumbers();
+  }).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+
+<script id="LUKA-FUNCTIONAL-NAV">
+(function(){
+
+let activeFilter='all';
+
+function findUserRows(){
+  return [...document.querySelectorAll('#LUKA-CENTRAL tbody tr')];
+}
+
+function getRowText(row){
+  return (row.innerText||row.textContent||'').toLowerCase();
+}
+
+function filterUsers(filter){
+
+  activeFilter=filter;
+
+  const rows=findUserRows();
+
+  rows.forEach(row=>{
+    let show=true;
+    const text=getRowText(row);
+
+    if(filter==='online'){
+      show=/online|conectado|🟢/.test(text);
+    }
+
+    if(filter==='active'){
+      show=/ativo|ativa|🟢/.test(text) && !/expirado|inativo/.test(text);
+    }
+
+    if(filter==='tests'){
+      show=/teste|test/.test(text);
+    }
+
+    if(filter==='expired'){
+      show=/expirado|vencido|inativo/.test(text);
+    }
+
+    if(filter==='all'){
+      show=true;
+    }
+
+    row.style.display=show?'':'none';
+  });
+
+  document.querySelectorAll('#LUKA-CENTRAL .lc-card[data-filter]')
+    .forEach(c=>c.classList.toggle('lk-filter-active',
+      c.dataset.filter===filter));
+
+  const label=document.querySelector('#lk-active-filter');
+
+  if(label){
+    const names={
+      all:'Todos os usuários',
+      online:'Usuários online',
+      active:'Usuários ativos',
+      tests:'Testes ativos',
+      expired:'Usuários expirados'
+    };
+    label.textContent=names[filter]||'Todos os usuários';
+  }
+
+  const visible=rows.filter(r=>r.style.display!=='none');
+
+  let empty=document.querySelector('#lk-filter-empty');
+
+  if(!visible.length){
+
+    if(!empty){
+      empty=document.createElement('div');
+      empty.id='lk-filter-empty';
+      empty.className='lk-empty';
+      empty.innerHTML='Nenhum usuário encontrado neste filtro.';
+      const table=document.querySelector('#LUKA-CENTRAL table');
+      if(table && table.parentElement)
+        table.parentElement.appendChild(empty);
+    }
+
+    empty.style.display='block';
+
+  }else if(empty){
+
+    empty.style.display='none';
+
+  }
+}
+
+function findCardByFilter(filter){
+  return document.querySelector(
+    '#LUKA-CENTRAL .lc-card[data-filter="'+filter+'"]'
+  );
+}
+
+function prepareCards(){
+
+  const numbers=[...document.querySelectorAll('#LUKA-CENTRAL .lc-number')];
+
+  numbers.forEach(number=>{
+
+    const card=number.closest('.lc-card');
+    if(!card || card.dataset.lkBound==='1') return;
+
+    const label=(card.innerText||'').toLowerCase();
+
+    let filter='all';
+
+    if(label.includes('online')) filter='online';
+    else if(label.includes('teste')) filter='tests';
+    else if(label.includes('expir')) filter='expired';
+    else if(label.includes('ativo')) filter='active';
+    else if(label.includes('usuário') || label.includes('usuarios'))
+      filter='all';
+
+    card.dataset.filter=filter;
+    card.dataset.lkBound='1';
+
+    card.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      filterUsers(filter);
+    });
+
+    card.addEventListener('touchend',function(e){
+      e.preventDefault();
+      filterUsers(filter);
+    },{passive:false});
+
+  });
+}
+
+function installNavigation(){
+
+  const top=document.querySelector('#LUKA-CENTRAL .lc-top');
+  if(!top || top.querySelector('.lk-navigation')) return;
+
+  const nav=document.createElement('div');
+  nav.className='lk-navigation';
+
+  nav.innerHTML=`
+    <button type="button" class="lk-filmes" id="lk-voltar-filmes">
+      🎬 Filmes
+    </button>
+    <button type="button" class="lk-sair" id="lk-sair-total">
+      🚪 Sair
+    </button>
+  `;
+
+  top.insertBefore(nav,top.firstChild);
+
+  document
+    .querySelector('#lk-voltar-filmes')
+    .addEventListener('click',()=>{
+      window.location.href='/';
+    });
+
+  document
+    .querySelector('#lk-sair-total')
+    .addEventListener('click',async()=>{
+
+      try{
+
+        await fetch('/api/logout',{
+          method:'POST',
+          credentials:'include'
+        });
+
+      }catch(e){}
+
+      window.location.href='/login.html';
+
+    });
+
+}
+
+function installFilterHeader(){
+
+  const panel=document.querySelector('#LUKA-CENTRAL .lc-panel');
+  if(!panel || document.querySelector('#lk-active-filter')) return;
+
+  const toolbar=panel.querySelector('.lc-toolbar');
+
+  if(toolbar){
+
+    const label=document.createElement('span');
+    label.id='lk-active-filter';
+    label.className='lk-filter-label';
+    label.textContent='Todos os usuários';
+
+    toolbar.appendChild(label);
+
+  }
+
+}
+
+function installRefresh(){
+
+  const buttons=[...document.querySelectorAll('#LUKA-CENTRAL button')];
+
+  buttons.forEach(btn=>{
+
+    const text=(btn.innerText||'').toLowerCase();
+
+    if(
+      text.includes('atualizar') ||
+      text.includes('refresh')
+    ){
+
+      if(btn.dataset.lkRefresh==='1') return;
+
+      btn.dataset.lkRefresh='1';
+
+      btn.addEventListener('click',()=>{
+        activeFilter='all';
+        setTimeout(()=>{
+          prepareCards();
+          filterUsers('all');
+        },300);
+      });
+
+    }
+
+  });
+
+}
+
+function boot(){
+
+  installNavigation();
+  installFilterHeader();
+  prepareCards();
+  installRefresh();
+
+}
+
+boot();
+
+setTimeout(boot,300);
+setTimeout(boot,1000);
+setTimeout(boot,2000);
+
+new MutationObserver(()=>{
+  installNavigation();
+  installFilterHeader();
+  prepareCards();
+  installRefresh();
+
+  if(activeFilter!=='all'){
+    setTimeout(()=>filterUsers(activeFilter),50);
+  }
+
+}).observe(document.body,{
+  childList:true,
+  subtree:true
+});
+
+})();
+</script>
+
+<script id="LUKA-MINI-PANELS-JS">
+(function(){
+
+function getRows(){
+return [...document.querySelectorAll('#LUKA-CENTRAL tbody tr')];
+}
+
+function text(row){
+return (row.innerText||row.textContent||'').toLowerCase();
+}
+
+function classify(row){
+const t=text(row);
+
+if(/online|conectado|🟢/.test(t))
+return 'online';
+
+if(/teste|test/.test(t))
+return 'tests';
+
+if(/expirado|vencido|inativo/.test(t))
+return 'expired';
+
+return 'active';
+}
+
+function createOverlay(){
+
+if(document.getElementById('lk-mini-overlay')) return;
+
+const overlay=document.createElement('div');
+overlay.id='lk-mini-overlay';
+
+overlay.innerHTML=`
+<div class="lk-mini-box">
+
+<div class="lk-mini-head">
+
+<div class="lk-mini-title">
+<div class="lk-mini-icon" id="lk-mini-icon">📊</div>
+<span id="lk-mini-title">Resumo</span>
+</div>
+
+<button class="lk-mini-close" id="lk-mini-close" type="button">×</button>
+
+</div>
+
+<div class="lk-mini-sub" id="lk-mini-sub">
+Informações em tempo real
+</div>
+
+<div class="lk-mini-body">
+
+<div class="lk-mini-stats">
+<div class="lk-mini-stat">
+<small>Total</small>
+<strong id="lk-mini-total">0</strong>
+</div>
+
+<div class="lk-mini-stat">
+<small>Online</small>
+<strong id="lk-mini-online">0</strong>
+</div>
+
+<div class="lk-mini-stat">
+<small>Ativos</small>
+<strong id="lk-mini-active">0</strong>
+</div>
+</div>
+
+<div id="lk-mini-list"></div>
+
+</div>
+</div>
+`;
+
+document.body.appendChild(overlay);
+
+document
+.getElementById('lk-mini-close')
+.addEventListener('click',closeMini);
+
+overlay.addEventListener('click',e=>{
+if(e.target===overlay) closeMini();
+});
+
+document.addEventListener('keydown',e=>{
+if(e.key==='Escape') closeMini();
+});
+
+}
+
+function closeMini(){
+
+const overlay=document.getElementById('lk-mini-overlay');
+
+if(overlay){
+overlay.classList.remove('lk-show');
+}
+
+}
+
+function openMini(type){
+
+createOverlay();
+
+const overlay=document.getElementById('lk-mini-overlay');
+
+const titles={
+all:['📊','Usuários','Visão geral dos usuários cadastrados'],
+online:['🟢','Online agora','Usuários conectados neste momento'],
+active:['⚡','Usuários ativos','Contas atualmente válidas'],
+tests:['🧪','Testes ativos','Testes e acessos temporários'],
+expired:['⛔','Expirados','Usuários com acesso vencido']
+};
+
+const info=titles[type]||titles.all;
+
+document.getElementById('lk-mini-icon').textContent=info[0];
+document.getElementById('lk-mini-title').textContent=info[1];
+document.getElementById('lk-mini-sub').textContent=info[2];
+
+const rows=getRows();
+
+let classified=rows.map(row=>({
+row,
+type:classify(row)
+}));
+
+const total=classified.length;
+const online=classified.filter(x=>x.type==='online').length;
+const active=classified.filter(x=>x.type==='active'||x.type==='online').length;
+
+document.getElementById('lk-mini-total').textContent=total;
+document.getElementById('lk-mini-online').textContent=online;
+document.getElementById('lk-mini-active').textContent=active;
+
+let selected;
+
+if(type==='all')
+selected=classified;
+
+else
+selected=classified.filter(x=>x.type===type);
+
+const list=document.getElementById('lk-mini-list');
+
+if(!selected.length){
+
+list.innerHTML=`
+<div class="lk-empty-mini">
+✨ Nenhum usuário encontrado nesta categoria.
+</div>`;
+
+}else{
+
+list.innerHTML=selected.map(item=>{
+
+const cells=[...item.row.querySelectorAll('td')];
+
+let name=cells[0]?.innerText?.trim()||'Usuário';
+let meta=cells[1]?.innerText?.trim()||'';
+let status=item.type;
+
+let icon=status==='online'?'🟢':
+status==='tests'?'🧪':
+status==='expired'?'⛔':'⚡';
+
+let statusText=status==='online'?'ONLINE':
+status==='tests'?'TESTE':
+status==='expired'?'EXPIRADO':'ATIVO';
+
+return `
+<div class="lk-user">
+
+<div class="lk-user-left">
+
+<div class="lk-avatar">${icon}</div>
+
+<div style="min-width:0">
+<div class="lk-user-name">${escapeHtml(name)}</div>
+<div class="lk-user-meta">${escapeHtml(meta)}</div>
+</div>
+
+</div>
+
+<span class="lk-status ${status}">
+${icon} ${statusText}
+</span>
+
+</div>
+`;
+
+}).join('');
+
+}
+
+overlay.classList.add('lk-show');
+
+}
+
+function escapeHtml(v){
+
+return String(v??'')
+.replace(/&/g,'&amp;')
+.replace(/</g,'&lt;')
+.replace(/>/g,'&gt;')
+.replace(/"/g,'&quot;')
+.replace(/'/g,'&#039;');
+
+}
+
+function prepareCards(){
+
+const cards=[
+...document.querySelectorAll('#LUKA-CENTRAL .lc-card')
+];
+
+cards.forEach(card=>{
+
+if(card.dataset.lkMiniBound==='1') return;
+
+const raw=(card.innerText||'').toLowerCase();
+
+let type='all';
+
+if(raw.includes('online'))
+type='online';
+
+else if(raw.includes('teste'))
+type='tests';
+
+else if(raw.includes('expir'))
+type='expired';
+
+else if(raw.includes('ativo'))
+type='active';
+
+else if(raw.includes('usuário')||raw.includes('usuarios'))
+type='all';
+
+card.dataset.lkMiniBound='1';
+card.dataset.lkMiniType=type;
+
+card.addEventListener('click',function(e){
+
+e.preventDefault();
+e.stopPropagation();
+
+openMini(type);
+
+});
+
+});
+
+}
+
+function boot(){
+
+createOverlay();
+prepareCards();
+
+}
+
+boot();
+
+setTimeout(boot,300);
+setTimeout(boot,800);
+setTimeout(boot,1500);
+
+new MutationObserver(()=>{
+
+setTimeout(()=>{
+createOverlay();
+prepareCards();
+},20);
+
+}).observe(document.body,{
+childList:true,
+subtree:true
+});
+
+})();
+</script>
+</body>
+</html>
+
+<script id="LUKA-ULTRA">
+(function(){
+  function animateNumbers(){
+    document.querySelectorAll('#LUKA-CENTRAL .lc-number').forEach(el=>{
+      if(el.dataset.lkAnimated==='1') return;
+      const raw=el.textContent.trim();
+      const n=parseInt(raw.replace(/\D/g,''),10);
+      if(!Number.isFinite(n)) return;
+      el.dataset.lkAnimated='1';
+      const start=performance.now();
+      const duration=650;
+      function frame(t){
+        const p=Math.min(1,(t-start)/duration);
+        const e=1-Math.pow(1-p,3);
+        el.textContent=Math.round(n*e).toLocaleString('pt-BR');
+        if(p<1) requestAnimationFrame(frame);
+      }
+      el.textContent='0';
+      requestAnimationFrame(frame);
+    });
+  }
+
+  function addLiveIndicator(){
+    const top=document.querySelector('#LUKA-CENTRAL .lc-top');
+    if(!top || top.querySelector('.lk-live-system')) return;
+    const d=document.createElement('div');
+    d.className='lk-live-system';
+    d.innerHTML='<span></span> SISTEMA ONLINE';
+    d.style.cssText='display:flex;align-items:center;gap:7px;font-size:9px;font-weight:950;letter-spacing:1.2px;color:#7f8ba3;margin-left:auto;margin-right:8px';
+    d.querySelector('span').style.cssText='width:7px;height:7px;border-radius:50%;background:#27e889;box-shadow:0 0 14px #27e889;animation:lkLive 1.5s infinite';
+    top.appendChild(d);
+  }
+
+  function reveal(){
+    document.querySelectorAll('#LUKA-CENTRAL .lc-card,#LUKA-CENTRAL .lc-panel').forEach((el,i)=>{
+      if(el.dataset.lkReveal==='1') return;
+      el.dataset.lkReveal='1';
+      el.style.opacity='0';
+      el.style.transform='translateY(12px)';
+      setTimeout(()=>{
+        el.style.transition='opacity .45s ease,transform .45s ease';
+        el.style.opacity='1';
+        el.style.transform='none';
+      },60+i*45);
+    });
+  }
+
+  setTimeout(()=>{
+    addLiveIndicator();
+    reveal();
+    animateNumbers();
+  },120);
+
+  new MutationObserver(()=>{
+    addLiveIndicator();
+    animateNumbers();
+  }).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+</body></html>

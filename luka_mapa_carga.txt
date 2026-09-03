@@ -1,0 +1,233 @@
+===== LUKAFILMES — MAPA REAL DE CARGA =====
+
+--- TAMANHO INDEX ---
+211181 index.html
+
+--- SCRIPTS INLINE ---
+2340:<script id="lukafilmes-tv-navigation-final">
+3514:<script id="lukafilmes-bloqueio-zoom-mobile">
+3591:<script id="lukafilmes-loader-js">
+3964:<script>
+6516:<script>
+6639:<script id="lukafilmes-pesquisa-home-final">
+6802:<script id="lukafilmes-catalogo-home-js">
+6868:<script src="/js/continuar-assistindo.js"></script>
+6869:<script>
+6881:<script id="lukafilmes-menu-mobile-fechar-ao-tocar-home">
+6976:<script id="lukafilmes-controle-menu-usuario">
+7040:<script id="luka-carrossel-performance">
+7490:<script id="lukafilmes-hero-audio-direto">
+7594:<script id="lukafilmes-hero-youtube-clean">
+7898:<script id="lukafilmes-hero-retomada">
+8616:<script id="lukafilmes-boasvindas-unificado-script">
+8820:<script id="lukafilmes-loader-navegacao">
+8846:<script id="lukafilmes-notificacoes-js">
+9199:<script id="lukafilmes-notificacao-auto-5s">
+9626:<script id="lukafilmes-categorias-menu-mobile-js">
+
+--- CSS INLINE ---
+15:<style>
+641:<style id="pc-hero-trailer-fix">
+659:<style id="pc-capas-hd">
+671:<style id="hero-titulo-responsivo">
+789:<style id="hero-layout-final">
+953:<style id="hero-posicao-final">
+1016:<style id="hero-posicao-celular-final">
+1065:<style id="lukafilmes-catalogo-home">
+1191:<style id="lukafilmes-menu-desktop">
+1242:<style id="lukafilmes-menu-desktop-visible">
+1287:<style id="lukafilmes-mobile-menu-final">
+1348:<style id="lukafilmes-menu-mobile-solto-fix">
+1378:<style id="lukafilmes-menu-mobile-final">
+1450:<style id="lukafilmes-menu-usuario-comum">
+1477:<style id="luka-carrossel-performance">
+1598:<style id="luka-setas-padrao-final">
+1698:<style id="lukafilmes-toque-hero-fix">
+1726:<style id="lukafilmes-setas-mobile-off">
+1742:<style id="lukafilmes-setas-mobile-final">@media (max-width:768px){.luka-carousel-arrow,.carrossel-seta-luka{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}.luka-carousel-wrapper .row,.carrossel-wrapper-luka .row{touch-action:pan-x pan-y!important;overflow-x:auto!important}}</style>
+1743:<style id="lukafilmes-continuar-home-section">
+1769:<style id="lukafilmes-header-interacao-final">
+1846:<style id="lukafilmes-continuar-mobile-btn">
+1904:<style id="lukafilmes-continuar-mobile-home-final">
+1926:<style id="lukafilmes-continuar-destaque-mobile">.lukafilmes-destaque-linha{display:flex;align-items:center;justify-content:space-between;gap:10px}.lukafilmes-destaque-linha .section-title{margin:0}.lukafilmes-continuar-destaque-btn{display:none;align-items:center;justify-content:center;padding:8px 11px;border-radius:8px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);color:#fff;text-decoration:none;font-size:12px;font-weight:700;white-space:nowrap;touch-action:manipulation;-webkit-tap-highlight-color:transparent}@media(max-width:768px){.lukafilmes-continuar-destaque-btn{display:inline-flex;transform:translateY(-18px)}} </style>
+1940:<style id="lukafilmes-categorias-mobile-final">
+2014:<style id="lukafilmes-categorias-mobile-ocultar">
+2024:<style id="lukafilmes-performance-desktop">
+2061:<style id="lukafilmes-tv-mode-final">
+2720:<style id="lukafilmes-tv-hero-posicao-final">
+2784:<style id="lukafilmes-tv-quadro-centro-removido">
+2805:<style id="lukafilmes-loader-premium">
+2921:<style id="lukafilmes-notificacoes">
+3044:<style id="lukafilmes-sino-dentro-menus-final">
+3101:<style id="luka-notificacao-card-style">
+3134:<style id="lukafilmes-notificacao-sem-duplicacao">
+3146:<style id="lukafilmes-menu-mobile-moderno">
+3374:<style id="lukafilmes-mobile-menu-desktop-hide">
+3384:<style id="lukafilmes-sino-esquerda-mobile">
+3405:<style id="lukafilmes-mobile-categorias-moderno">
+6528:<style id="lukafilmes-pesquisa-home-final">
+8109:<style id="lukafilmes-tv-refino-final">
+8358:<style id="lukafilmes-tv-hero-esquerda-desfoque-final">
+8473:<style id="lukafilmes-boasvindas-unificado-final">
+8678:<style id="lukafilmes-tv-hero-area-final">
+9299:<style id="lukafilmes-hero-trailer-cover-final">
+9396:<style id="lukafilmes-continuar-mobile-menu-final">
+9422:<style id="lukafilmes-notificacao-popup-15s">
+9511:<style id="lukafilmes-notificacao-final">
+9543:<style id="lukafilmes-categorias-menu-mobile">
+
+--- FETCH/API ---
+4048:            await fetch(
+4049:                "/api/eu",
+4111:        const resposta=await fetch(url);
+4384:                "/api/catalogo-filmes?pagina=" +
+4392:                    ? "/api/catalogo-series?pagina="+pagina
+4393:                    : "/api/catalogo-filmes?pagina="+pagina;
+4729:                await fetch(
+4730:                    "/api/filme/" +
+5342:                    "/api/catalogo-filmes?pagina=" +
+5352:                    "/api/catalogo-series?pagina=" +
+5499:                await fetch(
+5500:                    "/api/filme/" +
+5982:                "/api/catalogo-filmes?pagina=1&lancamentos=1"
+6394:                            "/api/catalogo-filmes?pagina=" +
+6518:    fetch("/logout", {
+6689:            const resposta = await fetch(
+6690:                "/api/pesquisar?q=" +
+6979:    fetch("/api/eu", {
+9101:            var resposta = await fetch(
+9102:                "/api/notificacoes/novos-filmes",
+
+--- TMDB ---
+3825:        style="background-image:url('https://image.tmdb.org/t/p/original');">
+4196:            : "https://image.tmdb.org/t/p/original"+img
+5209:            : "https://image.tmdb.org/t/p/original"+fundo;
+
+--- YOUTUBE ---
+7:<link rel="preconnect" href="https://www.youtube.com" crossorigin>
+8:<link rel="dns-prefetch" href="//www.youtube.com">
+580:#heroTrailer{
+596:#heroTrailer.ativo{
+647:    #heroTrailer{
+1705:#heroTrailer{
+1709:#heroTrailer,
+1710:#heroTrailer.ativo{
+3830:    id="heroTrailer"
+4666:let heroTrailerAtual = null;
+4671:        document.getElementById("heroTrailer");
+4690:    heroTrailerAtual =
+4708:            item.__heroTrailerChave || "";
+4713:        if(!chave && item.__heroTrailer){
+4716:                item.__heroTrailer.chave ||
+4717:                item.__heroTrailer.key ||
+4784:            item.__heroTrailer = trailer;
+4785:            item.__heroTrailerChave = chave;
+4788:        if(heroTrailerAtual !== idAtual){
+4794:         * EMBED DIRETO DO YOUTUBE
+4811:                "https://www.youtube.com/embed/" +
+4856:         * Permite que a API do YouTube reconheça este iframe
+4869:         * Solicita ao YouTube a maior qualidade disponível.
+4870:         * O YouTube ainda pode adaptar automaticamente conforme
+4891:                item.__heroTrailer &&
+4892:                item.__heroTrailer.nome
+4927:                proximoHeroTrailer();
+4938:   LUKAFILMES — MONITORAMENTO REAL DO YOUTUBE NO HERO
+4950:        return document.getElementById("heroTrailer");
+4953:    function solicitarEventosYouTube(video){
+5005:            typeof proximoHeroTrailer !== "function"
+5014:        proximoHeroTrailer();
+5043:         * Agora registramos os eventos do YouTube.
+5045:        solicitarEventosYouTube(video);
+5058:         * eventos reais do YouTube.
+5074:     * Recebe eventos do YouTube.
+5134:             * Erros conhecidos do YouTube.
+5152:                        "[HERO TRAILER] Trailer recusado pelo YouTube:",
+5774:    async function proximoHeroTrailer(){
+5846:            item.__heroTrailer = proximo.trailer;
+5847:            item.__heroTrailerChave = proximo.chave;
+5898:        .then(() => proximoHeroTrailer())
+7512:            document.getElementById("heroTrailer");
+7594:<script id="lukafilmes-hero-youtube-clean">
+7606:        return document.getElementById("heroTrailer");
+7714:                    "heroTrailer",
+7725:                                        "[HERO TRAILER] Player YouTube pronto."
+7745:                                        typeof proximoHeroTrailer ===
+7753:                                        proximoHeroTrailer();
+7761:                                        "[HERO TRAILER] Erro YouTube:",
+7767:                                        typeof proximoHeroTrailer ===
+7773:                                                proximoHeroTrailer();
+7810:            window.onYouTubeIframeAPIReady;
+7812:        window.onYouTubeIframeAPIReady =
+7830:            "https://www.youtube.com/iframe_api";
+7907:     * YouTube ao minimizar a página e voltar posteriormente.
+7913:     *   tenta recriar o controle do YouTube sobre o MESMO iframe.
+7938:            document.getElementById("heroTrailer");
+7985:         * Apenas tentamos devolver o controle do YouTube
+7997:                        "heroTrailer",
+8054:         * O Android pode restaurar o WebView/YouTube depois
+8400:    #heroTrailer{
+8440:    #heroTrailer{
+9321:#heroTrailer{
+9356:#heroTrailer.ativo{
+9373:    #heroTrailer{
+9381:    #heroTrailer{
+
+--- IMAGENS LAZY ---
+4204:            ? `<img src="${poster}" loading="lazy" decoding="async" fetchpriority="low" alt="${titulo(item)}">`
+6725:                        ? `<img src="${escapar(capa)}" loading="lazy" decoding="async" fetchpriority="low" alt="">`
+
+--- TIMERS ---
+2543:            setTimeout(function(){
+3985:        setTimeout(()=>{
+4920:        setTimeout(() => {
+5065:    setInterval(() => {
+5125:                    setTimeout(
+5164:                    setTimeout(
+5880:            setTimeout(() => {
+6441:                setTimeout(resolve, 10)
+7412:        setTimeout(
+7771:                                        setTimeout(
+7862:            setTimeout(
+7873:        setInterval(
+8065:        setTimeout(
+8070:        setTimeout(
+8075:        setTimeout(
+8643:            setTimeout(function(){
+9082:        setTimeout(function(){
+9087:                setTimeout(function(){
+9175:        setTimeout(function(){
+9215:            setTimeout(iniciar, 300);
+9238:                    timer = setTimeout(function(){
+
+--- DOM READY ---
+2706:            "DOMContentLoaded",
+6858:            "DOMContentLoaded",
+6870:document.addEventListener("DOMContentLoaded", () => {
+6967:            "DOMContentLoaded",
+7464:            "DOMContentLoaded",
+7884:            "DOMContentLoaded",
+8654:                "DOMContentLoaded",
+9183:            "DOMContentLoaded",
+9286:            "DOMContentLoaded",
+
+--- JS EXTERNOS ---
+app.js 14753 bytes
+config.js 20 bytes
+conta-storage.js 6960 bytes
+continuar-assistindo.js 10505 bytes
+home-visual.js 4942 bytes
+navegacao.js 15153 bytes
+script.js 21077 bytes
+
+--- HTML PRINCIPAIS ---
+admin.html 17251 bytes
+continuar-assistindo.html 19882 bytes
+filme.html 138011 bytes
+filmes.html 87273 bytes
+index.html 2719 bytes
+minha-lista.html 12613 bytes
+serie.html 94924 bytes
+series.html 32325 bytes
+series_nova.html 11255 bytes
+
+===== FIM DO MAPA =====

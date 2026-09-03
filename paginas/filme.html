@@ -3302,6 +3302,7 @@ body{
                 </button>
             </div>
 
+
             <div class="play-card">
                 <div class="play-numero">PLAY 4</div>
 
@@ -3311,6 +3312,7 @@ body{
                     ▶ PLAY
                 </button>
             </div>
+
 
         </div>
 
@@ -3656,8 +3658,11 @@ body{
                             "https://mgeb.top/embed/" +
                             tmdbId;
 
-                        filmeFrame.src =
-                            embedUrl;
+                        /*
+                         * PLAY CENTRAL
+                         * Mantém o carregamento padrão do player.
+                         */
+                        filmeFrame.src = embedUrl;
 
                         /* ==========================================
                            CONTINUAR ASSISTINDO
@@ -3718,7 +3723,7 @@ body{
 
                 botaoPlayer.addEventListener(
                     "click",
-                    function () {
+                    async function () {
 
                         const numero =
                             this.dataset.player;
@@ -3746,18 +3751,18 @@ body{
                         else if (numero === "2") {
 
                             embedUrl =
-                                "https://myembed.biz/filme/" +
-                                tmdbId;
+                                "https://pipocacine.lat/embed/" +
+                                String(tmdbId).trim();
                         }
 
                         /*
                          * PLAYER 3
-                         * Fonte alternativa
+                         * AUTOEMBED
                          */
                         else if (numero === "3") {
 
                             embedUrl =
-                                "https://vidsrc.me/embed/movie/" +
+                                "https://myembed.biz/filme/" +
                                 tmdbId;
                         }
 
@@ -3768,7 +3773,9 @@ body{
                         else if (numero === "4") {
 
                             embedUrl =
-                                "";
+                                "https://apiplayer.ru/embed/movie/" +
+                                String(tmdbId).trim() +
+                                "?lang=pt";
                         }
 
                         if (!embedUrl) {
@@ -3799,8 +3806,35 @@ body{
                         /*
                          * CARREGA O FRAME
                          */
+                        /*
+                         * CARREGA O FRAME
+                         */
                         filmeFrame.src =
                             embedUrl;
+
+                        /*
+                         * GARANTE A EXIBIÇÃO DO PLAYER
+                         * E ESCONDE O BOTÃO ▶ CENTRAL.
+                         */
+                        if (playerFilme) {
+                            playerFilme.style.display = "block";
+                        }
+
+                        if (filmeFrame) {
+                            filmeFrame.style.display = "block";
+                            filmeFrame.style.visibility = "visible";
+                            filmeFrame.style.opacity = "1";
+                        }
+
+                        if (playCentral) {
+                            playCentral.classList.add("oculto");
+                        }
+
+                        console.log(
+                            "[PLAYER FRAME CARREGADO]",
+                            numero,
+                            filmeFrame.src
+                        );
 
                         /* ==========================================
                            CONTINUAR ASSISTINDO
@@ -4397,10 +4431,7 @@ document.getElementById("voltarFilmes").addEventListener(
    Os demais players continuam disponíveis no código.
    ========================================================= */
 
-/* FILMES — esconder PLAY 2, 3 e 4 */
-.lista-plays .play-card:nth-child(n+3) {
-    display: none !important;
-}
+/* FILMES — PLAY 1, PLAY 2 E PLAY 3 VISÍVEIS */
 
 /* SÉRIES — mostrar PLAY 1 e PLAY 2 */
 .players-serie-opcoes .serie-player-btn:nth-child(n+3) {

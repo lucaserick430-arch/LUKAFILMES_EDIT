@@ -2242,6 +2242,241 @@ app.get('/api/filme/:id/videos', async (req, res) => {
 // FILME PARA ASSISTIR — YOUTUBE
 // ==========================================
 
+
+/* LUKAFILMES PLAY 3 YOUTUBE API */
+
+const lukafilmesYoutubeCache = new Map();
+
+app.get('/api/filme/:id/youtube', async (req, res) => {
+    try {
+        const tmdbId = String(req.params.id || '').trim();
+
+        if (!/^\d+$/.test(tmdbId)) {
+            return res.status(400).json({
+                encontrado: false,
+                erro: 'ID TMDB inválido.'
+            });
+        }
+
+        const apiKey = process.env.YOUTUBE_API_KEY;
+
+        if (!apiKey) {
+            return res.status(503).json({
+                encontrado: false,
+                erro: 'YOUTUBE_API_KEY não configurada.'
+            });
+        }
+
+        const cacheKey = tmdbId;
+        const cached = lukafilmesYoutubeCache.get(cacheKey);
+
+        if (cached && cached.expira > Date.now()) {
+            return res.json(cached.dados);
+        }
+
+        const filmeTMDB = await tmdb(
+            '/movie/' +
+            encodeURIComponent(tmdbId) +
+            '?language=pt-BR'
+        );
+
+        if (!filmeTMDB || !filmeTMDB.id) {
+            return res.status(404).json({
+                encontrado: false,
+                erro: 'Filme não encontrado no TMDB.'
+            });
+        }
+
+        const titulo = String(
+            filmeTMDB.title ||
+            filmeTMDB.original_title ||
+            ''
+        ).trim();
+
+        const tituloOriginal = String(
+            filmeTMDB.original_title ||
+            titulo
+        ).trim();
+
+        const ano = filmeTMDB.release_date
+            ? String(filmeTMDB.release_date).slice(0, 4)
+            : '';
+
+        if (!titulo) {
+            return res.json({
+                encontrado: false,
+                erro: 'Título do filme não encontrado.'
+            });
+        }
+
+        const consultas = [
+            '"' + titulo + '" ' + ano + ' filme',
+            '"' + tituloOriginal + '" ' + ano + ' movie'
+        ];
+
+        let resultados = [];
+
+        for (const consulta of consultas) {
+
+            const params = new URLSearchParams({
+                part: 'snippet',
+                type: 'video',
+                q: consulta,
+                maxResults: '10',
+                regionCode: 'BR',
+                relevanceLanguage: 'pt',
+                videoEmbeddable: 'true',
+                videoSyndicated: 'true',
+                key: apiKey
+            });
+
+            const resposta = await fetch(
+                'https://www.googleapis.com/youtube/v3/search?' +
+                params.toString()
+            );
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+                console.error(
+                    '[PLAY 3 YOUTUBE API]',
+                    dados?.error?.message || resposta.status
+                );
+
+                return res.status(502).json({
+                    encontrado: false,
+                    erro: 'YouTube Data API não respondeu corretamente.'
+                });
+            }
+
+            if (Array.isArray(dados.items)) {
+                resultados.push(...dados.items);
+            }
+        }
+
+        const vistos = new Set();
+
+        resultados = resultados.filter(item => {
+            const id = item?.id?.videoId;
+
+            if (!id || vistos.has(id)) {
+                return false;
+            }
+
+            vistos.add(id);
+            return true;
+        });
+
+        function pontuar(item) {
+
+            const texto = (
+                String(item?.snippet?.title || '') +
+                ' ' +
+                String(item?.snippet?.description || '')
+            ).toLowerCase();
+
+            const tituloBusca = titulo.toLowerCase();
+            const originalBusca = tituloOriginal.toLowerCase();
+
+            let pontos = 0;
+
+            if (texto.includes(tituloBusca)) {
+                pontos += 50;
+            }
+
+            if (
+                tituloOriginal !== titulo &&
+                texto.includes(originalBusca)
+            ) {
+                pontos += 30;
+            }
+
+            if (ano && texto.includes(ano)) {
+                pontos += 20;
+            }
+
+            if (/\bdublado\b/i.test(texto)) {
+                pontos += 15;
+            }
+
+            if (/\bportugu[eê]s\b/i.test(texto)) {
+                pontos += 10;
+            }
+
+            if (/\bpt-br\b/i.test(texto)) {
+                pontos += 10;
+            }
+
+            if (/\blegendado\b/i.test(texto)) {
+                pontos += 5;
+            }
+
+            return pontos;
+        }
+
+        resultados.sort(
+            (a, b) => pontuar(b) - pontuar(a)
+        );
+
+        const escolhido = resultados[0];
+
+        if (!escolhido?.id?.videoId) {
+
+            const vazio = {
+                encontrado: false,
+                tmdbId,
+                titulo,
+                ano
+            };
+
+            lukafilmesYoutubeCache.set(cacheKey, {
+                dados: vazio,
+                expira: Date.now() + 30 * 60 * 1000
+            });
+
+            return res.json(vazio);
+        }
+
+        const videoId = escolhido.id.videoId;
+
+        const resultado = {
+            encontrado: true,
+            tmdbId,
+            titulo,
+            ano,
+            videoId,
+            tituloYouTube:
+                escolhido.snippet?.title || '',
+            canal:
+                escolhido.snippet?.channelTitle || '',
+            embedUrl:
+                'https://www.youtube-nocookie.com/embed/' +
+                encodeURIComponent(videoId) +
+                '?rel=0&modestbranding=1'
+        };
+
+        lukafilmesYoutubeCache.set(cacheKey, {
+            dados: resultado,
+            expira: Date.now() + 6 * 60 * 60 * 1000
+        });
+
+        return res.json(resultado);
+
+    } catch (erro) {
+
+        console.error(
+            '[PLAY 3 YOUTUBE API] ERRO:',
+            erro?.message || erro
+        );
+
+        return res.status(500).json({
+            encontrado: false,
+            erro: 'Erro interno ao consultar o YouTube.'
+        });
+    }
+});
+
+
 app.get('/api/filme/:id/assistir', async (req, res) => {
 
     try {

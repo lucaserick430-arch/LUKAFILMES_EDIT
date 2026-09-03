@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LUKAFILMES • Central Administrativa</title>
+</head>
+<body>
+
+<style id="LUKA-PREMIUM">
+:root{
+--bg:#05070c;--panel:rgba(18,22,32,.72);--panel2:rgba(255,255,255,.045);
+--border:rgba(255,255,255,.09);--text:#f7f8fb;--muted:#8790a3;
+--red:#e50914;--red2:#ff4050;--green:#38e889;--blue:#5ba7ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:
+radial-gradient(circle at 80% 0%,rgba(229,9,20,.12),transparent 30%),
+radial-gradient(circle at 15% 20%,rgba(91,167,255,.08),transparent 28%),
+var(--bg);color:var(--text)}
+body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+#LUKA-CENTRAL{position:fixed;inset:0;z-index:2147483000;overflow:auto;padding:20px}
+#LUKA-CENTRAL:before{content:"";position:fixed;inset:0;pointer-events:none;
+background:linear-gradient(120deg,transparent,rgba(255,255,255,.018),transparent);
+animation:lukaGlow 8s linear infinite}
+@keyframes lukaGlow{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+.lc-top{position:sticky;top:0;z-index:10;display:flex;align-items:center;
+justify-content:space-between;gap:18px;padding:15px 18px;margin:-20px -20px 24px;
+background:rgba(5,7,12,.78);backdrop-filter:blur(22px);
+border-bottom:1px solid var(--border)}
+.lc-brand{font-size:25px;font-weight:950;letter-spacing:-.8px}
+.lc-brand span{color:var(--muted);font-size:12px;letter-spacing:1.5px;margin-left:7px}
+.lc-actions{display:flex;gap:9px;flex-wrap:wrap}
+.lc-btn{border:1px solid var(--border);border-radius:13px;padding:11px 15px;
+background:var(--panel2);color:white;font-weight:800;cursor:pointer;
+transition:.2s;backdrop-filter:blur(15px)}
+.lc-btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.2);
+background:rgba(255,255,255,.09)}
+.lc-primary{border:0!important;background:linear-gradient(135deg,var(--red),var(--red2))!important;
+box-shadow:0 8px 25px rgba(229,9,20,.2)}
+
+.lc-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;margin-bottom:18px}
+.lc-card{position:relative;overflow:hidden;padding:19px;border:1px solid var(--border);
+border-radius:20px;background:var(--panel);backdrop-filter:blur(20px);
+box-shadow:0 18px 55px rgba(0,0,0,.24);transition:.25s}
+.lc-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.16)}
+.lc-card:after{content:"";position:absolute;width:100px;height:100px;border-radius:50%;
+right:-45px;top:-45px;background:rgba(229,9,20,.12);filter:blur(20px)}
+.lc-card small{font-size:10px;color:var(--muted);font-weight:900;letter-spacing:1.3px}
+.lc-number{font-size:34px;font-weight:950;line-height:1;margin-top:10px}
+.lc-live{display:flex;align-items:center;gap:9px}
+.lc-dot{width:9px;height:9px;border-radius:50%;background:var(--green);
+box-shadow:0 0 18px var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{50%{opacity:.35;transform:scale(.72)}}
+
+.lc-panel{border:1px solid var(--border);border-radius:22px;background:var(--panel);
+backdrop-filter:blur(22px);box-shadow:0 20px 70px rgba(0,0,0,.3);padding:18px}
+.lc-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:15px}
+.lc-input,.lc-select{border:1px solid var(--border);background:#080b12;
+color:white;border-radius:12px;padding:12px 14px;outline:none}
+.lc-input:focus,.lc-select:focus{border-color:rgba(229,9,20,.65)}
+.lc-input{flex:1;min-width:200px}
+
+.lc-table{width:100%;border-collapse:separate;border-spacing:0 5px}
+.lc-table th{padding:10px;color:var(--muted);font-size:10px;text-transform:uppercase;
+letter-spacing:1px;text-align:left}
+.lc-table td{padding:13px 10px;background:rgba(255,255,255,.025);
+border-top:1px solid rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.045)}
+.lc-table td:first-child{border-left:1px solid rgba(255,255,255,.045);border-radius:12px 0 0 12px}
+.lc-table td:last-child{border-right:1px solid rgba(255,255,255,.045);border-radius:0 12px 12px 0}
+.lc-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;
+border-radius:999px;background:rgba(255,255,255,.07);font-size:10px;font-weight:900}
+.lc-online{color:var(--green);background:rgba(56,232,137,.08)}
+
+.lc-modal{position:fixed;inset:0;background:rgba(0,0,0,.76);display:none;
+align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(16px);
+z-index:2147483001}
+.lc-box{width:min(620px,100%);max-height:90vh;overflow:auto;padding:25px;
+border:1px solid var(--border);border-radius:25px;background:rgba(11,15,24,.96);
+box-shadow:0 30px 100px #000;animation:modalIn .22s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(15px) scale(.98)}
+to{opacity:1;transform:none}}
+.lc-close{float:right;border:0;background:none;color:white;font-size:27px;cursor:pointer}
+.lc-box h2{margin:0 0 7px;font-size:25px}
+.lc-box p{color:var(--muted)}
+.lc-fields{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.lc-fields input,.lc-fields select{width:100%;padding:13px;border-radius:12px;
+border:1px solid var(--border);background:#060910;color:white;outline:none}
+.lc-hours{display:flex;flex-wrap:wrap;gap:8px;margin:17px 0}
+.lc-hour{border:1px solid var(--border);border-radius:12px;padding:10px 15px;
+background:#101520;color:white;font-weight:900;cursor:pointer;transition:.18s}
+.lc-hour:hover{background:rgba(229,9,20,.2);border-color:rgba(229,9,20,.5);
+transform:translateY(-2px)}
+.lc-footer{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+@media(max-width:1000px){.lc-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){
+#LUKA-CENTRAL{padding:12px}.lc-top{margin:-12px -12px 18px;padding:12px}
+.lc-brand{font-size:19px}.lc-brand span{display:none}.lc-grid{grid-template-columns:1fr 1fr}
+.lc-fields{grid-template-columns:1fr}.lc-table{min-width:900px}.lc-panel{overflow:auto}
+}
+</style>
+
+<div id="LUKA-CENTRAL">
+<div class="lc-top">
+<div class="lc-brand">LUKAFILMES <span>• CENTRAL ADMIN</span></div>
+<div class="lc-actions">
+<button class="lc-btn lc-primary" onclick="LC.openUser()">＋ Novo Usuário</button>
+<button class="lc-btn" onclick="LC.openTest()">⚡ Criar Teste</button>
+<button class="lc-btn" onclick="LC.load()">↻ Atualizar</button>
+</div>
+</div>
+
+<div class="lc-grid">
+<div class="lc-card"><small>USUÁRIOS</small><div class="lc-number" id="lc-total">0</div></div>
+<div class="lc-card"><small>ATIVOS</small><div class="lc-number" id="lc-active">0</div></div>
+<div class="lc-card"><small>TESTES</small><div class="lc-number" id="lc-tests">0</div></div>
+<div class="lc-card"><small>EXPIRADOS</small><div class="lc-number" id="lc-expired">0</div></div>
+<div class="lc-card"><small>ONLINE AGORA</small><div class="lc-number lc-live"><i class="lc-dot"></i><span id="lc-online">0</span></div></div>
+</div>
+
+<div class="lc-panel">
+<div class="lc-toolbar">
+<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+<select id="lc-filter" class="lc-select" onchange="LC.render()">
+<option value="">Todos</option>
+<option value="ativo">Ativos</option>
+<option value="inativo">Inativos</option>
+<option value="teste">Testes</option>
+<option value="revendedor">Revendedores</option>
+</select>
+</div>
+
+<table class="lc-table">
+<thead><tr>
+<th>Usuário</th><th>Status</th><th>Validade</th><th>Conexões</th><th>Tipo</th><th>Ações</th>
+</tr></thead>
+<tbody id="lc-body"></tbody>
+</table>
+</div>
+</div>
+
+<div id="lc-user-modal" class="lc-modal">
+<div class="lc-box">
+<button class="lc-close" onclick="LC.close('lc-user-modal')">×</button>
+<h2 id="lc-user-title">Novo Usuário</h2>
+<div class="lc-fields">
+<input id="lc-u" placeholder="Usuário">
+<input id="lc-p" placeholder="Senha">
+<input id="lc-days" type="number" value="30" min="1" placeholder="Dias">
+<input id="lc-limit" type="number" value="1" min="1" placeholder="Limite de conexões">
+<input id="lc-phone" placeholder="Telefone / WhatsApp">
+<input id="lc-value" type="number" step="0.01" placeholder="Valor">
+<select id="lc-type">
+<option value="usuario">Usuário</option>
+<option value="teste">Teste</option>
+</select>
+</div>
+<div class="lc-footer">
+<button class="lc-btn" onclick="LC.close('lc-user-modal')">Cancelar</button>
+<button class="lc-btn lc-primary" onclick="LC.saveUser()">Salvar Usuário</button>
+</div>
+</div>
+</div>
+
+<div id="lc-test-modal" class="lc-modal">
+<div class="lc-box">
+<button class="lc-close" onclick="LC.close('lc-test-modal')">×</button>
+<h2>⚡ Criar Teste Automático</h2>
+<p style="opacity:.65">Escolha quantas horas o teste ficará ativo.</p>
+<div class="lc-hours">
+<button class="lc-hour" onclick="LC.setHours(1)">1h</button>
+<button class="lc-hour" onclick="LC.setHours(2)">2h</button>
+<button class="lc-hour" onclick="LC.setHours(3)">3h</button>
+<button class="lc-hour" onclick="LC.setHours(5)">5h</button>
+<button class="lc-hour" onclick="LC.setHours(10)">10h</button>
+<button class="lc-hour" onclick="LC.setHours(24)">24h</button>
+<button class="lc-hour" onclick="LC.setHours(48)">48h</button>
+<button class="lc-hour" onclick="LC.setHours(72)">72h</button>
+</div>
+<input id="lc-test-hours" class="lc-input" type="number" min="1" value="1" placeholder="Quantidade personalizada de horas">
+<input id="lc-test-limit" class="lc-input" type="number" min="1" value="1" placeholder="Limite de conexões" style="margin-top:10px">
+<div class="lc-footer">
+<button class="lc-btn" onclick="LC.close('lc-test-modal')">Cancelar</button>
+<button class="lc-btn lc-primary" onclick="LC.createTest()">⚡ Criar Teste</button>
+</div>
+</div>
+</div>
+
+<script>
+window.LC=(function(){
+let users=[],editing=null;
+
+async function load(){
+try{
+const r=await fetch('/api/admin/usuarios',{credentials:'same-origin'});
+const j=await r.json();
+users=Array.isArray(j)?j:(j.usuarios||j.users||[]);
+render();
+}catch(e){console.error(e)}
+}
+
+function render(){
+const q=(document.getElementById('lc-search').value||'').toLowerCase();
+const f=document.getElementById('lc-filter').value;
+let list=users.filter(x=>{
+const text=JSON.stringify(x).toLowerCase();
+if(q&&!text.includes(q))return false;
+const tipo=String(x.tipo||x.role||'usuario').toLowerCase();
+const status=String(x.status||'').toLowerCase();
+if(f==='revendedor'&&!tipo.includes('revendedor'))return false;
+if(f==='teste'&&!tipo.includes('teste'))return false;
+if(f==='ativo'&&!['ativo','active','1'].includes(status)&&x.ativo!==1&&x.ativo!==true)return false;
+if(f==='inativo'&&(['ativo','active','1'].includes(status)||x.ativo===1||x.ativo===true))return false;
+return true;
+});
+
+document.getElementById('lc-total').textContent=users.length;
+document.getElementById('lc-active').textContent=users.filter(x=>['ativo','active','1'].includes(String(x.status).toLowerCase())||x.ativo===1||x.ativo===true).length;
+document.getElementById('lc-tests').textContent=users.filter(x=>String(x.tipo||'').toLowerCase().includes('teste')).length;
+document.getElementById('lc-expired').textContent=users.filter(x=>String(x.status||'').toLowerCase().includes('expir')).length;
+document.getElementById('lc-online').textContent=users.filter(x=>x.online||x.conectado||Number(x.conexoes_utilizadas||0)>0).length;
+
+document.getElementById('lc-body').innerHTML=list.map(x=>{
+const tipo=String(x.tipo||x.role||'usuario');
+const rev=tipo.toLowerCase().includes('revendedor');
+const online=x.online||x.conectado||Number(x.conexoes_utilizadas||0)>0;
+return `<tr>
+<td><b>${esc(x.usuario||x.username||'-')}</b><br><small style="opacity:.45">${esc(x.telefone||x.whatsapp||'')}</small></td>
+<td><span class="lc-badge ${online?'lc-online':''}">${online?'● ONLINE':esc(x.status||'ATIVO')}</span></td>
+<td>${esc(x.validade||x.data_expiracao||x.expira_em||'-')}</td>
+<td>${x.conexoes_utilizadas||0}/${x.limite_conexoes||1}</td>
+<td>${esc(tipo)}</td>
+<td style="white-space:nowrap">
+${rev?'<span class="lc-badge">PROTEGIDO</span>':`
+<button class="lc-btn" onclick='LC.edit(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Editar</button>
+<button class="lc-btn" onclick="LC.renew(${Number(x.id)||0})">Renovar</button>
+<button class="lc-btn" onclick="LC.status(${Number(x.id)||0})">Ativar/Desativar</button>
+<button class="lc-btn" onclick="LC.del(${Number(x.id)||0})">Excluir</button>`}
+</td></tr>`;
+}).join('');
+}
+
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+function openUser(){editing=null;document.getElementById('lc-user-title').textContent='Novo Usuário';['lc-u','lc-p','lc-phone','lc-value'].forEach(id=>document.getElementById(id).value='');document.getElementById('lc-days').value=30;document.getElementById('lc-limit').value=1;document.getElementById('lc-type').value='usuario';show('lc-user-modal')}
+function edit(x){editing=x;document.getElementById('lc-user-title').textContent='Editar Usuário';document.getElementById('lc-u').value=x.usuario||x.username||'';document.getElementById('lc-p').value='';document.getElementById('lc-phone').value=x.telefone||x.whatsapp||'';document.getElementById('lc-value').value=x.valor||x.valor_mensal||'';document.getElementById('lc-limit').value=x.limite_conexoes||1;document.getElementById('lc-type').value=String(x.tipo||'usuario').toLowerCase().includes('teste')?'teste':'usuario';show('lc-user-modal')}
+async function saveUser(){
+const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+if(editing)body.id=editing.id;
+const url=editing?'/api/admin/usuarios/editar':'/api/admin/usuarios';
+const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)});
+const j=await r.json().catch(()=>({}));
+if(!r.ok||j.sucesso===false)alert(j.mensagem||'Não foi possível salvar.');
+else{close('lc-user-modal');await load()}
+}
+function openTest(){document.getElementById('lc-test-hours').value=1;show('lc-test-modal')}
+function setHours(h){document.getElementById('lc-test-hours').value=h}
+async function createTest(){
+const horas=Math.max(1,Number(document.getElementById('lc-test-hours').value)||1);
+const limite=Math.max(1,Number(document.getElementById('lc-test-limit').value)||1);
+const r=await fetch('/api/admin/usuarios/teste',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({horas,limite_conexoes:limite,valor:0})});
+const j=await r.json().catch(()=>({}));
+if(!r.ok||j.sucesso===false)alert(j.mensagem||'Não foi possível criar o teste.');
+else{close('lc-test-modal');await load()}
+}
+async function renew(id){if(!id)return;const dias=Number(prompt('Quantos dias deseja renovar?',30));if(!dias)return;await fetch('/api/admin/usuarios/renovar',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({id,dias})});await load()}
+async function status(id){if(!id)return;await fetch('/api/admin/usuarios/status',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({id})});await load()}
+async function del(id){if(!id||!confirm('Excluir este usuário permanentemente?'))return;await fetch('/api/admin/usuarios/excluir',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({id})});await load()}
+function show(id){document.getElementById(id).style.display='flex'}
+function close(id){document.getElementById(id).style.display='none'}
+load();setInterval(load,15000);
+return{load,render,openUser,edit,saveUser,openTest,setHours,createTest,renew,status,del,show,close}
+})();
+</script>
+
+</body>
+</html>
+</body></html>

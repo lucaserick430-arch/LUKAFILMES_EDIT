@@ -1883,6 +1883,7 @@ main {
             🎬 Assistindo
         </h2>
 
+        
         <div class="players-serie-opcoes">
 
             <button
@@ -1890,16 +1891,35 @@ main {
                 class="serie-player-btn ativo"
                 data-player="1">
                 <span class="serie-player-numero">PLAY 1</span>
-            MegaEmbed</button>
+                MegaEmbed
+            </button>
 
             <button
                 type="button"
                 class="serie-player-btn"
                 data-player="2">
                 <span class="serie-player-numero">PLAY 2</span>
-            EmbedMovies</button>
+                PipocaCine
+            </button>
+
+            <button
+                type="button"
+                class="serie-player-btn"
+                data-player="3">
+                <span class="serie-player-numero">PLAY 3</span>
+                MyEmbed
+            </button>
+
+            <button
+                type="button"
+                class="serie-player-btn"
+                data-player="4">
+                <span class="serie-player-numero">PLAY 4</span>
+                APIPlayer
+            </button>
 
         </div>
+
 
         <div class="player-video">
 
@@ -2966,12 +2986,42 @@ function criarTemporadaFallback() {
                     else if (numero === "2") {
 
                         embedUrl =
+                            "https://pipocacine.lat/embed/" +
+                            String(idSerie).trim() +
+                            "/" +
+                            String(temporadaId).trim() +
+                            "/" +
+                            String(episodioId).trim();
+                    }
+
+                    /*
+                     * PLAY 3 — APIPLAYER
+                     * SÉRIE / TV
+                     * IDIOMA: PORTUGUÊS
+                     */
+
+                    else if (numero === "3") {
+
+                        embedUrl =
                             "https://myembed.biz/serie/" +
                             idSerie +
                             "/" +
                             temporadaId +
                             "/" +
                             episodioId;
+                    }
+
+
+                    else if (numero === "4") {
+
+                        embedUrl =
+                            "https://apiplayer.ru/embed/tv/" +
+                            String(idSerie).trim() +
+                            "/" +
+                            String(temporadaId).trim() +
+                            "/" +
+                            String(episodioId).trim() +
+                            "?lang=pt";
                     }
 
                     if (!embedUrl) {

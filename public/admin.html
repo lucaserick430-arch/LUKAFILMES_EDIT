@@ -527,6 +527,105 @@ button[type="submit"]:hover{
 
 </style>
 
+
+<style id="luka-dashboard-live-chart">
+.luka-live-card{
+    position:relative;
+    overflow:hidden;
+    min-height:150px;
+}
+
+.luka-live-card > small{
+    display:block;
+    margin-bottom:6px;
+}
+
+.luka-live-mini{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.08em;
+    color:#63f58a;
+}
+
+.luka-live-pulse{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#63f58a;
+    box-shadow:0 0 10px rgba(99,245,138,.9);
+    animation:lukaLivePulse 1.2s infinite;
+}
+
+.luka-live-bars{
+    height:58px;
+    display:flex;
+    align-items:flex-end;
+    gap:5px;
+    margin:10px 0 7px;
+}
+
+.luka-live-bars div{
+    flex:1;
+    min-width:4px;
+    height:35%;
+    border-radius:5px 5px 2px 2px;
+    background:linear-gradient(to top,#287cff,#64d8ff);
+    opacity:.9;
+    transition:height .65s ease;
+}
+
+.luka-live-bars div:nth-child(2){height:55%}
+.luka-live-bars div:nth-child(3){height:42%}
+.luka-live-bars div:nth-child(4){height:72%}
+.luka-live-bars div:nth-child(5){height:48%}
+.luka-live-bars div:nth-child(6){height:82%}
+.luka-live-bars div:nth-child(7){height:62%}
+.luka-live-bars div:nth-child(8){height:92%}
+
+@keyframes lukaLivePulse{
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.35;transform:scale(.72)}
+}
+
+@media (max-width:700px){
+    .luka-live-card{
+        min-height:125px;
+    }
+
+    .luka-live-bars{
+        height:45px;
+        gap:4px;
+    }
+
+    .luka-live-card .card-hint{
+        font-size:10px;
+    }
+}
+
+@media (min-width:1200px){
+    .luka-live-card{
+        min-height:165px;
+    }
+
+    .luka-live-bars{
+        height:68px;
+    }
+}
+
+@media (min-width:1800px){
+    .luka-live-card{
+        min-height:185px;
+    }
+
+    .luka-live-bars{
+        height:78px;
+    }
+}
+</style>
+
 <style id="luka-online-modern">
 .online{
     display:flex;
@@ -1061,7 +1160,511 @@ input,select,textarea{
 }
 </style>
 
-<style id="luka-click-premium-css">#lukaPremiumOverlay{position:fixed;inset:0;z-index:10000020;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.78);backdrop-filter:blur(16px)}#lukaPremiumOverlay.show{display:flex;animation:lpFade .18s ease}#lukaPremiumBox{width:min(960px,100%);max-height:90vh;overflow:hidden;background:linear-gradient(145deg,#181818,#080808);border:1px solid #333;border-radius:24px;box-shadow:0 30px 100px #000;animation:lpIn .25s ease}.lpHead{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #292929}.lpTitle{display:flex;gap:12px;align-items:center}.lpIcon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#211010;border:1px solid #4a2020;font-size:22px}.lpHead h2{margin:0;font-size:21px}.lpHead p{margin:4px 0 0;color:#888;font-size:12px}.lpClose{width:40px;height:40px;border-radius:12px;border:1px solid #333;background:#171717;color:#fff;font-size:22px;cursor:pointer;transition:.2s}.lpClose:hover{background:#e50914;transform:scale(1.06)}.lpBody{padding:18px;overflow:auto;max-height:calc(90vh - 88px)}.lpStats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px}.lpStat{padding:13px;border:1px solid #292929;border-radius:14px;background:#111}.lpStat small{display:block;color:#777;font-size:9px;font-weight:800}.lpStat strong{display:block;margin-top:4px;font-size:21px}.lpSearch{width:100%;box-sizing:border-box;padding:13px;border-radius:12px;border:1px solid #292929;background:#0d0d0d;color:#fff;margin-bottom:13px;outline:0}.lpSearch:focus{border-color:#e50914;box-shadow:0 0 0 3px #e5091420}.lpList{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.lpUser{padding:15px;border:1px solid #292929;border-radius:16px;background:linear-gradient(145deg,#171717,#101010);transition:.2s;position:relative;overflow:hidden}.lpUser:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#e50914}.lpUser:hover{transform:translateY(-3px);border-color:#e50914;box-shadow:0 12px 35px #000}.lpTop{display:flex;justify-content:space-between;gap:8px}.lpName{font-weight:800}.lpPill{font-size:9px;padding:5px 8px;border-radius:99px;background:#222;color:#999}.lpPill.on{background:#12351f;color:#6ee7a0}.lpMeta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}.lpMeta div{padding:8px;background:#0b0b0b;border:1px solid #222;border-radius:9px}.lpMeta small{display:block;color:#666;font-size:8px}.lpMeta span{display:block;margin-top:3px;font-size:11px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lpActions{display:flex;gap:6px;margin-top:10px}.lpActions button{flex:1;min-height:36px;border:1px solid #292929;border-radius:9px;background:#181818;color:#fff;cursor:pointer;font-weight:700;font-size:10px;transition:.15s}.lpActions button:hover{background:#e50914;border-color:#e50914;transform:translateY(-1px)}.lpEmpty{padding:30px;text-align:center;color:#777;border:1px dashed #333;border-radius:15px;grid-column:1/-1}@keyframes lpFade{from{opacity:0}to{opacity:1}}@keyframes lpIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}@media(max-width:700px){.lpStats{grid-template-columns:1fr 1fr}.lpList{grid-template-columns:1fr}.lpBody{padding:13px}.lpHead{padding:16px}}</style></head>
+<style id="luka-click-premium-css">#lukaPremiumOverlay{position:fixed;inset:0;z-index:10000020;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.78);backdrop-filter:blur(16px)}#lukaPremiumOverlay.show{display:flex;animation:lpFade .18s ease}#lukaPremiumBox{width:min(960px,100%);max-height:90vh;overflow:hidden;background:linear-gradient(145deg,#181818,#080808);border:1px solid #333;border-radius:24px;box-shadow:0 30px 100px #000;animation:lpIn .25s ease}.lpHead{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #292929}.lpTitle{display:flex;gap:12px;align-items:center}.lpIcon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#211010;border:1px solid #4a2020;font-size:22px}.lpHead h2{margin:0;font-size:21px}.lpHead p{margin:4px 0 0;color:#888;font-size:12px}.lpClose{width:40px;height:40px;border-radius:12px;border:1px solid #333;background:#171717;color:#fff;font-size:22px;cursor:pointer;transition:.2s}.lpClose:hover{background:#e50914;transform:scale(1.06)}.lpBody{padding:18px;overflow:auto;max-height:calc(90vh - 88px)}.lpStats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px}.lpStat{padding:13px;border:1px solid #292929;border-radius:14px;background:#111}.lpStat small{display:block;color:#777;font-size:9px;font-weight:800}.lpStat strong{display:block;margin-top:4px;font-size:21px}.lpSearch{width:100%;box-sizing:border-box;padding:13px;border-radius:12px;border:1px solid #292929;background:#0d0d0d;color:#fff;margin-bottom:13px;outline:0}.lpSearch:focus{border-color:#e50914;box-shadow:0 0 0 3px #e5091420}.lpList{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.lpUser{padding:15px;border:1px solid #292929;border-radius:16px;background:linear-gradient(145deg,#171717,#101010);transition:.2s;position:relative;overflow:hidden}.lpUser:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#e50914}.lpUser:hover{transform:translateY(-3px);border-color:#e50914;box-shadow:0 12px 35px #000}.lpTop{display:flex;justify-content:space-between;gap:8px}.lpName{font-weight:800}.lpPill{font-size:9px;padding:5px 8px;border-radius:99px;background:#222;color:#999}.lpPill.on{background:#12351f;color:#6ee7a0}.lpMeta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}.lpMeta div{padding:8px;background:#0b0b0b;border:1px solid #222;border-radius:9px}.lpMeta small{display:block;color:#666;font-size:8px}.lpMeta span{display:block;margin-top:3px;font-size:11px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lpActions{display:flex;gap:6px;margin-top:10px}.lpActions button{flex:1;min-height:36px;border:1px solid #292929;border-radius:9px;background:#181818;color:#fff;cursor:pointer;font-weight:700;font-size:10px;transition:.15s}.lpActions button:hover{background:#e50914;border-color:#e50914;transform:translateY(-1px)}.lpEmpty{padding:30px;text-align:center;color:#777;border:1px dashed #333;border-radius:15px;grid-column:1/-1}@keyframes lpFade{from{opacity:0}to{opacity:1}}@keyframes lpIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}@media(max-width:700px){.lpStats{grid-template-columns:1fr 1fr}.lpList{grid-template-columns:1fr}.lpBody{padding:13px}.lpHead{padding:16px}}</style>
+<style id="luka-rgb-premium-panel">
+
+/* ============================================================
+   LUKAFILMES — RGB DE FUNDO
+   Somente luz ambiente. Nunca fica por cima do conteúdo.
+   ============================================================ */
+
+:root{
+    --luka-rgb-blue:#00b7ff;
+    --luka-rgb-purple:#8b2cff;
+    --luka-rgb-pink:#ff20c8;
+    --luka-rgb-yellow:#ffd21f;
+    --luka-rgb-green:#20ff78;
+    --luka-rgb-cyan:#00e5ff;
+}
+
+/* Luz RGB somente no FUNDO */
+body{
+    position:relative;
+    isolation:isolate;
+    background:#060912;
+}
+
+/* Grande luz colorida atrás de todo o painel */
+body::before{
+    content:"";
+    position:fixed;
+    inset:-25%;
+    z-index:-2;
+    pointer-events:none;
+
+    background:
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(0,183,255,.28),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 85% 20%,
+            rgba(139,44,255,.28),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba(255,32,200,.24),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 20% 85%,
+            rgba(32,255,120,.24),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(255,210,31,.12),
+            transparent 35%
+        );
+
+    filter:blur(55px);
+
+    transform:translate3d(0,0,0);
+
+    animation:lukaRGBBackground 18s ease-in-out infinite;
+}
+
+/* Uma segunda camada de brilho, também ATRÁS */
+body::after{
+    content:"";
+    position:fixed;
+    inset:-10%;
+    z-index:-3;
+    pointer-events:none;
+
+    background:
+        conic-gradient(
+            from 0deg,
+            rgba(0,183,255,.18),
+            rgba(139,44,255,.18),
+            rgba(255,32,200,.18),
+            rgba(255,210,31,.18),
+            rgba(32,255,120,.18),
+            rgba(0,229,255,.18),
+            rgba(0,183,255,.18)
+        );
+
+    filter:blur(90px);
+
+    opacity:.55;
+
+    animation:lukaRGBRotate 24s linear infinite;
+}
+
+/* O conteúdo fica sempre acima da iluminação */
+#dashboard,
+.section,
+main,
+.content,
+.cards,
+.card,
+.top,
+.sidebar,
+.nav{
+    position:relative;
+    z-index:1;
+}
+
+/* Cards continuam limpos; apenas recebem um brilho MUITO suave */
+.card{
+    overflow:hidden;
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+
+    border-radius:inherit;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(0,183,255,.035),
+            rgba(139,44,255,.035),
+            rgba(255,32,200,.025),
+            rgba(255,210,31,.025),
+            rgba(32,255,120,.035),
+            rgba(0,229,255,.035)
+        );
+
+    background-size:300% 300%;
+
+    animation:lukaCardAmbient 12s linear infinite;
+
+    z-index:-1;
+}
+
+/* Animação da luz */
+@keyframes lukaRGBBackground{
+
+    0%{
+        transform:translate(-8%,-4%) scale(1);
+    }
+
+    25%{
+        transform:translate(6%,-8%) scale(1.06);
+    }
+
+    50%{
+        transform:translate(8%,7%) scale(1.03);
+    }
+
+    75%{
+        transform:translate(-7%,8%) scale(1.07);
+    }
+
+    100%{
+        transform:translate(-8%,-4%) scale(1);
+    }
+}
+
+@keyframes lukaRGBRotate{
+
+    0%{
+        transform:rotate(0deg) scale(1);
+    }
+
+    50%{
+        transform:rotate(180deg) scale(1.08);
+    }
+
+    100%{
+        transform:rotate(360deg) scale(1);
+    }
+}
+
+@keyframes lukaCardAmbient{
+
+    0%{
+        background-position:0% 50%;
+    }
+
+    50%{
+        background-position:100% 50%;
+    }
+
+    100%{
+        background-position:200% 50%;
+    }
+}
+
+/* Segurança: nunca permitir que a luz bloqueie cliques */
+body::before,
+body::after,
+.card::before{
+    pointer-events:none !important;
+}
+
+/* Celular: brilho um pouco mais discreto */
+@media(max-width:700px){
+
+    body::before{
+        filter:blur(42px);
+        opacity:.75;
+    }
+
+    body::after{
+        filter:blur(65px);
+        opacity:.40;
+    }
+}
+
+</style>
+
+<style id="luka-mobile-perfect-fix">
+
+/* ============================================================
+   LUKAFILMES — AJUSTE PERFEITO PARA CELULAR
+   ============================================================ */
+
+html,
+body{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    overflow-x:hidden !important;
+}
+
+*{
+    box-sizing:border-box;
+    max-width:100%;
+}
+
+/* Área principal */
+main,
+.main,
+.content,
+.container,
+#dashboard,
+.section{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+}
+
+/* ============================================================
+   CELULAR
+   ============================================================ */
+
+@media (max-width:700px){
+
+    html,
+    body{
+        width:100vw !important;
+        max-width:100vw !important;
+        min-width:0 !important;
+        margin:0 !important;
+        padding:0 !important;
+        overflow-x:hidden !important;
+    }
+
+    body{
+        font-size:14px;
+    }
+
+    /* Evita qualquer elemento criando largura extra */
+    .app,
+    .layout,
+    .admin-layout,
+    .main,
+    main,
+    .content,
+    .page,
+    .section{
+        width:100% !important;
+        max-width:100% !important;
+        min-width:0 !important;
+        margin-left:0 !important;
+        margin-right:0 !important;
+    }
+
+    /* ========================================================
+       DASHBOARD
+       ======================================================== */
+
+    #dashboard{
+        width:100% !important;
+        max-width:100% !important;
+        min-width:0 !important;
+        padding:14px !important;
+        margin:0 !important;
+    }
+
+    #dashboard .top,
+    .top{
+        width:100% !important;
+        max-width:100% !important;
+        min-width:0 !important;
+        gap:10px !important;
+        flex-wrap:wrap !important;
+    }
+
+    .title{
+        min-width:0 !important;
+        flex:1 1 180px !important;
+    }
+
+    .title h1{
+        font-size:24px !important;
+        line-height:1.15 !important;
+        margin:0 !important;
+        word-break:break-word !important;
+    }
+
+    .title p{
+        font-size:12px !important;
+        line-height:1.4 !important;
+        margin-top:5px !important;
+    }
+
+    .online{
+        white-space:nowrap !important;
+        font-size:11px !important;
+    }
+
+    /* ========================================================
+       CARDS
+       ======================================================== */
+
+    .cards{
+        width:100% !important;
+        max-width:100% !important;
+        min-width:0 !important;
+
+        display:grid !important;
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+
+        gap:10px !important;
+        margin-top:14px !important;
+    }
+
+    .card{
+        width:100% !important;
+        min-width:0 !important;
+        max-width:100% !important;
+
+        padding:14px !important;
+        overflow:hidden !important;
+    }
+
+    .card small{
+        font-size:10px !important;
+        line-height:1.2 !important;
+        display:block !important;
+        white-space:normal !important;
+        overflow-wrap:anywhere !important;
+    }
+
+    .card .num{
+        font-size:26px !important;
+        line-height:1.1 !important;
+        margin-top:7px !important;
+    }
+
+    .card-hint{
+        display:block !important;
+        font-size:10px !important;
+        line-height:1.3 !important;
+        margin-top:6px !important;
+        white-space:normal !important;
+    }
+
+    /* ========================================================
+       BOTÕES
+       ======================================================== */
+
+    button,
+    .btn{
+        max-width:100% !important;
+        min-width:0 !important;
+    }
+
+    /* ========================================================
+       TABELAS / LISTAS
+       ======================================================== */
+
+    table{
+        width:100% !important;
+        max-width:100% !important;
+    }
+
+    .table-wrap,
+    .table-container,
+    .list,
+    .lista{
+        width:100% !important;
+        max-width:100% !important;
+        min-width:0 !important;
+        overflow-x:auto !important;
+        -webkit-overflow-scrolling:touch !important;
+    }
+
+    /* ========================================================
+       INPUTS
+       ======================================================== */
+
+    input,
+    select,
+    textarea{
+        max-width:100% !important;
+        min-width:0 !important;
+    }
+
+    /* ========================================================
+       MODAIS
+       ======================================================== */
+
+    #lukaPremiumOverlay,
+    #lukaEditarConta,
+    .modal,
+    .overlay{
+        padding:10px !important;
+    }
+
+    #lukaPremiumBox,
+    .modal-box,
+    .modal-content{
+        width:100% !important;
+        max-width:100% !important;
+        min-width:0 !important;
+        margin:0 auto !important;
+    }
+
+    /* ========================================================
+       NAVEGAÇÃO
+       ======================================================== */
+
+    .sidebar{
+        max-width:100vw !important;
+    }
+
+    .nav{
+        max-width:100% !important;
+    }
+
+    .nav button{
+        max-width:100% !important;
+        white-space:normal !important;
+        overflow-wrap:anywhere !important;
+    }
+
+    /* ========================================================
+       IMAGENS
+       ======================================================== */
+
+    img,
+    video,
+    iframe{
+        max-width:100% !important;
+    }
+
+    /* ========================================================
+       TEXTOS GRANDES
+       ======================================================== */
+
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    span,
+    small{
+        overflow-wrap:anywhere;
+    }
+
+}
+
+/* Celulares bem estreitos */
+@media (max-width:380px){
+
+    #dashboard{
+        padding:10px !important;
+    }
+
+    .cards{
+        grid-template-columns:1fr !important;
+        gap:8px !important;
+    }
+
+    .card{
+        padding:12px !important;
+    }
+
+    .title h1{
+        font-size:21px !important;
+    }
+
+    .card .num{
+        font-size:24px !important;
+    }
+}
+
+</style>
+</head>
 
 <body>
 
@@ -1093,7 +1696,7 @@ input,select,textarea{
 <button class="active" onclick="aba('dashboard',this)">🏠 Dashboard</button>
 <button onclick="aba('usuarios',this)">👤 Usuários</button>
 <button onclick="aba('testes',this)">🧪 Testes</button>
-<button onclick="aba('revendedores',this)">🤝 Revendedores</button>
+
 <button type="button" onclick="window.location.href='/'" title="Voltar para a página inicial">🎬 Luca Filme</button>
 </nav>
 
@@ -1114,7 +1717,18 @@ input,select,textarea{
 <div class="cards">
 <div class="card clickable-card" onclick="abrirPainelPremium('usuarios')"><small>USUÁRIOS</small><div class="num blue" id="cUsuarios">0</div><span class="card-hint">Clique para abrir →</span></div>
 
-<div class="card clickable-card" onclick="abrirPainelPremium('revendedores')"><small>REVENDEDORES</small><div class="num green" id="cRevendedores">0</div><span class="card-hint">Clique para abrir →</span></div>
+<div class="card clickable-card luka-live-card" onclick="renderChart();">
+<small>ATIVIDADE EM TEMPO REAL</small>
+<div class="luka-live-mini">
+<span class="luka-live-pulse"></span>
+<span>AO VIVO</span>
+</div>
+<div class="luka-live-bars" id="lukaLiveBars">
+<div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div>
+</div>
+<span class="card-hint">Dados atualizados automaticamente →</span>
+</div>
 <div class="card clickable-card" onclick="abrirPainelPremium('online')"><small>ONLINE AGORA</small><div class="num green" id="cOnline">0</div><span class="card-hint">Clique para ver →</span></div>
 </div>
 
@@ -1132,7 +1746,7 @@ input,select,textarea{
 <button class="btn primary" onclick="abrirModal('usuario')">＋ Criar usuário</button>
 <button class="btn yellow" onclick="abrirModal('teste')">＋ Criar teste</button>
 
-<button class="btn green" onclick="abrirModal('revendedor')">＋ Criar revendedor</button>
+
 </div>
 </div>
 
@@ -1212,7 +1826,7 @@ input,select,textarea{
 <h1>Revendedores</h1>
 <p>Controle seus parceiros e limites de conexão</p>
 </div>
-<button class="btn green" onclick="abrirModal('revendedor')">＋ Novo revendedor</button>
+
 </div>
 
 <div class="panel">
@@ -1273,6 +1887,69 @@ input,select,textarea{
 
 <input type="hidden" id="tipoCriacao">
 
+<div id="lukaEscolhaTeste" style="display:none;margin:0 0 18px;">
+  <div style="font-weight:800;margin-bottom:10px;">🧪 Como deseja criar o teste?</div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button type="button"
+            id="lukaModoManual"
+            onclick="LUKA_MODO_TESTE('manual')"
+            style="flex:1;min-width:130px;padding:12px;border-radius:12px;
+                   border:1px solid rgba(255,255,255,.15);cursor:pointer;
+                   font-weight:800;">
+      👤 Manual
+    </button>
+
+    <button type="button"
+            id="lukaModoAutomatico"
+            onclick="LUKA_MODO_TESTE('automatico')"
+            style="flex:1;min-width:160px;padding:12px;border-radius:12px;
+                   border:0;cursor:pointer;font-weight:800;">
+      ⚡ Automático
+    </button>
+  </div>
+</div>
+
+<div id="lukaAutomaticoBox"
+     style="display:none;margin:0 0 18px;padding:16px;border-radius:14px;
+            background:rgba(255,255,255,.05);
+            border:1px solid rgba(255,255,255,.10);">
+
+  <div style="font-weight:800;margin-bottom:12px;">
+    ⚡ Gerar testes automaticamente
+  </div>
+
+  <label>⏱️ Duração (horas)</label>
+  <input id="lukaAutoHoras"
+         type="number"
+         min="1"
+         max="72"
+         value="1">
+
+  <label style="display:block;margin-top:10px;">
+    🔌 Limite de conexões
+  </label>
+  <input id="lukaAutoConexoes"
+         type="number"
+         min="1"
+         value="1">
+
+  <label style="display:block;margin-top:10px;">
+    🔢 Quantidade de testes
+  </label>
+  <input id="lukaAutoQuantidade"
+         type="number"
+         min="1"
+         max="100"
+         value="1">
+
+  <div style="margin-top:12px;opacity:.75;font-size:13px;line-height:1.4;">
+    O sistema irá gerar automaticamente usuário e senha exclusivos para cada teste.
+  </div>
+</div>
+
+<div id="lukaCamposManuais">
+
 <label>Usuário</label>
 <input id="fUsuario" required autocomplete="off">
 
@@ -1281,6 +1958,8 @@ input,select,textarea{
 
 <label id="fTempoLabel">Dias</label>
 <input id="fDias" type="number" min="1" value="30" required>
+
+</div>
 
 <div id="limiteBox" style="display:none">
 <label>Limite de conexões</label>
@@ -1463,6 +2142,35 @@ function abrirModal(tipo){
 
  document.getElementById("fUsuario").value="";
  document.getElementById("fSenha").value="";
+
+ const escolhaTeste=document.getElementById("lukaEscolhaTeste");
+ const automaticoBox=document.getElementById("lukaAutomaticoBox");
+ const camposManuais=document.getElementById("lukaCamposManuais");
+
+ if(escolhaTeste){
+  escolhaTeste.style.display=tipo==="teste"?"block":"none";
+ }
+
+ if(automaticoBox){
+  automaticoBox.style.display="none";
+ }
+
+ if(camposManuais){
+  camposManuais.style.display=tipo==="teste"?"none":"block";
+ }
+
+ const btnSalvarInicial=document.getElementById("btnSalvar");
+
+ if(btnSalvarInicial){
+  if(tipo==="teste"){
+   btnSalvarInicial.style.display="none";
+   btnSalvarInicial.disabled=false;
+   btnSalvarInicial.textContent="Criar";
+  }else{
+   btnSalvarInicial.style.display="";
+  }
+ }
+
  document.getElementById("fTempoLabel").textContent =
   tipo==="teste" ? "Horas de teste" : "Dias";
 
@@ -1489,6 +2197,184 @@ function abrirModal(tipo){
 
 function fecharModal(){
  document.getElementById("modal").classList.remove("show");
+
+ const escolha=document.getElementById("lukaEscolhaTeste");
+ const auto=document.getElementById("lukaAutomaticoBox");
+ const manual=document.getElementById("lukaCamposManuais");
+
+ if(escolha) escolha.style.display="none";
+ if(auto) auto.style.display="none";
+ if(manual) manual.style.display="block";
+
+ const campoUsuario=document.getElementById("fUsuario");
+ const campoSenha=document.getElementById("fSenha");
+ const campoDias=document.getElementById("fDias");
+ const btnSalvar=document.getElementById("btnSalvar");
+
+ if(campoUsuario) campoUsuario.required=true;
+ if(campoSenha) campoSenha.required=true;
+ if(campoDias) campoDias.required=true;
+ if(btnSalvar){
+  btnSalvar.style.display="";
+  btnSalvar.disabled=false;
+  btnSalvar.textContent="Criar";
+ }
+}
+
+function LUKA_MODO_TESTE(modo){
+
+ const auto=document.getElementById("lukaAutomaticoBox");
+ const manual=document.getElementById("lukaCamposManuais");
+ const btnManual=document.getElementById("lukaModoManual");
+ const btnAuto=document.getElementById("lukaModoAutomatico");
+ const btnSalvar=document.getElementById("btnSalvar");
+
+ if(!auto || !manual) return;
+
+ if(modo==="automatico"){
+
+  auto.style.display="block";
+  manual.style.display="none";
+
+  /*
+   * Os campos manuais possuem required.
+   * Quando ficam escondidos, o navegador poderia impedir
+   * o envio do formulário antes do JavaScript executar.
+   */
+  const campoUsuario=document.getElementById("fUsuario");
+  const campoSenha=document.getElementById("fSenha");
+  const campoDias=document.getElementById("fDias");
+
+  if(campoUsuario) campoUsuario.required=false;
+  if(campoSenha) campoSenha.required=false;
+  if(campoDias) campoDias.required=false;
+
+  if(btnSalvar){
+   btnSalvar.style.display="";
+  }
+
+  if(btnAuto){
+   btnAuto.style.transform="scale(1.02)";
+   btnAuto.style.boxShadow="0 8px 25px rgba(0,0,0,.25)";
+  }
+
+  if(btnManual){
+   btnManual.style.transform="";
+   btnManual.style.boxShadow="";
+  }
+
+  if(btnSalvar){
+   btnSalvar.textContent="⚡ Gerar testes";
+  }
+
+ }else{
+
+  auto.style.display="none";
+  manual.style.display="block";
+
+  const campoUsuario=document.getElementById("fUsuario");
+  const campoSenha=document.getElementById("fSenha");
+  const campoDias=document.getElementById("fDias");
+
+  if(campoUsuario) campoUsuario.required=true;
+  if(campoSenha) campoSenha.required=true;
+  if(campoDias) campoDias.required=true;
+
+  if(btnSalvar){
+   btnSalvar.style.display="";
+  }
+
+  if(btnManual){
+   btnManual.style.transform="scale(1.02)";
+   btnManual.style.boxShadow="0 8px 25px rgba(0,0,0,.25)";
+  }
+
+  if(btnAuto){
+   btnAuto.style.transform="";
+   btnAuto.style.boxShadow="";
+  }
+
+  if(btnSalvar){
+   btnSalvar.textContent="Criar";
+  }
+ }
+}
+
+async function LUKA_CRIAR_TESTES_AUTOMATICOS(){
+
+ const horas=Number(document.getElementById("lukaAutoHoras").value);
+ const quantidade=Number(document.getElementById("lukaAutoQuantidade").value);
+ const limite_conexoes=Number(document.getElementById("lukaAutoConexoes").value);
+
+ if(!Number.isInteger(horas) || horas<1 || horas>72){
+  toast("Escolha uma duração entre 1 e 72 horas.");
+  return;
+ }
+
+ if(!Number.isInteger(quantidade) || quantidade<1 || quantidade>100){
+  toast("A quantidade deve estar entre 1 e 100 testes.");
+  return;
+ }
+
+ if(!Number.isInteger(limite_conexoes) || limite_conexoes<1){
+  toast("O limite de conexões deve ser no mínimo 1.");
+  return;
+ }
+
+ const btn=document.getElementById("btnSalvar");
+
+ if(btn){
+  btn.disabled=true;
+  btn.textContent="⚡ Gerando...";
+ }
+
+ try{
+
+  const r=await fetch("/api/admin/usuarios/teste-auto",{
+   method:"POST",
+   credentials:"include",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    horas,
+    quantidade,
+    limite_conexoes
+   })
+  });
+
+  const d=await r.json().catch(()=>({}));
+
+  if(!r.ok || d.sucesso===false){
+   throw new Error(d.mensagem || "Não foi possível gerar os testes.");
+  }
+
+  fecharModal();
+
+  if(typeof window.LUKA_MOSTRAR_RESULTADO_TESTE==="function"){
+   window.LUKA_MOSTRAR_RESULTADO_TESTE(d.testes || []);
+  }else{
+   mostrarMensagemCriacao(d,{
+    usuario:"",
+    senha:"",
+    valor:0,
+    telefone:""
+   });
+  }
+
+  if(typeof carregar==="function"){
+   await carregar();
+  }
+
+ }catch(err){
+
+  toast("❌ "+err.message);
+
+ }finally{
+
+  if(btn){
+   btn.disabled=false;
+   btn.textContent="⚡ Gerar testes";
+  }
+ }
 }
 
 
@@ -1712,6 +2598,14 @@ async function salvar(e){
  e.preventDefault();
 
  const tipo=document.getElementById("tipoCriacao").value;
+
+ const autoBox=document.getElementById("lukaAutomaticoBox");
+
+ if(tipo==="teste" && autoBox && autoBox.style.display==="block"){
+  await LUKA_CRIAR_TESTES_AUTOMATICOS();
+  return;
+ }
+
  const usuario=document.getElementById("fUsuario").value.trim();
  const senha=document.getElementById("fSenha").value;
  const dias=Number(document.getElementById("fDias").value);
@@ -1802,6 +2696,9 @@ async function salvar(e){
 
 async function carregar(){
 
+ iniciarGraficoTempoReal();
+
+
  try{
 
   const r=await fetch("/api/admin/presenca",{credentials:"include"});
@@ -1840,6 +2737,88 @@ async function carregar(){
  }
 }
 
+
+function atualizarGraficoTempoReal(){
+
+    const lista =
+        Array.isArray(usuarios)
+            ? usuarios
+            : [];
+
+    const totalUsuarios =
+        lista.filter(u => u.tipo === "usuario").length;
+
+    const totalTestes =
+        lista.filter(u => u.tipo === "teste").length;
+
+    const totalOnline =
+        lista.filter(u => Boolean(u.online)).length;
+
+    const totalAtivos =
+        lista.filter(u =>
+            String(u.status || "ativo").toLowerCase() === "ativo"
+        ).length;
+
+    const totalExpirados =
+        lista.filter(u => {
+            if(!u.validade) return false;
+            const d = new Date(u.validade);
+            return !Number.isNaN(d.getTime()) &&
+                   d.getTime() <= Date.now();
+        }).length;
+
+    const valores = [
+        totalUsuarios,
+        totalTestes,
+        totalOnline,
+        totalAtivos,
+        totalExpirados,
+        totalOnline + totalTestes,
+        totalUsuarios + totalOnline,
+        lista.length
+    ];
+
+    const maior =
+        Math.max(...valores, 1);
+
+    const barras =
+        document.querySelectorAll("#lukaLiveBars div");
+
+    barras.forEach((barra, i) => {
+
+        const valor =
+            valores[i] ?? 0;
+
+        const altura =
+            Math.max(
+                12,
+                Math.min(
+                    100,
+                    (valor / maior) * 100
+                )
+            );
+
+        barra.style.height =
+            altura + "%";
+    });
+}
+
+function iniciarGraficoTempoReal(){
+
+    atualizarGraficoTempoReal();
+
+    if(window.__lukaGraficoTimer){
+        clearInterval(window.__lukaGraficoTimer);
+    }
+
+    window.__lukaGraficoTimer =
+        setInterval(() => {
+
+            atualizarGraficoTempoReal();
+
+        }, 3000);
+}
+
 function data(v){
 
  if(!v)return"—";
@@ -1862,6 +2841,7 @@ function acoes(u){
  return `
  <div class="actions">
  <button onclick="abrirContaDetalhes(${Number(u.id)})" title="Ver detalhes">👁️</button>
+ <button onclick="abrirEditorConta(${Number(u.id)})" title="Editar usuário">✏️</button>
  <button onclick="renovar(${Number(u.id)})" title="Renovar">🔄</button>
  <button onclick="alternar(${Number(u.id)})" title="Ativar/Suspender">⚡</button>
  <button onclick="excluir(${Number(u.id)})" title="Excluir">🗑️</button>
@@ -2311,32 +3291,94 @@ function excluirContaAberta(){
 }
 
 
-function abrirEditorConta(){
+function abrirEditorConta(id){
 
-    if(!contaDetalhesAberta){
+    const conta = usuarios.find(
+        u => Number(u.id) === Number(id)
+    ) || contaDetalhesAberta;
+
+    if(!conta){
         toast("Nenhuma conta selecionada.");
         return;
     }
 
-    const u=contaDetalhesAberta;
+    contaDetalhesAberta = conta;
 
-    document.getElementById("editarContaUsuario").value =
-        u.usuario || "";
+    const usuarioEl =
+        document.getElementById("editarContaUsuario");
 
-    document.getElementById("editarContaSenha").value =
-        "";
+    const senhaEl =
+        document.getElementById("editarContaSenha");
 
-    document.getElementById("editarContaTipo").value =
-        u.tipo || "usuario";
+    const tipoEl =
+        document.getElementById("editarContaTipo");
 
-    document.getElementById("editarContaTelefone").value =
-        u.telefone || u.whatsapp || "";
+    const telefoneEl =
+        document.getElementById("editarContaTelefone");
 
-    document.getElementById("editarContaValor").value =
-        u.valor ?? u.valor_mensal ?? "";
+    const valorEl =
+        document.getElementById("editarContaValor");
 
-    document.getElementById("lukaEditarConta")
-        .classList.add("show");
+    const validadeEl =
+        document.getElementById("editarContaValidade");
+
+    const limiteEl =
+        document.getElementById("editarContaLimite");
+
+    if(usuarioEl)
+        usuarioEl.value = conta.usuario || "";
+
+    if(senhaEl)
+        senhaEl.value = "";
+
+    if(tipoEl)
+        tipoEl.value = conta.tipo || "usuario";
+
+    if(telefoneEl)
+        telefoneEl.value =
+            conta.telefone ||
+            conta.whatsapp ||
+            "";
+
+    if(valorEl)
+        valorEl.value =
+            conta.valor_mensal ??
+            conta.valor ??
+            "";
+
+    if(validadeEl){
+
+        if(conta.validade){
+
+            const d = new Date(conta.validade);
+
+            validadeEl.value =
+                Number.isNaN(d.getTime())
+                    ? ""
+                    : new Date(
+                        d.getTime() -
+                        d.getTimezoneOffset() * 60000
+                    )
+                    .toISOString()
+                    .slice(0,16);
+
+        }else{
+
+            validadeEl.value = "";
+
+        }
+    }
+
+    if(limiteEl)
+        limiteEl.value =
+            Number(conta.limite_conexoes) || 0;
+
+    const modal =
+        document.getElementById("lukaEditarConta");
+
+    if(modal){
+        modal.classList.add("show");
+    }
 }
 
 function fecharEditorConta(event){
@@ -2345,7 +3387,8 @@ function fecharEditorConta(event){
         return;
     }
 
-    const el=document.getElementById("lukaEditarConta");
+    const el =
+        document.getElementById("lukaEditarConta");
 
     if(el){
         el.classList.remove("show");
@@ -2359,32 +3402,43 @@ async function salvarEdicaoConta(){
         return;
     }
 
-    const id=Number(contaDetalhesAberta.id);
+    const id =
+        Number(contaDetalhesAberta.id);
 
-    const usuario=
+    const usuario =
         document.getElementById("editarContaUsuario")
         .value.trim();
 
-    const senha=
+    const senha =
         document.getElementById("editarContaSenha")
         .value;
 
-    const tipo=
+    const tipo =
         document.getElementById("editarContaTipo")
         .value;
 
-    const telefone=
+    const telefone =
         document.getElementById("editarContaTelefone")
         .value.trim();
 
-    const valorTexto=
+    const valorTexto =
         document.getElementById("editarContaValor")
         .value;
 
-    const valor=
+    const valor =
         valorTexto === ""
             ? 0
             : Number(valorTexto);
+
+    const validade =
+        document.getElementById("editarContaValidade")
+        ?.value || "";
+
+    const limite_conexoes =
+        Number(
+            document.getElementById("editarContaLimite")
+            ?.value || 0
+        );
 
     if(!usuario){
         toast("Informe o usuário.");
@@ -2397,19 +3451,31 @@ async function salvarEdicaoConta(){
     }
 
     if(senha && senha.length < 4){
-        toast("A senha precisa ter pelo menos 4 caracteres.");
+        toast(
+            "A senha precisa ter pelo menos 4 caracteres."
+        );
         return;
     }
 
-    const btn=
+    if(
+        !Number.isInteger(limite_conexoes) ||
+        limite_conexoes < 0
+    ){
+        toast("Limite de conexões inválido.");
+        return;
+    }
+
+    const btn =
         document.getElementById("btnSalvarEdicaoConta");
 
-    btn.disabled=true;
-    btn.textContent="Salvando...";
+    if(btn){
+        btn.disabled = true;
+        btn.textContent = "Salvando...";
+    }
 
     try{
 
-        const r=await fetch(
+        const r = await fetch(
             "/api/admin/usuarios/editar",
             {
                 method:"POST",
@@ -2425,14 +3491,17 @@ async function salvarEdicaoConta(){
                     telefone,
                     valor,
                     whatsapp:telefone,
-                    valor_mensal:valor
+                    valor_mensal:valor,
+                    validade,
+                    limite_conexoes
                 })
             }
         );
 
-        const d=await r.json().catch(()=>({}));
+        const d =
+            await r.json().catch(() => ({}));
 
-        if(!r.ok || d.sucesso===false){
+        if(!r.ok || d.sucesso === false){
             throw new Error(
                 d.mensagem ||
                 "Não foi possível atualizar a conta."
@@ -2441,32 +3510,44 @@ async function salvarEdicaoConta(){
 
         fecharEditorConta();
 
-        toast("✅ Conta atualizada com sucesso.");
+        toast(
+            "✅ Conta atualizada com sucesso."
+        );
 
         await carregar();
 
-        const atualizada=usuarios.find(
-            x=>Number(x.id)===id
-        );
+        const atualizada =
+            usuarios.find(
+                x => Number(x.id) === id
+            );
 
         if(atualizada){
-            contaDetalhesAberta=atualizada;
+            contaDetalhesAberta = atualizada;
             abrirContaDetalhes(id);
         }
 
     }catch(e){
 
-        console.error("[ADMIN EDITAR]",e);
+        console.error(
+            "[ADMIN EDITAR]",
+            e
+        );
 
-        toast("❌ "+(
-            e.message ||
-            "Erro ao salvar."
-        ));
+        toast(
+            "❌ " +
+            (
+                e.message ||
+                "Erro ao salvar."
+            )
+        );
 
     }finally{
 
-        btn.disabled=false;
-        btn.textContent="💾 Salvar alterações";
+        if(btn){
+            btn.disabled = false;
+            btn.textContent =
+                "💾 Salvar alterações";
+        }
     }
 }
 
@@ -3609,7 +4690,337 @@ window.alternarContaPremium=function(id){
     }
 };
 
-window.renderPainelPremium=function(){let a=(Array.isArray(window.usuarios)&&window.usuarios.length?window.usuarios:Array.isArray(window.listaUsuarios)&&window.listaUsuarios.length?window.listaUsuarios:Array.isArray(window.usuariosCache)&&window.usuariosCache.length?window.usuariosCache:[]),m={usuarios:["👤","Usuários","Contas de clientes"],testes:["🧪","Testes","Acessos temporários"],revendedores:["🤝","Revendedores","Parceiros"],online:["🟢","Online agora","Contas conectadas"]},c=m[tipo]||m.usuarios,l=tipo==="online"?a.filter(u=>u.online):a.filter(u=>u.tipo===(tipo==="usuarios"?"usuario":tipo)),q=(document.getElementById("lpSearch").value||"").toLowerCase();l=l.filter(u=>String(u.usuario||"").toLowerCase().includes(q));document.getElementById("lpIcon").textContent=c[0];document.getElementById("lpTitle").textContent=c[1];document.getElementById("lpSub").textContent=c[2];document.getElementById("lpStats").innerHTML=`<div class="lpStat"><small>TOTAL</small><strong>${l.length}</strong></div><div class="lpStat"><small>ATIVOS</small><strong>${l.filter(u=>(u.status||"ativo")==="ativo").length}</strong></div><div class="lpStat"><small>ONLINE</small><strong>${l.filter(u=>u.online).length}</strong></div><div class="lpStat"><small>EXPIRADOS</small><strong>${l.filter(u=>u.validade&&new Date(u.validade)<=Date.now()).length}</strong></div>`;let b=document.getElementById("lpList");if(!l.length){b.innerHTML=`<div class="lpEmpty">Nenhuma conta encontrada.</div>`;return}b.innerHTML=l.map(u=>`<div class="lpUser"><div class="lpTop"><span class="lpName">${esc(u.usuario)}</span><span class="lpPill ${u.online?"on":""}">${u.online?"● ONLINE":"○ OFFLINE"}</span></div><div class="lpMeta"><div><small>STATUS</small><span>${esc((u.status||"ativo").toUpperCase())}</span></div><div><small>VALIDADE</small><span>${esc(rest(u.validade))}</span></div><div><small>TELEFONE</small><span>${esc(u.telefone||u.whatsapp||"Não informado")}</span></div><div><small>TIPO</small><span>${esc((u.tipo||"usuario").toUpperCase())}</span></div></div><div class="lpActions"><button onclick="event.stopPropagation();fecharPainelPremium();setTimeout(()=>abrirContaDetalhes(${Number(u.id)}),120)">👁️ Detalhes</button><button onclick="event.stopPropagation();renovarContaPremium(${Number(u.id)})">🔄 Renovar</button><button onclick="event.stopPropagation();alternarContaPremium(${Number(u.id)})">⚡ Status</button></div></div>`).join("")};document.addEventListener("keydown",e=>{if(e.key==="Escape")fecharPainelPremium()})})();</script></body>
+window.renderPainelPremium=function(){let a=(Array.isArray(window.usuarios)&&window.usuarios.length?window.usuarios:Array.isArray(window.listaUsuarios)&&window.listaUsuarios.length?window.listaUsuarios:Array.isArray(window.usuariosCache)&&window.usuariosCache.length?window.usuariosCache:[]),m={usuarios:["👤","Usuários","Contas de clientes"],testes:["🧪","Testes","Acessos temporários"],revendedores:["🤝","Revendedores","Parceiros"],online:["🟢","Online agora","Contas conectadas"]},c=m[tipo]||m.usuarios,l=tipo==="online"?a.filter(u=>u.online):a.filter(u=>u.tipo===(tipo==="usuarios"?"usuario":tipo)),q=(document.getElementById("lpSearch").value||"").toLowerCase();l=l.filter(u=>String(u.usuario||"").toLowerCase().includes(q));document.getElementById("lpIcon").textContent=c[0];document.getElementById("lpTitle").textContent=c[1];document.getElementById("lpSub").textContent=c[2];document.getElementById("lpStats").innerHTML=`<div class="lpStat"><small>TOTAL</small><strong>${l.length}</strong></div><div class="lpStat"><small>ATIVOS</small><strong>${l.filter(u=>(u.status||"ativo")==="ativo").length}</strong></div><div class="lpStat"><small>ONLINE</small><strong>${l.filter(u=>u.online).length}</strong></div><div class="lpStat"><small>EXPIRADOS</small><strong>${l.filter(u=>u.validade&&new Date(u.validade)<=Date.now()).length}</strong></div>`;let b=document.getElementById("lpList");if(!l.length){b.innerHTML=`<div class="lpEmpty">Nenhuma conta encontrada.</div>`;return}b.innerHTML=l.map(u=>`<div class="lpUser"><div class="lpTop"><span class="lpName">${esc(u.usuario)}</span><span class="lpPill ${u.online?"on":""}">${u.online?"● ONLINE":"○ OFFLINE"}</span></div><div class="lpMeta"><div><small>STATUS</small><span>${esc((u.status||"ativo").toUpperCase())}</span></div><div><small>VALIDADE</small><span>${esc(rest(u.validade))}</span></div><div><small>TELEFONE</small><span>${esc(u.telefone||u.whatsapp||"Não informado")}</span></div><div><small>TIPO</small><span>${esc((u.tipo||"usuario").toUpperCase())}</span></div></div><div class="lpActions"><button onclick="event.stopPropagation();fecharPainelPremium();setTimeout(()=>abrirContaDetalhes(${Number(u.id)}),120)">👁️ Detalhes</button><button onclick="event.stopPropagation();renovarContaPremium(${Number(u.id)})">🔄 Renovar</button><button onclick="event.stopPropagation();alternarContaPremium(${Number(u.id)})">⚡ Status</button></div></div>`).join("")};document.addEventListener("keydown",e=>{if(e.key==="Escape")fecharPainelPremium()})})();</script>
+<!-- LUKAFILMES — RESULTADO AUTOMÁTICO DO TESTE -->
+<div id="luka-teste-resultado"
+     style="display:none;position:fixed;inset:0;z-index:999999;
+            background:rgba(0,0,0,.84);align-items:center;
+            justify-content:center;padding:20px;box-sizing:border-box;">
+
+  <div style="
+      width:min(560px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:#151515;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:18px;
+      padding:24px;
+      box-sizing:border-box;
+      box-shadow:0 25px 90px rgba(0,0,0,.65);">
+
+    <div style="text-align:center;margin-bottom:20px;">
+
+      <div style="
+          font-size:23px;
+          font-weight:900;
+          line-height:1.25;">
+        🎉 TESTE CRIADO COM SUCESSO!
+      </div>
+
+      <div style="
+          font-size:18px;
+          font-weight:800;
+          margin-top:10px;">
+        🎬 SEJA BEM-VINDO À LUKAFILMES!
+      </div>
+
+      <div style="
+          opacity:.82;
+          margin-top:10px;
+          line-height:1.5;
+          font-size:14px;">
+        Aproveite bastante o teste gratuito, teste filmes e séries
+        à vontade e conheça tudo que a LUKAFILMES oferece.
+      </div>
+
+    </div>
+
+    <div id="luka-teste-resultado-conteudo"></div>
+
+    <div style="
+        margin-top:16px;
+        padding:15px;
+        border-radius:12px;
+        background:rgba(255,255,255,.06);
+        line-height:1.55;
+        font-size:14px;">
+
+      🍿 Teste bastante para depois decidir com calma se quer contratar.
+
+      <br><br>
+
+      💰 <b>Plano completo: R$ 18,00 mensais.</b>
+
+    </div>
+
+    <div style="
+        display:flex;
+        gap:10px;
+        margin-top:18px;
+        flex-wrap:wrap;">
+
+      <button type="button"
+              onclick="LUKA_COPIAR_TESTE()"
+              style="
+                flex:1;
+                min-width:180px;
+                padding:14px;
+                border:0;
+                border-radius:11px;
+                cursor:pointer;
+                font-weight:900;
+                font-size:15px;">
+        📋 Copiar tudo
+      </button>
+
+      <button type="button"
+              onclick="LUKA_FECHAR_TESTE()"
+              style="
+                flex:1;
+                min-width:120px;
+                padding:14px;
+                border:1px solid rgba(255,255,255,.15);
+                background:rgba(255,255,255,.07);
+                color:#fff;
+                border-radius:11px;
+                cursor:pointer;
+                font-weight:800;
+                font-size:15px;">
+        Fechar
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+
+window.LUKA_TESTE_TEXTO = "";
+
+window.LUKA_MOSTRAR_RESULTADO_TESTE = function(testes){
+
+    if(!Array.isArray(testes) || !testes.length){
+
+        if(typeof toast === "function"){
+            toast("❌ O servidor não retornou os dados do teste.");
+        }else{
+            alert("O servidor não retornou os dados do teste.");
+        }
+
+        return;
+    }
+
+    var blocos = [];
+
+    testes.forEach(function(t, i){
+
+        var usuario = String(t.usuario || "");
+        var senha = String(t.senha || "");
+        var validade = t.validade || "";
+
+        try{
+            validade = new Date(validade).toLocaleString("pt-BR",{
+                dateStyle:"short",
+                timeStyle:"short"
+            });
+        }catch(e){}
+
+        blocos.push(
+            '<div style="' +
+            'padding:17px;' +
+            'margin-bottom:12px;' +
+            'border-radius:14px;' +
+            'background:rgba(255,255,255,.055);' +
+            'border:1px solid rgba(255,255,255,.10);' +
+            '">' +
+
+            '<div style="' +
+            'font-size:16px;' +
+            'font-weight:900;' +
+            'margin-bottom:13px;' +
+            '">' +
+
+            '🎬 TESTE ' +
+            (testes.length > 1 ? (i + 1) : '') +
+
+            '</div>' +
+
+            '<div style="margin:7px 0;">' +
+            '👤 <b>Usuário:</b> ' +
+            '<span style="font-family:monospace;">' +
+            usuario +
+            '</span>' +
+            '</div>' +
+
+            '<div style="margin:7px 0;">' +
+            '🔑 <b>Senha:</b> ' +
+            '<span style="font-family:monospace;">' +
+            senha +
+            '</span>' +
+            '</div>' +
+
+            '<div style="margin:7px 0;">' +
+            '⏱️ <b>Expira em:</b> ' +
+            validade +
+            '</div>' +
+
+            '</div>'
+        );
+    });
+
+    var texto =
+`🎉 TESTE CRIADO COM SUCESSO!
+
+🎬 SEJA BEM-VINDO À LUKAFILMES!
+
+🍿 Aproveite bastante o teste gratuito.
+Teste filmes e séries à vontade, explore a plataforma e conheça tudo que a LUKAFILMES oferece.
+
+`;
+
+    testes.forEach(function(t, i){
+
+        var validade = t.validade || "";
+
+        try{
+            validade = new Date(validade).toLocaleString("pt-BR",{
+                dateStyle:"short",
+                timeStyle:"short"
+            });
+        }catch(e){}
+
+        if(testes.length > 1){
+            texto += "🎬 TESTE " + (i + 1) + "\n";
+        }
+
+        texto +=
+            "👤 Usuário: " + String(t.usuario || "") + "\n" +
+            "🔑 Senha: " + String(t.senha || "") + "\n" +
+            "⏱️ Expira em: " + validade + "\n\n";
+    });
+
+    texto +=
+`🍿 Teste bastante para depois decidir com calma se quer contratar.
+
+💰 Plano completo: R$ 18,00 mensais.
+
+🎬 Aproveite a LUKAFILMES!`;
+
+    window.LUKA_TESTE_TEXTO = texto;
+
+    var el = document.getElementById(
+        "luka-teste-resultado-conteudo"
+    );
+
+    if(el){
+        el.innerHTML = blocos.join("");
+    }
+
+    var modal = document.getElementById(
+        "luka-teste-resultado"
+    );
+
+    if(modal){
+        modal.style.display = "flex";
+    }
+
+};
+
+window.LUKA_COPIAR_TESTE = async function(){
+
+    var texto = window.LUKA_TESTE_TEXTO || "";
+
+    if(!texto){
+        return;
+    }
+
+    var copiado = false;
+
+    try{
+
+        if(navigator.clipboard &&
+           navigator.clipboard.writeText){
+
+            await navigator.clipboard.writeText(texto);
+            copiado = true;
+        }
+
+    }catch(e){}
+
+    if(!copiado){
+
+        try{
+
+            var area = document.createElement("textarea");
+
+            area.value = texto;
+            area.style.position = "fixed";
+            area.style.left = "-9999px";
+
+            document.body.appendChild(area);
+            area.focus();
+            area.select();
+
+            copiado = document.execCommand("copy");
+
+            area.remove();
+
+        }catch(e){}
+    }
+
+    var botoes = document.querySelectorAll(
+        '#luka-teste-resultado button'
+    );
+
+    var botao = botoes.length ? botoes[0] : null;
+
+    if(copiado){
+
+        if(botao){
+
+            var original = botao.innerHTML;
+
+            botao.innerHTML = "✅ Copiado!";
+
+            setTimeout(function(){
+                botao.innerHTML = original;
+            },1800);
+
+        }
+
+        if(typeof toast === "function"){
+            toast("✅ Dados copiados!");
+        }
+
+    }else{
+
+        if(typeof toast === "function"){
+            toast("❌ Não foi possível copiar.");
+        }
+
+    }
+
+};
+
+window.LUKA_FECHAR_TESTE = function(){
+
+    var modal = document.getElementById(
+        "luka-teste-resultado"
+    );
+
+    if(modal){
+        modal.style.display = "none";
+    }
+
+};
+
+})();
+</script>
+
+</body>
 </html>
 
 <style id="luka-conta-tech-upgrade">
@@ -5358,80 +6769,12 @@ tbody td:last-child{
 
     function lukaModernDashboard(){
 
-        if(document.querySelector(".luka-modern-overview")){
-            lukaAtualizarCards();
-            return;
-        }
-
-        const alvo =
-            document.querySelector("main") ||
-            document.querySelector(".content") ||
-            document.body;
-
-        if(!alvo)return;
-
-        const overview=document.createElement("div");
-        overview.className="luka-modern-overview";
-
-        overview.innerHTML=`
-            <div class="luka-modern-stat"
-                 onclick="abrirPainelPremium('usuarios')">
-                <div class="luka-modern-stat-icon">👤</div>
-                <div class="luka-modern-stat-label">Usuários</div>
-                <div class="luka-modern-stat-number"
-                     id="lukaModernUsuarios">0</div>
-                <div class="luka-modern-stat-sub">
-                    Contas ativas no sistema
-                </div>
-            </div>
-
-            <div class="luka-modern-stat"
-                 onclick="abrirAbaAdmin('testes')">
-                <div class="luka-modern-stat-icon">🧪</div>
-                <div class="luka-modern-stat-label">Testes</div>
-                <div class="luka-modern-stat-number"
-                     id="lukaModernTestes">0</div>
-                <div class="luka-modern-stat-sub">
-                    Acessos temporários
-                </div>
-            </div>
-
-            <div class="luka-modern-stat"
-                 onclick="abrirPainelPremium('revendedores')">
-                <div class="luka-modern-stat-icon">🤝</div>
-                <div class="luka-modern-stat-label">Revendedores</div>
-                <div class="luka-modern-stat-number"
-                     id="lukaModernRevendedores">0</div>
-                <div class="luka-modern-stat-sub">
-                    Parceiros cadastrados
-                </div>
-            </div>
-
-            <div class="luka-modern-stat"
-                 onclick="abrirPainelPremium('online')">
-                <div class="luka-modern-stat-icon">🟢</div>
-                <div class="luka-modern-stat-label">Online</div>
-                <div class="luka-modern-stat-number"
-                     id="lukaModernOnline">0</div>
-                <div class="luka-modern-stat-sub">
-                    Sessões detectadas agora
-                </div>
-            </div>
-        `;
-
-        const primeiraSection =
-            alvo.querySelector(".section");
-
-        if(primeiraSection){
-            primeiraSection.parentNode.insertBefore(
-                overview,
-                primeiraSection
-            );
-        }else{
-            alvo.prepend(overview);
-        }
-
-        lukaAtualizarCards();
+        /*
+         * Dashboard superior removido.
+         * A Dashboard principal existente abaixo permanece como
+         * estrutura única do painel.
+         */
+        return;
     }
 
     function lukaAtualizarCards(){

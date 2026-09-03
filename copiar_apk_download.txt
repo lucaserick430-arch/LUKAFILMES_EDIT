@@ -1,0 +1,13 @@
+============================================================
+LUKAFILMES — APK COPIADO PARA DOWNLOADS
+============================================================
+
+-rw-rw----. 1 u0_a335 media_rw 12K Sep  2 14:23 /sdcard/Download/LUKAFILMES-TESTE-ANUNCIO-BACK.apk
+
+Agora abra a pasta DOWNLOAD no celular.
+Toque em:
+LUKAFILMES-TESTE-ANUNCIO-BACK.apk
+
+E escolha INSTALAR/REINSTALAR.
+
+============================================================

@@ -669,29 +669,56 @@ body{
 }
 
 .btn-assistir,
-.btn-lista{
+.btn-favorito,
+.btn-meus-favoritos{
     border:0;
-    border-radius:5px;
-    padding:12px 22px;
-    font-size:15px;
-    font-weight:bold;
+    border-radius:8px;
+    min-height:46px;
+    padding:12px 20px;
+    font-size:14px;
+    font-weight:800;
     cursor:pointer;
-    transition:.2s;
+    transition:
+        transform .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    white-space:nowrap;
+    box-sizing:border-box;
 }
 
 .btn-assistir{
     background:#fff;
     color:#000;
+    box-shadow:0 6px 22px rgba(0,0,0,.25);
 }
 
-.btn-lista{
-    background:rgba(109,109,110,.7);
+.btn-favorito{
+    background:rgba(255,255,255,.12);
+    color:#fff;
+    border:1px solid rgba(255,255,255,.24);
+    backdrop-filter:blur(10px);
+}
+
+.btn-meus-favoritos{
+    background:rgba(109,109,110,.72);
     color:#fff;
 }
 
 .btn-assistir:hover,
-.btn-lista:hover{
-    transform:scale(1.04);
+.btn-favorito:hover,
+.btn-meus-favoritos:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(0,0,0,.28);
+}
+
+.btn-favorito.favoritado{
+    background:rgba(220,30,70,.92);
+    color:#fff;
+    border-color:transparent;
 }
 
 .catalogo-netflix{
@@ -961,11 +988,22 @@ body{
         width:100%;
     }
 
+    .hero-botoes{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:9px;
+        width:100%;
+    }
+
     .btn-assistir,
-    .btn-lista{
-        flex:1;
-        padding:11px 8px;
-        font-size:13px;
+    .btn-favorito,
+    .btn-meus-favoritos{
+        width:100%;
+        min-width:0;
+        min-height:45px;
+        padding:10px 7px;
+        font-size:12px;
+        border-radius:8px;
     }
 }
 </style>
@@ -2426,6 +2464,93 @@ body {
 }
 </style>
 
+
+<style id="hero-filmes-audio-button-css">
+#heroFilmesAudioBtn{
+    display:none;
+}
+
+@media (max-width:768px){
+
+    #heroFilmesAudioBtn{
+        display:flex !important;
+        position:absolute !important;
+        right:18px !important;
+        bottom:28px !important;
+
+        width:48px !important;
+        height:48px !important;
+
+        align-items:center !important;
+        justify-content:center !important;
+
+        border:1px solid rgba(255,255,255,.35) !important;
+        border-radius:50% !important;
+
+        background:rgba(0,0,0,.65) !important;
+        color:#fff !important;
+
+        font-size:21px !important;
+        line-height:1 !important;
+
+        padding:0 !important;
+        margin:0 !important;
+
+        cursor:pointer !important;
+
+        z-index:9999 !important;
+
+        -webkit-tap-highlight-color:transparent !important;
+        touch-action:manipulation !important;
+
+        box-sizing:border-box !important;
+    }
+
+    #heroFilmesAudioBtn:active{
+        transform:scale(.94) !important;
+    }
+}
+</style>
+
+
+<style id="hero-filmes-touch-css">
+
+#heroFilmesTouchLayer{
+    display:none;
+}
+
+@media (max-width:768px){
+
+    #heroFilmesTouchLayer{
+        display:block !important;
+
+        position:absolute !important;
+        inset:0 !important;
+
+        width:100% !important;
+        height:100% !important;
+
+        z-index:4 !important;
+
+        background:transparent !important;
+
+        touch-action:auto !important;
+
+        -webkit-tap-highlight-color:transparent !important;
+    }
+
+    /*
+     * O conteúdo do filme continua acima
+     * da camada de toque.
+     */
+    .hero-conteudo{
+        z-index:5 !important;
+    }
+
+}
+
+</style>
+
 </head>
 
 <body>
@@ -2565,6 +2690,19 @@ body {
         </div>
 
         <div class="hero-trailer-filme-overlay"></div>
+        <div
+            id="heroFilmesTouchLayer"
+            aria-hidden="true">
+        </div>
+
+        <button
+            id="heroFilmesAudioBtn"
+            type="button"
+            aria-label="Ativar áudio"
+            aria-pressed="false">
+            🔇
+        </button>
+
 
         <div class="hero-conteudo">
             <div class="hero-tag">LUKAFILMES ORIGINAL</div>
@@ -2584,15 +2722,15 @@ body {
                     ▶ Assistir
                 </button>
 
-                <button id="heroLista" class="btn-lista">
-                    ＋ Minha lista
+                <button id="heroFavorito" class="btn-favorito" type="button">
+                    ♡ Adicionar aos Favoritos
                 </button>
+
                 <a
                     href="/paginas/minha-lista"
-                    id="heroMinhaLista"
-                    class="btn-lista"
-                    style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;margin-left:8px;"
-                >♥ Minha Lista</a>
+                    id="heroMeusFavoritos"
+                    class="btn-meus-favoritos"
+                >♥ Meus Favoritos</a>
             </div>
         </div>
     </section>
@@ -3387,7 +3525,7 @@ function colocarTrailer(trailer){
         "&rel=0"+
         "&modestbranding=1"+
         "&playsinline=1"+
-        "&iv_load_policy=3";
+        "&iv_load_policy=3"+"&enablejsapi=1"+"&origin="+encodeURIComponent(location.origin);
 
     limparCapa();
 
@@ -3444,8 +3582,85 @@ async function buscarTrailer(filme){
 
 function configurarBotoes(){
 
-    const botaoAssistir=
+    const botaoAssistir =
         document.getElementById("heroAssistir");
+
+    const botaoFavorito =
+        document.getElementById("heroFavorito");
+
+    function obterIdFilme(filme){
+
+        return String(
+            filme?.id ||
+            filme?.tmdb_id ||
+            filme?.titulo ||
+            filme?.nome ||
+            ""
+        );
+    }
+
+    function lerMinhaLista(){
+
+        try{
+
+            const lista =
+                JSON.parse(
+                    localStorage.getItem(
+                        "lukafilmes_minhalista"
+                    ) || "[]"
+                );
+
+            return Array.isArray(lista)
+                ? lista
+                : [];
+
+        }catch(e){
+
+            return [];
+        }
+    }
+
+    function salvarMinhaLista(lista){
+
+        localStorage.setItem(
+            "lukafilmes_minhalista",
+            JSON.stringify(lista)
+        );
+    }
+
+    function estaNosFavoritos(filme){
+
+        const id =
+            obterIdFilme(filme);
+
+        if(!id)
+            return false;
+
+        return lerMinhaLista().some(function(item){
+
+            return obterIdFilme(item) === id;
+
+        });
+    }
+
+    function atualizarBotaoFavorito(){
+
+        if(!botaoFavorito)
+            return;
+
+        const ativo =
+            estaNosFavoritos(filmeHeroAtual);
+
+        botaoFavorito.classList.toggle(
+            "favoritado",
+            ativo
+        );
+
+        botaoFavorito.textContent =
+            ativo
+            ? "♥ Remover dos Favoritos"
+            : "♡ Adicionar aos Favoritos";
+    }
 
     if(botaoAssistir){
 
@@ -3459,73 +3674,56 @@ function configurarBotoes(){
                 JSON.stringify(filmeHeroAtual)
             );
 
-            window.location.href=
+            window.location.href =
                 "/paginas/filme.html";
         };
     }
 
-    const botaoLista=
-        document.getElementById("heroLista");
+    if(botaoFavorito){
 
-    if(!botaoLista)
-        return;
+        botaoFavorito.onclick=function(){
 
-    botaoLista.onclick=function(){
+            if(!filmeHeroAtual)
+                return;
 
-        if(!filmeHeroAtual)
-            return;
+            const id =
+                obterIdFilme(filmeHeroAtual);
 
-        let lista=[];
+            if(!id)
+                return;
 
-        try{
+            let lista =
+                lerMinhaLista();
 
-            lista=JSON.parse(
-                localStorage.getItem(
-                    "lukafilmes_minhalista"
-                )||"[]"
-            );
+            const indice =
+                lista.findIndex(function(item){
 
-        }catch(e){
+                    return obterIdFilme(item) === id;
 
-            lista=[];
-        }
+                });
 
-        const id=String(
-            filmeHeroAtual.id||
-            filmeHeroAtual.tmdb_id||
-            filmeHeroAtual.titulo||
-            filmeHeroAtual.nome||
-            ""
-        );
+            if(indice >= 0){
 
-        const existe=lista.some(
-            item=>
-                String(
-                    item.id||
-                    item.tmdb_id||
-                    item.titulo||
-                    item.nome||
-                    ""
-                )===id
-        );
+                lista.splice(indice,1);
 
-        if(!existe){
+                salvarMinhaLista(lista);
 
-            lista.push(filmeHeroAtual);
+            }else{
 
-            localStorage.setItem(
-                "lukafilmes_minhalista",
-                JSON.stringify(lista)
-            );
-        }
+                lista.push(filmeHeroAtual);
 
-        botaoLista.textContent=
-            existe
-            ?"✓ Na minha lista"
-            :"✓ Adicionada";
-    };
+                salvarMinhaLista(lista);
+            }
+
+            atualizarBotaoFavorito();
+        };
+    }
+
+    atualizarBotaoFavorito();
+
+    window.atualizarBotaoFavorito =
+        atualizarBotaoFavorito;
 }
-
 
 /*
  * Busca várias páginas do catálogo,
@@ -3840,60 +4038,219 @@ if(document.readyState==="loading"){
 <script id="hero-filmes-audio">
 (function(){
 
-    window.__heroFilmesAudioLiberado = false;
+    /*
+     * COMPORTAMENTO MOBILE
+     *
+     * Primeiro toque:
+     *     pausa o trailer.
+     *
+     * Segundo toque:
+     *     libera o áudio e continua.
+     *
+     * Depois:
+     *     mantém o trailer reproduzindo.
+     *
+     * Desktop:
+     *     não interfere.
+     */
 
-    function liberarAudioHero(){
+    let trailerFoiRetomado = false;
 
-        if(window.__heroFilmesAudioLiberado)
+    function mobile(){
+
+        return window.matchMedia(
+            "(max-width: 768px)"
+        ).matches;
+
+    }
+
+    function obterIframe(){
+
+        return document.getElementById(
+            "trailerFilmes"
+        );
+
+    }
+
+    function comandoYoutube(funcao, args){
+
+        const iframe = obterIframe();
+
+        if(
+            !iframe ||
+            !iframe.contentWindow ||
+            !iframe.src
+        ){
             return;
-
-        const iframe =
-            document.getElementById("trailerFilmes");
-
-        if(!iframe || !iframe.src)
-            return;
-
-        window.__heroFilmesAudioLiberado = true;
+        }
 
         try{
 
-            if(
-                iframe.src.indexOf("mute=1") !== -1
-            ){
-
-                iframe.src =
-                    iframe.src.replace(
-                        "&mute=1",
-                        "&mute=0"
-                    );
-            }
+            iframe.contentWindow.postMessage(
+                JSON.stringify({
+                    event:"command",
+                    func:funcao,
+                    args:args || []
+                }),
+                "https://www.youtube.com"
+            );
 
         }catch(e){
 
             console.warn(
-                "[HERO FILMES AUDIO] Erro:",
+                "[LUKAFILMES TRAILER]",
                 e
             );
+
         }
+
     }
 
-    document.addEventListener(
-        "pointerdown",
-        liberarAudioHero,
-        {
-            once:true,
-            passive:true
-        }
-    );
+    function primeiroToque(){
 
-    document.addEventListener(
-        "touchstart",
-        liberarAudioHero,
-        {
-            once:true,
-            passive:true
+        /*
+         * Primeiro toque somente pausa.
+         * Não mexe no áudio.
+         */
+        comandoYoutube(
+            "pauseVideo"
+        );
+
+    }
+
+    function segundoToque(){
+
+        /*
+         * Segundo toque:
+         * libera áudio + continua trailer.
+         */
+        trailerFoiRetomado = true;
+
+        comandoYoutube(
+            "unMute"
+        );
+
+        comandoYoutube(
+            "setVolume",
+            [100]
+        );
+
+        comandoYoutube(
+            "playVideo"
+        );
+
+        /*
+         * Reforça o comando depois que
+         * o player processar o primeiro.
+         */
+        setTimeout(function(){
+
+            comandoYoutube(
+                "unMute"
+            );
+
+            comandoYoutube(
+                "playVideo"
+            );
+
+        }, 250);
+
+    }
+
+    function toqueNoTrailer(event){
+
+        if(!mobile())
+            return;
+
+        /*
+         * Não deixa o mesmo gesto disparar
+         * várias vezes.
+         */
+        if(
+            event.type === "touchstart" &&
+            event.touches &&
+            event.touches.length > 1
+        ){
+            return;
         }
-    );
+
+        if(!trailerFoiRetomado){
+
+            primeiroToque();
+
+        }else{
+
+            /*
+             * Depois que o trailer voltou com áudio,
+             * os próximos toques não pausam novamente.
+             */
+            comandoYoutube(
+                "playVideo"
+            );
+
+        }
+
+    }
+
+    function instalar(){
+
+        const camada =
+            document.getElementById(
+                "heroFilmesTouchLayer"
+            );
+
+        if(!camada)
+            return;
+
+        /*
+         * Um toque inicia a sequência.
+         *
+         * Não usamos listeners globais.
+         * A camada fica somente sobre o trailer.
+         */
+        camada.addEventListener(
+            "touchstart",
+            toqueNoTrailer,
+            {
+                passive:true
+            }
+        );
+
+        camada.addEventListener(
+            "pointerdown",
+            function(event){
+
+                if(
+                    event.pointerType === "touch"
+                ){
+
+                    toqueNoTrailer(event);
+
+                }
+
+            },
+            {
+                passive:true
+            }
+        );
+
+    }
+
+    if(
+        document.readyState === "loading"
+    ){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            instalar,
+            {once:true}
+        );
+
+    }else{
+
+        instalar();
+
+    }
 
 })();
 </script>

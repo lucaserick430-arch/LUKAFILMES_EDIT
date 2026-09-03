@@ -1,0 +1,1109 @@
+==================================================
+LUKAFILMES — DELIMITANDO BLOCO REVENDEDOR
+==================================================
+
+===== 3300–4200 =====
+            u => Number(u.id) === id
+        );
+
+        if (indice === -1) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        usuarios[indice].status = status;
+
+        await salvarUsuarios(usuarios);
+        return res.json({
+            sucesso: true,
+            mensagem:
+                status === "ativo"
+                    ? "Usuário ativado com sucesso."
+                    : "Usuário suspenso com sucesso."
+        });
+
+    } catch (erro) {
+        console.error("[ERRO STATUS USUARIO]", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao alterar status."
+        });
+    }
+});
+
+// ==========================================
+// ADMIN — RENOVAR USUÁRIO
+// ==========================================
+
+app.post("/api/admin/usuarios/renovar", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.body.id);
+        const dias = Number(req.body.dias);
+
+        if (
+            !Number.isInteger(id) ||
+            id < 1 ||
+            !Number.isInteger(dias) ||
+            dias < 1
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Informe uma quantidade válida de dias."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const indice = usuarios.findIndex(
+            u => Number(u.id) === id
+        );
+
+        if (indice === -1) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const usuario = usuarios[indice];
+
+        let inicio = Date.now();
+
+        if (usuario.validade) {
+
+            const validadeAtual =
+                new Date(usuario.validade).getTime();
+
+            if (
+                Number.isFinite(validadeAtual) &&
+                validadeAtual > Date.now()
+            ) {
+                inicio = validadeAtual;
+            }
+        }
+
+        const novaValidade =
+            new Date(
+                inicio +
+                dias *
+                24 *
+                60 *
+                60 *
+                1000
+            ).toISOString();
+
+        usuarios[indice].validade = novaValidade;
+        usuarios[indice].status = "ativo";
+
+        await salvarUsuarios(usuarios);
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Usuário renovado com sucesso.",
+            validade: novaValidade
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO RENOVAR USUARIO]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao renovar usuário."
+        });
+    }
+
+});// ==========================================
+
+
+
+
+// ==========================================
+
+app.post("/api/revendedor/clientes", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso permitido somente para revendedores."
+            });
+        }
+
+        const revendedorId =
+            Number(req.session.usuario.id);
+
+        const usuario =
+            String(req.body.usuario || "").trim();
+
+        const senha =
+            String(req.body.senha || "");
+
+        const dias =
+            Number(req.body.dias);
+
+        if (
+            !usuario ||
+            !senha ||
+            !Number.isInteger(dias) ||
+            dias < 1
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem:
+                    "Preencha usuário, senha e dias corretamente."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const revendedor =
+            usuarios.find(
+                u =>
+                    Number(u.id) === revendedorId &&
+                    u.tipo === "revendedor"
+            );
+
+        if (!revendedor) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Revendedor não encontrado."
+            });
+        }
+
+        const limite =
+            Number(revendedor.limite_conexoes) || 0;
+
+        const clientes =
+            usuarios.filter(
+                u =>
+                    Number(u.revendedor_id) === revendedorId
+            );
+
+        if (limite > 0 && clientes.length >= limite) {
+            return res.json({
+                sucesso: false,
+                mensagem:
+                    "Você atingiu o limite de clientes da sua conta."
+            });
+        }
+
+        const existente =
+            usuarios.find(
+                u =>
+                    String(u.usuario || "").toLowerCase() ===
+                    usuario.toLowerCase()
+            );
+
+        if (existente) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Esse usuário já existe."
+            });
+        }
+
+        const senhaHash =
+            await bcrypt.hash(senha, 12);
+
+        const validade =
+            new Date(
+                Date.now() +
+                dias *
+                24 *
+                60 *
+                60 *
+                1000
+            );
+
+        const novoCliente = {
+
+            id: proximoId(usuarios),
+
+            usuario,
+
+            senha: senhaHash,
+
+            status: "ativo",
+
+            tipo: "usuario",
+
+            validade:
+                validade.toISOString(),
+
+            criado_em:
+                new Date().toISOString(),
+
+            limite_conexoes:
+                0,
+
+            conexoes_utilizadas:
+                0,
+
+            revendedor_id:
+                revendedorId
+        };
+
+        usuarios.push(novoCliente);
+
+        await salvarUsuarios(usuarios);
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Cliente criado com sucesso."
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO REVENDEDOR CRIAR CLIENTE]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao criar cliente."
+        });
+    }
+});
+
+
+
+// ==========================================
+
+
+// ==========================================
+// PRESENÇA ONLINE — REVENDEDOR / CLIENTES
+// ==========================================
+
+const PRESENCA_FILE = path.join(__dirname, "dados", "presenca.json");
+
+function garantirArquivoPresenca() {
+    try {
+        const pasta = path.dirname(PRESENCA_FILE);
+
+        if (!fs.existsSync(pasta)) {
+            fs.mkdirSync(pasta, { recursive: true });
+        }
+
+        if (!fs.existsSync(PRESENCA_FILE)) {
+            fs.writeFileSync(
+                PRESENCA_FILE,
+                "{}",
+                "utf8"
+            );
+        }
+    } catch (erro) {
+        console.error("[ERRO CRIAR PRESENCA]", erro);
+    }
+}
+
+function lerPresenca() {
+    garantirArquivoPresenca();
+
+    try {
+        return JSON.parse(
+            fs.readFileSync(PRESENCA_FILE, "utf8")
+        );
+    } catch (erro) {
+        return {};
+    }
+}
+
+function salvarPresenca(dados) {
+    garantirArquivoPresenca();
+
+    fs.writeFileSync(
+        PRESENCA_FILE,
+        JSON.stringify(dados, null, 2),
+        "utf8"
+    );
+}
+
+function usuarioEstaOnline(lastSeen) {
+    const tempo = Number(lastSeen || 0);
+
+    return (
+        tempo > 0 &&
+        Date.now() - tempo <= 45000
+    );
+}
+
+app.get("/api/revendedor/clientes", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const revendedorId =
+            Number(req.session.usuario.id);
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const revendedor =
+            usuarios.find(
+                u =>
+                    Number(u.id) === revendedorId &&
+                    u.tipo === "revendedor"
+            );
+
+        if (!revendedor) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Revendedor não encontrado."
+            });
+        }
+
+        const presencas = lerPresenca();
+
+        const clientes =
+            usuarios
+                .filter(
+                    u =>
+                        Number(u.revendedor_id) === revendedorId
+                )
+                .map(u => {
+                    const presenca =
+                        presencas[String(u.id)] || {};
+
+                    const lastSeen =
+                        Number(presenca.last_seen || 0);
+
+                    return {
+                        id: u.id,
+                        usuario: u.usuario,
+                        status: u.status,
+                        tipo: u.tipo,
+                        validade: u.validade,
+                        criado_em: u.criado_em,
+                        online: usuarioEstaOnline(lastSeen),
+                        last_seen: lastSeen
+                    };
+                });
+
+        return res.json({
+            sucesso: true,
+            limite: Number(revendedor.limite_conexoes) || 0,
+            utilizados: clientes.length,
+            clientes
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO LISTAR CLIENTES REVENDEDOR]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno."
+        });
+    }
+});
+
+
+
+// ==========================================
+
+app.get("/api/revendedor/eu", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const revendedor =
+            usuarios.find(
+                u =>
+                    Number(u.id) ===
+                    Number(req.session.usuario.id)
+            );
+
+        if (!revendedor) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Revendedor não encontrado."
+            });
+        }
+
+        return res.json({
+            sucesso: true,
+            usuario: {
+                id: revendedor.id,
+                usuario: revendedor.usuario,
+                status: revendedor.status,
+                validade: revendedor.validade,
+                limite_conexoes:
+                    Number(revendedor.limite_conexoes) || 0
+            }
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO REVENDEDOR EU]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno."
+        });
+    }
+});
+
+
+
+
+// ==========================================
+
+app.post("/api/revendedor/clientes/editar", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const revendedorId =
+            Number(req.session.usuario.id);
+
+        const id =
+            Number(req.body.id);
+
+        const usuario =
+            String(req.body.usuario || "").trim();
+
+        const senha =
+            String(req.body.senha || "");
+
+        if (!Number.isInteger(id) || id < 1) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "ID inválido."
+            });
+        }
+
+        if (!usuario) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Informe o usuário."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const indice =
+            usuarios.findIndex(
+                u =>
+                    Number(u.id) === id &&
+                    Number(u.revendedor_id) === revendedorId
+            );
+
+        if (indice === -1) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Cliente não encontrado."
+            });
+        }
+
+        const outroUsuario =
+            usuarios.find(
+                u =>
+                    String(u.usuario || "").toLowerCase() ===
+                    usuario.toLowerCase() &&
+                    Number(u.id) !== id
+            );
+
+        if (outroUsuario) {
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse usuário já existe."
+            });
+        }
+
+        usuarios[indice].usuario = usuario;
+
+        if (senha.trim()) {
+
+            if (senha.length < 4) {
+                return res.status(400).json({
+                    sucesso: false,
+                    mensagem:
+                        "A senha precisa ter pelo menos 4 caracteres."
+                });
+            }
+
+            usuarios[indice].senha =
+                await bcrypt.hash(senha, 12);
+        }
+
+        await salvarUsuarios(usuarios);
+
+        console.log(
+            "[REVENDEDOR] Cliente editado:",
+            usuario
+        );
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Cliente atualizado com sucesso."
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO REVENDEDOR EDITAR]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao editar cliente."
+        });
+    }
+});
+
+
+
+// ==========================================
+
+app.post("/api/revendedor/clientes/status", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const revendedorId =
+            Number(req.session.usuario.id);
+
+        const id =
+            Number(req.body.id);
+
+        const status =
+            String(req.body.status || "").trim();
+
+        if (
+            !Number.isInteger(id) ||
+            id < 1 ||
+            !["ativo", "suspenso"].includes(status)
+        ) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Dados inválidos."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const indice =
+            usuarios.findIndex(
+                u =>
+                    Number(u.id) === id &&
+                    Number(u.revendedor_id) === revendedorId
+            );
+
+        if (indice === -1) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Cliente não encontrado."
+            });
+        }
+
+        usuarios[indice].status = status;
+
+        await salvarUsuarios(usuarios);
+
+        console.log(
+            "[REVENDEDOR] Status alterado:",
+            usuarios[indice].usuario,
+            status
+        );
+
+        return res.json({
+            sucesso: true,
+            mensagem:
+                status === "ativo"
+                    ? "Cliente ativado com sucesso."
+                    : "Cliente suspenso com sucesso."
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO REVENDEDOR STATUS]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao alterar status."
+        });
+    }
+});
+
+
+
+// ==========================================
+
+app.post("/api/revendedor/clientes/excluir", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const revendedorId =
+            Number(req.session.usuario.id);
+
+        const id =
+            Number(req.body.id);
+
+        if (!Number.isInteger(id) || id < 1) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "ID inválido."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const cliente =
+            usuarios.find(
+                u =>
+                    Number(u.id) === id &&
+                    Number(u.revendedor_id) === revendedorId
+            );
+
+        if (!cliente) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Cliente não encontrado."
+            });
+        }
+
+        const novosUsuarios =
+            usuarios.filter(
+                u => Number(u.id) !== id
+            );
+
+        await salvarUsuarios(novosUsuarios);
+
+        console.log(
+            "[REVENDEDOR] Cliente excluído:",
+            cliente.usuario
+        );
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Cliente excluído com sucesso."
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO REVENDEDOR EXCLUIR]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao excluir cliente."
+        });
+    }
+});
+
+
+
+// ==========================================
+
+app.post("/api/revendedor/clientes/renovar", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const revendedorId =
+            Number(req.session.usuario.id);
+
+        const id =
+            Number(req.body.id);
+
+        const dias =
+            Number(req.body.dias);
+
+        if (
+            !Number.isInteger(id) ||
+            id < 1 ||
+            !Number.isInteger(dias) ||
+            dias < 1
+        ) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Informe uma quantidade válida de dias."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const indice =
+            usuarios.findIndex(
+                u =>
+                    Number(u.id) === id &&
+                    Number(u.revendedor_id) === revendedorId
+            );
+
+        if (indice === -1) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Cliente não encontrado."
+            });
+        }
+
+        const atual =
+            usuarios[indice].validade
+                ? new Date(usuarios[indice].validade)
+                : new Date();
+
+        const agora = new Date();
+
+        const inicio =
+            atual > agora
+                ? atual
+                : agora;
+
+        usuarios[indice].validade =
+            new Date(
+                inicio.getTime() +
+                dias * 24 * 60 * 60 * 1000
+            ).toISOString();
+
+        usuarios[indice].status = "ativo";
+
+        await salvarUsuarios(usuarios);
+
+        console.log(
+            "[REVENDEDOR] Cliente renovado:",
+            usuarios[indice].usuario,
+            dias,
+            "dias"
+        );
+
+        return res.json({
+            sucesso: true,
+            mensagem:
+                "Cliente renovado com sucesso."
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO REVENDEDOR RENOVAR]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao renovar cliente."
+        });
+    }
+});
+
+
+
+// ADMIN — LISTAR USUÁRIOS
+// ==========================================
+
+app.get(
+    "/api/admin/usuarios",
+    async (req, res) => {
+
+        try {
+
+            if (
+                !req.session.usuario ||
+                req.session.usuario.tipo !== "admin"
+            ) {
+
+                return res.status(403).json({
+
+                    sucesso: false,
+
+
+===== 4200–4400 =====
+
+                    mensagem:
+                        "Acesso negado."
+
+                });
+
+            }
+
+            const usuarios =
+                await carregarUsuarios();
+
+            const usuariosLista =
+                usuarios
+                    .map(u => ({
+                        id: u.id,
+                        usuario: u.usuario,
+                        status: u.status,
+                        tipo: u.tipo,
+                        criado_em: u.criado_em,
+                        validade: u.validade,
+                        limite_conexoes: Number(u.limite_conexoes) || 0,
+                        conexoes_utilizadas: Number(u.conexoes_utilizadas) || 0,
+                        revendedor_id: u.revendedor_id || null
+                    }))
+                    .sort(
+                        (a, b) =>
+                            Number(b.id) - Number(a.id)
+                    );
+            return res.json({
+
+                sucesso: true,
+
+                usuarios
+
+            });
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO LISTAR USUARIOS]",
+                erro
+            );
+
+            return res.status(500).json({
+
+                sucesso: false,
+
+                mensagem:
+                    "Erro ao carregar usuários."
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// STATUS
+// ==========================================
+
+app.get(
+    "/status",
+    (req, res) => {
+
+        res.json({
+
+            online: true,
+
+            servidor:
+                "LUKAFILMES",
+
+            porta:
+                PORT
+
+        });
+
+    }
+);
+
+
+// ==========================================
+// FAVICON — IDENTIDADE LUKAFILMES
+// ==========================================
+app.get("/favicon/lukafilmes.svg", (req, res) => {
+    res.sendFile(
+        require("path").join(
+            __dirname,
+            "public",
+            "favicon",
+            "lukafilmes.svg"
+        ),
+        {
+            headers: {
+                "Content-Type": "image/svg+xml",
+                "Cache-Control": "public, max-age=86400"
+            }
+        }
+    );
+});
+
+// ==========================================
+// PROTEÇÃO DAS PÁGINAS
+// ==========================================
+
+app.use(
+    (req, res, next) => {
+
+        console.log(
+            "[DEBUG PROTEÇÃO]",
+            "originalUrl:", req.originalUrl,
+            "url:", req.url,
+            "path:", req.path,
+            "method:", req.method
+        );
+
+        if (
+
+            req.path === "/login" ||
+            req.path === "/favicon/lukafilmes.svg" ||
+
+            req.path === "/admin.html" ||
+
+            req.path === "/status" ||
+
+            req.path === "/api/eu" ||
+            req.path === "/api/pesquisar"
+
+        ) {
+
+            return next();
+
+        }
+
+        /*
+         * TODAS AS PÁGINAS DO SITE SÃO PROTEGIDAS.
+         *
+         * Primeiro verifica se existe sessão.
+         * Depois verifica se a validade do usuário expirou.
+         *
+         * Admin não possui expiração.
+         */
+/*
+         * APIs de séries devem responder diretamente em JSON.
+         * Não redirecionar detalhes, temporadas e episódios para /login.
+         */
+        if (req.path.startsWith("/api/serie/") || req.path.startsWith("/api/series")) {
+            return next();
+        }
+
+        if (!req.session || !req.session.usuario) {
+
+            return res.redirect("/login");
+
+        }
+
+        const usuarioSessao = req.session.usuario;
+
+        if (
+            usuarioSessao.tipo !== "admin" &&
+            usuarioSessao.validade &&
+            new Date(usuarioSessao.validade) <= new Date()
+        ) {
+
+            return req.session.destroy(() => {
+                res.redirect("/login");
+            });
+
+        }
+
+        next();
+
+    }
+);
+
+// ==========================================
+// ARQUIVOS DO SITE
+// ==========================================
+
+app.get("/paginas/minha-lista", (req, res) => {
+    res.sendFile(
+        require("path").join(__dirname, "paginas", "minha-lista.html")
+    );
+});
+
+app.use(
+    express.static(__dirname)
+);
+
+app.get("/paginas/filme",(req,res)=>{res.sendFile(require("path").join(__dirname,"paginas","filme.html"));});
+
+
+
+
+
+
+
+
+
+
+

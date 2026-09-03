@@ -1,0 +1,64 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:1:1-29:12
+INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:1:1-29:12
+INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:1:1-29:12
+INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:1:1-29:12
+	package
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:2:5-33
+		INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:1:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:4:5-66
+	android:name
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:4:22-64
+application
+ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:6:5-27:19
+INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:6:5-27:19
+	android:extractNativeLibs
+		INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml
+	android:supportsRtl
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:12:9-35
+	android:label
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:7:9-41
+	android:hardwareAccelerated
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:10:9-43
+	android:icon
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:8:9-44
+	android:allowBackup
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:11:9-35
+	android:usesCleartextTraffic
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:9:9-45
+activity#com.lukafilmes.app.MainActivity
+ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:14:9-25:20
+	android:windowSoftInputMode
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:18:13-55
+	android:exported
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:16:13-36
+	android:configChanges
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:17:13-113
+	android:name
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:15:13-41
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:20:13-23:29
+action#android.intent.action.MAIN
+ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:21:17-68
+	android:name
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:21:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:22:17-76
+	android:name
+		ADDED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml:22:27-74
+uses-sdk
+INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml
+INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /data/data/com.termux/files/home/FACETO_RENDER_34186A1/android/app/src/main/AndroidManifest.xml

@@ -1,0 +1,2 @@
+com.lukafilmes.app:string/app_name = 0x7f020000
+com.lukafilmes.app:drawable/lukafilmes = 0x7f010000
