@@ -1311,7 +1311,6 @@ footer strong{
     }
 }
 </style>
-
 </head>
 
 <body>
@@ -1326,6 +1325,7 @@ footer strong{
         <a href="#" class="active">Início</a>
         <a href="paginas/filmes.html">Filmes</a>
         <a href="paginas/series.html">Séries</a>
+        <a href="/login" class="lukafilmes-entrar-btn">🔐 Entrar</a>
         <a
             class="continuar-header-btn"
             href="/paginas/continuar-assistindo.html"
@@ -1345,6 +1345,14 @@ footer strong{
 
 <div class="desktop-user-menu" id="desktopUserMenu">
     <div id="desktopUserOptions"></div>
+
+    <a
+        href="/admin.html"
+        id="lukafilmesDesktopAdmin"
+        style="display:none;"
+        data-lukafilmes-admin-link="true"
+    >⚙️ ADMIN</a>
+
     <a href="#" onclick="logout(); return false;">🚪 Sair</a>
 </div>
 
@@ -1362,10 +1370,20 @@ footer strong{
     <a href="#">Início</a>
     <a href="paginas/filmes.html">Filmes</a>
     <a href="paginas/series.html">Séries</a>
-    
+    <a href="/login" class="lukafilmes-entrar-btn-mobile">🔐 Entrar</a>
+
+    <a
+        href="/admin.html"
+        id="lukafilmesMenuPainel"
+        style="display:none;"
+        data-lukafilmes-painel="true"
+    >ADMIN</a>
+
     <a href="#" onclick="logout(); return false;">🚪 Sair</a>
 </div>
 
+
+<!-- ================= BARRA ENTRADA CLIENTE ================= -->
 <section class="hero">
 
     <div
@@ -1570,8 +1588,23 @@ async function carregarMenuUsuarioDesktop(){
 
         if(tipo === "admin"){
 
-            opcoes.innerHTML =
-                '';
+            opcoes.innerHTML = '';
+
+            const adminLink =
+                document.getElementById("lukafilmesDesktopAdmin");
+
+            if(adminLink){
+                adminLink.style.display = "block";
+                adminLink.textContent = "⚙️ ADMIN";
+
+                adminLink.onclick = function(evento){
+                    evento.preventDefault();
+                    evento.stopPropagation();
+                    evento.stopImmediatePropagation();
+                    window.location.assign("/admin.html");
+                    return false;
+                };
+            }
 
         }else if(tipo === "revendedor"){
 
@@ -3119,5 +3152,323 @@ function logout(){
     );
 
 })();
+</script>
+
+
+
+<!-- =========================================================
+     LUKAFILMES — NOTIFICAÇÃO DE RENOVAÇÃO
+     ========================================================= -->
+
+<style id="lukafilmes-renovacao-notificacao-style">
+
+#lukaRenovacaoNotificacao {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92vw, 460px);
+    box-sizing: border-box;
+    padding: 20px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #242424, #101010);
+    border: 1px solid rgba(255,255,255,.18);
+    box-shadow: 0 18px 55px rgba(0,0,0,.65);
+    color: #fff;
+    z-index: 2147483000;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    display: none;
+}
+
+#lukaRenovacaoNotificacao .luka-renovacao-titulo {
+    font-size: 21px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+#lukaRenovacaoNotificacao .luka-renovacao-texto {
+    font-size: 15px;
+    line-height: 1.45;
+    color: #ddd;
+}
+
+#lukaRenovacaoNotificacao .luka-renovacao-dias {
+    margin: 12px 0;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+#lukaRenovacaoNotificacao .luka-renovacao-acoes {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+#lukaRenovacaoNotificacao button {
+    border: 0;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+#lukaRenovacaoNotificacao .luka-renovar {
+    background: #fff;
+    color: #111;
+}
+
+#lukaRenovacaoNotificacao .luka-fechar {
+    background: rgba(255,255,255,.10);
+    color: #fff;
+}
+
+@media (min-width: 700px) {
+    #lukaRenovacaoNotificacao {
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@media (min-width: 1600px) and (min-height: 800px) {
+    #lukaRenovacaoNotificacao {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(560px, 70vw);
+        padding: 28px;
+    }
+
+    #lukaRenovacaoNotificacao .luka-renovacao-titulo {
+        font-size: 28px;
+    }
+
+    #lukaRenovacaoNotificacao .luka-renovacao-texto {
+        font-size: 18px;
+    }
+}
+
+</style>
+
+<script id="lukafilmes-renovacao-notificacao-script">
+(function(){
+
+    "use strict";
+
+    const TEMPO = 10000;
+
+    function escapar(valor){
+        return String(valor || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function removerNotificacao(){
+        const antigo =
+            document.getElementById(
+                "lukaRenovacaoNotificacao"
+            );
+
+        if(antigo){
+            antigo.remove();
+        }
+    }
+
+    function mostrarNotificacao(dados){
+
+        removerNotificacao();
+
+        const caixa =
+            document.createElement("div");
+
+        caixa.id =
+            "lukaRenovacaoNotificacao";
+
+        const usuario =
+            escapar(dados.usuario || "");
+
+        const dias =
+            Number(dados.dias_restantes || 0);
+
+        let textoDias;
+
+        if(dados.expirado){
+            textoDias =
+                "Seu acesso já expirou.";
+        }else if(dias === 1){
+            textoDias =
+                "Seu acesso vence em 1 dia.";
+        }else{
+            textoDias =
+                "Seu acesso vence em " +
+                dias +
+                " dias.";
+        }
+
+        caixa.innerHTML = `
+            <div class="luka-renovacao-titulo">
+                🔔 RENOVAÇÃO DO LUKAFILMES
+            </div>
+
+            <div class="luka-renovacao-texto">
+                Olá, <strong>${usuario}</strong>!
+                <br>
+                ${textoDias}
+                <br>
+                Renove seu acesso por mais
+                ${Number(dados.dias_renovacao || 30)} dias.
+            </div>
+
+            <div class="luka-renovacao-dias">
+                R$ ${escapar(dados.valor || "18.00")}
+            </div>
+
+            <div class="luka-renovacao-acoes">
+                <button
+                    type="button"
+                    class="luka-renovar"
+                    id="lukaRenovarAgora">
+                    🔄 RENOVAR
+                </button>
+
+                <button
+                    type="button"
+                    class="luka-fechar"
+                    id="lukaFecharRenovacao">
+                    FECHAR
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(caixa);
+
+        caixa.style.display = "block";
+
+        const botaoRenovar =
+            document.getElementById(
+                "lukaRenovarAgora"
+            );
+
+        if(botaoRenovar){
+
+            botaoRenovar.addEventListener(
+                "click",
+                function(){
+
+                    /*
+                     * Próxima etapa:
+                     * abrir o PIX existente com
+                     * renovacao=true.
+                     */
+                    window.dispatchEvent(
+                        new CustomEvent(
+                            "luka:renovar",
+                            {
+                                detail: dados
+                            }
+                        )
+                    );
+
+                    caixa.remove();
+                }
+            );
+        }
+
+        const botaoFechar =
+            document.getElementById(
+                "lukaFecharRenovacao"
+            );
+
+        if(botaoFechar){
+            botaoFechar.addEventListener(
+                "click",
+                removerNotificacao
+            );
+        }
+
+        setTimeout(function(){
+
+            if(document.body.contains(caixa)){
+                caixa.remove();
+            }
+
+        }, TEMPO);
+    }
+
+    async function verificarRenovacao(){
+
+        try{
+
+            const resposta =
+                await fetch(
+                    "/api/renovacao-status",
+                    {
+                        method: "GET",
+                        credentials: "same-origin",
+                        cache: "no-store"
+                    }
+                );
+
+            if(!resposta.ok){
+                return;
+            }
+
+            const dados =
+                await resposta.json();
+
+            if(
+                dados &&
+                dados.sucesso &&
+                dados.logado &&
+                dados.deve_notificar
+            ){
+
+                mostrarNotificacao(dados);
+            }
+
+        }catch(erro){
+
+            console.warn(
+                "[LUKAFILMES] Falha ao verificar renovação:",
+                erro
+            );
+        }
+    }
+
+    function iniciar(){
+
+        /*
+         * Pequeno atraso para não competir com
+         * o carregamento principal da página.
+         */
+        setTimeout(
+            verificarRenovacao,
+            1200
+        );
+    }
+
+    if(
+        document.readyState ===
+        "loading"
+    ){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            iniciar,
+            {once:true}
+        );
+
+    }else{
+
+        iniciar();
+    }
+
+})();
+
 </script>
 

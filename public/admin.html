@@ -5020,6 +5020,735 @@ window.LUKA_FECHAR_TESTE = function(){
 })();
 </script>
 
+
+
+<!-- LUKA_PAGAMENTOS_ADMIN_V1 -->
+
+<style>
+#lukaPagamentosAdmin{
+    margin:24px 0;
+    padding:22px;
+    border-radius:20px;
+    background:rgba(255,255,255,.035);
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow:0 15px 45px rgba(0,0,0,.28);
+}
+
+#lukaPagamentosAdmin h2{
+    margin:0;
+    font-size:22px;
+}
+
+.luka-pag-sub{
+    margin-top:5px;
+    opacity:.62;
+    font-size:13px;
+}
+
+.luka-pag-resumo{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+    gap:12px;
+    margin:20px 0;
+}
+
+.luka-pag-card{
+    padding:16px;
+    border-radius:15px;
+    background:rgba(255,255,255,.045);
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.luka-pag-card small{
+    display:block;
+    opacity:.62;
+    margin-bottom:7px;
+}
+
+.luka-pag-card strong{
+    font-size:23px;
+}
+
+.luka-pag-lista{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.luka-pag-item{
+    padding:17px;
+    border-radius:15px;
+    background:rgba(0,0,0,.20);
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.luka-pag-topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.luka-pag-status{
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.luka-pag-pendente{
+    background:rgba(255,190,0,.14);
+    color:#ffd54a;
+}
+
+.luka-pag-aprovado{
+    background:rgba(0,220,120,.13);
+    color:#55f0a2;
+}
+
+.luka-pag-recusado{
+    background:rgba(255,60,60,.13);
+    color:#ff7777;
+}
+
+.luka-pag-info{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:8px;
+    margin-top:13px;
+    font-size:13px;
+}
+
+.luka-pag-acoes{
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap;
+    margin-top:15px;
+}
+
+.luka-pag-acoes button{
+    border:0;
+    border-radius:10px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:800;
+}
+
+.luka-pag-aprovar-btn{
+    background:#19c979;
+    color:#06130c;
+}
+
+.luka-pag-recusar-btn{
+    background:#e34848;
+    color:white;
+}
+
+.luka-pag-atualizar-btn{
+    background:#444;
+    color:white;
+}
+
+.luka-pag-vazio{
+    padding:22px;
+    text-align:center;
+    opacity:.55;
+}
+
+@media(max-width:600px){
+    #lukaPagamentosAdmin{
+        padding:16px;
+        margin:15px 0;
+    }
+
+    .luka-pag-card strong{
+        font-size:20px;
+    }
+}
+</style>
+
+<div id="lukaPagamentosAdmin">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:12px;
+        flex-wrap:wrap;
+    ">
+
+        <div>
+            <h2>💳 Pagamentos LUKAFILMES</h2>
+            <div class="luka-pag-sub">
+                Confira os pagamentos e libere o acesso após verificar o comprovante.
+            </div>
+        </div>
+
+        <button
+            type="button"
+            class="luka-pag-acoes luka-pag-atualizar-btn"
+            onclick="LUKA_CARREGAR_PAGAMENTOS()"
+        >
+            🔄 Atualizar
+        </button>
+
+    </div>
+
+    <div class="luka-pag-resumo">
+
+        <div class="luka-pag-card">
+            <small>⏳ Pendentes</small>
+            <strong id="lukaPagPendentes">0</strong>
+        </div>
+
+        <div class="luka-pag-card">
+            <small>✅ Aprovados</small>
+            <strong id="lukaPagAprovados">0</strong>
+        </div>
+
+        <div class="luka-pag-card">
+            <small>❌ Recusados</small>
+            <strong id="lukaPagRecusados">0</strong>
+        </div>
+
+        <div class="luka-pag-card">
+            <small>💰 Receita</small>
+            <strong id="lukaPagReceita">R$ 0,00</strong>
+        </div>
+
+    </div>
+
+    <div id="lukaPagamentosLista" class="luka-pag-lista">
+        <div class="luka-pag-vazio">
+            Carregando pagamentos...
+        </div>
+    </div>
+
+</div>
+
+<script>
+async function LUKA_CARREGAR_PAGAMENTOS(){
+
+    const lista =
+        document.getElementById("lukaPagamentosLista");
+
+    if(!lista) return;
+
+    try{
+
+        const resposta =
+            await fetch(
+                "/api/admin/pagamentos",
+                {
+                    credentials:"same-origin",
+                    cache:"no-store"
+                }
+            );
+
+        const dados =
+            await resposta.json();
+
+        if(!resposta.ok || !dados.sucesso){
+            throw new Error(
+                dados.mensagem ||
+                "Não foi possível carregar os pagamentos."
+            );
+        }
+
+        const resumo =
+            dados.resumo || {};
+
+        const pendentes =
+            document.getElementById("lukaPagPendentes");
+
+        const aprovados =
+            document.getElementById("lukaPagAprovados");
+
+        const recusados =
+            document.getElementById("lukaPagRecusados");
+
+        const receita =
+            document.getElementById("lukaPagReceita");
+
+        if(pendentes)
+            pendentes.textContent =
+                resumo.pendentes || 0;
+
+        if(aprovados)
+            aprovados.textContent =
+                resumo.aprovados || 0;
+
+        if(recusados)
+            recusados.textContent =
+                resumo.recusados || 0;
+
+        if(receita){
+
+            receita.textContent =
+                "R$ " +
+                Number(resumo.receita || 0)
+                    .toFixed(2)
+                    .replace(".", ",");
+
+        }
+
+        const pagamentosTodos =
+            Array.isArray(dados.pagamentos)
+                ? dados.pagamentos
+                : [];
+
+        // A área visual mostra somente pagamentos que ainda precisam
+        // de decisão. Aprovados e recusados permanecem apenas nos
+        // contadores/resumo e não ficam acumulados na lista.
+        const pagamentos =
+            pagamentosTodos.filter(p =>
+                String(p.status || "pendente").toLowerCase() === "pendente"
+            );
+
+        if(!pagamentos.length){
+
+            lista.innerHTML =
+                '<div class="luka-pag-vazio">Nenhum pagamento registrado.</div>';
+
+            return;
+
+        }
+
+        lista.innerHTML =
+            pagamentos.map(p => {
+
+                const status =
+                    String(p.status || "pendente")
+                        .toLowerCase();
+
+                const classe =
+                    status === "aprovado"
+                        ? "luka-pag-aprovado"
+                        : status === "recusado"
+                            ? "luka-pag-recusado"
+                            : "luka-pag-pendente";
+
+                const textoStatus =
+                    status === "aprovado"
+                        ? "APROVADO"
+                        : status === "recusado"
+                            ? "RECUSADO"
+                            : "PENDENTE";
+
+                const criado =
+                    p.criado_em
+                        ? new Date(p.criado_em)
+                            .toLocaleString("pt-BR")
+                        : "—";
+
+                const validade =
+                    p.usuario_validade
+                        ? new Date(p.usuario_validade)
+                            .toLocaleString("pt-BR")
+                        : "—";
+
+                const valor =
+                    Number(p.valor || 0)
+                        .toFixed(2)
+                        .replace(".", ",");
+
+                const ehRenovacao =
+                    p.renovacao === true ||
+                    String(p.renovacao).toLowerCase() === "true" ||
+                    String(p.tipo_pagamento || "").toLowerCase() === "renovacao";
+
+                const avisoRenovacao =
+                    ehRenovacao
+                        ? `
+                            <div style="
+                                margin: 12px 0;
+                                padding: 13px 15px;
+                                border-radius: 12px;
+                                background: rgba(255,255,255,.08);
+                                border: 2px solid rgba(255,255,255,.25);
+                                font-size: 15px;
+                                font-weight: 800;
+                                text-align: center;
+                            ">
+                                🔄 ${String(p.usuario || "Usuário")}
+                                PEDINDO RENOVAÇÃO
+                            </div>
+                          `
+                        : "";
+
+                let acoes = "";
+
+                if(status === "pendente"){
+
+                    acoes = `
+                        <button
+                            class="luka-pag-aprovar-btn"
+                            onclick="LUKA_APROVAR_PAGAMENTO(${Number(p.id)})"
+                        >
+                            ✅ APROVAR
+                        </button>
+
+                        <button
+                            class="luka-pag-recusar-btn"
+                            onclick="LUKA_RECUSAR_PAGAMENTO(${Number(p.id)})"
+                        >
+                            ❌ RECUSAR
+                        </button>
+                    `;
+
+                }
+
+                return `
+                    <div class="luka-pag-item">
+
+                        <div class="luka-pag-topo">
+
+                            <strong>
+                                💳 Pagamento #${Number(p.id)}
+                            </strong>
+
+                            <span class="luka-pag-status ${classe}">
+                                ${textoStatus}
+                            </span>
+
+                        </div>
+
+                        ${avisoRenovacao}
+
+                        <div class="luka-pag-info">
+
+                            <div>
+                                👤 <b>Usuário:</b>
+                                ${String(p.usuario || "—")}
+                            </div>
+
+                            <div>
+                                🆔 <b>ID:</b>
+                                ${Number(p.usuario_id || 0)}
+                            </div>
+
+                            <div>
+                                💰 <b>Valor:</b>
+                                R$ ${valor}
+                            </div>
+
+                            <div>
+                                🕒 <b>Criado:</b>
+                                ${criado}
+                            </div>
+
+                            <div>
+                                📅 <b>Validade:</b>
+                                ${validade}
+                            </div>
+
+                        </div>
+
+                        ${
+                            p.observacao
+                                ? `
+                                    <div style="
+                                        margin-top:10px;
+                                        opacity:.65;
+                                        font-size:13px;
+                                    ">
+                                        📝 ${String(p.observacao)}
+                                    </div>
+                                  `
+                                : ""
+                        }
+
+                        ${
+                            acoes
+                                ? `
+                                    <div class="luka-pag-acoes">
+                                        ${acoes}
+                                    </div>
+                                  `
+                                : ""
+                        }
+
+                    </div>
+                `;
+
+            }).join("");
+
+    }catch(erro){
+
+        console.error(
+            "[LUKA PAGAMENTOS ADMIN]",
+            erro
+        );
+
+        lista.innerHTML =
+            '<div class="luka-pag-vazio">⚠️ Erro ao carregar pagamentos.</div>';
+
+    }
+
+}
+
+
+async function LUKA_APROVAR_PAGAMENTO(id){
+
+    if(!confirm(
+        "Aprovar este pagamento e liberar 30 dias de acesso?"
+    )){
+        return;
+    }
+
+    try{
+
+        const resposta =
+            await fetch(
+                "/api/admin/pagamentos/" +
+                encodeURIComponent(id) +
+                "/aprovar",
+                {
+                    method:"POST",
+                    credentials:"same-origin",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:"{}"
+                }
+            );
+
+        const dados =
+            await resposta.json();
+
+        if(!resposta.ok || !dados.sucesso){
+
+            alert(
+                dados.mensagem ||
+                "Não foi possível aprovar."
+            );
+
+            return;
+
+        }
+
+        alert(
+            "✅ Pagamento aprovado!\n\n" +
+            "Usuário: " +
+            (dados.usuario || "—") +
+            "\n\n" +
+            "Acesso válido até:\n" +
+            new Date(dados.validade)
+                .toLocaleString("pt-BR")
+        );
+
+        await LUKA_CARREGAR_PAGAMENTOS();
+        await carregar();
+
+    }catch(erro){
+
+        console.error(erro);
+
+        alert(
+            "Erro de comunicação com o servidor."
+        );
+
+    }
+
+}
+
+
+async function LUKA_RECUSAR_PAGAMENTO(id){
+
+    const observacao =
+        prompt(
+            "Motivo da recusa (opcional):"
+        );
+
+    if(observacao === null){
+        return;
+    }
+
+    try{
+
+        const resposta =
+            await fetch(
+                "/api/admin/pagamentos/" +
+                encodeURIComponent(id) +
+                "/recusar",
+                {
+                    method:"POST",
+                    credentials:"same-origin",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        observacao:observacao
+                    })
+                }
+            );
+
+        const dados =
+            await resposta.json();
+
+        if(!resposta.ok || !dados.sucesso){
+
+            alert(
+                dados.mensagem ||
+                "Não foi possível recusar."
+            );
+
+            return;
+
+        }
+
+        alert("❌ Pagamento recusado.");
+
+        await LUKA_CARREGAR_PAGAMENTOS();
+        await carregar();
+
+    }catch(erro){
+
+        console.error(erro);
+
+        alert(
+            "Erro de comunicação com o servidor."
+        );
+
+    }
+
+}
+
+
+// Carrega automaticamente quando a página terminar de carregar.
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        setTimeout(
+            LUKA_CARREGAR_PAGAMENTOS,
+            300
+        );
+
+    }
+);
+</script>
+
+<!-- FIM LUKA_PAGAMENTOS_ADMIN_V1 -->
+
+
+
+<!-- LUKA_MODO_TESTE_USUARIO_V1 -->
+
+<div id="lukaTesteUsuarioAdmin"
+     style="
+        margin-top:14px;
+        padding:16px;
+        border-radius:16px;
+        background:linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,0,80,.08));
+        border:1px solid rgba(255,255,255,.12);
+        box-shadow:0 12px 35px rgba(0,0,0,.25);
+     ">
+
+    <div style="
+        font-size:13px;
+        font-weight:800;
+        opacity:.7;
+        margin-bottom:8px;
+    ">
+        MODO DE TESTE
+    </div>
+
+    <button
+        type="button"
+        onclick="LUKA_TESTAR_COMO_USUARIO()"
+        style="
+            width:100%;
+            border:0;
+            border-radius:12px;
+            padding:13px 15px;
+            cursor:pointer;
+            font-weight:900;
+            color:#fff;
+            background:linear-gradient(135deg,#ff1744,#8e24aa);
+            box-shadow:0 8px 25px rgba(255,23,68,.25);
+        "
+    >
+        🧪 TESTAR COMO USUÁRIO
+    </button>
+
+    <div style="
+        margin-top:9px;
+        font-size:12px;
+        line-height:1.45;
+        opacity:.65;
+    ">
+        Abre o LUKAFILMES como um cliente comum,
+        preservando sua sessão de administrador.
+    </div>
+</div>
+
+<script id="luka-modo-teste-usuario-v1">
+async function LUKA_TESTAR_COMO_USUARIO() {
+
+    const botao = document.querySelector(
+        '#lukaTesteUsuarioAdmin button'
+    );
+
+    if (botao) {
+        botao.disabled = true;
+        botao.textContent = "🧪 INICIANDO TESTE...";
+    }
+
+    try {
+
+        const resposta = await fetch(
+            "/api/admin/teste/iniciar",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const dados = await resposta.json();
+
+        if (!dados.sucesso) {
+            throw new Error(
+                dados.mensagem || "Não foi possível iniciar o teste."
+            );
+        }
+
+        /*
+         * Nova aba:
+         * a sessão ADMIN continua existindo no servidor.
+         * O cookie luka_modo_teste seleciona o usuário de teste
+         * somente nas rotas que reconhecem esse modo.
+         */
+        window.open(
+            dados.destino || "/?luka_teste=1",
+            "_blank"
+        );
+
+    } catch (erro) {
+
+        console.error("[LUKA TESTE]", erro);
+
+        if (typeof toast === "function") {
+            toast(erro.message);
+        } else {
+            alert(erro.message);
+        }
+
+    } finally {
+
+        if (botao) {
+            botao.disabled = false;
+            botao.textContent = "🧪 TESTAR COMO USUÁRIO";
+        }
+    }
+}
+</script>
+
+<!-- FIM LUKA_MODO_TESTE_USUARIO_V1 -->
+
 </body>
 </html>
 

@@ -2551,6 +2551,100 @@ pointer-events:none;}
 
 </style>
 
+
+
+<style id="lukafilmes-pesquisa-filmes-centralizada">
+
+.pesquisa-filmes-pagina{
+    width:100% !important;
+    max-width:520px !important;
+    margin:0 auto 35px !important;
+    display:block !important;
+    box-sizing:border-box !important;
+}
+
+#pesquisaFilmesPagina{
+    display:block !important;
+    width:100% !important;
+    max-width:520px !important;
+    margin:0 auto !important;
+    box-sizing:border-box !important;
+    text-align:center !important;
+}
+
+#pesquisaFilmesPagina::placeholder{
+    text-align:center !important;
+}
+
+</style>
+
+<style id="lukafilmes-pesquisa-filmes-pagina">
+
+.pesquisa-filmes-pagina{
+    width:100%;
+    max-width:520px;
+    margin:0 auto 35px;
+}
+
+#pesquisaFilmesPagina{
+    width:100%;
+    height:46px;
+    padding:0 16px;
+    border:1px solid #666;
+    border-radius:4px;
+    outline:none;
+    background:#222;
+    color:#fff;
+    font-size:16px;
+    text-align:center;
+    box-sizing:border-box;
+}
+
+#pesquisaFilmesPagina:focus{
+    border-color:#fff;
+}
+
+#pesquisaFilmesPagina::placeholder{
+    text-align:center;
+}
+
+@media (max-width:700px){
+    .pesquisa-filmes-pagina{
+        width:100%;
+        margin:0 auto 28px;
+    }
+
+    #pesquisaFilmesPagina{
+        height:44px;
+        font-size:15px;
+    }
+}
+
+</style>
+
+
+<style id="lukafilmes-pesquisa-filmes-texto-centro">
+
+#pesquisaFilmesPagina{
+    text-align:center !important;
+}
+
+#pesquisaFilmesPagina::placeholder{
+    text-align:center !important;
+}
+
+</style>
+
+
+<style id="LUKAFILMES-TEXTO-PESQUISA-CENTRO-FINAL">
+#pesquisaFilmesPagina{
+    text-align:center !important;
+}
+#pesquisaFilmesPagina::placeholder{
+    text-align:center !important;
+}
+</style>
+
 </head>
 
 <body>
@@ -2720,6 +2814,14 @@ pointer-events:none;}
     </section>
 
     <main class="catalogo-netflix">
+
+        <div class="pesquisa-filmes-pagina">
+            <input
+                id="pesquisaFilmesPagina"
+                type="search"
+                placeholder="Pesquisar filmes..."
+                autocomplete="off">
+        </div>
 
         <div id="grade" class="lista-series filmes-grade-series"></div>
 
@@ -4598,6 +4700,157 @@ if(document.readyState==="loading"){
     }
 })();
 </script>
+
+
+<script id="lukafilmes-pesquisa-filmes-final">
+(function(){
+
+    const campo = document.getElementById("pesquisaFilmesPagina");
+    const grade = document.getElementById("grade");
+
+    if(!campo || !grade){
+        console.error("[LUKAFILMES PESQUISA] Campo ou grade não encontrado");
+        return;
+    }
+
+    let timer = null;
+
+    campo.addEventListener("input", function(){
+
+        clearTimeout(timer);
+
+        const texto = campo.value.trim();
+
+        timer = setTimeout(function(){
+
+            if(!texto){
+                location.reload();
+                return;
+            }
+
+            pesquisar(texto);
+
+        }, 300);
+    });
+
+    async function pesquisar(texto){
+
+        grade.innerHTML =
+            '<div style="grid-column:1/-1;text-align:center;padding:35px;color:#aaa;">' +
+            'Pesquisando...' +
+            '</div>';
+
+        try{
+
+            const resposta = await fetch(
+                "/api/pesquisar?q=" +
+                encodeURIComponent(texto)
+            );
+
+            if(!resposta.ok)
+                throw new Error("HTTP " + resposta.status);
+
+            const dados = await resposta.json();
+
+            const filmes =
+                Array.isArray(dados.resultados)
+                    ? dados.resultados
+                    : [];
+
+            grade.innerHTML = "";
+
+            if(!filmes.length){
+
+                grade.innerHTML =
+                    '<div style="grid-column:1/-1;text-align:center;padding:35px;color:#aaa;">' +
+                    'Nenhum filme encontrado.' +
+                    '</div>';
+
+                return;
+            }
+
+            filmes.forEach(function(filme){
+
+                const id =
+                    filme.id ||
+                    filme.tmdb_id ||
+                    filme.tmdbId;
+
+                if(!id) return;
+
+                const card = document.createElement("div");
+
+                card.className = "filme";
+
+                card.innerHTML =
+                    '<img src="' +
+                    (filme.capa || "") +
+                    '" alt="' +
+                    (filme.titulo || "Filme") +
+                    '">' +
+                    '<div class="info">' +
+                    '<h3>' +
+                    (filme.titulo || "Sem título") +
+                    '</h3>' +
+                    '<p>' +
+                    (filme.ano || "") +
+                    '</p>' +
+                    '</div>';
+
+                card.addEventListener("click", function(){
+
+                    try{
+                        localStorage.setItem(
+                            "filmeSelecionado",
+                            JSON.stringify(filme)
+                        );
+
+                        localStorage.setItem(
+                            "filmeSelecionadoHome_" + String(id),
+                            JSON.stringify(filme)
+                        );
+                    }catch(e){}
+
+                    window.location.href =
+                        "/paginas/filme.html?id=" +
+                        encodeURIComponent(id);
+                });
+
+                grade.appendChild(card);
+            });
+
+        }catch(erro){
+
+            console.error(
+                "[LUKAFILMES PESQUISA] ERRO:",
+                erro
+            );
+
+            grade.innerHTML =
+                '<div style="grid-column:1/-1;text-align:center;padding:35px;color:#aaa;">' +
+                'Erro ao pesquisar filmes.' +
+                '</div>';
+        }
+    }
+
+})();
+</script>
+
+
+<style id="LUKAFILMES-PLACEHOLDER-FILMES-CENTRO-DEFINITIVO">
+#pesquisaFilmesPagina{
+    text-align:center !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+    text-indent:0 !important;
+}
+
+#pesquisaFilmesPagina::placeholder{
+    text-align:center !important;
+    opacity:1 !important;
+}
+
+</style>
 
 </body>
 </html>

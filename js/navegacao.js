@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
 
 "use strict";
 
@@ -46,12 +46,9 @@ function criarBotaoAdmin() {
         return;
     }
 
-    if (document.querySelector(".lukafilmes-admin")) {
-        return;
-    }
-
     fetch("/api/eu", {
-        credentials: "same-origin"
+        credentials: "same-origin",
+        cache: "no-store"
     })
     .then(function(resposta) {
 
@@ -72,63 +69,151 @@ function criarBotaoAdmin() {
             return;
         }
 
+        const tipo =
+            String(
+                dados.usuario.tipo || ""
+            ).toLowerCase();
+
         let texto = "";
         let destino = "";
 
-        if (dados.usuario.tipo === "admin") {
+        if (tipo === "admin") {
 
-            texto = "ADMIN";
+            texto = "⚙️ ADMIN";
             destino = "/admin.html";
 
-        } else if (dados.usuario.tipo === "revendedor") {
+        } else if (tipo === "revendedor") {
 
-            texto = "REVENDEDOR";
+            texto = "🏪 REVENDEDOR";
             destino = "/revendedor.html";
 
         } else {
 
             return;
-
         }
 
         /*
-         * O botão já existe no menu mobile da Home.
-         * Reutiliza o botão existente para não criar duplicado.
+         * ==================================================
+         * MENU MOBILE
+         * ==================================================
          */
-        const painel = document.getElementById("lukafilmesMenuPainel");
+
+        const painel =
+            document.getElementById(
+                "lukafilmesMenuPainel"
+            );
 
         if (painel) {
 
             painel.href = destino;
             painel.textContent = texto;
+            painel.style.display = "block";
 
-            return;
+            painel.onclick = function(evento) {
 
+                evento.preventDefault();
+                evento.stopPropagation();
+                evento.stopImmediatePropagation();
+
+                window.location.assign(
+                    destino
+                );
+
+                return false;
+            };
         }
 
         /*
-         * Fallback: caso alguma página não possua
-         * o botão fixo, cria o botão dinamicamente.
+         * ==================================================
+         * MENU DESKTOP
+         * ==================================================
          */
-        if (document.querySelector(".lukafilmes-admin")) {
-            return;
+
+        const desktopAdmin =
+            document.getElementById(
+                "lukafilmesDesktopAdmin"
+            );
+
+        if (
+            desktopAdmin &&
+            tipo === "admin"
+        ) {
+
+            desktopAdmin.href =
+                "/admin.html";
+
+            desktopAdmin.textContent =
+                "⚙️ ADMIN";
+
+            desktopAdmin.style.display =
+                "block";
+
+            desktopAdmin.onclick =
+                function(evento) {
+
+                    evento.preventDefault();
+                    evento.stopPropagation();
+                    evento.stopImmediatePropagation();
+
+                    window.location.assign(
+                        "/admin.html"
+                    );
+
+                    return false;
+                };
         }
 
-        const botao = document.createElement("a");
+        /*
+         * ==================================================
+         * FALLBACK
+         * ==================================================
+         */
 
-        botao.href = destino;
-        botao.className = "lukafilmes-admin";
-        botao.innerHTML = texto;
+        if (
+            !painel &&
+            !desktopAdmin &&
+            !document.querySelector(
+                ".lukafilmes-admin"
+            )
+        ) {
 
-        botao.setAttribute(
-            "data-lukafilmes-admin",
-            "true"
-        );
+            const botao =
+                document.createElement("a");
 
-        document.body.appendChild(botao);
+            botao.href =
+                destino;
+
+            botao.className =
+                "lukafilmes-admin";
+
+            botao.textContent =
+                texto;
+
+            botao.setAttribute(
+                "data-lukafilmes-admin",
+                "true"
+            );
+
+            botao.onclick =
+                function(evento) {
+
+                    evento.preventDefault();
+                    evento.stopPropagation();
+                    evento.stopImmediatePropagation();
+
+                    window.location.assign(
+                        destino
+                    );
+
+                    return false;
+                };
+
+            document.body.appendChild(
+                botao
+            );
+        }
 
     })
-
     .catch(function(erro) {
 
         console.warn(

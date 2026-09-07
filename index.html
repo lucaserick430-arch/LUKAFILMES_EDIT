@@ -3860,6 +3860,150 @@ z-index:2;
 }
 </style>
 
+
+
+
+<style id="luka-login-visitor-client-style">
+.luka-login-entrance-actions{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.luka-login-entrance-actions .luka-login-entrance-btn{
+    min-width:170px;
+}
+
+.luka-visitor-btn{
+    background:rgba(255,255,255,.07) !important;
+    border:1px solid rgba(255,255,255,.16) !important;
+}
+
+.luka-login-client-btn{
+    background:linear-gradient(135deg,#e50914,#b0060f) !important;
+}
+
+/* ==========================================================
+   LUKAFILMES — ENTRADA PROFISSIONAL PC / TV
+   MOBILE NÃO É ALTERADO
+   ========================================================== */
+
+@media(min-width:701px){
+
+    .luka-login-entrance-actions{
+        width:100%;
+        max-width:760px;
+        margin:28px auto 0;
+        justify-content:center;
+        align-items:stretch;
+        gap:18px;
+    }
+
+    .luka-login-entrance-actions .luka-login-entrance-btn{
+        min-width:250px;
+        min-height:58px;
+        padding:0 28px;
+        border-radius:12px;
+        font-size:15px;
+        font-weight:700;
+        letter-spacing:.2px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        box-sizing:border-box;
+        transition:transform .18s ease,
+                   box-shadow .18s ease,
+                   border-color .18s ease;
+    }
+
+    .luka-login-entrance-actions .luka-login-entrance-btn:hover{
+        transform:translateY(-2px);
+        box-shadow:0 10px 28px rgba(0,0,0,.30);
+    }
+
+    .luka-visitor-btn{
+        background:rgba(255,255,255,.06) !important;
+        border:1px solid rgba(255,255,255,.20) !important;
+    }
+
+    .luka-login-client-btn{
+        background:linear-gradient(135deg,#e50914,#b0060f) !important;
+        border:1px solid rgba(255,255,255,.08) !important;
+        box-shadow:0 8px 25px rgba(229,9,20,.20);
+    }
+}
+
+/* ==========================================================
+   TELAS GRANDES / SMART TV
+   ========================================================== */
+
+@media(min-width:1400px){
+
+    .luka-login-entrance-actions{
+        max-width:1050px;
+        margin-top:42px;
+        gap:28px;
+    }
+
+    .luka-login-entrance-actions .luka-login-entrance-btn{
+        min-width:320px;
+        min-height:72px;
+        padding:0 38px;
+        border-radius:15px;
+        font-size:19px;
+    }
+}
+
+/* ==========================================================
+   TV MUITO GRANDE
+   ========================================================== */
+
+@media(min-width:1900px){
+
+    .luka-login-entrance-actions{
+        max-width:1250px;
+        gap:34px;
+        margin-top:52px;
+    }
+
+    .luka-login-entrance-actions .luka-login-entrance-btn{
+        min-width:370px;
+        min-height:82px;
+        border-radius:17px;
+        font-size:22px;
+        padding:0 45px;
+    }
+}
+
+@media(max-width:700px){
+    .luka-login-entrance-actions{
+        gap:7px;
+    }
+
+    .luka-login-entrance-actions .luka-login-entrance-btn{
+        min-width:auto;
+        padding-left:10px;
+        padding-right:10px;
+        font-size:9px;
+    }
+}
+
+@media(max-width:430px){
+    .luka-login-entrance-actions{
+        flex-direction:column;
+        align-items:stretch;
+        gap:5px;
+    }
+
+    .luka-login-entrance-actions .luka-login-entrance-btn{
+        min-height:34px;
+        font-size:8px;
+        padding:0 8px;
+    }
+}
+</style>
+
 </head>
 
 <body>
@@ -4024,7 +4168,7 @@ z-index:2;
     </div>
 
     <div id="desktopUserOptions">
-        <a href="/admin.html" class="lukafilmes-menu-admin">ADMIN</a>
+        <a href="/admin.html" class="lukafilmes-menu-admin" style="display:none !important;">ADMIN</a>
     </div>
     <a href="#" onclick="logout(); return false;">🚪 Sair</a>
 </div>
@@ -4098,6 +4242,7 @@ z-index:2;
         href="/admin.html"
         class="lukafilmes-menu-admin"
         id="lukafilmesMenuPainel"
+        style="display:none !important;"
     >ADMIN</a>
 
     <a
@@ -4107,6 +4252,9 @@ z-index:2;
     >Sair</a>
 
 </div>
+
+<!-- ================= BARRA ENTRADA CLIENTE ================= -->
+
 
 <section class="hero">
 
@@ -7282,60 +7430,171 @@ document.addEventListener("DOMContentLoaded", () => {
 <script id="lukafilmes-controle-menu-usuario">
 (function(){
 
-    fetch("/api/eu", {
-        credentials: "include",
-        cache: "no-store"
-    })
-    .then(function(r){
-        return r.ok ? r.json() : null;
-    })
-    .then(function(d){
+    "use strict";
 
-        if(!d) return;
+    /*
+     * LUKAFILMES — CONTROLE DE ACESSO DO MENU
+     *
+     * O item administrativo começa SEMPRE oculto.
+     * Só aparece depois que /api/eu confirmar:
+     *
+     * admin       -> ADMIN
+     * revendedor  -> PAINEL
+     * qualquer outro -> oculto
+     */
 
-        const u = d.usuario || d.user || d;
+    function esconderPainel(){
 
-        const tipo = String(
-            u && (u.tipo || u.role || "")
-        ).toLowerCase();
+        const mobile =
+            document.getElementById("lukafilmesMenuPainel");
 
-        const ehAdmin =
-            tipo === "admin" ||
-            tipo === "administrador";
-
-        const ehRevendedor =
-            tipo === "revendedor" ||
-            tipo === "revenda";
-
-        /*
-         * Usuário comum não recebe acesso administrativo.
-         */
-        if(!ehAdmin && !ehRevendedor){
-
-            document.body.classList.add(
-                "lukafilmes-usuario-comum"
+        const desktop =
+            document.querySelector(
+                "#desktopUserOptions .lukafilmes-menu-admin"
             );
 
-            document.querySelectorAll(
-                'a[href*="admin"],' +
-                'a[href*="revendedor"],' +
-                '.lukafilmes-menu-admin,' +
-                '.lukafilmes-admin,' +
-                '.lukafilmes-revendedor'
-            ).forEach(function(el){
-                el.remove();
-            });
+        [mobile, desktop].forEach(function(el){
+
+            if(!el) return;
+
+            el.style.setProperty(
+                "display",
+                "none",
+                "important"
+            );
+
+            el.href = "/admin.html";
+            el.textContent = "ADMIN";
+
+        });
+    }
+
+    function mostrarAdmin(){
+
+        const mobile =
+            document.getElementById("lukafilmesMenuPainel");
+
+        const desktop =
+            document.querySelector(
+                "#desktopUserOptions .lukafilmes-menu-admin"
+            );
+
+        [mobile, desktop].forEach(function(el){
+
+            if(!el) return;
+
+            el.href = "/admin.html";
+            el.textContent = "ADMIN";
+
+            el.style.setProperty(
+                "display",
+                "block",
+                "important"
+            );
+
+        });
+    }
+
+    function mostrarPainel(){
+
+        const mobile =
+            document.getElementById("lukafilmesMenuPainel");
+
+        const desktop =
+            document.querySelector(
+                "#desktopUserOptions .lukafilmes-menu-admin"
+            );
+
+        [mobile, desktop].forEach(function(el){
+
+            if(!el) return;
+
+            el.href = "/revendedor.html";
+            el.textContent = "PAINEL";
+
+            el.style.setProperty(
+                "display",
+                "block",
+                "important"
+            );
+
+        });
+    }
+
+    /*
+     * REGRA PRINCIPAL:
+     * começa oculto imediatamente.
+     */
+    esconderPainel();
+
+    fetch("/api/eu", {
+        credentials: "same-origin",
+        cache: "no-store"
+    })
+    .then(function(resposta){
+
+        if(!resposta.ok){
+
+            esconderPainel();
+
+            return null;
+        }
+
+        return resposta.json();
+
+    })
+    .then(function(dados){
+
+        if(
+            !dados ||
+            dados.logado !== true ||
+            !dados.usuario
+        ){
+
+            esconderPainel();
+
+            return;
+        }
+
+        const tipo = String(
+            dados.usuario.tipo ||
+            dados.usuario.role ||
+            ""
+        ).trim().toLowerCase();
+
+        if(
+            tipo === "admin" ||
+            tipo === "administrador"
+        ){
+
+            mostrarAdmin();
+
+        }else if(
+            tipo === "revendedor" ||
+            tipo === "revenda"
+        ){
+
+            mostrarPainel();
+
+        }else{
+
+            esconderPainel();
 
         }
 
     })
-    .catch(function(){
-        /*
-         * Em caso de falha, não liberar elementos administrativos.
-         */
-        document.body.classList.add(
-            "lukafilmes-usuario-comum"
+    .catch(function(erro){
+
+        console.warn(
+            "[MENU ACESSO] Não foi possível verificar a sessão:",
+            erro
         );
+
+        /*
+         * Falhou = não libera ADMIN.
+         */
+        esconderPainel();
+
     });
 
 })();

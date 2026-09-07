@@ -111,8 +111,91 @@ class NetlifyBlobSessionStore extends session.Store {
 
 }
 
-const Database = require("better-sqlite3");
+let Database = null;
 const { createClient } = require("@libsql/client/http");
+
+// ==========================================
+// CONFIGURACAO DO NOVO SISTEMA DE ACESSO
+// ==========================================
+
+const CONFIGURACAO_ACESSO_LUKAFILMES = {
+    valorMensal: 18.00,
+    diasAcesso: 30,
+
+    tipos: {
+        ADMIN: "admin",
+        CLIENTE: "usuario",
+        ISENTO: "isento",
+        TESTE: "teste"
+    },
+
+    pagamentos: {
+        PENDENTE: "pendente",
+        APROVADO: "aprovado",
+        RECUSADO: "recusado"
+    }
+};
+
+
+// ==========================================
+// PIX FIXO LUKAFILMES - COPIA E COLA
+// ==========================================
+
+function crc16PixLuka(str) {
+    let crc = 0xFFFF;
+
+    for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+
+        for (let j = 0; j < 8; j++) {
+            if (crc & 0x8000) {
+                crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+            } else {
+                crc = (crc << 1) & 0xFFFF;
+            }
+        }
+    }
+
+    return crc.toString(16).toUpperCase().padStart(4, "0");
+}
+
+function campoPixLuka(id, valor) {
+    const texto = String(valor ?? "");
+    return id + String(texto.length).padStart(2, "0") + texto;
+}
+
+function gerarPixCopiaColaLuka() {
+    const chave = String(process.env.PIX_CHAVE || "").trim();
+    const nome = String(process.env.PIX_NOME || "LUKAFILMES")
+        .trim()
+        .substring(0, 25);
+    const cidade = String(process.env.PIX_CIDADE || "CARAPICUIBA")
+        .trim()
+        .substring(0, 15);
+    const valor = Number(process.env.PIX_VALOR || 18).toFixed(2);
+
+    if (!chave) {
+        throw new Error("PIX_CHAVE não configurada no .env");
+    }
+
+    const merchantAccount =
+        campoPixLuka("00", "br.gov.bcb.pix") +
+        campoPixLuka("01", chave);
+
+    const payloadSemCRC =
+        campoPixLuka("00", "01") +
+        campoPixLuka("26", merchantAccount) +
+        campoPixLuka("52", "0000") +
+        campoPixLuka("53", "986") +
+        campoPixLuka("54", valor) +
+        campoPixLuka("58", "BR") +
+        campoPixLuka("59", nome) +
+        campoPixLuka("60", cidade) +
+        campoPixLuka("62", campoPixLuka("05", "***")) +
+        "6304";
+
+    return payloadSemCRC + crc16PixLuka(payloadSemCRC);
+}
 
 const USUARIOS_STORE = "lukafilmes-usuarios";
 const USUARIOS_KEY = "usuarios";
@@ -151,7 +234,179 @@ async function prepararTursoUsuarios() {
   tursoUsuariosPreparado = true;
 }
 
+async function prepararTursoPagamentos() {
+  if (!turso) return;
+
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS lukafilmes_pagamentos (
+      id INTEGER PRIMARY KEY,
+      usuario_id INTEGER,
+      usuario TEXT NOT NULL,
+      valor REAL NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pendente',
+      criado_em TEXT NOT NULL,
+      aprovado_em TEXT,
+      inicio_acesso TEXT,
+      fim_acesso TEXT,
+      observacao TEXT
+    )
+  `);
+}
+
+async function criarPagamentoLuka(dados) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const resultado = await turso.execute({
+        sql: `
+            INSERT INTO lukafilmes_pagamentos
+            (
+                id,
+                usuario_id,
+                usuario,
+                valor,
+                status,
+                criado_em,
+                aprovado_em,
+                inicio_acesso,
+                fim_acesso,
+                observacao
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        args: [
+            Number(dados.id),
+            dados.usuario_id == null ? null : Number(dados.usuario_id),
+            String(dados.usuario || ""),
+            Number(dados.valor || CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal),
+            String(dados.status || CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE),
+            String(dados.criado_em || new Date().toISOString()),
+            dados.aprovado_em || null,
+            dados.inicio_acesso || null,
+            dados.fim_acesso || null,
+            dados.observacao || null
+        ]
+    });
+
+    return resultado;
+}
+
+async function proximoIdPagamentoLuka() {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const resultado = await turso.execute(`
+        SELECT COALESCE(MAX(id), 0) + 1 AS proximo_id
+        FROM lukafilmes_pagamentos
+    `);
+
+    return Number(resultado.rows?.[0]?.proximo_id || 1);
+}
+
+async function listarPagamentosLuka(status = null) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    if (status) {
+        const resultado = await turso.execute({
+            sql: `
+                SELECT *
+                FROM lukafilmes_pagamentos
+                WHERE status = ?
+                ORDER BY id DESC
+            `,
+            args: [String(status)]
+        });
+
+        return resultado.rows || [];
+    }
+
+    const resultado = await turso.execute(`
+        SELECT *
+        FROM lukafilmes_pagamentos
+        ORDER BY id DESC
+    `);
+
+    return resultado.rows || [];
+}
+
+async function buscarPagamentoLuka(id) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const resultado = await turso.execute({
+        sql: `
+            SELECT *
+            FROM lukafilmes_pagamentos
+            WHERE id = ?
+            LIMIT 1
+        `,
+        args: [Number(id)]
+    });
+
+    return resultado.rows?.[0] || null;
+}
+
+async function atualizarPagamentoLuka(id, dados) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const campos = [];
+    const args = [];
+
+    const permitidos = [
+        "status",
+        "aprovado_em",
+        "inicio_acesso",
+        "fim_acesso",
+        "observacao"
+    ];
+
+    for (const campo of permitidos) {
+        if (Object.prototype.hasOwnProperty.call(dados, campo)) {
+            campos.push(`${campo} = ?`);
+            args.push(dados[campo] == null ? null : String(dados[campo]));
+        }
+    }
+
+    if (campos.length === 0) {
+        return false;
+    }
+
+    args.push(Number(id));
+
+    await turso.execute({
+        sql: `
+            UPDATE lukafilmes_pagamentos
+            SET ${campos.join(", ")}
+            WHERE id = ?
+        `,
+        args
+    });
+
+    return true;
+}
+
 function obterBancoLocal() {
+
+    if (!Database) {
+        Database = require("better-sqlite3");
+    }
 
     if (!bancoLocal) {
 
@@ -369,6 +624,11 @@ const configuracaoSessao = {
 if (!ambienteLocal) {
     configuracaoSessao.store = new NetlifyBlobSessionStore();
 }
+
+prepararTursoPagamentos()
+    .then(() => console.log("[TURSO] Tabela de pagamentos preparada."))
+    .catch(erro => console.error("[TURSO PAGAMENTOS] Erro ao preparar tabela:", erro));
+
 console.log("[DIAGNOSTICO] session middleware carregado");
 
 app.use(session(configuracaoSessao));
@@ -385,6 +645,23 @@ app.get("/login", (req, res) => {
     res.sendFile(
         path.join(__dirname, "public", "login.html")
     );
+});
+
+
+// ==========================================
+// ENTRADA COMO VISITANTE
+// ==========================================
+app.get("/entrar-visitante", (req, res, next) => {
+    req.session.visitante = true;
+
+    req.session.save((err) => {
+        if (err) {
+            console.error("[VISITANTE] Erro ao salvar sessão:", err);
+            return next(err);
+        }
+
+        return res.redirect("/");
+    });
 });
 
 // ==========================================
@@ -414,6 +691,177 @@ app.get("/admin.html", (req, res) => {
             cacheControl: false
         }
     );
+});
+
+
+// ==========================================
+// LUKAFILMES — CADASTRO DE CLIENTE
+// ==========================================
+
+app.get("/cadastro", (req, res) => {
+    res.sendFile(
+        path.join(__dirname, "public", "cadastro.html"),
+        {
+            cacheControl: false
+        }
+    );
+});
+
+// ==========================================
+// LUKAFILMES — API CADASTRO DE CLIENTE
+// ==========================================
+
+app.post("/api/cadastro", async (req, res) => {
+    try {
+        const nome = String(req.body.nome || "").trim();
+        const usuario = String(req.body.usuario || "").trim();
+        const senha = String(req.body.senha || "");
+        const telefone = String(req.body.telefone || "").trim();
+
+        if (!nome || !usuario || !senha || !telefone) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Preencha nome, usuário, senha e telefone."
+            });
+        }
+
+        if (nome.length < 2) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Digite seu nome completo."
+            });
+        }
+
+        if (usuario.length < 3) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "O usuário precisa ter pelo menos 3 caracteres."
+            });
+        }
+
+        if (senha.length < 6) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "A senha precisa ter pelo menos 6 caracteres."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const existente = usuarios.find(
+            u =>
+                String(u.usuario || "")
+                    .trim()
+                    .toLowerCase() === usuario.toLowerCase()
+        );
+
+        if (existente) {
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse usuário já existe. Escolha outro."
+            });
+        }
+
+        const senhaHash = await bcrypt.hash(senha, 12);
+
+        const novoUsuario = {
+            id: proximoId(usuarios),
+            nome,
+            usuario,
+            senha: senhaHash,
+            telefone,
+            status: "ativo",
+            tipo: "usuario",
+            validade: null,
+            criado_em: new Date().toISOString()
+        };
+
+        usuarios.push(novoUsuario);
+
+        await salvarUsuarios(usuarios);
+
+        /*
+         * Já deixa o cliente logado depois do cadastro.
+         * O cadastro NÃO libera os filmes.
+         * A validade continua null até o pagamento ser aprovado.
+         */
+        // =====================================================
+        // MODO TESTE:
+        // mantém o ADMIN na sessão real e coloca o novo cliente
+        // somente como usuário operacional do teste.
+        // =====================================================
+        if (lukaModoTesteAtivo(req)) {
+
+            req.session.lukaTesteUsuario = {
+                id: novoUsuario.id,
+                usuario: novoUsuario.usuario,
+                tipo: novoUsuario.tipo,
+                validade: null,
+                teste_lukafilmes: true
+            };
+
+            // Marca permanentemente o cliente como criado pelo
+            // fluxo de teste. Isso permite removê-lo com segurança
+            // quando o pagamento de teste for recusado.
+            novoUsuario.teste_lukafilmes = true;
+
+            await salvarUsuarios(usuarios);
+
+            console.log(
+                "[LUKA TESTE] Cadastro vinculado ao teste:",
+                novoUsuario.usuario,
+                "ID:",
+                novoUsuario.id
+            );
+
+        } else if (
+            !req.session.usuario ||
+            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+        ) {
+
+            req.session.usuario = {
+                id: novoUsuario.id,
+                usuario: novoUsuario.usuario,
+                tipo: novoUsuario.tipo,
+                validade: null
+            };
+        }
+
+        /*
+         * Garante que a sessão foi gravada antes da resposta.
+         */
+        await new Promise((resolve, reject) => {
+            req.session.save(erro => {
+                if (erro) {
+                    reject(erro);
+                    return;
+                }
+
+                resolve();
+            });
+        });
+
+        console.log(
+            "[CADASTRO] Novo cliente:",
+            novoUsuario.usuario
+        );
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Conta criada com sucesso!",
+            usuario: novoUsuario.usuario,
+            nome: novoUsuario.nome,
+            telefone: novoUsuario.telefone
+        });
+
+    } catch (erro) {
+        console.error("[CADASTRO] Erro:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível criar sua conta."
+        });
+    }
 });
 
 // ==========================================
@@ -461,18 +909,11 @@ app.post("/login", async (req, res) => {
             });
         }
 
-        if (
-            pessoa.tipo !== "admin" &&
-            pessoa.validade &&
-            new Date(pessoa.validade) <= new Date()
-        ) {
-
-            return res.json({
-                sucesso: false,
-                mensagem:
-                    "Seu acesso expirou. Entre em contato com o administrador."
-            });
-        }
+        /*
+         * Usuário vencido continua podendo fazer login e navegar
+         * pelo catálogo. O bloqueio para assistir será feito
+         * somente no botão principal "ASSISTIR".
+         */
 
         const senhaCorreta =
             await bcrypt.compare(
@@ -529,10 +970,182 @@ app.post("/login", async (req, res) => {
 // USUÁRIO LOGADO
 // ==========================================
 
+
+// ===== LUKA MODO TESTE USUARIO V1 =====
+// Mantém a sessão ADMIN intacta e permite simular um cliente
+// no mesmo navegador através de cookie separado.
+
+function lukaCookieTesteAtivo(req) {
+    const cookies = String(
+        req?.headers?.cookie || ""
+    ).split(";");
+
+    return cookies.some(parte => {
+        const [chave, ...resto] = parte.trim().split("=");
+        return (
+            chave === "luka_modo_teste" &&
+            decodeURIComponent(resto.join("=")) === "1"
+        );
+    });
+}
+
+function lukaUsuarioOperacional(req) {
+    if (
+        req &&
+        req.session &&
+        req.session.lukaTesteUsuario &&
+        lukaCookieTesteAtivo(req)
+    ) {
+        return req.session.lukaTesteUsuario;
+    }
+
+    return req && req.session
+        ? req.session.usuario
+        : null;
+}
+
+function lukaModoTesteAtivo(req) {
+    return !!(
+        req &&
+        req.session &&
+        req.session.lukaTesteUsuario &&
+        lukaCookieTesteAtivo(req)
+    );
+}
+
+app.post("/api/admin/teste/iniciar", async (req, res) => {
+    try {
+        if (
+            !req.session ||
+            !req.session.usuario ||
+            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso restrito ao administrador."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        let teste = usuarios.find(
+            u =>
+                String(u.tipo || "").toLowerCase() === "teste" &&
+                String(u.status || "").toLowerCase() === "ativo"
+        );
+
+        if (!teste) {
+            const ids = usuarios
+                .map(u => Number(u.id))
+                .filter(Number.isFinite);
+
+            const novoId = ids.length ? Math.max(...ids) + 1 : 1;
+
+            teste = {
+                id: novoId,
+                nome: "TESTE LUKAFILMES",
+                usuario: "teste_lukafilmes",
+                senha: "",
+                telefone: "",
+                status: "ativo",
+                tipo: "teste",
+                validade: null,
+                criado_em: new Date().toISOString(),
+                limite_conexoes: 1,
+                conexoes_utilizadas: 0
+            };
+
+            usuarios.push(teste);
+            await salvarUsuarios(usuarios);
+        }
+
+        req.session.lukaTesteUsuario = {
+            id: teste.id,
+            usuario: teste.usuario,
+            tipo: "teste",
+            validade: teste.validade || null
+        };
+
+        res.cookie("luka_modo_teste", "1", {
+            httpOnly: true,
+            secure: !ambienteLocal,
+            sameSite: "lax",
+            maxAge: 1000 * 60 * 60 * 6
+        });
+
+        return res.json({
+            sucesso: true,
+            usuario: {
+                id: teste.id,
+                usuario: teste.usuario,
+                tipo: "teste",
+                validade: teste.validade || null
+            },
+            destino: "/?luka_teste=1"
+        });
+
+    } catch (erro) {
+        console.error("[LUKA TESTE] Erro ao iniciar:", erro);
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível iniciar o modo de teste."
+        });
+    }
+});
+
+app.post("/api/admin/teste/encerrar", (req, res) => {
+
+    if (
+        !req.session ||
+        !req.session.usuario ||
+        String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+    ) {
+        return res.status(403).json({
+            sucesso: false,
+            mensagem: "Acesso restrito ao administrador."
+        });
+    }
+
+    delete req.session.lukaTesteUsuario;
+
+    res.clearCookie("luka_modo_teste", {
+        httpOnly: true,
+        secure: !ambienteLocal,
+        sameSite: "lax"
+    });
+
+    return res.json({
+        sucesso: true,
+        destino: "/admin.html"
+    });
+});
+
+app.get("/api/admin/teste/status", (req, res) => {
+
+    const admin =
+        req.session &&
+        req.session.usuario &&
+        String(req.session.usuario.tipo || "").toLowerCase() === "admin";
+
+    if (!admin) {
+        return res.status(403).json({
+            sucesso: false
+        });
+    }
+
+    return res.json({
+        sucesso: true,
+        ativo: lukaModoTesteAtivo(req),
+        usuario: req.session.lukaTesteUsuario || null
+    });
+});
+
+
 app.get("/api/eu", (req, res) => {
 
-    if (!req.session.usuario) {
+    const usuario = lukaUsuarioOperacional(req);
 
+    if (!usuario) {
         return res.status(401).json({
             logado: false
         });
@@ -540,8 +1153,898 @@ app.get("/api/eu", (req, res) => {
 
     res.json({
         logado: true,
-        usuario: req.session.usuario
+        usuario
     });
+
+});
+
+// ==========================================
+// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+// ==========================================
+
+app.get("/api/debug-acesso", async (req, res) => {
+    try {
+        if (!req.session || !req.session.usuario) {
+            return res.json({
+                logado: false,
+                sessao: null
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        return res.json({
+            logado: true,
+            sessao: {
+                id: sessao.id,
+                usuario: sessao.usuario,
+                tipo: sessao.tipo,
+                validade: sessao.validade || null
+            },
+            pessoa: pessoa ? {
+                id: pessoa.id,
+                usuario: pessoa.usuario,
+                tipo: pessoa.tipo,
+                status: pessoa.status,
+                validade: pessoa.validade || null
+            } : null,
+            agora: new Date().toISOString()
+        });
+    } catch (erro) {
+        console.error("[DEBUG ACESSO] Erro:", erro);
+        return res.status(500).json({
+            erro: "erro_servidor"
+        });
+    }
+});
+
+
+// ==========================================
+// LUKAFILMES — STATUS DE RENOVAÇÃO
+// ==========================================
+
+app.get("/api/renovacao-status", async (req, res) => {
+
+    try {
+
+        const sessao = lukaUsuarioOperacional(req);
+
+        if (!sessao) {
+            return res.json({
+                sucesso: true,
+                logado: false,
+                deve_notificar: false
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                sucesso: false,
+                logado: true,
+                deve_notificar: false,
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const tipo = String(
+            pessoa.tipo || "usuario"
+        ).toLowerCase();
+
+        /*
+         * ADMIN E ISENTOS NÃO PAGAM.
+         */
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                sucesso: true,
+                logado: true,
+                deve_notificar: false,
+                isento: true,
+                tipo
+            });
+        }
+
+        const validadeTexto =
+            pessoa.validade || null;
+
+        if (!validadeTexto) {
+            return res.json({
+                sucesso: true,
+                logado: true,
+                deve_notificar: false,
+                motivo: "sem_validade",
+                usuario: pessoa.usuario || ""
+            });
+        }
+
+        const validade =
+            new Date(validadeTexto).getTime();
+
+        const agora = Date.now();
+
+        if (!Number.isFinite(validade)) {
+            return res.json({
+                sucesso: true,
+                logado: true,
+                deve_notificar: false,
+                motivo: "validade_invalida",
+                usuario: pessoa.usuario || ""
+            });
+        }
+
+        const diferenca =
+            validade - agora;
+
+        const diasRestantes =
+            Math.ceil(
+                diferenca /
+                (24 * 60 * 60 * 1000)
+            );
+
+        /*
+         * Avisa nos últimos 10 dias.
+         * Também informa quando já expirou.
+         */
+        const deveNotificar =
+            diasRestantes <= 10;
+
+        return res.json({
+            sucesso: true,
+            logado: true,
+            deve_notificar: deveNotificar,
+            expirado: diferenca <= 0,
+            dias_restantes: Math.max(0, diasRestantes),
+            validade: validadeTexto,
+            usuario: pessoa.usuario || "",
+            valor: Number(
+                process.env.PIX_VALOR ||
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal ||
+                18
+            ).toFixed(2),
+            dias_renovacao:
+                Number(
+                    CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso
+                ) || 30
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[RENOVACAO STATUS] Erro:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            logado: false,
+            deve_notificar: false,
+            mensagem:
+                "Não foi possível verificar a validade."
+        });
+    }
+
+});
+
+app.get("/api/acesso-assistir", async (req, res) => {
+
+    try {
+
+        const sessao = lukaUsuarioOperacional(req);
+
+        if (!sessao) {
+            return res.status(401).json({
+                permitido: false,
+                logado: false,
+                motivo: "nao_logado"
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                permitido: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado"
+            });
+        }
+
+        const tipo = String(pessoa.tipo || "usuario").toLowerCase();
+        const status = String(pessoa.status || "ativo").toLowerCase();
+
+        if (status !== "ativo") {
+            return res.json({
+                permitido: false,
+                logado: true,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                permitido: true,
+                logado: true,
+                tipo,
+                validade: pessoa.validade || null
+            });
+        }
+
+        if (
+            pessoa.validade &&
+            new Date(pessoa.validade).getTime() > Date.now()
+        ) {
+            return res.json({
+                permitido: true,
+                logado: true,
+                tipo,
+                validade: pessoa.validade
+            });
+        }
+
+        return res.json({
+            permitido: false,
+            logado: true,
+            tipo,
+            motivo: "expirado",
+            valor: CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+            dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+            validade: pessoa.validade || null
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ACESSO ASSISTIR] Erro:",
+            erro
+        );
+
+        return res.status(500).json({
+            permitido: false,
+            logado: true,
+            motivo: "erro_servidor",
+            mensagem: "Erro interno ao verificar o acesso."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+// ==========================================
+
+
+
+// ============================================================
+// ADMIN — LIMPAR TESTES ANTIGOS
+// ============================================================
+
+app.post("/api/admin/testes/limpar", async (req, res) => {
+
+    try {
+
+        if (!adminAutorizadoLuka(req)) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const testes = usuarios.filter(u =>
+            String(u.tipo || "").toLowerCase() === "teste" ||
+            u.teste_lukafilmes === true
+        );
+
+        if (!testes.length) {
+            return res.json({
+                sucesso: true,
+                removidos: 0,
+                mensagem: "Nenhum teste encontrado."
+            });
+        }
+
+        const idsRemovidos = new Set(
+            testes.map(u => Number(u.id))
+        );
+
+        const restantes = usuarios.filter(u =>
+            !idsRemovidos.has(Number(u.id))
+        );
+
+        await salvarUsuarios(restantes);
+
+        // Limpa somente a associação de teste da sessão atual.
+        if (req.session) {
+            delete req.session.lukaTesteUsuario;
+        }
+
+        console.log(
+            "[LUKA TESTE] Testes antigos removidos:",
+            testes.map(u => ({
+                id: u.id,
+                usuario: u.usuario
+            }))
+        );
+
+        return res.json({
+            sucesso: true,
+            removidos: testes.length,
+            usuarios: testes.map(u => u.usuario),
+            mensagem:
+                `${testes.length} teste(s) removido(s) com sucesso.`
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[LUKA TESTE] Erro ao limpar testes:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao limpar testes."
+        });
+    }
+
+});
+
+// ============================================================
+// ADMIN — PAGAMENTOS LUKAFILMES
+// ============================================================
+
+function adminAutorizadoLuka(req) {
+    return Boolean(
+        req.session &&
+        req.session.usuario &&
+        String(req.session.usuario.tipo || "").toLowerCase() === "admin"
+    );
+}
+
+app.get("/api/admin/pagamentos", async (req, res) => {
+
+    try {
+
+        if (!adminAutorizadoLuka(req)) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const pagamentos = await listarPagamentosLuka();
+
+        return res.json({
+            sucesso: true,
+            pagamentos: Array.isArray(pagamentos) ? pagamentos : []
+        });
+
+    } catch (erro) {
+
+        console.error("[ADMIN PAGAMENTOS] Erro ao listar:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro ao carregar pagamentos.",
+            pagamentos: []
+        });
+
+    }
+
+});
+
+
+// ============================================================
+// ADMIN — APROVAR PAGAMENTO
+// ============================================================
+
+app.post("/api/admin/pagamentos/:id/aprovar", async (req, res) => {
+
+    try {
+
+        if (!adminAutorizadoLuka(req)) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id < 1) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Pagamento inválido."
+            });
+        }
+
+        const pagamento = await buscarPagamentoLuka(id);
+
+        if (!pagamento) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Pagamento não encontrado."
+            });
+        }
+
+        if (
+            String(pagamento.status || "").toLowerCase() ===
+            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Este pagamento já foi aprovado."
+            });
+        }
+
+        if (
+            String(pagamento.status || "").toLowerCase() ===
+            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.RECUSADO
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Este pagamento já foi recusado."
+            });
+        }
+
+        const usuarioId = Number(pagamento.usuario_id);
+
+        const usuarios = await carregarUsuarios();
+
+        const indice = usuarios.findIndex(
+            u => Number(u.id) === usuarioId
+        );
+
+        if (indice === -1) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Usuário do pagamento não encontrado."
+            });
+        }
+
+        const usuario = usuarios[indice];
+
+        // Se ainda houver acesso válido, soma 30 dias a partir da validade.
+        // Se estiver expirado, começa agora.
+        let inicio = Date.now();
+
+        if (usuario.validade) {
+
+            const validadeAtual =
+                new Date(usuario.validade).getTime();
+
+            if (
+                Number.isFinite(validadeAtual) &&
+                validadeAtual > Date.now()
+            ) {
+                inicio = validadeAtual;
+            }
+
+        }
+
+        const dias =
+            Number(CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso) || 30;
+
+        const novaValidade =
+            new Date(
+                inicio +
+                dias * 24 * 60 * 60 * 1000
+            ).toISOString();
+
+        usuario.validade = novaValidade;
+        usuario.status = "ativo";
+
+        await salvarUsuarios(usuarios);
+
+        const agora = new Date().toISOString();
+
+        await atualizarPagamentoLuka(id, {
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO,
+            aprovado_em: agora,
+            inicio_acesso: new Date(inicio).toISOString(),
+            fim_acesso: novaValidade,
+            observacao:
+                pagamento.renovacao === true ||
+                pagamento.tipo_pagamento === "renovacao"
+                    ? "RENOVAÇÃO aprovada pelo administrador."
+                    : "Pagamento aprovado pelo administrador."
+        });
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Pagamento aprovado e acesso liberado.",
+            pagamento_id: id,
+            usuario_id: usuarioId,
+            validade: novaValidade
+        });
+
+    } catch (erro) {
+
+        console.error("[ADMIN PAGAMENTOS] Erro ao aprovar:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao aprovar pagamento."
+        });
+
+    }
+
+});
+
+
+// ============================================================
+// ADMIN — RECUSAR PAGAMENTO
+// ============================================================
+
+app.post("/api/admin/pagamentos/:id/recusar", async (req, res) => {
+
+    try {
+
+        if (!adminAutorizadoLuka(req)) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id < 1) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Pagamento inválido."
+            });
+        }
+
+        const pagamento = await buscarPagamentoLuka(id);
+
+        if (!pagamento) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Pagamento não encontrado."
+            });
+        }
+
+        if (
+            String(pagamento.status || "").toLowerCase() ===
+            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Não é possível recusar um pagamento já aprovado."
+            });
+        }
+
+        await atualizarPagamentoLuka(id, {
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.RECUSADO,
+            observacao:
+                "Pagamento recusado pelo administrador."
+        });
+
+        // =====================================================
+        // LIMPEZA AUTOMÁTICA DO TESTE
+        //
+        // Só remove usuários criados pelo modo de teste.
+        // Usuários reais NUNCA são removidos por esta rotina.
+        // =====================================================
+        let testeRemovido = false;
+
+        if (pagamento.usuario_id) {
+
+            const usuarios = await carregarUsuarios();
+
+            const indiceTeste = usuarios.findIndex(u =>
+                Number(u.id) === Number(pagamento.usuario_id) &&
+                (
+                    String(u.tipo || "").toLowerCase() === "teste" ||
+                    u.teste_lukafilmes === true
+                )
+            );
+
+            if (indiceTeste !== -1) {
+
+                const usuarioRemovido = usuarios[indiceTeste];
+
+                usuarios.splice(indiceTeste, 1);
+
+                await salvarUsuarios(usuarios);
+
+                testeRemovido = true;
+
+                console.log(
+                    "[LUKA TESTE] Usuário removido após recusa:",
+                    usuarioRemovido.usuario,
+                    "ID:",
+                    usuarioRemovido.id
+                );
+
+                // Se esse teste ainda estiver associado à sessão
+                // administrativa, remove somente o modo teste.
+                if (
+                    req.session &&
+                    req.session.lukaTesteUsuario &&
+                    Number(req.session.lukaTesteUsuario.id) ===
+                    Number(usuarioRemovido.id)
+                ) {
+                    delete req.session.lukaTesteUsuario;
+                }
+            }
+        }
+
+        return res.json({
+            sucesso: true,
+            mensagem: testeRemovido
+                ? "Pagamento recusado e teste removido."
+                : "Pagamento recusado.",
+            teste_removido: testeRemovido
+        });
+
+    } catch (erro) {
+
+        console.error("[ADMIN PAGAMENTOS] Erro ao recusar:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao recusar pagamento."
+        });
+
+    }
+
+});
+
+
+// ============================================================
+
+app.post("/api/pagamentos/criar", async (req, res) => {
+
+    try {
+
+        const sessao = lukaUsuarioOperacional(req);
+
+        if (!sessao) {
+            return res.status(401).json({
+                sucesso: false,
+                logado: false,
+                motivo: "nao_logado",
+                mensagem: "Faça login para continuar."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                sucesso: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado",
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const tipo = String(
+            pessoa.tipo || "usuario"
+        ).toLowerCase();
+
+        const renovacaoSolicitada =
+            req.body &&
+            (
+                req.body.renovacao === true ||
+                String(req.body.renovacao).toLowerCase() === "true"
+            );
+
+        const tipoPagamentoSolicitado =
+            renovacaoSolicitada
+                ? "renovacao"
+                : "primeiro_acesso";
+
+        const statusUsuario = String(
+            pessoa.status || "ativo"
+        ).toLowerCase();
+
+        if (statusUsuario !== "ativo") {
+            return res.status(403).json({
+                sucesso: false,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: false,
+                motivo: "isento",
+                tipo
+            });
+        }
+
+        const pagamentosPendentes =
+            await listarPagamentosLuka(
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+            );
+
+        const pagamentoExistente =
+            pagamentosPendentes.find(
+                pagamento =>
+                    Number(pagamento.usuario_id) === Number(pessoa.id) &&
+                    (
+                        renovacaoSolicitada
+                            ? (
+                                pagamento.renovacao === true ||
+                                pagamento.tipo_pagamento === "renovacao"
+                            )
+                            : (
+                                pagamento.renovacao !== true &&
+                                pagamento.tipo_pagamento !== "renovacao"
+                            )
+                    )
+            );
+
+        if (pagamentoExistente) {
+
+            let pix;
+
+            try {
+                pix = gerarPixCopiaColaLuka();
+            } catch (erroPix) {
+                console.error(
+                    "[PAGAMENTO] Erro ao gerar PIX:",
+                    erroPix
+                );
+            }
+
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: true,
+                pagamento: pagamentoExistente,
+                pix: pix || null,
+                valor: Number(
+                    process.env.PIX_VALOR ||
+                    CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+                ).toFixed(2),
+                nome: process.env.PIX_NOME || "LUKAFILMES",
+                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+            });
+        }
+
+        const idPagamento =
+            await proximoIdPagamentoLuka();
+
+        const pagamento = {
+            id: idPagamento,
+            usuario_id: Number(pessoa.id),
+            usuario: String(
+                pessoa.usuario ||
+                sessao.usuario ||
+                ""
+            ),
+            valor:
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+
+            /*
+             * primeiro_acesso = fluxo normal de cadastro
+             * renovacao      = cliente já existente renovando
+             */
+            tipo_pagamento:
+                tipoPagamentoSolicitado,
+
+            renovacao:
+                renovacaoSolicitada,
+
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+            criado_em:
+                new Date().toISOString(),
+            aprovado_em: null,
+            inicio_acesso: null,
+            fim_acesso: null,
+            observacao: null
+        };
+
+        await criarPagamentoLuka(pagamento);
+
+        let pix;
+
+        try {
+            pix = gerarPixCopiaColaLuka();
+        } catch (erroPix) {
+            console.error(
+                "[PAGAMENTO] Erro ao gerar PIX:",
+                erroPix
+            );
+        }
+
+        return res.json({
+            sucesso: true,
+            pagamento_necessario: true,
+            pagamento,
+            pix: pix || null,
+            valor: Number(
+                process.env.PIX_VALOR ||
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+            ).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[PAGAMENTO] Erro ao criar pagamento:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível criar o pagamento."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// PIX LUKAFILMES — COPIA E COLA
+// ==========================================
+
+app.get("/api/pix", (req, res) => {
+
+    try {
+
+        const pix = gerarPixCopiaColaLuka();
+
+        return res.json({
+            sucesso: true,
+            valor: Number(process.env.PIX_VALOR || 18).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA",
+            pix
+        });
+
+    } catch (erro) {
+
+        console.error("[PIX] Erro ao gerar Pix:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível gerar o Pix."
+        });
+
+    }
 
 });
 
@@ -954,8 +2457,8 @@ app.get(
             );
 
             return res.status(500).json({
-                erro:
-                    "Não foi possível consultar o TMDB."
+                erro: erro.message,
+                tipo: erro.name
             });
         }
     }
@@ -4729,7 +6232,25 @@ app.use(
 
             req.path === "/api/eu" || req.path === "/api/admin/revendedores" || req.path === "/api/revendedor/clientes" ||
 
-            req.path === "/api/pesquisar"
+            req.path === "/api/pesquisar" ||
+
+            req.path === "/" ||
+
+            req.path === "/index.html" ||
+
+            req.path === "/paginas/filme.html" ||
+
+            req.path === "/paginas/filme" ||
+
+            req.path === "/paginas/filmes.html" ||
+
+            req.path === "/paginas/series.html" ||
+
+            req.path === "/paginas/series" ||
+
+            req.path === "/paginas/serie.html" ||
+
+            req.path === "/paginas/serie"
 
         ) {
 
@@ -4751,7 +6272,12 @@ app.use(
          * APIs de séries devem responder diretamente em JSON.
          * Não redirecionar detalhes, temporadas e episódios para /login.
          */
-        if (req.path.startsWith("/api/serie/") || req.path.startsWith("/api/series")) {
+        if (
+            req.path.startsWith("/api/serie/") ||
+            req.path.startsWith("/api/series") ||
+            req.path === "/api/acesso-assistir" ||
+            req.path === "/api/pagamentos/criar"
+        ) {
             return next();
         }
 
@@ -4763,17 +6289,13 @@ app.use(
 
         const usuarioSessao = req.session.usuario;
 
-        if (
-            usuarioSessao.tipo !== "admin" &&
-            usuarioSessao.validade &&
-            new Date(usuarioSessao.validade) <= new Date()
-        ) {
-
-            return req.session.destroy(() => {
-                res.redirect("/login");
-            });
-
-        }
+        /*
+         * Usuário vencido continua logado e pode navegar pelo catálogo.
+         * A verificação de acesso para assistir será feita no botão
+         * principal "ASSISTIR".
+         *
+         * Admin e isento nunca dependem de validade.
+         */
 
         next();
 
