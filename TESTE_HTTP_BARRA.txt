@@ -1,0 +1,21 @@
+========== TESTE HTTP LOCAL ==========
+
+===== / =====
+
+===== /index.html =====
+
+===== CABECALHO / =====
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Sat, 05 Sep 2026 07:08:36 GMT
+ETag: W/"476a2-1a07065d2c3"
+Content-Type: text/html; charset=utf-8
+Content-Length: 292514
+Date: Mon, 07 Sep 2026 11:40:58 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+
+===== FIM =====

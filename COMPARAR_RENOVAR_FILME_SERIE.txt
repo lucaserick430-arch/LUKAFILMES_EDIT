@@ -1,0 +1,1872 @@
+
+================================================================================
+FILME.HTML
+================================================================================
+INÍCIO DA FUNÇÃO: 80543
+TAMANHO: 31200
+
+async function mostrarPagamentoLuka(acesso, renovacao = false) {
+
+                try {
+
+                    let pagamento = null;
+
+                    const respostaPagamento =
+                        await fetch(
+                            "/api/pagamentos/criar",
+                            {
+                                method: "POST",
+                                credentials: "same-origin",
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+                                body: JSON.stringify(
+                                    renovacao
+                                        ? { renovacao: true }
+                                        : {}
+                                )
+                            }
+                        );
+
+                    const dadosPagamento =
+                        await respostaPagamento.json();
+
+                    if (!respostaPagamento.ok ||
+                        !dadosPagamento.sucesso) {
+
+                        alert(
+                            dadosPagamento.mensagem ||
+                            "Não foi possível preparar o pagamento."
+                        );
+
+                        return;
+                    }
+
+                    if (
+                        dadosPagamento.pagamento_necessario ===
+                        false
+                    ) {
+
+                        playerFilme.style.display =
+                            "block";
+
+                        return;
+                    }
+
+                    pagamento =
+                        dadosPagamento.pagamento ||
+                        null;
+
+                    const valor =
+                        dadosPagamento.valor ||
+                        Number(
+                            acesso.valor || 18
+                        ).toFixed(2);
+
+                    const pix =
+                        dadosPagamento.pix ||
+                        "";
+
+                    const antigo =
+                        document.getElementById(
+                            "lukafilmesPagamento"
+                        );
+
+                    if (antigo) {
+                        antigo.remove();
+                    }
+
+                    const tela =
+                        document.createElement("div");
+
+                    tela.id =
+                        "lukafilmesPagamento";
+
+                    tela.style.cssText = `
+                        width: min(92%, 520px);
+                        margin: 24px auto;
+                        padding: 24px;
+                        box-sizing: border-box;
+                        background: linear-gradient(180deg, #242424 0%, #111 100%);
+                        border: 2px solid rgba(255,255,255,.16);
+                        border-radius: 20px;
+                        text-align: center;
+                        color: #fff;
+                        box-shadow: 0 15px 50px rgba(0,0,0,.75);
+                        position: relative;
+                        z-index: 20;
+                    `;
+
+                    tela.innerHTML = `
+                        <h2 style="margin:0 0 10px;">
+                            ${renovacao ? "🔄 Renovar acesso" : "🔒 Acesso expirado"}
+                        </h2>
+
+                        <p style="margin:8px 0 18px;">
+                            ${renovacao
+                                ? "Renove seu acesso ao LUKAFILMES por mais 30 dias."
+                                : "Para assistir este filme, renove seu acesso."}
+                        </p>
+
+                        <div style="
+                            font-size:30px;
+                            font-weight:700;
+                            margin:15px 0;
+                        ">
+                            R$ ${valor}
+                        </div>
+
+                        <p style="margin:8px 0;">
+                            Acesso por 30 dias
+                        </p>
+
+                        <div
+                            id="lukafilmesQrCode"
+                            style="
+                                width:220px;
+                                min-height:220px;
+                                margin:20px auto;
+                                padding:10px;
+                                box-sizing:border-box;
+                                background:#fff;
+                                border-radius:12px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                            ">
+                        </div>
+
+                        <p style="
+                            font-size:14px;
+                            margin:14px 0 6px;
+                        ">
+                            PIX copia e cola
+                        </p>
+
+                        <textarea
+                            id="lukafilmesPix"
+                            readonly
+                            style="
+                                width:100%;
+                                min-height:90px;
+                                box-sizing:border-box;
+                                resize:none;
+                                padding:10px;
+                                border-radius:10px;
+                                border:1px solid #444;
+                                background:#fff;
+                                color:#111;
+                                font-size:13px;
+                                font-weight:600;
+                                line-height:1.45;
+                                outline:none;
+                            ">${pix}</textarea>
+
+                        <button
+                            type="button"
+                            id="lukafilmesCopiarPix"
+                            style="
+                                width:100%;
+                                margin-top:12px;
+                                padding:15px;
+                                border:2px solid #fff;
+                                border-radius:12px;
+                                cursor:pointer;
+                                font-weight:800;
+                                font-size:15px;
+                                background:#fff;
+                                color:#111;
+                                box-shadow:0 5px 18px rgba(0,0,0,.35);
+                                display:block;
+                                visibility:visible;
+                                opacity:1;
+                            ">
+                            📋 COPIAR CÓDIGO PIX
+                        </button>
+
+                        <button
+                            type="button"
+                            id="lukafilmesPagamentoFeito"
+                            style="
+                                width:100%;
+                                margin-top:10px;
+                                padding:13px;
+                                border:0;
+                                border-radius:10px;
+                                cursor:pointer;
+                                font-weight:700;
+                            ">
+                            📲 ENVIAR COMPROVANTE PELO WHATSAPP
+                        </button>
+
+                        <p
+                            id="lukafilmesPagamentoStatus"
+                            style="
+                                display:none;
+                                margin-top:14px;
+                                font-size:14px;
+                            ">
+                        </p>
+                    `;
+
+                    playerFilme.parentNode.insertBefore(
+                        tela,
+                        playerFilme
+                    );
+
+                    tela.scrollIntoView({
+                        behavior: "auto",
+                        block: "center"
+                    });
+
+                    const areaQr =
+                        document.getElementById(
+                            "lukafilmesQrCode"
+                        );
+
+                    if (
+                        pix &&
+                        areaQr &&
+                        typeof QRCode !== "undefined"
+                    ) {
+
+                        new QRCode(
+                            areaQr,
+                            {
+                                text: pix,
+                                width: 200,
+                                height: 200
+                            }
+                        );
+
+                    }
+                    else if (areaQr) {
+
+                        areaQr.innerHTML =
+                            "<span style='color:#222;'>QR Code indisponível</span>";
+
+                    }
+
+                    const botaoCopiar =
+                        document.getElementById(
+                            "lukafilmesCopiarPix"
+                        );
+
+                    if (botaoCopiar) {
+
+                        botaoCopiar.onclick =
+                            async function () {
+
+                                let copiou = false;
+
+                                try {
+
+                                    if (
+                                        navigator.clipboard &&
+                                        navigator.clipboard.writeText
+                                    ) {
+                                        await navigator.clipboard.writeText(
+                                            String(pix)
+                                        );
+                                        copiou = true;
+                                    }
+
+                                } catch (_) {}
+
+                                if (!copiou) {
+
+                                    const campo =
+                                        document.getElementById(
+                                            "lukafilmesPix"
+                                        );
+
+                                    if (campo) {
+
+                                        campo.focus();
+                                        campo.select();
+                                        campo.setSelectionRange(
+                                            0,
+                                            campo.value.length
+                                        );
+
+                                        try {
+                                            copiou =
+                                                document.execCommand(
+                                                    "copy"
+                                                );
+                                        } catch (_) {}
+                                    }
+                                }
+
+                                if (copiou) {
+
+                                    botaoCopiar.innerHTML =
+                                        "✅ PIX COPIADO";
+
+                                    setTimeout(
+                                        function () {
+                                            botaoCopiar.innerHTML =
+                                                "📋 COPIAR CÓDIGO PIX";
+                                        },
+                                        2000
+                                    );
+
+                                } else {
+
+                                    botaoCopiar.innerHTML =
+                                        "⚠️ Não foi possível copiar";
+
+                                    setTimeout(
+                                        function () {
+                                            botaoCopiar.innerHTML =
+                                                "📋 COPIAR CÓDIGO PIX";
+                                        },
+                                        2500
+                                    );
+
+                                }
+
+                            };
+
+                    }
+
+                    const botaoFeito =
+                        document.getElementById(
+                            "lukafilmesPagamentoFeito"
+                        );
+
+                    if (botaoFeito) {
+
+                        botaoFeito.onclick =
+                            function () {
+
+                                const nomeUsuario =
+                                    String(
+                                        pagamento &&
+                                        pagamento.usuario
+                                            ? pagamento.usuario
+                                            : "cliente"
+                                    );
+
+                                const idPagamento =
+                                    pagamento &&
+                                    pagamento.id
+                                        ? Number(pagamento.id)
+                                        : "";
+
+                                const mensagem =
+                                    renovacao
+                                        ? [
+                                            "🔄 LUKAFILMES — SOLICITAÇÃO DE RENOVAÇÃO",
+                                            "",
+                                            "👤 Usuário: " + nomeUsuario,
+                                            "🧾 Pagamento: #" + idPagamento,
+                                            "💰 Valor: R$ " + valor,
+                                            "",
+                                            "✅ Já realizei o pagamento via PIX.",
+                                            "",
+                                            "📅 Solicito a renovação do meu acesso por mais 30 dias.",
+                                            "",
+                                            "Estou enviando o comprovante para conferência e aprovação da renovação."
+                                        ].join("\n")
+                                        : [
+                                            "🎬 LUKAFILMES — COMPROVANTE DE PAGAMENTO",
+                                            "",
+                                            "👤 Usuário: " + nomeUsuario,
+                                            "🧾 Pagamento: #" + idPagamento,
+                                            "💰 Valor: R$ " + valor,
+                                            "",
+                                            "✅ Já realizei o pagamento via PIX.",
+                                            "",
+                                            "Estou enviando o comprovante para conferência e aprovação."
+                                        ].join("\n");
+
+                                const whatsapp =
+                                    "https://wa.me/5511957621653?text=" +
+                                    encodeURIComponent(mensagem);
+
+                                const status =
+                                    document.getElementById(
+                                        "lukafilmesPagamentoStatus"
+                                    );
+
+                                if (status) {
+
+                                    status.style.display =
+                                        "block";
+
+                                    status.innerHTML =
+                                        "⏳ Pagamento pendente.<br><br>📲 Envie o comprovante pelo WhatsApp e depois volte para esta página.<br><br>Seu acesso será liberado após a aprovação.";
+
+                                }
+
+                                botaoFeito.disabled = true;
+
+                                botaoFeito.innerHTML =
+                                    "📲 ABRINDO WHATSAPP...";
+
+                                window.location.href = whatsapp;
+
+                                setTimeout(function () {
+
+                                    botaoFeito.innerHTML =
+                                        "⏳ AGUARDANDO APROVAÇÃO";
+
+                                }, 1200);
+
+                            };
+
+                    }
+
+                    console.log(
+                        "[LUKAFILMES] Pagamento preparado:",
+                        pagamento
+                    );
+
+                } catch (erro) {
+
+                    console.error(
+                        "[LUKAFILMES] Erro na tela de pagamento:",
+                        erro
+                    );
+
+                    alert(
+                        "Não foi possível abrir a tela de pagamento."
+                    );
+
+                }
+
+            }
+
+            /* ==========================================
+               RENOVAÇÃO — USA O MESMO PIX EXISTENTE
+               ========================================== */
+
+            window.addEventListener(
+                "luka:renovar",
+                async function (evento) {
+
+                    try {
+
+                        const dados =
+                            evento &&
+                            evento.detail
+                                ? evento.detail
+                                : {};
+
+                        await mostrarPagamentoLuka(
+                            dados,
+                            true
+                        );
+
+                    } catch (erro) {
+
+                        console.error(
+                            "[LUKAFILMES] Erro ao abrir renovação:",
+                            erro
+                        );
+
+                    }
+
+                }
+            );
+
+            /* ==========================================
+               PLAY CENTRAL — CARREGA PLAYER 1
+               ========================================== */
+
+            const playCentral =
+                document.getElementById(
+                    "playCentralFilme"
+                );
+
+            if (playCentral) {
+
+                playCentral.addEventListener(
+                    "click",
+                    async function () {
+
+                        try {
+
+                            /*
+                             * VERIFICA O ACESSO ANTES
+                             * DE CARREGAR O CONTEÚDO.
+                             */
+                            const respostaAcesso =
+                                await fetch(
+                                    "/api/acesso-assistir",
+                                    {
+                                        method: "GET",
+                                        credentials: "same-origin",
+                                        cache: "no-store"
+                                    }
+                                );
+
+                            const acesso =
+                                await respostaAcesso.json();
+
+                            console.log(
+                                "[LUKAFILMES] Acesso para assistir:",
+                                acesso
+                            );
+
+                            /*
+                             * SEM AUTORIZAÇÃO:
+                             * NÃO CARREGA O PLAYER.
+                             */
+                            if (!acesso.permitido) {
+
+                                if (
+                                    acesso.motivo ===
+                                    "nao_logado"
+                                ) {
+                                    alert(
+                                        "Faça login para assistir."
+                                    );
+                                }
+                                else if (
+                                    acesso.motivo ===
+                                    "expirado"
+                                ) {
+                                    alert(
+                                        "Seu acesso expirou. É necessário renovar para assistir."
+                                    );
+                                }
+                                else {
+                                    alert(
+                                        acesso.mensagem ||
+                                        "Seu acesso não está liberado para assistir."
+                                    );
+                                }
+
+                                return;
+                            }
+
+                            const tmdbId =
+                                String(filme.id).trim();
+
+                            if (!tmdbId) return;
+
+                            const embedUrl =
+                                "https://mgeb.top/embed/" +
+                                tmdbId;
+
+                            /*
+                             * PLAY CENTRAL
+                             * Só carrega depois da autorização.
+                             */
+                            filmeFrame.src = embedUrl;
+
+                        /* ==========================================
+                           CONTINUAR ASSISTINDO
+                           REGISTRA O FILME + PLAYER 1
+                           ========================================== */
+                        if (window.LukaContinuar) {
+                            LukaContinuar.registrarInicio({
+                                id: filme.id,
+                                titulo: filme.titulo || "Filme",
+                                capa: filme.capa || "",
+                                tipo: "filme",
+                                player: "1"
+                            });
+                        }
+
+                        playCentral.classList.add(
+                            "oculto"
+                        );
+
+                        const primeiroPlayer =
+                            document.querySelector(
+                                '.player-btn[data-player="1"]'
+                            );
+
+                        if (primeiroPlayer) {
+
+                            document
+                                .querySelectorAll(
+                                    ".player-btn"
+                                )
+                                .forEach(function(btn){
+                                    btn.classList.remove(
+                                        "player-selecionado"
+                                    );
+                                });
+
+                            primeiroPlayer.classList.add(
+                                "player-selecionado"
+                            );
+                        }
+
+                        botao.innerHTML =
+                            "▶ REPRODUZINDO";
+
+                        } catch (erro) {
+
+                            console.error(
+                                "[LUKAFILMES] Erro ao verificar acesso:",
+                                erro
+                            );
+
+                            alert(
+                                "Não foi possível verificar seu acesso. Tente novamente."
+                            );
+                        }
+                    }
+                );
+            }
+
+            /* ==========================================
+               SELECAO DOS PLAYERS
+               ========================================== */
+
+            const botoesPlayers =
+                document.querySelectorAll(
+                    ".player-btn"
+                );
+
+            botoesPlayers.forEach(function (botaoPlayer) {
+
+                botaoPlayer.addEventListener(
+                    "click",
+                    async function () {
+
+                        const numero =
+                            this.dataset.player;
+
+                        const tmdbId =
+                            String(filme.id).trim();
+
+                        let embedUrl = "";
+
+                        /*
+                         * PLAYER 1
+                         * MyEmbed
+                         */
+                        if (numero === "1") {
+
+                            embedUrl =
+                                "https://mgeb.top/embed/" +
+                                tmdbId;
+                        }
+
+                        /*
+                         * PLAYER 2
+                         * Fonte alternativa TMDB
+                         */
+                        else if (numero === "2") {
+
+                            embedUrl =
+                                "https://pipocacine.lat/embed/" +
+                                String(tmdbId).trim();
+                        }
+
+                        /*
+                         * PLAYER 3
+                         * AUTOEMBED
+                         */
+                        else if (numero === "3") {
+
+                            embedUrl =
+                                "https://myembed.biz/filme/" +
+                                tmdbId;
+                        }
+
+                        /*
+                         * PLAYER 4
+                         * Fonte alternativa
+                         */
+                        else if (numero === "4") {
+
+                            embedUrl =
+                                "https://apiplayer.ru/embed/movie/" +
+                                String(tmdbId).trim() +
+                                "?lang=pt";
+                        }
+
+                        if (!embedUrl) {
+                            return;
+                        }
+
+                        console.log(
+                            "[PLAYER SELECIONADO]",
+                            numero,
+                            embedUrl
+                        );
+
+                        /*
+                         * DESTACA O PLAYER ESCOLHIDO
+                         */
+                        botoesPlayers.forEach(
+                            function (btn) {
+                                btn.classList.remove(
+                                    "player-selecionado"
+                                );
+                            }
+                        );
+
+                        this.classList.add(
+                            "player-selecionado"
+                        );
+
+                        /*
+                         * CARREGA O FRAME
+                         */
+                        /*
+                         * CARREGA O FRAME
+                         */
+                        filmeFrame.src =
+                            embedUrl;
+
+                        /*
+                         * GARANTE A EXIBIÇÃO DO PLAYER
+                         * E ESCONDE O BOTÃO ▶ CENTRAL.
+                         */
+                        if (playerFilme) {
+                            playerFilme.style.display = "block";
+                        }
+
+                        if (filmeFrame) {
+                            filmeFrame.style.display = "block";
+                            filmeFrame.style.visibility = "visible";
+                            filmeFrame.style.opacity = "1";
+                        }
+
+                        if (playCentral) {
+                            playCentral.classList.add("oculto");
+                        }
+
+                        console.log(
+                            "[PLAYER FRAME CARREGADO]",
+                            numero,
+                            filmeFrame.src
+                        );
+
+                        /* ==========================================
+                           CONTINUAR ASSISTINDO
+                           REGISTRA FILME + PLAYER ESCOLHIDO
+                           ========================================== */
+                        if (window.LukaContinuar) {
+                            LukaContinuar.registrarInicio({
+                                id: filme.id,
+                                titulo: filme.titulo || "Filme",
+                                capa: filme.capa || "",
+                                tipo: "filme",
+                                player: numero
+                            });
+                        }
+
+                        playerFilme.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+
+                    }
+                );
+
+            });
+
+        }
+        /* ASSISTIR NO SITE DE ORIGEM */
+
+        const botaoOrigem =
+            document.getElementById("botaoAssistirOrigem");
+
+        if (botaoOrigem && filme.id) {
+
+            botaoOrigem.style.display =
+                "none";
+
+            fetch(
+                "/api/filme/" +
+                filme.id +
+                "/origem"
+            )
+            .then(resposta =>
+                resposta.json()
+            )
+            .then(dados => {
+
+                if (
+                    dados &&
+                    dados.sucesso &&
+                    dados.encontrado &&
+                    dados.link
+                ) {
+
+                    botaoOrigem.href =
+                        dados.link;
+
+                    botaoOrigem.target =
+                        "_blank";
+
+                    botaoOrigem.rel =
+                        "noopener noreferrer";
+
+                    botaoOrigem.style.display =
+                        "inline-flex";
+
+                    console.log(
+                        "[LINK ORIGEM]",
+                        dados.titulo,
+                        dados.link
+                    );
+
+                } else {
+
+                    botaoOrigem.style.display =
+                        "none";
+                }
+
+            })
+            .catch(erro => {
+
+                console.error(
+                    "[ERRO LINK ORIGEM]",
+                    erro
+                );
+
+                botaoOrigem.style.display =
+                    "none";
+            });
+        }
+    /* TRAILER */
+
+        if (filme.id) {
+
+            fetch(
+                "/api/filme/" +
+                filme.id +
+                "/videos"
+            )
+
+            .then(resposta =>
+                resposta.json()
+            )
+
+            .then(dados => {
+
+                const container =
+                    document.getElementById(
+                        "trailerContainer"
+                    );
+
+                const frame =
+                    document.getElementById(
+                        "trailerFrame"
+                    );
+
+                if (
+                    container &&
+                    frame &&
+                    dados &&
+                    dados.sucesso &&
+                    dados.encontrado &&
+                    dados.trailer &&
+                    dados.trailer.embed
+                ) {
+
+                    frame.src =
+                        dados.trailer.embed;
+
+                    frame.title =
+                        dados.trailer.nome ||
+                        "Trailer do filme";
+
+                    container.style.display =
+                        "block";
+
+                }
+
+            })
+
+            .catch(erro => {
+
+                console.error(
+                    "[ERRO TRAILER]",
+                    erro
+                );
+
+            });
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO FILME]",
+            erro
+        );
+
+        document.getElementById("titulo")
+            .textContent =
+            "Erro ao carregar filme";
+
+        document.getElementById("sinopse")
+            .textContent =
+            "Não foi possível carregar os dados deste filme.";
+
+    }
+
+})();
+</script>
+
+
+--------------------------------------------------------------------------------
+BOTÕES/CHAMADAS RELACIONADOS A RENOVAR
+--------------------------------------------------------------------------------
+3667:                                 await mostrarPagamentoLuka(
+3739:             async function mostrarPagamentoLuka(acesso, renovacao = false) {
+3834:                             ${renovacao ? "🔄 Renovar acesso" : "🔒 Acesso expirado"}
+4178:                 "luka:renovar",
+4189:                         await mostrarPagamentoLuka(
+4264:                                         "Seu acesso expirou. É necessário renovar para assistir."
+5740: #lukaRenovacaoNotificacao .luka-renovar {
+5856:                     class="luka-renovar"
+5857:                     id="lukaRenovarAgora">
+5858:                     🔄 RENOVAR
+5874:         const botaoRenovar =
+5876:                 "lukaRenovarAgora"
+5879:         if(botaoRenovar){
+5881:             botaoRenovar.addEventListener(
+5892:                             "luka:renovar",
+
+================================================================================
+SERIE.HTML
+================================================================================
+INÍCIO DA FUNÇÃO: 55276
+TAMANHO: 28485
+
+async function mostrarPagamentoLuka(acesso, renovacao = false) {
+
+                try {
+
+                    let pagamento = null;
+
+                    const respostaPagamento =
+                        await fetch(
+                            "/api/pagamentos/criar",
+                            {
+                                method: "POST",
+                                credentials: "same-origin",
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+                                body: JSON.stringify(
+                                    renovacao
+                                        ? { renovacao: true }
+                                        : {}
+                                )
+                            }
+                        );
+
+                    const dadosPagamento =
+                        await respostaPagamento.json();
+
+                    if (!respostaPagamento.ok ||
+                        !dadosPagamento.sucesso) {
+
+                        alert(
+                            dadosPagamento.mensagem ||
+                            "Não foi possível preparar o pagamento."
+                        );
+
+                        return;
+                    }
+
+                    if (
+                        dadosPagamento.pagamento_necessario ===
+                        false
+                    ) {
+
+                        playerSerie.style.display =
+                            "block";
+
+                        return;
+                    }
+
+                    pagamento =
+                        dadosPagamento.pagamento ||
+                        null;
+
+                    const valor =
+                        dadosPagamento.valor ||
+                        Number(
+                            acesso.valor || 18
+                        ).toFixed(2);
+
+                    const pix =
+                        dadosPagamento.pix ||
+                        "";
+
+                    const antigo =
+                        document.getElementById(
+                            "lukafilmesPagamento"
+                        );
+
+                    if (antigo) {
+                        antigo.remove();
+                    }
+
+                    const tela =
+                        document.createElement("div");
+
+                    tela.id =
+                        "lukafilmesPagamento";
+
+                    tela.style.cssText = `
+                        width: min(92%, 520px);
+                        margin: 24px auto;
+                        padding: 24px;
+                        box-sizing: border-box;
+                        background: linear-gradient(180deg, #242424 0%, #111 100%);
+                        border: 2px solid rgba(255,255,255,.16);
+                        border-radius: 20px;
+                        text-align: center;
+                        color: #fff;
+                        box-shadow: 0 15px 50px rgba(0,0,0,.75);
+                        position: relative;
+                        z-index: 20;
+                    `;
+
+                    tela.innerHTML = `
+                        <h2 style="margin:0 0 10px;">
+                            ${renovacao ? "🔄 Renovar acesso" : "🔒 Acesso expirado"}
+                        </h2>
+
+                        <p style="margin:8px 0 18px;">
+                            ${renovacao
+                                ? "Renove seu acesso ao LUKAFILMES por mais 30 dias."
+                                : "Para assistir esta série, renove seu acesso."}
+                        </p>
+
+                        <div style="
+                            font-size:30px;
+                            font-weight:700;
+                            margin:15px 0;
+                        ">
+                            R$ ${valor}
+                        </div>
+
+                        <p style="margin:8px 0;">
+                            Acesso por 30 dias
+                        </p>
+
+                        <div
+                            id="lukafilmesQrCode"
+                            style="
+                                width:220px;
+                                min-height:220px;
+                                margin:20px auto;
+                                padding:10px;
+                                box-sizing:border-box;
+                                background:#fff;
+                                border-radius:12px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                            ">
+                        </div>
+
+                        <p style="
+                            font-size:14px;
+                            margin:14px 0 6px;
+                        ">
+                            PIX copia e cola
+                        </p>
+
+                        <textarea
+                            id="lukafilmesPix"
+                            readonly
+                            style="
+                                width:100%;
+                                min-height:90px;
+                                box-sizing:border-box;
+                                resize:none;
+                                padding:10px;
+                                border-radius:10px;
+                                border:1px solid #444;
+                                background:#fff;
+                                color:#111;
+                                font-size:13px;
+                                font-weight:600;
+                                line-height:1.45;
+                                outline:none;
+                            ">${pix}</textarea>
+
+                        <button
+                            type="button"
+                            id="lukafilmesCopiarPix"
+                            style="
+                                width:100%;
+                                margin-top:12px;
+                                padding:15px;
+                                border:2px solid #fff;
+                                border-radius:12px;
+                                cursor:pointer;
+                                font-weight:800;
+                                font-size:15px;
+                                background:#fff;
+                                color:#111;
+                                box-shadow:0 5px 18px rgba(0,0,0,.35);
+                                display:block;
+                                visibility:visible;
+                                opacity:1;
+                            ">
+                            📋 COPIAR CÓDIGO PIX
+                        </button>
+
+                        <button
+                            type="button"
+                            id="lukafilmesPagamentoFeito"
+                            style="
+                                width:100%;
+                                margin-top:10px;
+                                padding:13px;
+                                border:0;
+                                border-radius:10px;
+                                cursor:pointer;
+                                font-weight:700;
+                            ">
+                            📲 ENVIAR COMPROVANTE PELO WHATSAPP
+                        </button>
+
+                        <p
+                            id="lukafilmesPagamentoStatus"
+                            style="
+                                display:none;
+                                margin-top:14px;
+                                font-size:14px;
+                            ">
+                        </p>
+                    `;
+
+                    playerSerie.parentNode.insertBefore(
+                        tela,
+                        playerSerie
+                    );
+
+                    tela.scrollIntoView({
+                        behavior: "auto",
+                        block: "center"
+                    });
+
+                    const areaQr =
+                        document.getElementById(
+                            "lukafilmesQrCode"
+                        );
+
+                    if (
+                        pix &&
+                        areaQr &&
+                        typeof QRCode !== "undefined"
+                    ) {
+
+                        new QRCode(
+                            areaQr,
+                            {
+                                text: pix,
+                                width: 200,
+                                height: 200
+                            }
+                        );
+
+                    }
+                    else if (areaQr) {
+
+                        areaQr.innerHTML =
+                            "<span style='color:#222;'>QR Code indisponível</span>";
+
+                    }
+
+                    const botaoCopiar =
+                        document.getElementById(
+                            "lukafilmesCopiarPix"
+                        );
+
+                    if (botaoCopiar) {
+
+                        botaoCopiar.onclick =
+                            async function () {
+
+                                let copiou = false;
+
+                                try {
+
+                                    if (
+                                        navigator.clipboard &&
+                                        navigator.clipboard.writeText
+                                    ) {
+                                        await navigator.clipboard.writeText(
+                                            String(pix)
+                                        );
+                                        copiou = true;
+                                    }
+
+                                } catch (_) {}
+
+                                if (!copiou) {
+
+                                    const campo =
+                                        document.getElementById(
+                                            "lukafilmesPix"
+                                        );
+
+                                    if (campo) {
+
+                                        campo.focus();
+                                        campo.select();
+                                        campo.setSelectionRange(
+                                            0,
+                                            campo.value.length
+                                        );
+
+                                        try {
+                                            copiou =
+                                                document.execCommand(
+                                                    "copy"
+                                                );
+                                        } catch (_) {}
+                                    }
+                                }
+
+                                if (copiou) {
+
+                                    botaoCopiar.innerHTML =
+                                        "✅ PIX COPIADO";
+
+                                    setTimeout(
+                                        function () {
+                                            botaoCopiar.innerHTML =
+                                                "📋 COPIAR CÓDIGO PIX";
+                                        },
+                                        2000
+                                    );
+
+                                } else {
+
+                                    botaoCopiar.innerHTML =
+                                        "⚠️ Não foi possível copiar";
+
+                                    setTimeout(
+                                        function () {
+                                            botaoCopiar.innerHTML =
+                                                "📋 COPIAR CÓDIGO PIX";
+                                        },
+                                        2500
+                                    );
+
+                                }
+
+                            };
+
+                    }
+
+                    const botaoFeito =
+                        document.getElementById(
+                            "lukafilmesPagamentoFeito"
+                        );
+
+                    if (botaoFeito) {
+
+                        botaoFeito.onclick =
+                            function () {
+
+                                const nomeUsuario =
+                                    String(
+                                        pagamento &&
+                                        pagamento.usuario
+                                            ? pagamento.usuario
+                                            : "cliente"
+                                    );
+
+                                const idPagamento =
+                                    pagamento &&
+                                    pagamento.id
+                                        ? Number(pagamento.id)
+                                        : "";
+
+                                const mensagem =
+                                    renovacao
+                                        ? [
+                                            "🔄 LUKAFILMES — SOLICITAÇÃO DE RENOVAÇÃO",
+                                            "",
+                                            "👤 Usuário: " + nomeUsuario,
+                                            "🧾 Pagamento: #" + idPagamento,
+                                            "💰 Valor: R$ " + valor,
+                                            "",
+                                            "✅ Já realizei o pagamento via PIX.",
+                                            "",
+                                            "📅 Solicito a renovação do meu acesso por mais 30 dias.",
+                                            "",
+                                            "Estou enviando o comprovante para conferência e aprovação da renovação."
+                                        ].join("\n")
+                                        : [
+                                            "🎬 LUKAFILMES — COMPROVANTE DE PAGAMENTO",
+                                            "",
+                                            "👤 Usuário: " + nomeUsuario,
+                                            "🧾 Pagamento: #" + idPagamento,
+                                            "💰 Valor: R$ " + valor,
+                                            "",
+                                            "✅ Já realizei o pagamento via PIX.",
+                                            "",
+                                            "Estou enviando o comprovante para conferência e aprovação."
+                                        ].join("\n");
+
+                                const whatsapp =
+                                    "https://wa.me/5511957621653?text=" +
+                                    encodeURIComponent(mensagem);
+
+                                const status =
+                                    document.getElementById(
+                                        "lukafilmesPagamentoStatus"
+                                    );
+
+                                if (status) {
+
+                                    status.style.display =
+                                        "block";
+
+                                    status.innerHTML =
+                                        "⏳ Pagamento pendente.<br><br>📲 Envie o comprovante pelo WhatsApp e depois volte para esta página.<br><br>Seu acesso será liberado após a aprovação.";
+
+                                }
+
+                                botaoFeito.disabled = true;
+
+                                botaoFeito.innerHTML =
+                                    "📲 ABRINDO WHATSAPP...";
+
+                                window.location.href = whatsapp;
+
+                                setTimeout(function () {
+
+                                    botaoFeito.innerHTML =
+                                        "⏳ AGUARDANDO APROVAÇÃO";
+
+                                }, 1200);
+
+                            };
+
+                    }
+
+                    console.log(
+                        "[LUKAFILMES] Pagamento preparado:",
+                        pagamento
+                    );
+
+                } catch (erro) {
+
+                    console.error(
+                        "[LUKAFILMES] Erro na tela de pagamento:",
+                        erro
+                    );
+
+                    alert(
+                        "Não foi possível abrir a tela de pagamento."
+                    );
+
+                }
+
+            }
+
+            
+
+async function assistirEpisodio(
+        temporada,
+        episodio,
+        nome
+    ) {
+
+        if (!serie || !serie.id) {
+
+            console.error(
+                "[SERIES] ID da série não encontrado."
+            );
+
+            return;
+        }
+
+        const idSerie =
+            String(serie.id).trim();
+
+        const temporadaId =
+            String(temporada).trim();
+
+        const episodioId =
+            String(episodio).trim();
+
+        if (!idSerie || !temporadaId || !episodioId) {
+
+            console.error(
+                "[SERIES] Dados do episódio incompletos.",
+                {
+                    idSerie,
+                    temporadaId,
+                    episodioId
+                }
+            );
+
+            return;
+        }
+
+        /*
+         * VERIFICA O ACESSO ANTES DE ABRIR O EPISÓDIO.
+         * Usa a mesma rota de acesso dos filmes.
+         */
+        try {
+            const respostaAcesso =
+                await fetch(
+                    "/api/acesso-assistir",
+                    {
+                        method: "GET",
+                        credentials: "same-origin",
+                        cache: "no-store"
+                    }
+                );
+
+            const acesso =
+                await respostaAcesso.json();
+
+            console.log(
+                "[LUKAFILMES] Acesso para assistir série:",
+                acesso
+            );
+
+            if (
+                acesso.motivo ===
+                "nao_logado"
+            ) {
+                const retorno =
+                    window.location.pathname +
+                    window.location.search;
+
+                window.location.href =
+                    "/cadastro?retorno=" +
+                    encodeURIComponent(retorno);
+
+                return;
+            }
+
+            if (!acesso.permitido) {
+                if (
+                    acesso.motivo ===
+                    "expirado"
+                ) {
+                    await mostrarPagamentoLuka(
+                        acesso
+                    );
+
+                    return;
+                }
+
+                alert(
+                    acesso.mensagem ||
+                    "Seu acesso não está liberado para assistir."
+                );
+
+                return;
+            }
+
+        } catch (erro) {
+            console.error(
+                "[LUKAFILMES] Erro ao verificar acesso da série:",
+                erro
+            );
+
+            alert(
+                "Não foi possível verificar seu acesso. Tente novamente."
+            );
+
+            return;
+        }
+
+        console.log(
+            "[SERIES PLAYER] Abrindo episódio:",
+            {
+                serie: idSerie,
+                temporada: temporadaId,
+                episodio: episodioId,
+                nome: nome || ""
+            }
+        );
+
+        const playerSerie =
+            document.getElementById("playerSerie");
+
+        const serieFrame =
+            document.getElementById("serieFrame");
+
+        if (!playerSerie || !serieFrame) {
+
+            console.error(
+                "[SERIES PLAYER] Área do player não encontrada."
+            );
+
+            return;
+        }
+
+        /*
+         * GUARDA OS DADOS DO EPISÓDIO
+         */
+
+        playerSerie.dataset.serieId =
+            idSerie;
+
+        playerSerie.dataset.temporada =
+            temporadaId;
+
+        playerSerie.dataset.episodio =
+            episodioId;
+
+        /*
+         * ABRE O PLAYER
+         */
+
+        playerSerie.style.display =
+            "block";
+
+        /*
+         * PLAY 1 — MEGA
+         * INICIA COMO PADRÃO
+         */
+
+        const play1Url =
+            "https://mgeb.top/embed/" +
+            idSerie +
+            "/" +
+            temporadaId +
+            "/" +
+            episodioId;
+
+        serieFrame.src =
+            play1Url;
+
+        /*
+         * CONTINUAR ASSISTINDO
+         * Registra imediatamente o episódio clicado.
+         * O episódio começa sempre no PLAY 1.
+         */
+        if (window.LukaRegistrarSerieContinuar) {
+
+            window.LukaRegistrarSerieContinuar({
+
+                id: idSerie,
+
+                titulo:
+                    serie.name ||
+                    serie.titulo ||
+                    nome ||
+                    "Série",
+
+                capa:
+                    serie.poster_path
+                        ? "https://image.tmdb.org/t/p/w500" +
+                          serie.poster_path
+                        : "",
+
+                tipo: "serie",
+
+                player: "1",
+
+                temporada:
+                    temporadaId,
+
+                episodio:
+                    episodioId
+
+            });
+
+            console.log(
+                "[CONTINUAR SÉRIE] Episódio iniciado:",
+                {
+                    id: idSerie,
+                    temporada: temporadaId,
+                    episodio: episodioId,
+                    player: "1"
+                }
+            );
+        }
+
+        /*
+         * MARCA PLAY 1
+         */
+
+        const botoesPlayers =
+            playerSerie.querySelectorAll(
+                ".serie-player-btn"
+            );
+
+        botoesPlayers.forEach(function(btn) {
+
+            btn.classList.remove(
+                "ativo"
+            );
+
+            btn.classList.remove(
+                "player-selecionado"
+            );
+
+        });
+
+        const play1 =
+            playerSerie.querySelector(
+                '.serie-player-btn[data-player="1"]'
+            );
+
+        if (play1) {
+
+            play1.classList.add(
+                "ativo"
+            );
+
+            play1.classList.add(
+                "player-selecionado"
+            );
+
+        }
+
+        /*
+         * CONFIGURA PLAY 1 E PLAY 2
+         */
+
+        botoesPlayers.forEach(function(btn) {
+
+            if (
+                btn.dataset.playerConfigurado === "1"
+            ) {
+                return;
+            }
+
+            btn.dataset.playerConfigurado =
+                "1";
+
+            btn.addEventListener(
+                "click",
+                function() {
+
+                    const numero =
+                        String(
+                            this.dataset.player || ""
+                        );
+
+                    let embedUrl = "";
+
+                    /*
+                     * PLAY 1 — MEGA
+                     */
+
+                    if (numero === "1") {
+
+                        embedUrl =
+                            "https://mgeb.top/embed/" +
+                            idSerie +
+                            "/" +
+                            temporadaId +
+                            "/" +
+                            episodioId;
+                    }
+
+                    /*
+                     * PLAY 2 — MAYA / MYEMBED
+                     */
+
+                    else if (numero === "2") {
+
+                        embedUrl =
+                            "https://pipocacine.lat/embed/" +
+                            String(idSerie).trim() +
+                            "/" +
+                            String(temporadaId).trim() +
+                            "/" +
+                            String(episodioId).trim();
+                    }
+
+                    /*
+                     * PLAY 3 — APIPLAYER
+                     * SÉRIE / TV
+                     * IDIOMA: PORTUGUÊS
+                     */
+
+                    else if (numero === "3") {
+
+                        embedUrl =
+                            "https://myembed.biz/serie/" +
+                            idSerie +
+                            "/" +
+                            temporadaId +
+                            "/" +
+                            episodioId;
+                    }
+
+
+                    else if (numero === "4") {
+
+                        embedUrl =
+                            "https://apiplayer.ru/embed/tv/" +
+                            String(idSerie).trim() +
+                            "/" +
+                            String(temporadaId).trim() +
+                            "/" +
+                            String(episodioId).trim() +
+                            "?lang=pt";
+                    }
+
+                    if (!embedUrl) {
+                        return;
+                    }
+
+                    /*
+                     * DESELECIONA OS OUTROS
+                     */
+
+                    botoesPlayers.forEach(
+                        function(item) {
+
+                            item.classList.remove(
+                                "ativo"
+                            );
+
+                            item.classList.remove(
+                                "player-selecionado"
+                            );
+
+                        }
+                    );
+
+                    /*
+                     * MARCA O ESCOLHIDO
+                     */
+
+                    this.classList.add(
+                        "ativo"
+                    );
+
+                    this.classList.add(
+                        "player-selecionado"
+                    );
+
+                    /*
+                     * TROCA O IFRAME
+                     */
+
+                    serieFrame.src =
+                        embedUrl;
+
+                    console.log(
+                        "[SERIES PLAYER]",
+                        "PLAY " + numero,
+                        embedUrl
+                    );
+
+                    /*
+                     * CONTINUAR ASSISTINDO
+                     *
+                     * Atualiza somente o episódio/player atual.
+                     * O storage já está isolado por conta.
+                     */
+                    if (window.LukaRegistrarSerieContinuar) {
+
+                        window.LukaRegistrarSerieContinuar({
+
+                            id: idSerie,
+
+                            titulo:
+                                serie.name ||
+                                serie.titulo ||
+                                nome ||
+                                "Série",
+
+                            capa:
+                                serie.poster_path
+                                    ? "https://image.tmdb.org/t/p/w500" +
+                                      serie.poster_path
+                                    : "",
+
+                            tipo: "serie",
+
+                            player: String(numero),
+
+                            temporada:
+                                String(temporadaId),
+
+                            episodio:
+                                String(episodioId)
+
+                        });
+
+                        console.log(
+                            "[CONTINUAR SÉRIE] PLAYER ATUALIZADO:",
+                            {
+                                id: idSerie,
+                                temporada: String(temporadaId),
+                                episodio: String(episodioId),
+                                player: String(numero)
+                            }
+                        );
+                    }
+
+                    
+
+                }
+            );
+
+        });
+
+        /*
+         * DESCE ATÉ O PLAYER
+         */
+
+        playerSerie.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        console.log(
+            "[SERIES PLAYER] PLAY 1 carregado:",
+            play1Url
+        );
+
+    }
+
+
+    /* ==========================================
+       VOLTAR PARA A LISTAGEM PRESERVANDO POSIÇÃO
+       ========================================== */
+
+    const botaoVoltarSerie =
+        document.getElementById("voltarSerie");
+
+    if (botaoVoltarSerie) {
+
+        botaoVoltarSerie.addEventListener(
+            "click",
+            function (e) {
+
+                e.preventDefault();
+
+                window.location.href = "series.html";
+
+            }
+        );
+
+    }
+
+    /* ==========================================
+       INICIAR
+       ========================================== */
+
+    carregarDetalhes();
+
+
+})();
+
+
+
+--------------------------------------------------------------------------------
+BOTÕES/CHAMADAS RELACIONADOS A RENOVAR
+--------------------------------------------------------------------------------
+2759:     async function mostrarPagamentoLuka(acesso, renovacao = false) {
+2854:                             ${renovacao ? "🔄 Renovar acesso" : "🔒 Acesso expirado"}
+3276:                     await mostrarPagamentoLuka(

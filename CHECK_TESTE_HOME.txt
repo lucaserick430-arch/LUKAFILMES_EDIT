@@ -1,0 +1,286 @@
+========== COOKIE / TESTE ==========
+934:function lukaUsuarioOperacional(req) {
+937:        req.cookies &&
+938:        req.cookies.luka_modo_teste === "1" &&
+940:        req.session.lukaTesteUsuario
+942:        return req.session.lukaTesteUsuario;
+951:        req.cookies &&
+952:        req.cookies.luka_modo_teste === "1" &&
+954:        req.session.lukaTesteUsuario
+1004:        req.session.lukaTesteUsuario = {
+1011:        res.cookie("luka_modo_teste", "1", {
+1051:    delete req.session.lukaTesteUsuario;
+1053:    res.clearCookie("luka_modo_teste", {
+1081:        usuario: req.session.lukaTesteUsuario || null
+
+========== API EU ==========
+        ativo: lukaModoTesteAtivo(req),
+        usuario: req.session.lukaTesteUsuario || null
+    });
+});
+
+
+app.get("/api/eu", (req, res) => {
+
+    if (!req.session.usuario) {
+
+        return res.status(401).json({
+            logado: false
+        });
+    }
+
+    res.json({
+        logado: true,
+        usuario: req.session.usuario
+    });
+
+});
+
+
+// ==========================================
+// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+// ==========================================
+
+app.get("/api/debug-acesso", async (req, res) => {
+    try {
+        if (!req.session || !req.session.usuario) {
+            return res.json({
+
+========== ROTA TESTE ==========
+// ==========================================
+// USUÁRIO LOGADO
+// ==========================================
+
+
+// ===== LUKA MODO TESTE USUARIO V1 =====
+// Mantém a sessão ADMIN intacta e permite simular um cliente
+// no mesmo navegador através de cookie separado.
+
+function lukaUsuarioOperacional(req) {
+    if (
+        req &&
+        req.cookies &&
+        req.cookies.luka_modo_teste === "1" &&
+        req.session &&
+        req.session.lukaTesteUsuario
+    ) {
+        return req.session.lukaTesteUsuario;
+    }
+
+    return req && req.session ? req.session.usuario : null;
+}
+
+function lukaModoTesteAtivo(req) {
+    return !!(
+        req &&
+        req.cookies &&
+        req.cookies.luka_modo_teste === "1" &&
+        req.session &&
+        req.session.lukaTesteUsuario
+    );
+}
+
+app.post("/api/admin/teste/iniciar", async (req, res) => {
+    try {
+        if (
+            !req.session ||
+            !req.session.usuario ||
+            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso restrito ao administrador."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        let teste = usuarios.find(
+            u =>
+                String(u.tipo || "").toLowerCase() === "teste" &&
+                String(u.status || "").toLowerCase() === "ativo"
+        );
+
+        if (!teste) {
+            const ids = usuarios
+                .map(u => Number(u.id))
+                .filter(Number.isFinite);
+
+            const novoId = ids.length ? Math.max(...ids) + 1 : 1;
+
+            teste = {
+                id: novoId,
+                nome: "TESTE LUKAFILMES",
+                usuario: "teste_lukafilmes",
+                senha: "",
+                telefone: "",
+                status: "ativo",
+                tipo: "teste",
+                validade: null,
+                criado_em: new Date().toISOString(),
+                limite_conexoes: 1,
+                conexoes_utilizadas: 0
+            };
+
+            usuarios.push(teste);
+            await salvarUsuarios(usuarios);
+        }
+
+        req.session.lukaTesteUsuario = {
+            id: teste.id,
+            usuario: teste.usuario,
+            tipo: "teste",
+            validade: teste.validade || null
+        };
+
+        res.cookie("luka_modo_teste", "1", {
+            httpOnly: true,
+            secure: !ambienteLocal,
+            sameSite: "lax",
+            maxAge: 1000 * 60 * 60 * 6
+        });
+
+        return res.json({
+            sucesso: true,
+            usuario: {
+                id: teste.id,
+                usuario: teste.usuario,
+                tipo: "teste",
+                validade: teste.validade || null
+            },
+            destino: "/?luka_teste=1"
+        });
+
+    } catch (erro) {
+        console.error("[LUKA TESTE] Erro ao iniciar:", erro);
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível iniciar o modo de teste."
+        });
+    }
+});
+
+app.post("/api/admin/teste/encerrar", (req, res) => {
+
+    if (
+        !req.session ||
+        !req.session.usuario ||
+        String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+    ) {
+        return res.status(403).json({
+            sucesso: false,
+            mensagem: "Acesso restrito ao administrador."
+        });
+    }
+
+    delete req.session.lukaTesteUsuario;
+
+    res.clearCookie("luka_modo_teste", {
+        httpOnly: true,
+        secure: !ambienteLocal,
+        sameSite: "lax"
+    });
+
+    return res.json({
+        sucesso: true,
+        destino: "/admin.html"
+    });
+});
+
+app.get("/api/admin/teste/status", (req, res) => {
+
+    const admin =
+        req.session &&
+        req.session.usuario &&
+        String(req.session.usuario.tipo || "").toLowerCase() === "admin";
+
+    if (!admin) {
+        return res.status(403).json({
+            sucesso: false
+        });
+    }
+
+    return res.json({
+        sucesso: true,
+        ativo: lukaModoTesteAtivo(req),
+        usuario: req.session.lukaTesteUsuario || null
+    });
+});
+
+
+
+========== BOTAO ADMIN ==========
+5614-        font-size:13px;
+5615-        font-weight:800;
+5616-        opacity:.7;
+5617-        margin-bottom:8px;
+5618-    ">
+5619-        MODO DE TESTE
+5620-    </div>
+5621-
+5622-    <button
+5623-        type="button"
+5624:        onclick="LUKA_TESTAR_COMO_USUARIO()"
+5625-        style="
+5626-            width:100%;
+5627-            border:0;
+5628-            border-radius:12px;
+5629-            padding:13px 15px;
+5630-            cursor:pointer;
+5631-            font-weight:900;
+5632-            color:#fff;
+5633-            background:linear-gradient(135deg,#ff1744,#8e24aa);
+5634-            box-shadow:0 8px 25px rgba(255,23,68,.25);
+5635-        "
+5636-    >
+5637-        🧪 TESTAR COMO USUÁRIO
+5638-    </button>
+5639-
+5640-    <div style="
+5641-        margin-top:9px;
+5642-        font-size:12px;
+5643-        line-height:1.45;
+5644-        opacity:.65;
+5645-    ">
+5646-        Abre o LUKAFILMES como um cliente comum,
+5647-        preservando sua sessão de administrador.
+5648-    </div>
+5649-</div>
+5650-
+5651-<script id="luka-modo-teste-usuario-v1">
+5652:async function LUKA_TESTAR_COMO_USUARIO() {
+5653-
+5654-    const botao = document.querySelector(
+5655-        '#lukaTesteUsuarioAdmin button'
+5656-    );
+5657-
+5658-    if (botao) {
+5659-        botao.disabled = true;
+5660-        botao.textContent = "🧪 INICIANDO TESTE...";
+5661-    }
+5662-
+5663-    try {
+5664-
+5665-        const resposta = await fetch(
+5666-            "/api/admin/teste/iniciar",
+5667-            {
+5668-                method: "POST",
+5669-                headers: {
+5670-                    "Content-Type": "application/json"
+5671-                }
+5672-            }
+5673-        );
+5674-
+5675-        const dados = await resposta.json();
+5676-
+5677-        if (!dados.sucesso) {
+5678-            throw new Error(
+5679-                dados.mensagem || "Não foi possível iniciar o teste."
+5680-            );
+5681-        }
+5682-
+5683-        /*
+5684-         * Nova aba:
+5685-         * a sessão ADMIN continua existindo no servidor.
+5686-         * O cookie luka_modo_teste seleciona o usuário de teste
+5687-         * somente nas rotas que reconhecem esse modo.

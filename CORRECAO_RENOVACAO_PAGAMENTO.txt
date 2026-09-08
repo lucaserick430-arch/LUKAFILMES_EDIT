@@ -1,0 +1,22 @@
+OK: variáveis de renovação inseridas na rota.
+OK: pagamentos pendentes separados entre primeiro_acesso e renovacao.
+
+===== BACKUP =====
+server_render.js.backup_pagamento_renovacao_20260907_161857
+
+===== NODE CHECK =====
+NODE_EXIT=0
+
+===== VERIFICAÇÃO =====
+1655:                 pagamento.renovacao === true ||
+1656:                 pagamento.tipo_pagamento === "renovacao"
+1841:         const renovacaoSolicitada =
+1848:         const tipoPagamentoSolicitado =
+1882:         const pagamentoExistente =
+1889:                                 pagamento.renovacao === true ||
+1890:                                 pagamento.tipo_pagamento === "renovacao"
+1893:                                 pagamento.renovacao !== true &&
+1894:                                 pagamento.tipo_pagamento !== "renovacao"
+1944:             tipo_pagamento:
+
+CORREÇÃO CONCLUÍDA.

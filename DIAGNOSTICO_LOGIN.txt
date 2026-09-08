@@ -1,0 +1,370 @@
+========== DIAGNOSTICO LOGIN ==========
+
+===== PUBLIC/LOGIN.HTML =====
+35:        transform: translate(-50%, -50%) scale(1.12);
+86:    .login {
+131:        text-transform: uppercase;
+160:        text-transform: uppercase;
+207:    #botaoEntrar {
+228:            transform .2s ease,
+233:    #botaoEntrar::before {
+246:        transform: skewX(-20deg);
+250:    #botaoEntrar:hover::before {
+254:    #botaoEntrar:hover {
+255:        transform: translateY(-2px);
+262:    #botaoEntrar:active {
+263:        transform: scale(.985);
+266:    #botaoEntrar:disabled {
+269:        transform: none;
+295:            transform: translateY(18px) scale(.985);
+299:            transform: translateY(0) scale(1);
+333:        #botaoEntrar {
+353:        #botaoEntrar {
+368:<style id="lukafilmes-login-loader-premium">
+369:#lukafilmesLoginLoader{
+383:#lukafilmesLoginLoader.ativo{
+388:#lukafilmesLoginLoaderBox{
+404:#lukafilmesLoginLoaderLogo{
+411:    text-transform:uppercase;
+414:#lukafilmesLoginLoaderLogo .luka{
+418:#lukafilmesLoginLoaderLogo .filmes{
+422:#lukafilmesLoginLoaderSpinner{
+430:    animation:lukafilmesLoginLoaderSpin .85s linear infinite;
+434:#lukafilmesLoginLoaderTitle{
+442:#lukafilmesLoginLoaderText{
+449:@keyframes lukafilmesLoginLoaderSpin{
+450:    to{transform:rotate(360deg)}
+454:    #lukafilmesLoginLoaderBox{
+461:    #lukafilmesLoginLoaderLogo{
+466:    #lukafilmesLoginLoaderSpinner{
+473:    #lukafilmesLoginLoaderTitle{
+477:    #lukafilmesLoginLoaderText{
+482:    .premium-login-campos {
+490:    .premium-login-campos input {
+507:    .premium-login-campos input::placeholder {
+511:    .premium-login-campos input:focus {
+527:        .premium-login-campos input {
+550:<div class="login">
+574:        <form id="loginForm">
+584:        <div class="premium-login-campos">
+587:            id="usuario"
+595:            id="senha"
+597:            placeholder="Senha"
+604:        <button id="botaoEntrar" type="submit">
+607:        </button>
+615:        </form>
+625:<div id="lukafilmesLoginLoader" aria-hidden="true">
+626:    <div id="lukafilmesLoginLoaderBox">
+627:        <div id="lukafilmesLoginLoaderLogo">
+630:        <div id="lukafilmesLoginLoaderSpinner"></div>
+631:        <h2 id="lukafilmesLoginLoaderTitle">Entrando no LUKAFILMES...</h2>
+632:        <p id="lukafilmesLoginLoaderText">Preparando sua sessão...</p>
+638:<script id="lukafilmes-login-funcional">
+640:        .getElementById("loginForm")
+645:            const usuario =
+646:                document.getElementById("usuario").value.trim();
+648:            const senha =
+649:                document.getElementById("senha").value;
+655:                document.getElementById("botaoEntrar");
+664:                    "/login",
+673:                            usuario,
+674:                            senha
+683:                    window.location.href = dados.destino || "/";
+689:                        "Usuário ou senha incorretos.";
+696:                    "Erro no login:",
+706:                botao.textContent = "ENTRAR";
+713:<script id="lukafilmes-login-loader-js">
+716:    var loader = document.getElementById("lukafilmesLoginLoader");
+717:    var form = document.getElementById("loginForm");
+719:    function mostrarLoginLoader(){
+725:    function esconderLoginLoader(){
+731:    window.lukafilmesMostrarLoginLoader = mostrarLoginLoader;
+732:    window.lukafilmesEsconderLoginLoader = esconderLoginLoader;
+734:    if(form){
+735:        form.addEventListener("submit",function(){
+736:            mostrarLoginLoader();
+741:        esconderLoginLoader();
+
+===== TRECHO INICIAL DA TELA =====
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>LUKAFILMES — Sua próxima história começa agora</title>
+
+<style>
+
+    #fundoTrailer {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -3;
+        background: #000;
+    }
+
+    #fundoTrailer iframe {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120vw;
+        height: 67.5vw;
+        min-width: 177.78vh;
+        min-height: 100vh;
+        transform: translate(-50%, -50%) scale(1.12);
+        border: 0;
+        pointer-events: none;
+    }
+
+    #escuro {
+        position: fixed;
+        inset: 0;
+        background:
+            linear-gradient(
+                90deg,
+                rgba(0,0,0,.88),
+                rgba(0,0,0,.58),
+                rgba(0,0,0,.88)
+            ),
+            linear-gradient(
+                180deg,
+                rgba(0,0,0,.35),
+                rgba(0,0,0,.72)
+            );
+        z-index: -2;
+        pointer-events: none;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        min-height: 100vh;
+        overflow: hidden;
+        position: relative;
+        background: #000;
+        color: white;
+        font-family: Arial, sans-serif;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #080808;
+        color: white;
+        font-family: Arial, sans-serif;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login {
+        position: relative;
+        z-index: 5;
+        width: 90%;
+        max-width: 400px;
+        background: rgba(10, 10, 10, 0.82);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,.12);
+        width: 90%;
+        max-width: 400px;
+        background: #151515;
+        padding: 35px;
+        border-radius: 10px;
+        box-shadow: 0 0 30px rgba(229, 9, 20, 0.15);
+    }
+
+    .logo {
+        text-align: center;
+        font-size: 30px;
+        font-weight: bold;
+        margin-bottom: 30px;
+    }
+
+    .logo span {
+        color: #e50914;
+    }
+
+    .boas-vindas {
+        text-align: center;
+    }
+
+    .premium-entrada {
+        width: 100%;
+        text-align: center;
+        position: relative;
+        animation: premiumEntrada .9s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    .premium-logo {
+        font-size: 38px;
+        font-weight: 900;
+        letter-spacing: -2.5px;
+        line-height: 1;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        text-shadow: 0 4px 25px rgba(0,0,0,.45);
+    }
+
+    .premium-logo span {
+        color: #fff;
+    }
+
+    .premium-logo b {
+        color: #e50914;
+        font-weight: 900;
+    }
+
+    .premium-linha {
+        width: 54px;
+        height: 2px;
+        margin: 0 auto 27px;
+        background: #e50914;
+        box-shadow:
+            0 0 8px rgba(229,9,20,.7),
+            0 0 22px rgba(229,9,20,.3);
+    }
+
+    .premium-kicker {
+        color: #a6a6a6;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 3.2px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+    }
+
+    .premium-entrada h1 {
+        color: #fff;
+        font-size: 30px;
+        line-height: 1.12;
+        letter-spacing: -.9px;
+        margin: 0 0 17px;
+        font-weight: 400;
+        text-shadow: 0 3px 20px rgba(0,0,0,.5);
+    }
+
+    .premium-entrada h1 strong {
+        font-weight: 900;
+    }
+
+    .premium-subtitulo {
+        color: #d0d0d0;
+        font-size: 15px;
+        line-height: 1.55;
+        margin: 0 0 23px;
+        text-shadow: 0 2px 12px rgba(0,0,0,.5);
+    }
+
+    .premium-tags {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: #8e8e8e;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 1.6px;
+        margin-bottom: 29px;
+        white-space: nowrap;
+    }
+
+    .premium-tags i {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: #e50914;
+        display: inline-block;
+        box-shadow: 0 0 7px rgba(229,9,20,.8);
+    }
+
+    #botaoEntrar {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 11px;
+        width: 100%;
+        min-height: 58px;
+        padding: 16px 22px;
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 7px;
+        background: linear-gradient(135deg,#e50914,#b20710);
+        box-shadow:
+            0 12px 35px rgba(229,9,20,.25),
+            inset 0 1px 0 rgba(255,255,255,.12);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 1.2px;
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease,
+            filter .2s ease;
+    }
+
+    #botaoEntrar::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -120%;
+        width: 70%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.16),
+            transparent
+        );
+        transform: skewX(-20deg);
+        transition: left .7s ease;
+    }
+
+    #botaoEntrar:hover::before {
+        left: 150%;
+    }
+
+    #botaoEntrar:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.08);
+        box-shadow:
+            0 16px 45px rgba(229,9,20,.34),
+            inset 0 1px 0 rgba(255,255,255,.15);
+    }
+
+    #botaoEntrar:active {
+        transform: scale(.985);
+    }
+
+    #botaoEntrar:disabled {
+        cursor: wait;
+        opacity: .9;
+        transform: none;
+    }
+
+    .icone-play {
+        width: 25px;
+        height: 25px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255,255,255,.13);
+        font-size: 10px;
+
+========== FIM ==========

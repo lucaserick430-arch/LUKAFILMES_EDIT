@@ -1,0 +1,164 @@
+========== INÍCIO EXATO DE assistirEpisodio ==========
+function assistirEpisodio(
+        temporada,
+        episodio,
+        nome
+    ) {
+
+        if (!serie || !serie.id) {
+
+            console.error(
+                "[SERIES] ID da série não encontrado."
+            );
+
+            return;
+        }
+
+        const idSerie =
+            String(serie.id).trim();
+
+        const temporadaId =
+            String(temporada).trim();
+
+        const episodioId =
+            String(episodio).trim();
+
+        if (!idSerie || !temporadaId || !episodioId) {
+
+            console.error(
+                "[SERIES] Dados do episódio incompletos.",
+                {
+                    idSerie,
+                    temporadaId,
+                    episodioId
+                }
+            );
+
+            return;
+        }
+
+        console.log(
+            "[SERIES PLAYER] Abrindo episódio:",
+            {
+                serie: idSerie,
+                temporada: temporadaId,
+                episodio: episodioId,
+                nome: nome || ""
+            }
+        );
+
+        const playerSerie =
+            document.getElementById("playerSerie");
+
+        const serieFrame =
+            document.getElementById("serieFrame");
+
+        if (!playerSerie || !serieFrame) {
+
+            console.error(
+                "[SERIES PLAYER] Área do player não encontrada."
+            );
+
+            return;
+        }
+
+        /*
+         * GUARDA OS DADOS DO EPISÓDIO
+         */
+
+        playerSerie.dataset.serieId =
+            idSerie;
+
+        playerSerie.dataset.temporada =
+            temporadaId;
+
+        playerSerie.dataset.episodio =
+            episodioId;
+
+        /*
+         * ABRE O PLAYER
+         */
+
+        playerSerie.style.display =
+            "block";
+
+        /*
+         * PLAY 1 — MEGA
+         * INICIA COMO PADRÃO
+         */
+
+        const play1Url =
+            "https://mgeb.top/embed/" +
+            idSerie +
+            "/" +
+            temporadaId +
+            "/" +
+            episodioId;
+
+        serieFrame.src =
+            play1Url;
+
+        /*
+         * CONTINUAR ASSISTINDO
+         * Registra imediatamente o episódio clicado.
+         * O episódio começa sempre no PLAY 1.
+         */
+        if (window.LukaRegistrarSerieContinuar) {
+
+            window.LukaRegistrarSerieContinuar({
+
+                id: idSerie,
+
+                titulo:
+                    serie.name ||
+                    serie.titulo ||
+                    nome ||
+                    "Série",
+
+                capa:
+                    serie.poster_path
+                        ? "https://image.tmdb.org/t/p/w500" +
+                          serie.poster_path
+                        : "",
+
+                tipo: "serie",
+
+                player: "1",
+
+                temporada:
+                    temporadaId,
+
+                episodio:
+                    episodioId
+
+            });
+
+            console.log(
+                "[CONTINUAR SÉRIE] Episódio iniciado:",
+                {
+                    id: idSerie,
+                    temporada: temporadaId,
+                    episodio: episodioId,
+                    player: "1"
+                }
+            );
+        }
+
+        /*
+         * MARCA PLAY 1
+         */
+
+        const botoesPlayers =
+            playerSerie.querySelectorAll(
+                ".serie-player-btn"
+            );
+
+        botoesPlayers.forEach(function(btn) {
+
+            btn.classList.remove(
+                "ativo"
+            );
+
+            btn.classList.remove(
+                "player-s
+========== FIM DO TRECHO ==========

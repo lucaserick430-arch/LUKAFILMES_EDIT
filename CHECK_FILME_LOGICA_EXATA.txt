@@ -1,0 +1,500 @@
+4137-                                botaoFeito.innerHTML =
+4138-                                    "📲 ABRINDO WHATSAPP...";
+4139-
+4140-                                window.location.href = whatsapp;
+4141-
+4142-                                setTimeout(function () {
+4143-
+4144-                                    botaoFeito.innerHTML =
+4145-                                        "⏳ AGUARDANDO APROVAÇÃO";
+4146-
+4147-                                }, 1200);
+4148-
+4149-                            };
+4150-
+4151-                    }
+4152-
+4153-                    console.log(
+4154-                        "[LUKAFILMES] Pagamento preparado:",
+4155-                        pagamento
+4156-                    );
+4157-
+4158-                } catch (erro) {
+4159-
+4160-                    console.error(
+4161-                        "[LUKAFILMES] Erro na tela de pagamento:",
+4162-                        erro
+4163-                    );
+4164-
+4165-                    alert(
+4166-                        "Não foi possível abrir a tela de pagamento."
+4167-                    );
+4168-
+4169-                }
+4170-
+4171-            }
+4172-
+4173-            /* ==========================================
+4174-               RENOVAÇÃO — USA O MESMO PIX EXISTENTE
+4175-               ========================================== */
+4176-
+4177-            window.addEventListener(
+4178-                "luka:renovar",
+4179-                async function (evento) {
+4180-
+4181-                    try {
+4182-
+4183-                        const dados =
+4184-                            evento &&
+4185-                            evento.detail
+4186-                                ? evento.detail
+4187-                                : {};
+4188-
+4189:                        await mostrarPagamentoLuka(
+4190-                            dados,
+4191-                            true
+4192-                        );
+4193-
+4194-                    } catch (erro) {
+4195-
+4196-                        console.error(
+4197-                            "[LUKAFILMES] Erro ao abrir renovação:",
+4198-                            erro
+4199-                        );
+4200-
+4201-                    }
+4202-
+4203-                }
+4204-            );
+4205-
+4206-            /* ==========================================
+4207-               PLAY CENTRAL — CARREGA PLAYER 1
+4208-               ========================================== */
+4209-
+4210-            const playCentral =
+4211-                document.getElementById(
+4212-                    "playCentralFilme"
+4213-                );
+4214-
+4215-            if (playCentral) {
+4216-
+4217-                playCentral.addEventListener(
+4218-                    "click",
+4219-                    async function () {
+4220-
+4221-                        try {
+4222-
+4223-                            /*
+4224-                             * VERIFICA O ACESSO ANTES
+4225-                             * DE CARREGAR O CONTEÚDO.
+4226-                             */
+4227-                            const respostaAcesso =
+4228-                                await fetch(
+4229:                                    "/api/acesso-assistir",
+4230-                                    {
+4231-                                        method: "GET",
+4232-                                        credentials: "same-origin",
+4233-                                        cache: "no-store"
+4234-                                    }
+4235-                                );
+4236-
+4237:                            const acesso =
+4238-                                await respostaAcesso.json();
+4239-
+4240-                            console.log(
+4241-                                "[LUKAFILMES] Acesso para assistir:",
+4242:                                acesso
+4243-                            );
+4244-
+4245-                            /*
+4246-                             * SEM AUTORIZAÇÃO:
+4247-                             * NÃO CARREGA O PLAYER.
+4248-                             */
+4249:                            if (!acesso.permitido) {
+4250-
+4251-                                if (
+4252:                                    acesso.motivo ===
+4253-                                    "nao_logado"
+4254-                                ) {
+4255-                                    alert(
+4256-                                        "Faça login para assistir."
+4257-                                    );
+4258-                                }
+4259-                                else if (
+4260:                                    acesso.motivo ===
+4261-                                    "expirado"
+4262-                                ) {
+4263-                                    alert(
+4264:                                        "Seu acesso expirou. É necessário renovar para assistir."
+4265-                                    );
+4266-                                }
+4267-                                else {
+4268-                                    alert(
+4269:                                        acesso.mensagem ||
+4270:                                        "Seu acesso não está liberado para assistir."
+4271-                                    );
+4272-                                }
+4273-
+4274-                                return;
+4275-                            }
+4276-
+4277-                            const tmdbId =
+4278-                                String(filme.id).trim();
+4279-
+4280-                            if (!tmdbId) return;
+4281-
+4282-                            const embedUrl =
+4283-                                "https://mgeb.top/embed/" +
+4284-                                tmdbId;
+4285-
+4286-                            /*
+4287-                             * PLAY CENTRAL
+4288-                             * Só carrega depois da autorização.
+4289-                             */
+4290-                            filmeFrame.src = embedUrl;
+4291-
+4292-                        /* ==========================================
+4293-                           CONTINUAR ASSISTINDO
+4294-                           REGISTRA O FILME + PLAYER 1
+4295-                           ========================================== */
+4296-                        if (window.LukaContinuar) {
+4297-                            LukaContinuar.registrarInicio({
+4298-                                id: filme.id,
+4299-                                titulo: filme.titulo || "Filme",
+4300-                                capa: filme.capa || "",
+4301-                                tipo: "filme",
+4302-                                player: "1"
+4303-                            });
+4304-                        }
+4305-
+4306-                        playCentral.classList.add(
+4307-                            "oculto"
+4308-                        );
+4309-
+4310-                        const primeiroPlayer =
+4311-                            document.querySelector(
+4312-                                '.player-btn[data-player="1"]'
+4313-                            );
+4314-
+4315-                        if (primeiroPlayer) {
+4316-
+4317-                            document
+4318-                                .querySelectorAll(
+4319-                                    ".player-btn"
+4320-                                )
+4321-                                .forEach(function(btn){
+4322-                                    btn.classList.remove(
+4323-                                        "player-selecionado"
+4324-                                    );
+4325-                                });
+4326-
+4327-                            primeiroPlayer.classList.add(
+4328-                                "player-selecionado"
+4329-                            );
+4330-                        }
+4331-
+4332-                        botao.innerHTML =
+4333-                            "▶ REPRODUZINDO";
+4334-
+4335-                        } catch (erro) {
+4336-
+4337-                            console.error(
+4338:                                "[LUKAFILMES] Erro ao verificar acesso:",
+4339-                                erro
+4340-                            );
+4341-
+4342-                            alert(
+4343:                                "Não foi possível verificar seu acesso. Tente novamente."
+4344-                            );
+4345-                        }
+4346-                    }
+4347-                );
+4348-            }
+4349-
+4350-            /* ==========================================
+4351-               SELECAO DOS PLAYERS
+4352-               ========================================== */
+4353-
+4354-            const botoesPlayers =
+4355-                document.querySelectorAll(
+4356-                    ".player-btn"
+4357-                );
+4358-
+4359-            botoesPlayers.forEach(function (botaoPlayer) {
+4360-
+4361-                botaoPlayer.addEventListener(
+4362-                    "click",
+4363-                    async function () {
+4364-
+4365-                        const numero =
+4366-                            this.dataset.player;
+4367-
+4368-                        const tmdbId =
+4369-                            String(filme.id).trim();
+4370-
+4371-                        let embedUrl = "";
+4372-
+4373-                        /*
+4374-                         * PLAYER 1
+4375-                         * MyEmbed
+4376-                         */
+4377-                        if (numero === "1") {
+4378-
+4379-                            embedUrl =
+4380-                                "https://mgeb.top/embed/" +
+4381-                                tmdbId;
+4382-                        }
+4383-
+4384-                        /*
+4385-                         * PLAYER 2
+4386-                         * Fonte alternativa TMDB
+4387-                         */
+4388-                        else if (numero === "2") {
+4389-
+4390-                            embedUrl =
+4391-                                "https://pipocacine.lat/embed/" +
+4392-                                String(tmdbId).trim();
+4393-                        }
+4394-
+4395-                        /*
+4396-                         * PLAYER 3
+4397-                         * AUTOEMBED
+4398-                         */
+4399-                        else if (numero === "3") {
+4400-
+4401-                            embedUrl =
+4402-                                "https://myembed.biz/filme/" +
+4403-                                tmdbId;
+4404-                        }
+4405-
+4406-                        /*
+4407-                         * PLAYER 4
+4408-                         * Fonte alternativa
+4409-                         */
+4410-                        else if (numero === "4") {
+4411-
+4412-                            embedUrl =
+4413-                                "https://apiplayer.ru/embed/movie/" +
+4414-                                String(tmdbId).trim() +
+4415-                                "?lang=pt";
+4416-                        }
+4417-
+4418-                        if (!embedUrl) {
+4419-                            return;
+4420-                        }
+4421-
+4422-                        console.log(
+4423-                            "[PLAYER SELECIONADO]",
+4424-                            numero,
+4425-                            embedUrl
+4426-                        );
+4427-
+4428-                        /*
+4429-                         * DESTACA O PLAYER ESCOLHIDO
+4430-                         */
+4431-                        botoesPlayers.forEach(
+4432-                            function (btn) {
+4433-                                btn.classList.remove(
+4434-                                    "player-selecionado"
+4435-                                );
+4436-                            }
+4437-                        );
+4438-
+4439-                        this.classList.add(
+4440-                            "player-selecionado"
+4441-                        );
+4442-
+4443-                        /*
+4444-                         * CARREGA O FRAME
+4445-                         */
+4446-                        /*
+4447-                         * CARREGA O FRAME
+4448-                         */
+4449-                        filmeFrame.src =
+4450-                            embedUrl;
+4451-
+4452-                        /*
+4453-                         * GARANTE A EXIBIÇÃO DO PLAYER
+4454-                         * E ESCONDE O BOTÃO ▶ CENTRAL.
+4455-                         */
+4456-                        if (playerFilme) {
+4457-                            playerFilme.style.display = "block";
+4458-                        }
+4459-
+4460-                        if (filmeFrame) {
+4461-                            filmeFrame.style.display = "block";
+4462-                            filmeFrame.style.visibility = "visible";
+4463-                            filmeFrame.style.opacity = "1";
+--
+5794-        const antigo =
+5795-            document.getElementById(
+5796-                "lukaRenovacaoNotificacao"
+5797-            );
+5798-
+5799-        if(antigo){
+5800-            antigo.remove();
+5801-        }
+5802-    }
+5803-
+5804-    function mostrarNotificacao(dados){
+5805-
+5806-        removerNotificacao();
+5807-
+5808-        const caixa =
+5809-            document.createElement("div");
+5810-
+5811-        caixa.id =
+5812-            "lukaRenovacaoNotificacao";
+5813-
+5814-        const usuario =
+5815-            escapar(dados.usuario || "");
+5816-
+5817-        const dias =
+5818-            Number(dados.dias_restantes || 0);
+5819-
+5820-        let textoDias;
+5821-
+5822-        if(dados.expirado){
+5823-            textoDias =
+5824:                "Seu acesso já expirou.";
+5825-        }else if(dias === 1){
+5826-            textoDias =
+5827:                "Seu acesso vence em 1 dia.";
+5828-        }else{
+5829-            textoDias =
+5830:                "Seu acesso vence em " +
+5831-                dias +
+5832-                " dias.";
+5833-        }
+5834-
+5835-        caixa.innerHTML = `
+5836-            <div class="luka-renovacao-titulo">
+5837-                🔔 RENOVAÇÃO DO LUKAFILMES
+5838-            </div>
+5839-
+5840-            <div class="luka-renovacao-texto">
+5841-                Olá, <strong>${usuario}</strong>!
+5842-                <br>
+5843-                ${textoDias}
+5844-                <br>
+5845:                Renove seu acesso por mais
+5846-                ${Number(dados.dias_renovacao || 30)} dias.
+5847-            </div>
+5848-
+5849-            <div class="luka-renovacao-dias">
+5850-                R$ ${escapar(dados.valor || "18.00")}
+5851-            </div>
+5852-
+5853-            <div class="luka-renovacao-acoes">
+5854-                <button
+5855-                    type="button"
+5856-                    class="luka-renovar"
+5857-                    id="lukaRenovarAgora">
+5858-                    🔄 RENOVAR
+5859-                </button>
+5860-
+5861-                <button
+5862-                    type="button"
+5863-                    class="luka-fechar"
+5864-                    id="lukaFecharRenovacao">
+5865-                    FECHAR
+5866-                </button>
+5867-            </div>
+5868-        `;
+5869-
+5870-        document.body.appendChild(caixa);
+5871-
+5872-        caixa.style.display = "block";
+5873-
+5874-        const botaoRenovar =
+5875-            document.getElementById(
+5876-                "lukaRenovarAgora"
+5877-            );
+5878-
+5879-        if(botaoRenovar){
+5880-
+5881-            botaoRenovar.addEventListener(
+5882-                "click",
+5883-                function(){
+5884-
+5885-                    /*
+5886-                     * Próxima etapa:
+5887-                     * abrir o PIX existente com
+5888-                     * renovacao=true.
+5889-                     */
+5890-                    window.dispatchEvent(
+5891-                        new CustomEvent(
+5892-                            "luka:renovar",
+5893-                            {
+5894-                                detail: dados
+5895-                            }
+5896-                        )
+5897-                    );
+5898-
+5899-                    caixa.remove();
+5900-                }
+5901-            );
+5902-        }
+5903-
+5904-        const botaoFechar =
+5905-            document.getElementById(
+5906-                "lukaFecharRenovacao"
+5907-            );
+5908-
+5909-        if(botaoFechar){
+5910-            botaoFechar.addEventListener(
+5911-                "click",
+5912-                removerNotificacao
+5913-            );
+5914-        }
+5915-
+5916-        setTimeout(function(){
+5917-
+5918-            if(document.body.contains(caixa)){
+5919-                caixa.remove();
+5920-            }
+5921-
+5922-        }, TEMPO);
+5923-    }
+5924-
+5925-    async function verificarRenovacao(){
+5926-
+5927-        try{
+5928-
+5929-            const resposta =
+5930-                await fetch(
+5931-                    "/api/renovacao-status",
+5932-                    {
+5933-                        method: "GET",
+5934-                        credentials: "same-origin",
+5935-                        cache: "no-store"
+5936-                    }
+5937-                );
+5938-
+5939-            if(!resposta.ok){
+5940-                return;
+5941-            }
+5942-
+5943-            const dados =
+5944-                await resposta.json();
+5945-
+5946-            if(
+5947-                dados &&
+5948-                dados.sucesso &&
+5949-                dados.logado &&
+5950-                dados.deve_notificar
+5951-            ){
+5952-
+5953-                mostrarNotificacao(dados);
+5954-            }
+5955-
+5956-        }catch(erro){
+5957-
+5958-            console.warn(
+5959-                "[LUKAFILMES] Falha ao verificar renovação:",
+5960-                erro
+5961-            );
+5962-        }
+5963-    }
+5964-
+5965-    function iniciar(){

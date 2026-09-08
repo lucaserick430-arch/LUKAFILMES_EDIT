@@ -1,0 +1,437 @@
+========== LOGIN ANTIGO ==========
+
+<div id="escuro"></div>
+
+
+<div class="login">
+
+    <div class="logo">
+        LUKA<span>FILMES</span>
+    </div>
+
+    <form id="loginForm">
+
+        <input
+            id="usuario"
+            type="text"
+            placeholder="Usuário"
+            autocomplete="username"
+            required
+        >
+
+        <input
+            id="senha"
+            type="password"
+            placeholder="Senha"
+            autocomplete="current-password"
+            required
+        >
+
+        <button
+            id="botaoLogin"
+            type="submit"
+        >
+            ENTRAR
+        </button>
+
+    </form>
+
+    <div id="mensagem"></div>
+
+</div>
+
+<script>
+    document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const usuario =
+                document.getElementById("usuario").value.trim();
+
+            const senha =
+                document.getElementById("senha").value;
+
+            const mensagem =
+                document.getElementById("mensagem");
+
+            const botao =
+                document.getElementById("botaoLogin");
+
+            mensagem.textContent = "";
+            botao.disabled = true;
+            botao.textContent = "ENTRANDO...";
+
+            try {
+
+                const resposta = await fetch(
+                    "/login",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            usuario,
+                            senha
+                        })
+                    }
+                );
+
+                const dados = await resposta.json();
+
+                if (dados.sucesso) {
+
+
+========== LOGIN ATUAL ==========
+    <div class="premium-entrada">
+
+        <div class="premium-logo">
+            <span>LUKA</span><b>FILMES</b>
+        </div>
+
+        <div class="premium-linha"></div>
+
+        <div class="premium-kicker">
+            UMA NOVA EXPERIÊNCIA DE ENTRETENIMENTO
+        </div>
+
+        <h1>
+            Sua próxima história<br>
+            <strong>começa agora.</strong>
+        </h1>
+
+        <p class="premium-subtitulo">
+            Filmes, séries e grandes histórias.<br>
+            Tudo em um só lugar.
+        </p>
+
+        <div class="premium-tags">
+            <span>FILMES</span>
+            <i></i>
+            <span>SÉRIES</span>
+            <i></i>
+            <span>ENTRETENIMENTO</span>
+        </div>
+
+        <button id="botaoEntrar" type="button">
+            <span class="icone-play">▶</span>
+            <span>COMEÇAR A ASSISTIR</span>
+        </button>
+
+        <div class="premium-mensagem">
+            Explore o catálogo e descubra seu próximo filme.
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+========== DIFERENÇA ==========
+--- public/login.html.backup-20260905	2026-09-05 14:36:39.169015535 -0300
++++ public/login.html	2026-09-05 14:45:45.105015327 -0300
+@@ -1,4 +1,4 @@
+-﻿<!DOCTYPE html>
++<!DOCTYPE html>
+ 
+ <html lang="pt-BR">
+ <head>
+@@ -10,7 +10,7 @@
+     content="width=device-width, initial-scale=1.0"
+ >
+ 
+-<title>LUKAFILMES - Login</title>
++<title>LUKAFILMES — Sua próxima história começa agora</title>
+ 
+ <style>
+ 
+@@ -111,39 +111,248 @@
+         color: #e50914;
+     }
+ 
+-    input {
++    .boas-vindas {
++        text-align: center;
++    }
++
++    .premium-entrada {
+         width: 100%;
+-        padding: 15px;
++        text-align: center;
++        position: relative;
++        animation: premiumEntrada .9s cubic-bezier(.22,1,.36,1) both;
++    }
++
++    .premium-logo {
++        font-size: 38px;
++        font-weight: 900;
++        letter-spacing: -2.5px;
++        line-height: 1;
++        margin-bottom: 20px;
++        text-transform: uppercase;
++        text-shadow: 0 4px 25px rgba(0,0,0,.45);
++    }
++
++    .premium-logo span {
++        color: #fff;
++    }
++
++    .premium-logo b {
++        color: #e50914;
++        font-weight: 900;
++    }
++
++    .premium-linha {
++        width: 54px;
++        height: 2px;
++        margin: 0 auto 27px;
++        background: #e50914;
++        box-shadow:
++            0 0 8px rgba(229,9,20,.7),
++            0 0 22px rgba(229,9,20,.3);
++    }
++
++    .premium-kicker {
++        color: #a6a6a6;
++        font-size: 9px;
++        font-weight: 800;
++        letter-spacing: 3.2px;
+         margin-bottom: 15px;
+-        border: none;
+-        border-radius: 5px;
+-        font-size: 16px;
+-        outline: none;
++        text-transform: uppercase;
+     }
+ 
+-    input:focus {
+-        box-shadow: 0 0 0 2px #e50914;
++    .premium-entrada h1 {
++        color: #fff;
++        font-size: 30px;
++        line-height: 1.12;
++        letter-spacing: -.9px;
++        margin: 0 0 17px;
++        font-weight: 400;
++        text-shadow: 0 3px 20px rgba(0,0,0,.5);
+     }
+ 
+-    button {
+-        width: 100%;
+-        padding: 15px;
+-        border: none;
+-        border-radius: 5px;
++    .premium-entrada h1 strong {
++        font-weight: 900;
++    }
++
++    .premium-subtitulo {
++        color: #d0d0d0;
++        font-size: 15px;
++        line-height: 1.55;
++        margin: 0 0 23px;
++        text-shadow: 0 2px 12px rgba(0,0,0,.5);
++    }
++
++    .premium-tags {
++        display: flex;
++        align-items: center;
++        justify-content: center;
++        gap: 10px;
++        color: #8e8e8e;
++        font-size: 9px;
++        font-weight: 800;
++        letter-spacing: 1.6px;
++        margin-bottom: 29px;
++        white-space: nowrap;
++    }
++
++    .premium-tags i {
++        width: 3px;
++        height: 3px;
++        border-radius: 50%;
+         background: #e50914;
+-        color: white;
+-        font-size: 16px;
+-        font-weight: bold;
+-        cursor: pointer;
++        display: inline-block;
++        box-shadow: 0 0 7px rgba(229,9,20,.8);
++    }
++
++    #botaoEntrar {
++        position: relative;
++        overflow: hidden;
++        display: flex;
++        align-items: center;
++        justify-content: center;
++        gap: 11px;
++        width: 100%;
++        min-height: 58px;
++        padding: 16px 22px;
++        border: 1px solid rgba(255,255,255,.08);
++        border-radius: 7px;
++        background: linear-gradient(135deg,#e50914,#b20710);
++        box-shadow:
++            0 12px 35px rgba(229,9,20,.25),
++            inset 0 1px 0 rgba(255,255,255,.12);
++        color: #fff;
++        font-size: 12px;
++        font-weight: 900;
++        letter-spacing: 1.2px;
++        transition:
++            transform .2s ease,
++            box-shadow .2s ease,
++            filter .2s ease;
++    }
++
++    #botaoEntrar::before {
++        content: "";
++        position: absolute;
++        top: 0;
++        left: -120%;
++        width: 70%;
++        height: 100%;
++        background: linear-gradient(
++            90deg,
++            transparent,
++            rgba(255,255,255,.16),
++            transparent
++        );
++        transform: skewX(-20deg);
++        transition: left .7s ease;
++    }
++
++    #botaoEntrar:hover::before {
++        left: 150%;
++    }
++
++    #botaoEntrar:hover {
++        transform: translateY(-2px);
++        filter: brightness(1.08);
++        box-shadow:
++            0 16px 45px rgba(229,9,20,.34),
++            inset 0 1px 0 rgba(255,255,255,.15);
+     }
+ 
+-    button:hover {
+-        background: #b20710;
++    #botaoEntrar:active {
++        transform: scale(.985);
+     }
+ 
+-    button:disabled {
+-        opacity: 0.6;
++    #botaoEntrar:disabled {
+         cursor: wait;
++        opacity: .9;
++        transform: none;
++    }
++
++    .icone-play {
++        width: 25px;
++        height: 25px;
++        display: inline-flex;
++        align-items: center;
++        justify-content: center;
++        border-radius: 50%;
++        background: rgba(255,255,255,.13);
++        font-size: 10px;
++        line-height: 1;
++    }
++
++    .premium-mensagem {
++        color: #707070;
++        font-size: 10px;
++        line-height: 1.5;
++        margin-top: 18px;
++        letter-spacing: .15px;
++    }
++
++    @keyframes premiumEntrada {
++        from {
++            opacity: 0;
++            transform: translateY(18px) scale(.985);
++        }
++        to {
++            opacity: 1;
++            transform: translateY(0) scale(1);
++        }
++    }
++
++    @media(max-width:600px) {
++
++        .premium-logo {
++            font-size: 32px;
++            letter-spacing: -2px;
++        }
++
++        .premium-linha {
++            margin-bottom: 23px;
++        }
++
++        .premium-kicker {
++            font-size: 8px;
++            letter-spacing: 2.5px;
++        }
++
++        .premium-entrada h1 {
++            font-size: 25px;
++        }
++
++        .premium-subtitulo {
++            font-size: 14px;
++        }
++
++        .premium-tags {
++            gap: 7px;
++            font-size: 7.5px;
++            letter-spacing: 1.2px;
++        }
++
++        #botaoEntrar {
++            min-height: 55px;
++            font-size: 11px;
++        }
++    }
++
++    @media(min-width:1200px) {
++
++        .premium-logo {
++            font-size: 42px;
++        }
++
++        .premium-entrada h1 {
++            font-size: 34px;
++        }
++
++        .premium-subtitulo {
++            font-size: 16px;
++        }
++
++        #botaoEntrar {
++            min-height: 60px;
++        }
+     }
+ 
+     #mensagem {
+@@ -288,115 +497,50 @@
+ 
+ <div class="login">
+ 
+-    <div class="logo">
+-        LUKA<span>FILMES</span>
+-    </div>
+-
+-    <form id="loginForm">
++    <div class="premium-entrada">
+ 
+-        <input
+-            id="usuario"

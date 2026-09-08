@@ -1,0 +1,123 @@
+// ==========================================
+// API DE PESQUISA
+// ==========================================
+
+app.get(
+    "/api/pesquisar",
+    async (req, res) => {
+
+        const busca =
+            String(req.query.q || "").trim();
+
+        if (!busca) {
+            return res.json({
+                resultados: []
+            });
+        }
+
+        const chavePesquisa =
+            busca.toLowerCase();
+
+        const cachePesquisa =
+            pesquisaCache.get(chavePesquisa);
+
+        if (
+            cachePesquisa &&
+            (Date.now() - cachePesquisa.tempo) < PESQUISA_CACHE_MS
+        ) {
+
+            console.log(
+                "[PESQUISA] Cache:",
+                busca
+            );
+
+            return res.json(cachePesquisa.dados);
+        }
+
+        try {
+
+            const dados =
+                await tmdb(
+                    "/search/movie" +
+                    "?query=" +
+                    encodeURIComponent(busca) +
+                    "&language=pt-BR" +
+                    "&page=1" +
+                    "&include_adult=false"
+                );
+
+            const resultados =
+                (dados.results || [])
+                    .map(converterFilme);
+
+            const resposta = {
+                pagina: dados.page || 1,
+                totalPaginas: dados.total_pages || 0,
+                totalResultados: dados.total_results || 0,
+                resultados
+            };
+
+            pesquisaCache.set(
+                chavePesquisa,
+                {
+                    tempo: Date.now(),
+                    dados: resposta
+                }
+            );
+
+            if (pesquisaCache.size > PESQUISA_CACHE_MAX) {
+
+                const primeira =
+                    pesquisaCache.keys().next().value;
+
+                pesquisaCache.delete(primeira);
+            }
+
+            console.log(
+                "[PESQUISA] TMDB:",
+                busca
+            );
+
+            return res.json(resposta);
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO PESQUISA]",
+                erro
+            );
+
+            return res.status(500).json({
+                erro: erro.message,
+                tipo: erro.name
+            });
+        }
+    }
+);
+
+// ==========================================
+
+/* ==========================================
+   DETALHES COMPLETOS DA SÉRIE
+   ========================================== */
+
+app.get('/api/serie/:id', async (req, res) => {
+
+    try {
+
+        const id = req.params.id;
+
+        if (!id) {
+            return res.status(400).json({
+                sucesso: false,
+                erro: "ID da série não informado"
+            });
+        }
+
+        const dados = await tmdb(
+            '/tv/' +
+            encodeURIComponent(id) +
+            '?language=pt-BR'
+        );
+
+        return res.json({

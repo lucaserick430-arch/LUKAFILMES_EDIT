@@ -1,0 +1,3870 @@
+========== FILME — JAVASCRIPT PAGAMENTO ==========
+990-    margin:0 !important;
+991-    padding:11px 20px !important;
+992-
+993-    border-radius:4px !important;
+994-
+995-    background:#fff !important;
+996-    color:#000 !important;
+997-
+998-    font-size:14px !important;
+999-    font-weight:800 !important;
+1000-
+1001-    box-shadow:none !important;
+1002-}
+1003-
+1004-.assistir:hover{
+1005-    transform:scale(1.04) !important;
+1006-    background:#e6e6e6 !important;
+1007-    box-shadow:none !important;
+1008-}
+1009-
+1010:#botaoAssistirOrigem{
+1011-    background:rgba(109,109,110,.75) !important;
+1012-    color:#fff !important;
+1013-}
+1014-
+1015:#botaoAssistirOrigem:hover{
+1016-    background:rgba(109,109,110,.95) !important;
+1017-}
+1018-
+1019-/* =========================================================
+1020-   PLAYER
+1021-   ========================================================= */
+1022-
+1023-.player-filme{
+1024-    width:92% !important;
+1025-    max-width:1100px !important;
+1026-
+1027-    margin:0 auto 55px !important;
+1028-    padding:22px !important;
+1029-
+1030-    background:#101010 !important;
+1031-
+1032-    border:1px solid rgba(255,255,255,.08) !important;
+1033-    border-radius:8px !important;
+1034-
+1035-    box-shadow:0 25px 70px rgba(0,0,0,.75) !important;
+1036-
+1037-    backdrop-filter:none !important;
+1038-}
+1039-
+1040-.player-filme h2{
+1041-    text-align:left !important;
+1042-    font-size:21px !important;
+1043-    margin:0 0 15px !important;
+1044-}
+1045-
+1046-.player-video{
+1047-    max-width:none !important;
+1048-    border-radius:5px !important;
+1049-}
+1050-
+1051-/* =========================================================
+1052-   TRAILER
+1053-   ========================================================= */
+1054-
+1055-.trailer{
+1056-    width:92% !important;
+1057-    max-width:1100px !important;
+1058-
+1059-    margin:0 auto 70px !important;
+1060-    padding:22px !important;
+1061-
+1062-    background:#101010 !important;
+1063-
+1064-    border:1px solid rgba(255,255,255,.08) !important;
+1065-    border-radius:8px !important;
+1066-
+1067-    box-shadow:0 25px 70px rgba(0,0,0,.75) !important;
+1068-
+1069-    backdrop-filter:none !important;
+1070-}
+1071-
+1072-.trailer h2{
+1073-    text-align:left !important;
+1074-    font-size:21px !important;
+1075-}
+1076-
+1077-.trailer-video{
+1078-    max-width:none !important;
+1079-    border-radius:5px !important;
+1080-}
+1081-
+1082-/* =========================================================
+1083-   MOBILE — ESTILO APP/NETFLIX
+1084-   ========================================================= */
+1085-
+1086-@media(max-width:700px){
+1087-
+1088-    .pagina-filme{
+1089-        overflow-x:hidden !important;
+1090-    }
+1091-
+1092-    .pagina-filme::before{
+1093-        height:600px !important;
+1094-
+1095-        background-image:
+--
+1165-    .sinopse{
+1166-        max-width:100% !important;
+1167-        font-size:14px !important;
+1168-        line-height:1.55 !important;
+1169-
+1170-        -webkit-line-clamp:5 !important;
+1171-    }
+1172-
+1173-    .botoes-assistir{
+1174-        width:100% !important;
+1175-
+1176-        display:flex !important;
+1177-        flex-direction:column !important;
+1178-
+1179-        gap:9px !important;
+1180-
+1181-        margin-top:20px !important;
+1182-    }
+1183-
+1184-    .assistir,
+1185:    #botaoAssistirOrigem{
+1186-        width:100% !important;
+1187-        min-height:46px !important;
+1188-
+1189-        display:flex !important;
+1190-        align-items:center !important;
+1191-        justify-content:center !important;
+1192-
+1193-        font-size:14px !important;
+1194-    }
+1195-
+1196-    .player-filme{
+1197-        width:100% !important;
+1198-        margin:0 !important;
+1199-
+1200-        padding:15px 8px 20px !important;
+1201-
+1202-        border-left:0 !important;
+1203-        border-right:0 !important;
+1204-
+1205-        border-radius:0 !important;
+1206-    }
+1207-
+1208-    .player-filme h2{
+1209-        padding:0 5px !important;
+1210-        font-size:19px !important;
+1211-    }
+1212-
+1213-    .player-video{
+1214-        width:100% !important;
+1215-        height:auto !important;
+1216-        min-height:0 !important;
+1217-        max-height:none !important;
+1218-        aspect-ratio:16/9 !important;
+1219-        border-radius:5px !important;
+1220-    }
+1221-
+1222-    .player-video iframe{
+1223-        width:100% !important;
+1224-        height:100% !important;
+1225-    }
+1226-
+1227-    .trailer{
+1228-        width:100% !important;
+1229-        margin:25px 0 45px !important;
+1230-
+1231-        padding:15px 8px 20px !important;
+1232-
+1233-        border-left:0 !important;
+1234-        border-right:0 !important;
+1235-
+1236-        border-radius:0 !important;
+1237-    }
+1238-
+1239-    .trailer h2{
+1240-        padding:0 5px !important;
+1241-        font-size:19px !important;
+1242-    }
+1243-
+1244-    .trailer-video{
+1245-        width:100% !important;
+1246-        aspect-ratio:16/9 !important;
+1247-        border-radius:5px !important;
+1248-    }
+1249-}
+1250-
+1251-</style>
+1252-
+1253-
+1254-
+1255-<style id="lukafilmes-frame-definitivo">
+1256-/* =========================================================
+1257-   LUKAFILMES — FRAME DO FILME — REGRA FINAL
+1258-   SOMENTE VISUAL
+1259-   NÃO ALTERA JAVASCRIPT / SERVIDOR / URL
+1260-   ========================================================= */
+1261-
+1262-/* PC */
+1263-#playerFilme {
+1264-    width: 92% !important;
+1265-    max-width: 1100px !important;
+--
+2259-    gap:12px !important;
+2260-    margin:30px 0 0 !important;
+2261-}
+2262-
+2263-.botoes-assistir .assistir{
+2264-    display:inline-flex !important;
+2265-    align-items:center !important;
+2266-    justify-content:center !important;
+2267-    min-height:48px !important;
+2268-    box-sizing:border-box !important;
+2269-    padding:12px 23px !important;
+2270-    border:0 !important;
+2271-    border-radius:5px !important;
+2272-    font-size:16px !important;
+2273-    font-weight:800 !important;
+2274-    text-decoration:none !important;
+2275-    transition:.2s ease !important;
+2276-    cursor:pointer !important;
+2277-}
+2278-
+2279:#botaoAssistir{
+2280-    background:#fff !important;
+2281-    color:#000 !important;
+2282-}
+2283-
+2284:#botaoAssistir:hover{
+2285-    background:#ddd !important;
+2286-    transform:scale(1.03) !important;
+2287-}
+2288-
+2289:#botaoAssistirOrigem,
+2290-#botaoMinhaListaFilme,
+2291-#botaoAbrirMinhaListaFilme{
+2292-    background:rgba(70,70,70,.82) !important;
+2293-    color:#fff !important;
+2294-    backdrop-filter:blur(8px) !important;
+2295-}
+2296-
+2297:#botaoAssistirOrigem:hover,
+2298-#botaoMinhaListaFilme:hover,
+2299-#botaoAbrirMinhaListaFilme:hover{
+2300-    background:rgba(100,100,100,.9) !important;
+2301-}
+2302-
+2303-/* TRAILER */
+2304-
+2305-.trailer{
+2306-    position:relative !important;
+2307-    z-index:10 !important;
+2308-    width:92vw !important;
+2309-    max-width:1600px !important;
+2310-    margin:0 auto 80px !important;
+2311-    box-sizing:border-box !important;
+2312-    padding:0 !important;
+2313-    background:transparent !important;
+2314-    border:0 !important;
+2315-}
+2316-
+2317-.trailer h2{
+2318-    margin:0 0 18px !important;
+2319-    color:#fff !important;
+2320-    font-size:26px !important;
+2321-}
+2322-
+2323-.trailer-video{
+2324-    width:100% !important;
+2325-    aspect-ratio:16 / 9 !important;
+2326-    max-height:none !important;
+2327-    overflow:hidden !important;
+2328-    border-radius:8px !important;
+2329-    background:#000 !important;
+2330-    box-shadow:0 20px 60px rgba(0,0,0,.65) !important;
+2331-}
+2332-
+2333-.trailer-video iframe{
+2334-    display:block !important;
+2335-    width:100% !important;
+2336-    height:100% !important;
+2337-    border:0 !important;
+2338-}
+2339-
+2340-/* PLAYER */
+2341-
+2342-.player-filme{
+2343-    position:relative !important;
+2344-    z-index:10 !important;
+2345-    width:100% !important;
+2346-    max-width:none !important;
+2347-    box-sizing:border-box !important;
+2348-    margin:0 !important;
+2349-    padding:55px 5vw 90px !important;
+2350-    background:#050505 !important;
+2351-}
+2352-
+2353-.player-filme h2{
+2354-    margin:0 0 25px !important;
+2355-    color:#fff !important;
+2356-    font-size:26px !important;
+2357-    text-align:left !important;
+2358-}
+2359-
+2360-.lista-plays{
+2361-    display:flex !important;
+2362-    flex-wrap:wrap !important;
+2363-    gap:12px !important;
+2364-    margin:0 0 25px !important;
+2365-}
+2366-
+2367-.play-card{
+2368-    min-width:150px !important;
+2369-}
+2370-
+2371-.player-video{
+2372-    width:100% !important;
+2373-    max-width:1500px !important;
+2374-    margin:0 auto !important;
+2375-    aspect-ratio:16 / 9 !important;
+2376-    background:#000 !important;
+2377-    border-radius:6px !important;
+--
+3195-
+3196-                <p id="sinopse" class="sinopse">
+3197-                    Carregando sinopse...
+3198-                </p>
+3199-
+3200-            </div>
+3201-
+3202-            <div
+3203-                class="botoes-assistir"
+3204-                style="
+3205-                    display:flex;
+3206-                    flex-wrap:wrap;
+3207-                    justify-content:center;
+3208-                    align-items:center;
+3209-                    gap:12px;
+3210-                    margin:20px auto;
+3211-                ">
+3212-
+3213-                <a
+3214-                    class="assistir"
+3215:                    id="botaoAssistir"
+3216-                    href="#">
+3217-                    ▶ PLAY
+3218-                </a>
+3219-
+3220-                <a
+3221-                    class="assistir"
+3222:                    id="botaoAssistirOrigem"
+3223-                    href="#"
+3224-                    target="_blank"
+3225-                    rel="noopener noreferrer"
+3226-                    style="display:none;">
+3227-                    🌐 SITE DE ORIGEM
+3228-                </a>
+3229-
+3230-                <a
+3231-                    class="assistir"
+3232-                    id="botaoMinhaListaFilme"
+3233-                    href="javascript:void(0)"
+3234-                    style="text-decoration:none;">
+3235-                    ＋ Minha lista
+3236-                </a>
+3237-
+3238-                
+3239-
+3240-<section
+3241-        class="trailer"
+3242-        id="trailerContainer"
+3243-        style="display:none;">
+3244-
+3245-        <h2>▶ Trailer</h2>
+3246-
+3247-        <div class="trailer-video">
+3248-
+3249-            <iframe
+3250-                id="trailerFrame"
+3251-                src=""
+3252-                title="Trailer do filme"
+3253-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+3254-                allowfullscreen>
+3255-            </iframe>
+3256-
+3257-        </div>
+3258-
+3259-    </section>
+3260-
+3261-            </div>
+3262-
+3263-    </main>
+3264-
+3265-    <section
+3266-        class="player-filme"
+3267-        id="playerFilme"
+3268-        style="display:none;">
+3269-
+3270-        <h2>🎬 Escolha o Player</h2>
+3271-
+3272-        <div
+3273-            id="listaPlayers"
+3274-            class="lista-plays">
+3275-
+3276-            <div class="play-card">
+3277-                <div class="play-numero">PLAY 1</div>
+3278-                
+3279-                <button type="button"
+3280-                        class="play-btn player-btn"
+3281-                        data-player="1">
+3282-                    ▶ PLAY
+3283-                </button>
+3284-            </div>
+3285-
+3286-            <div class="play-card">
+3287-                <div class="play-numero">PLAY 2</div>
+3288-                
+3289-                <button type="button"
+3290-                        class="play-btn player-btn"
+3291-                        data-player="2">
+3292-                    ▶ PLAY
+3293-                </button>
+3294-            </div>
+3295-
+3296-            <div class="play-card">
+3297-                <div class="play-numero">PLAY 3</div>
+3298-
+3299-                <button type="button"
+3300-                        class="play-btn player-btn"
+3301-                        data-player="3">
+3302-                    ▶ PLAY
+--
+3557-            Array.isArray(filme.generos)
+3558-                ? filme.generos.join(" • ")
+3559-                : (filme.genero || "");
+3560-
+3561-        document.getElementById("generos")
+3562-            .textContent =
+3563-            generos;
+3564-
+3565-        /* SINOPSE */
+3566-
+3567-        document.getElementById("sinopse")
+3568-            .textContent =
+3569-            filme.sinopse ||
+3570-            "Sinopse não disponível.";
+3571-
+3572-        /* ==========================================
+3573-           ASSISTIR FILME — EMBEDMOVIES / TMDB
+3574-           ========================================== */
+3575-
+3576-        const botao =
+3577:            document.getElementById("botaoAssistir");
+3578-
+3579-        const playerFilme =
+3580-            document.getElementById("playerFilme");
+3581-
+3582-        const filmeFrame =
+3583-            document.getElementById("filmeFrame");
+3584-
+3585-        if (botao && playerFilme && filmeFrame && filme.id) {
+3586-
+3587-            botao.addEventListener(
+3588-                "click",
+3589-                async function (evento) {
+3590-
+3591-                    evento.preventDefault();
+3592-
+3593-                    const tmdbId =
+3594-                        String(filme.id).trim();
+3595-
+3596-                    if (!tmdbId) {
+3597-
+3598-                        alert(
+3599-                            "ID TMDB do filme não encontrado."
+3600-                        );
+3601-
+3602-                        return;
+3603-                    }
+3604-
+3605-                    console.log(
+3606-                        "[LUKAFILMES] Verificando acesso:",
+3607-                        filme.titulo,
+3608-                        tmdbId
+3609-                    );
+3610-
+3611-                    try {
+3612-
+3613-                        const respostaAcesso =
+3614-                            await fetch(
+3615-                                "/api/acesso-assistir",
+3616-                                {
+3617-                                    method: "GET",
+3618-                                    credentials: "same-origin",
+3619-                                    cache: "no-store"
+3620-                                }
+3621-                            );
+3622-
+3623-                        const acesso =
+3624-                            await respostaAcesso.json();
+3625-
+3626-                        console.log(
+3627-                            "[LUKAFILMES] Resultado do acesso:",
+3628-                            acesso
+3629-                        );
+3630-
+3631-                        /*
+3632-                         * PRIMEIRO PLAY:
+3633-                         * cliente ainda não possui conta.
+3634-                         *
+3635-                         * Em vez de mandar para o login,
+3636-                         * abrimos o cadastro específico do LUKAFILMES.
+3637-                         */
+3638-                        if (
+3639-                            acesso.motivo ===
+3640-                            "nao_logado"
+3641-                        ) {
+3642-
+3643-                            const retorno =
+3644-                                window.location.pathname +
+3645-                                window.location.search;
+3646-
+3647-                            window.location.href =
+3648-                                "/cadastro?retorno=" +
+3649-                                encodeURIComponent(retorno);
+3650-
+3651-                            return;
+3652-                        }
+3653-
+3654-                        /*
+3655-                         * ACESSO NEGADO / EXPIRADO
+3656-                         *
+3657-                         * NÃO ABRE O PLAYER.
+3658-                         * MOSTRA A TELA DE PAGAMENTO.
+3659-                         */
+3660-                        if (!acesso.permitido) {
+3661-
+3662-                            if (
+3663-                                acesso.motivo ===
+3664-                                "expirado"
+3665-                            ) {
+3666-
+3667:                                await mostrarPagamentoLuka(
+3668-                                    acesso
+3669-                                );
+3670-
+3671-                                return;
+3672-                            }
+3673-
+3674-                            alert(
+3675-                                acesso.mensagem ||
+3676-                                "Seu acesso não está liberado para assistir."
+3677-                            );
+3678-
+3679-                            return;
+3680-                        }
+3681-
+3682-                        /*
+3683-                         * ACESSO LIBERADO
+3684-                         *
+3685-                         * AGORA SIM MOSTRA O PLAYER.
+3686-                         */
+3687-                        console.log(
+3688-                            "[PLAYER TMDB]",
+3689-                            filme.titulo,
+3690-                            tmdbId
+3691-                        );
+3692-
+3693-                        playerFilme.style.display =
+3694-                            "block";
+3695-
+3696-                        filmeFrame.src = "";
+3697-
+3698-                        const playCentral =
+3699-                            document.getElementById(
+3700-                                "playCentralFilme"
+3701-                            );
+3702-
+3703-                        if (playCentral) {
+3704-
+3705-                            playCentral.classList.remove(
+3706-                                "oculto"
+3707-                            );
+3708-
+3709-                        }
+3710-
+3711-                        botao.innerHTML =
+3712-                            "▶ PLAY";
+3713-
+3714-                        playerFilme.scrollIntoView({
+3715-                            behavior: "auto",
+3716-                            block: "center"
+3717-                        });
+3718-
+3719-                    } catch (erro) {
+3720-
+3721-                        console.error(
+3722-                            "[LUKAFILMES] Erro ao verificar acesso:",
+3723-                            erro
+3724-                        );
+3725-
+3726-                        alert(
+3727-                            "Não foi possível verificar seu acesso. Tente novamente."
+3728-                        );
+3729-
+3730-                    }
+3731-
+3732-                }
+3733-            );
+3734-
+3735-            /* ==========================================
+3736-               PAGAMENTO LUKAFILMES
+3737-               ========================================== */
+3738-
+3739:            async function mostrarPagamentoLuka(acesso, renovacao = false) {
+3740-
+3741-                try {
+3742-
+3743-                    let pagamento = null;
+3744-
+3745-                    const respostaPagamento =
+3746-                        await fetch(
+3747:                            "/api/pagamentos/criar",
+3748-                            {
+3749-                                method: "POST",
+3750-                                credentials: "same-origin",
+3751-                                headers: {
+3752-                                    "Content-Type":
+3753-                                        "application/json"
+3754-                                },
+3755-                                body: JSON.stringify(
+3756-                                    renovacao
+3757-                                        ? { renovacao: true }
+3758-                                        : {}
+3759-                                )
+3760-                            }
+3761-                        );
+3762-
+3763-                    const dadosPagamento =
+3764-                        await respostaPagamento.json();
+3765-
+3766-                    if (!respostaPagamento.ok ||
+3767-                        !dadosPagamento.sucesso) {
+3768-
+3769-                        alert(
+3770-                            dadosPagamento.mensagem ||
+3771-                            "Não foi possível preparar o pagamento."
+3772-                        );
+3773-
+3774-                        return;
+3775-                    }
+3776-
+3777-                    if (
+3778-                        dadosPagamento.pagamento_necessario ===
+3779-                        false
+3780-                    ) {
+3781-
+3782-                        playerFilme.style.display =
+3783-                            "block";
+3784-
+3785-                        return;
+3786-                    }
+3787-
+3788-                    pagamento =
+3789-                        dadosPagamento.pagamento ||
+3790-                        null;
+3791-
+3792-                    const valor =
+3793-                        dadosPagamento.valor ||
+3794-                        Number(
+3795-                            acesso.valor || 18
+3796-                        ).toFixed(2);
+3797-
+3798-                    const pix =
+3799-                        dadosPagamento.pix ||
+3800-                        "";
+3801-
+3802-                    const antigo =
+3803-                        document.getElementById(
+3804-                            "lukafilmesPagamento"
+3805-                        );
+3806-
+3807-                    if (antigo) {
+3808-                        antigo.remove();
+3809-                    }
+3810-
+3811-                    const tela =
+3812-                        document.createElement("div");
+3813-
+3814-                    tela.id =
+3815-                        "lukafilmesPagamento";
+3816-
+3817-                    tela.style.cssText = `
+3818-                        width: min(92%, 520px);
+3819-                        margin: 24px auto;
+3820-                        padding: 24px;
+3821-                        box-sizing: border-box;
+3822-                        background: linear-gradient(180deg, #242424 0%, #111 100%);
+3823-                        border: 2px solid rgba(255,255,255,.16);
+3824-                        border-radius: 20px;
+3825-                        text-align: center;
+3826-                        color: #fff;
+3827-                        box-shadow: 0 15px 50px rgba(0,0,0,.75);
+--
+4169-                }
+4170-
+4171-            }
+4172-
+4173-            /* ==========================================
+4174-               RENOVAÇÃO — USA O MESMO PIX EXISTENTE
+4175-               ========================================== */
+4176-
+4177-            window.addEventListener(
+4178-                "luka:renovar",
+4179-                async function (evento) {
+4180-
+4181-                    try {
+4182-
+4183-                        const dados =
+4184-                            evento &&
+4185-                            evento.detail
+4186-                                ? evento.detail
+4187-                                : {};
+4188-
+4189:                        await mostrarPagamentoLuka(
+4190-                            dados,
+4191-                            true
+4192-                        );
+4193-
+4194-                    } catch (erro) {
+4195-
+4196-                        console.error(
+4197-                            "[LUKAFILMES] Erro ao abrir renovação:",
+4198-                            erro
+4199-                        );
+4200-
+4201-                    }
+4202-
+4203-                }
+4204-            );
+4205-
+4206-            /* ==========================================
+4207-               PLAY CENTRAL — CARREGA PLAYER 1
+4208-               ========================================== */
+4209-
+4210-            const playCentral =
+4211-                document.getElementById(
+4212-                    "playCentralFilme"
+4213-                );
+4214-
+4215-            if (playCentral) {
+4216-
+4217-                playCentral.addEventListener(
+4218-                    "click",
+4219-                    async function () {
+4220-
+4221-                        try {
+4222-
+4223-                            /*
+4224-                             * VERIFICA O ACESSO ANTES
+4225-                             * DE CARREGAR O CONTEÚDO.
+4226-                             */
+4227-                            const respostaAcesso =
+4228-                                await fetch(
+4229-                                    "/api/acesso-assistir",
+4230-                                    {
+4231-                                        method: "GET",
+4232-                                        credentials: "same-origin",
+4233-                                        cache: "no-store"
+4234-                                    }
+4235-                                );
+4236-
+4237-                            const acesso =
+4238-                                await respostaAcesso.json();
+4239-
+4240-                            console.log(
+4241-                                "[LUKAFILMES] Acesso para assistir:",
+4242-                                acesso
+4243-                            );
+4244-
+4245-                            /*
+4246-                             * SEM AUTORIZAÇÃO:
+4247-                             * NÃO CARREGA O PLAYER.
+4248-                             */
+4249-                            if (!acesso.permitido) {
+4250-
+4251-                                if (
+4252-                                    acesso.motivo ===
+4253-                                    "nao_logado"
+4254-                                ) {
+4255-                                    alert(
+4256-                                        "Faça login para assistir."
+4257-                                    );
+4258-                                }
+4259-                                else if (
+4260-                                    acesso.motivo ===
+4261-                                    "expirado"
+4262-                                ) {
+4263-                                    alert(
+4264-                                        "Seu acesso expirou. É necessário renovar para assistir."
+4265-                                    );
+4266-                                }
+4267-                                else {
+4268-                                    alert(
+4269-                                        acesso.mensagem ||
+--
+4484-                                capa: filme.capa || "",
+4485-                                tipo: "filme",
+4486-                                player: numero
+4487-                            });
+4488-                        }
+4489-
+4490-                        playerFilme.scrollIntoView({
+4491-                            behavior: "smooth",
+4492-                            block: "center"
+4493-                        });
+4494-
+4495-                    }
+4496-                );
+4497-
+4498-            });
+4499-
+4500-        }
+4501-        /* ASSISTIR NO SITE DE ORIGEM */
+4502-
+4503-        const botaoOrigem =
+4504:            document.getElementById("botaoAssistirOrigem");
+4505-
+4506-        if (botaoOrigem && filme.id) {
+4507-
+4508-            botaoOrigem.style.display =
+4509-                "none";
+4510-
+4511-            fetch(
+4512-                "/api/filme/" +
+4513-                filme.id +
+4514-                "/origem"
+4515-            )
+4516-            .then(resposta =>
+4517-                resposta.json()
+4518-            )
+4519-            .then(dados => {
+4520-
+4521-                if (
+4522-                    dados &&
+4523-                    dados.sucesso &&
+4524-                    dados.encontrado &&
+4525-                    dados.link
+4526-                ) {
+4527-
+4528-                    botaoOrigem.href =
+4529-                        dados.link;
+4530-
+4531-                    botaoOrigem.target =
+4532-                        "_blank";
+4533-
+4534-                    botaoOrigem.rel =
+4535-                        "noopener noreferrer";
+4536-
+4537-                    botaoOrigem.style.display =
+4538-                        "inline-flex";
+4539-
+4540-                    console.log(
+4541-                        "[LINK ORIGEM]",
+4542-                        dados.titulo,
+4543-                        dados.link
+4544-                    );
+4545-
+4546-                } else {
+4547-
+4548-                    botaoOrigem.style.display =
+4549-                        "none";
+4550-                }
+4551-
+4552-            })
+4553-            .catch(erro => {
+4554-
+4555-                console.error(
+4556-                    "[ERRO LINK ORIGEM]",
+4557-                    erro
+4558-                );
+4559-
+4560-                botaoOrigem.style.display =
+4561-                    "none";
+4562-            });
+4563-        }
+4564-    /* TRAILER */
+4565-
+4566-        if (filme.id) {
+4567-
+4568-            fetch(
+4569-                "/api/filme/" +
+4570-                filme.id +
+4571-                "/videos"
+4572-            )
+4573-
+4574-            .then(resposta =>
+4575-                resposta.json()
+4576-            )
+4577-
+4578-            .then(dados => {
+4579-
+4580-                const container =
+4581-                    document.getElementById(
+4582-                        "trailerContainer"
+4583-                    );
+4584-
+--
+6266-    border-radius:4px !important;
+6267-
+6268-    background:#fff !important;
+6269-    color:#000 !important;
+6270-
+6271-    font-size:14px !important;
+6272-    font-weight:800 !important;
+6273-
+6274-    box-shadow:none !important;
+6275-
+6276-    transition:
+6277-        transform .2s ease,
+6278-        background .2s ease !important;
+6279-}
+6280-
+6281-.assistir:hover{
+6282-    transform:scale(1.04) !important;
+6283-    background:#e6e6e6 !important;
+6284-}
+6285-
+6286:#botaoAssistirOrigem{
+6287-    background:rgba(109,109,110,.78) !important;
+6288-    color:#fff !important;
+6289-}
+6290-
+6291:#botaoAssistirOrigem:hover{
+6292-    background:rgba(109,109,110,.95) !important;
+6293-}
+6294-
+6295-/* =========================================================
+6296-   PLAYER
+6297-   ========================================================= */
+6298-
+6299-.player-filme{
+6300-    position:relative !important;
+6301-    z-index:8 !important;
+6302-
+6303-    width:92% !important;
+6304-    max-width:1100px !important;
+6305-
+6306-    margin:0 auto 55px !important;
+6307-
+6308-    padding:22px !important;
+6309-
+6310-    background:#111 !important;
+6311-
+6312-    border:1px solid rgba(255,255,255,.08) !important;
+6313-
+6314-    border-radius:7px !important;
+6315-
+6316-    box-shadow:
+6317-        0 25px 70px rgba(0,0,0,.8) !important;
+6318-
+6319-    backdrop-filter:none !important;
+6320-}
+6321-
+6322-.player-filme h2{
+6323-    margin:0 0 16px !important;
+6324-
+6325-    text-align:left !important;
+6326-
+6327-    font-size:21px !important;
+6328-}
+6329-
+6330-.player-video{
+6331-    max-width:none !important;
+6332-
+6333-    border-radius:5px !important;
+6334-}
+6335-
+6336-/* =========================================================
+6337-   TRAILER
+6338-   ========================================================= */
+6339-
+6340-.trailer{
+6341-    position:relative !important;
+6342-    z-index:8 !important;
+6343-
+6344-    width:92% !important;
+6345-    max-width:1100px !important;
+6346-
+6347-    margin:0 auto 70px !important;
+6348-
+6349-    padding:22px !important;
+6350-
+6351-    background:#111 !important;
+6352-
+6353-    border:1px solid rgba(255,255,255,.08) !important;
+6354-
+6355-    border-radius:7px !important;
+6356-
+6357-    box-shadow:
+6358-        0 25px 70px rgba(0,0,0,.8) !important;
+6359-
+6360-    backdrop-filter:none !important;
+6361-}
+6362-
+6363-.trailer h2{
+6364-    margin:0 0 16px !important;
+6365-
+6366-    text-align:left !important;
+6367-
+6368-    font-size:21px !important;
+6369-}
+6370-
+6371-.trailer-video{
+--
+6452-        max-width:100% !important;
+6453-
+6454-        font-size:14px !important;
+6455-
+6456-        line-height:1.55 !important;
+6457-
+6458-        -webkit-line-clamp:4 !important;
+6459-    }
+6460-
+6461-    .botoes-assistir{
+6462-        width:100% !important;
+6463-
+6464-        flex-direction:column !important;
+6465-
+6466-        gap:9px !important;
+6467-
+6468-        margin-top:20px !important;
+6469-    }
+6470-
+6471-    .assistir,
+6472:    #botaoAssistirOrigem{
+6473-        width:100% !important;
+6474-
+6475-        min-height:46px !important;
+6476-    }
+6477-
+6478-    .player-filme{
+6479-        width:100% !important;
+6480-
+6481-        margin:0 0 30px !important;
+6482-
+6483-        padding:15px 8px 20px !important;
+6484-
+6485-        border-left:0 !important;
+6486-        border-right:0 !important;
+6487-
+6488-        border-radius:0 !important;
+6489-    }
+6490-
+6491-    .player-filme h2{
+6492-        padding:0 5px !important;
+6493-
+6494-        font-size:19px !important;
+6495-    }
+6496-
+6497-    .player-video{
+6498-        width:100% !important;
+6499-
+6500-        aspect-ratio:16/9 !important;
+6501-
+6502-        height:auto !important;
+6503-
+6504-        min-height:0 !important;
+6505-
+6506-        border-radius:5px !important;
+6507-    }
+6508-
+6509-    .trailer{
+6510-        width:100% !important;
+6511-
+6512-        margin:0 0 45px !important;
+6513-
+6514-        padding:15px 8px 20px !important;
+6515-
+6516-        border-left:0 !important;
+6517-        border-right:0 !important;
+6518-
+6519-        border-radius:0 !important;
+6520-    }
+6521-
+6522-    .trailer h2{
+6523-        padding:0 5px !important;
+6524-
+6525-        font-size:19px !important;
+6526-    }
+6527-
+6528-    .trailer-video{
+6529-        width:100% !important;
+6530-
+6531-        aspect-ratio:16/9 !important;
+6532-
+6533-        border-radius:5px !important;
+6534-    }
+6535-}
+6536-
+6537-</style>
+6538-
+6539-<style id="lukafilmes-hero-final-correcao">
+6540-
+6541-/* =========================================================
+6542-   LUKAFILMES — HERO FINAL
+6543-   SOMENTE VISUAL
+6544-   ========================================================= */
+6545-
+6546-.pagina-filme{
+6547-    position:relative !important;
+6548-    min-height:100vh !important;
+6549-    background:#050505 !important;
+6550-    overflow-x:hidden !important;
+6551-}
+6552-
+--
+6746-    align-items:center !important;
+6747-    justify-content:center !important;
+6748-
+6749-    border:0 !important;
+6750-    border-radius:4px !important;
+6751-
+6752-    background:#fff !important;
+6753-    color:#000 !important;
+6754-
+6755-    font-size:14px !important;
+6756-    font-weight:800 !important;
+6757-
+6758-    box-shadow:none !important;
+6759-}
+6760-
+6761-.assistir:hover{
+6762-    background:#e6e6e6 !important;
+6763-    transform:scale(1.04) !important;
+6764-}
+6765-
+6766:#botaoAssistirOrigem{
+6767-    background:rgba(109,109,110,.80) !important;
+6768-    color:#fff !important;
+6769-}
+6770-
+6771-/* PLAYER */
+6772-.player-filme{
+6773-    position:relative !important;
+6774-    z-index:8 !important;
+6775-
+6776-    width:92% !important;
+6777-    max-width:1100px !important;
+6778-
+6779-    margin:0 auto 55px !important;
+6780-
+6781-    padding:22px !important;
+6782-
+6783-    background:#111 !important;
+6784-
+6785-    border:1px solid rgba(255,255,255,.08) !important;
+6786-    border-radius:7px !important;
+6787-
+6788-    box-shadow:0 25px 70px rgba(0,0,0,.8) !important;
+6789-}
+6790-
+6791-.player-filme h2{
+6792-    margin:0 0 16px !important;
+6793-    text-align:left !important;
+6794-    font-size:21px !important;
+6795-}
+6796-
+6797-/* TRAILER */
+6798-.trailer{
+6799-    position:relative !important;
+6800-    z-index:8 !important;
+6801-
+6802-    width:92% !important;
+6803-    max-width:1100px !important;
+6804-
+6805-    margin:0 auto 70px !important;
+6806-
+6807-    padding:22px !important;
+6808-
+6809-    background:#111 !important;
+6810-
+6811-    border:1px solid rgba(255,255,255,.08) !important;
+6812-    border-radius:7px !important;
+6813-
+6814-    box-shadow:0 25px 70px rgba(0,0,0,.8) !important;
+6815-}
+6816-
+6817-/* MOBILE */
+6818-@media(max-width:700px){
+6819-
+6820-    .pagina-filme::before{
+6821-        height:680px !important;
+6822-
+6823-        background-image:
+6824-            linear-gradient(
+6825-                180deg,
+6826-                rgba(0,0,0,.08) 0%,
+6827-                rgba(0,0,0,.22) 30%,
+6828-                rgba(0,0,0,.62) 55%,
+6829-                rgba(5,5,5,.96) 82%,
+6830-                #050505 100%
+6831-            ),
+6832-            var(--fundo-filme) !important;
+6833-
+6834-        background-position:center top !important;
+6835-        background-size:cover !important;
+6836-    }
+6837-
+6838-    .voltar-area{
+6839-        padding:15px !important;
+6840-    }
+6841-
+6842-    .detalhes{
+6843-        min-height:630px !important;
+6844-
+6845-        padding:0 16px 45px !important;
+6846-
+--
+6875-}
+6876-
+6877-    .sinopse{
+6878-        max-width:100% !important;
+6879-        font-size:14px !important;
+6880-        line-height:1.55 !important;
+6881-        -webkit-line-clamp:4 !important;
+6882-    }
+6883-
+6884-    .botoes-assistir{
+6885-        width:100% !important;
+6886-
+6887-        flex-direction:column !important;
+6888-
+6889-        gap:9px !important;
+6890-
+6891-        margin-top:20px !important;
+6892-    }
+6893-
+6894-    .assistir,
+6895:    #botaoAssistirOrigem{
+6896-        width:100% !important;
+6897-        min-height:46px !important;
+6898-    }
+6899-
+6900-    .player-filme{
+6901-        width:100% !important;
+6902-        margin:0 0 30px !important;
+6903-        padding:15px 8px 20px !important;
+6904-        border-left:0 !important;
+6905-        border-right:0 !important;
+6906-        border-radius:0 !important;
+6907-    }
+6908-
+6909-    .player-filme h2{
+6910-        padding:0 5px !important;
+6911-        font-size:19px !important;
+6912-    }
+6913-
+6914-    .trailer{
+6915-        width:100% !important;
+6916-        margin:0 0 45px !important;
+6917-        padding:15px 8px 20px !important;
+6918-        border-left:0 !important;
+6919-        border-right:0 !important;
+6920-        border-radius:0 !important;
+6921-    }
+6922-}
+6923-
+6924-</style>
+6925-
+6926-<style id="ajuste-final-player-trailer">
+6927-
+6928-/* =========================================================
+6929-   AJUSTE FINAL — PLAYER + TRAILER
+6930-   ========================================================= */
+6931-
+6932-.player-filme{
+6933-    height:auto !important;
+6934-    min-height:0 !important;
+6935-    margin-bottom:12px !important;
+6936-    padding-bottom:12px !important;
+6937-}
+6938-
+6939-.player-video{
+6940-    width:100% !important;
+6941-    height:auto !important;
+6942-    min-height:0 !important;
+6943-    aspect-ratio:16/9 !important;
+6944-    margin-bottom:0 !important;
+6945-}
+6946-
+6947-.player-video iframe{
+6948-    width:100% !important;
+6949-    height:100% !important;
+6950-    min-height:0 !important;
+6951-    display:block !important;
+6952-}
+6953-
+6954-.trailer{
+6955-    height:auto !important;
+6956-    min-height:0 !important;
+6957-    margin-top:0 !important;
+6958-    margin-bottom:25px !important;
+6959-}
+6960-
+6961-.trailer-video{
+6962-    width:100% !important;
+6963-    height:auto !important;
+6964-    min-height:0 !important;
+6965-    aspect-ratio:16/9 !important;
+6966-}
+6967-
+6968-.trailer-video iframe{
+6969-    width:100% !important;
+6970-    height:100% !important;
+6971-    min-height:0 !important;
+6972-    display:block !important;
+6973-}
+6974-
+6975-/* MOBILE */
+
+========== SÉRIE — JAVASCRIPT EPISÓDIOS ==========
+327-
+328-            width: 100%;
+329-
+330-            padding: 14px 16px;
+331-
+332-            color: #fff;
+333-
+334-            background: #151515;
+335-
+336-            border: 1px solid rgba(255, 255, 255, .15);
+337-
+338-            border-radius: 10px;
+339-
+340-            outline: none;
+341-
+342-            font-size: 16px;
+343-
+344-            cursor: pointer;
+345-        }
+346-
+347-
+348-        /* ==========================================
+349-           EPISODIOS
+350-           ========================================== */
+351-
+352:        .episodios {
+353-
+354-            margin-top: 25px;
+355-
+356-            display: grid;
+357-
+358-            grid-template-columns:
+359-                repeat(auto-fill, minmax(180px, 1fr));
+360-
+361-            gap: 14px;
+362-        }
+363-
+364:        .episodio {
+365-
+366-    position: relative;
+367-
+368-    padding: 20px 17px;
+369-
+370-    text-align: center;
+371-
+372-    color: #fff;
+373-
+374-    background: rgba(0, 0, 0, .18);
+375-
+376-    border: 1px solid rgba(255, 255, 255, .08);
+377-
+378-    border-radius: 14px;
+379-
+380-    cursor: pointer;
+381-
+382-    transition:
+383-        transform .25s ease,
+384-        background .25s ease,
+385-        border-color .25s ease,
+386-        box-shadow .25s ease;
+387-
+388-    font-family: inherit;
+389-
+390-    min-height: 145px;
+391-
+392-    backdrop-filter: blur(4px);
+393-
+394-    -webkit-backdrop-filter: blur(4px);
+395-}
+396-
+397:.episodio span {
+398-
+399-    transition:
+400-        transform .25s ease,
+401-        background .25s ease,
+402-        box-shadow .25s ease;
+403-}
+404-
+405:.episodio:hover {
+406-
+407-    background: rgba(229, 9, 20, .18);
+408-
+409-    border-color: rgba(229, 9, 20, .65);
+410-
+411-    transform: translateY(-4px);
+412-
+413-    box-shadow:
+414-        0 12px 35px rgba(0, 0, 0, .35);
+415-}
+416-
+417:.episodio:hover span {
+418-
+419-    background: rgba(229, 9, 20, .9) !important;
+420-
+421-    transform: scale(1.08);
+422-
+423-    box-shadow:
+424-        0 0 20px rgba(229, 9, 20, .35);
+425-}
+426-
+427:.episodio strong {
+428-
+429-    display: block;
+430-
+431-    margin-bottom: 6px;
+432-
+433-    color: #fff;
+434-
+435-    font-weight: 700;
+436-
+437-    text-shadow:
+438-        0 2px 8px rgba(0, 0, 0, .8);
+439-}
+440-
+441:.episodio small {
+442-
+443-    display: block;
+444-
+445-    color: rgba(255, 255, 255, .58);
+446-
+447-    line-height: 1.4;
+448-
+449-    transition: color .25s ease;
+450-}
+451-
+452:.episodio:hover small {
+453-
+454-    color: rgba(255, 255, 255, .9);
+455-}
+456-/* ==========================================
+457-           PLAYER
+458-           ========================================== */
+459-
+460-        .player-serie {
+461-
+462-            position: relative;
+463-
+464-            z-index: 3;
+465-
+466-            width: calc(100% - 40px);
+467-
+468-            max-width: 1000px;
+469-
+470-            margin: 55px auto 0;
+471-
+472-            padding: 30px;
+473-
+474-            text-align: center;
+475-
+476-            background:
+477-                linear-gradient(
+478-                    145deg,
+479-                    rgba(255, 255, 255, .075),
+480-                    rgba(255, 255, 255, .025)
+481-                );
+482-
+483-            border: 1px solid rgba(255, 255, 255, .10);
+484-
+485-            border-radius: 22px;
+486-
+487-            box-shadow:
+488-                0 30px 80px rgba(0, 0, 0, .65);
+489-
+490-            backdrop-filter: blur(16px);
+491-        }
+492-
+493-        .player-serie h2 {
+494-
+495-            margin: 0 0 22px;
+496-
+497-            font-size: 26px;
+498-        }
+499-
+500-        .player-video {
+501-
+502-            width: 100%;
+503-
+504-            aspect-ratio: 16 / 9;
+505-
+506-            overflow: hidden;
+507-
+508-            background: #000;
+509-
+510-            border-radius: 15px;
+511-
+512-            box-shadow:
+513-                0 20px 60px rgba(0, 0, 0, .7);
+514-        }
+515-
+516-        .player-video iframe {
+517-
+518-            width: 100%;
+519-
+520-            height: 100%;
+521-
+522-            border: 0;
+523-
+524-            display: block;
+525-        }
+526-
+527-
+528-        /* ==========================================
+529-           MOBILE
+530-           ========================================== */
+531-
+532-        @media (max-width: 700px) {
+533-
+534-            .voltar-area {
+535-
+536-                padding: 18px 15px 0;
+537-            }
+538-
+539-            .detalhes-serie {
+540-
+541-                margin-top: 35px;
+542-
+543-                padding: 0 15px;
+544-            }
+545-
+546-            .poster-serie {
+547-
+548-                width: 205px;
+549-            }
+550-
+551-            .sinopse-box {
+552-
+553-                padding: 22px 20px;
+554-            }
+555-
+556-            .temporadas,
+557-            .player-serie {
+558-
+559-                width: calc(100% - 24px);
+560-
+561-                padding: 18px 14px;
+562-
+563-                border-radius: 17px;
+564-            }
+565-
+566:            .episodios {
+567-
+568-                grid-template-columns: 1fr;
+569-            }
+570-
+571-            #tituloSerie {
+572-
+573-                font-size: 36px;
+574-            }
+575-
+576-        }
+577-
+578-    
+579-/* =========================================================
+580-   LUKAFILMES — DETALHES DA SÉRIE / VISUAL STREAMING
+581-   SOMENTE VISUAL — NÃO ALTERA A LÓGICA
+582-   ========================================================= */
+583-
+584-.pagina-serie {
+585-    background:
+586-        radial-gradient(
+587-            circle at 50% 0%,
+588-            rgba(229,9,20,.10),
+589-            transparent 38%
+590-        ),
+591-        #050505;
+592-}
+593-
+594-/* Backdrop mais cinematográfico */
+595-
+596-.pagina-serie::before {
+597-    height: 900px;
+598-    opacity: .82;
+599-    filter: blur(1px);
+600-    transform: scale(1.035);
+601-}
+602-
+603-.pagina-serie::after {
+604-    background:
+605-        linear-gradient(
+606-            to bottom,
+607-            rgba(0,0,0,.05) 0%,
+608-            rgba(0,0,0,.10) 18%,
+609-            rgba(5,5,5,.45) 48%,
+610-            #050505 78%,
+611-            #050505 100%
+612-        );
+613-}
+614-
+615-/* Cabeçalho de voltar */
+616-
+617-.voltar-area {
+618-    max-width: 1400px;
+619-    padding: 24px 5%;
+620-}
+621-
+622-.voltar {
+623-    background: rgba(15,15,15,.72);
+624-    border-color: rgba(255,255,255,.12);
+625-    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+626-    transition:
+627-        transform .25s ease,
+628-        background .25s ease,
+629-        box-shadow .25s ease;
+630-}
+631-
+632-.voltar:hover {
+633-    background: #e50914;
+634-    box-shadow: 0 12px 35px rgba(229,9,20,.28);
+635-}
+636-
+637-/* Área principal */
+638-
+639-.detalhes-serie {
+640-    max-width: 1250px;
+641-    margin-top: 80px;
+642-    padding: 0 5%;
+643-    text-align: left;
+644-
+645-    display: grid;
+646-    grid-template-columns: 260px minmax(0,1fr);
+647-    gap: 42px;
+648-    align-items: end;
+649-}
+650-
+651-/* Pôster */
+652-
+653-.poster-serie {
+654-    width: 260px;
+655-    margin: 0;
+656-    position: relative;
+657-}
+658-
+659-.poster-serie img {
+660-    border-radius: 12px;
+661-    border: 1px solid rgba(255,255,255,.10);
+662-    box-shadow:
+663-        0 25px 70px rgba(0,0,0,.75),
+664-        0 0 0 1px rgba(255,255,255,.03);
+665-}
+666-
+--
+764-
+765-/* Títulos das seções */
+766-
+767-.temporadas h2,
+768-.player-serie h2 {
+769-    font-size: 24px;
+770-    font-weight: 700;
+771-}
+772-
+773-/* Select */
+774-
+775-#selectTemporada {
+776-    background: #181818;
+777-    border-color: rgba(255,255,255,.10);
+778-    border-radius: 8px;
+779-    transition: border-color .2s ease, box-shadow .2s ease;
+780-}
+781-
+782-#selectTemporada:focus {
+783-    border-color: rgba(229,9,20,.65);
+784-    box-shadow: 0 0 0 3px rgba(229,9,20,.12);
+785-}
+786-
+787-/* Episódios */
+788-
+789:.episodio {
+790-    background:
+791-        linear-gradient(
+792-            145deg,
+793-            rgba(28,28,28,.92),
+794-            rgba(16,16,16,.90)
+795-        );
+796-
+797-    border: 1px solid rgba(255,255,255,.07);
+798-    border-radius: 10px;
+799-    min-height: 130px;
+800-}
+801-
+802:.episodio:hover {
+803-    background:
+804-        linear-gradient(
+805-            145deg,
+806-            rgba(229,9,20,.18),
+807-            rgba(30,30,30,.95)
+808-        );
+809-
+810-    border-color: rgba(229,9,20,.55);
+811-
+812-    transform: translateY(-3px);
+813-
+814-    box-shadow:
+815-        0 16px 38px rgba(0,0,0,.45);
+816-}
+817-
+818-/* Player */
+819-
+820-.player-serie {
+821-    margin-top: 42px;
+822-}
+823-
+824-.player-video {
+825-    border-radius: 10px;
+826-    box-shadow:
+827-        0 20px 60px rgba(0,0,0,.75),
+828-        0 0 0 1px rgba(255,255,255,.04);
+829-}
+830-
+831-/* =========================================================
+832-   MOBILE
+833-   ========================================================= */
+834-
+835-@media (max-width: 800px) {
+836-
+837-    .voltar-area {
+838-        padding: 16px 14px 0;
+839-    }
+840-
+841-    .detalhes-serie {
+842-        margin-top: 45px;
+843-        padding: 0 15px;
+844-
+845-        display: flex;
+846-        flex-direction: column;
+847-        align-items: center;
+848-        gap: 22px;
+849-
+850-        text-align: center;
+851-    }
+852-
+853-    .poster-serie {
+854-        width: min(210px, 60vw);
+855-        margin: 0 auto;
+856-    }
+857-
+858-    .poster-serie img {
+859-        border-radius: 11px;
+860-    }
+861-
+862-    #tituloSerie {
+863-        font-size: clamp(32px, 10vw, 44px);
+864-        letter-spacing: -1px;
+865-    }
+866-
+867-    .dados-serie {
+868-        justify-content: center;
+869-        font-size: 14px;
+870-    }
+871-
+872-    .dados-serie span + span::before {
+873-        margin-right: 6px;
+874-    }
+875-
+876-    .sinopse-box {
+877-        grid-column: auto;
+878-
+879-        width: calc(100% - 24px);
+880-        margin: 25px auto 0;
+881-        padding: 20px 18px;
+882-        border-radius: 12px;
+883-    }
+884-
+885-    .sinopse-box h2 {
+886-        font-size: 18px;
+887-    }
+888-
+889-    .sinopse {
+890-        font-size: 15px;
+891-        line-height: 1.65;
+892-    }
+893-
+894-    .temporadas,
+895-    .player-serie {
+896-        width: calc(100% - 24px);
+897-        padding: 18px 14px;
+898-        border-radius: 12px;
+899-    }
+900-
+901-    .temporadas h2,
+902-    .player-serie h2 {
+903-        font-size: 21px;
+904-    }
+905-
+906:    .episodios {
+907-        grid-template-columns: 1fr;
+908-        gap: 10px;
+909-    }
+910-
+911:    .episodio {
+912-        min-height: 120px;
+913-    }
+914-}
+915-
+916-</style>
+917-
+918-</style>
+919-
+920-
+921-<style id="lukafilmes-netflix-style">
+922-
+923-/* ===== LUKAFILMES — VISUAL ESTILO NETFLIX ===== */
+924-
+925-:root {
+926-    --nf-bg: #050505;
+927-    --nf-card: #181818;
+928-    --nf-card-hover: #242424;
+929-    --nf-text: #fff;
+930-    --nf-muted: #b3b3b3;
+931-    --nf-red: #e50914;
+932-}
+933-
+934-html,
+935-body {
+936-    background: #050505 !important;
+937-    color: var(--nf-text) !important;
+938-}
+939-
+940-body {
+941-    overflow-x: hidden;
+942-}
+943-
+944-/* Fundo da série
+945-   O backdrop principal é controlado por:
+946-   .pagina-serie::before
+947-   .pagina-serie::after
+948-   Não duplicar o fundo no body.
+949-*/
+950-/* Área principal */
+951-main {
+952-    position: relative;
+953-    max-width: 1200px !important;
+954-    margin: 0 auto !important;
+955-    padding: 70px 28px 35px !important;
+956-}
+957-
+958-/* Poster */
+959-#posterSerie {
+960-    width: 230px !important;
+961-    max-width: 42vw !important;
+962-    border-radius: 8px !important;
+963-    box-shadow: 0 20px 60px rgba(0,0,0,.75) !important;
+964-    transition: transform .25s ease, box-shadow .25s ease;
+965-}
+966-
+967-#posterSerie:hover {
+968-    transform: scale(1.025);
+969-    box-shadow: 0 25px 70px rgba(0,0,0,.9) !important;
+970-}
+971-
+972-/* Título */
+973-#tituloSerie {
+974-    color: #fff !important;
+975-    font-size: clamp(32px, 5vw, 58px) !important;
+976-    font-weight: 800 !important;
+977-    letter-spacing: -1px;
+978-    margin: 25px 0 8px !important;
+979-    text-shadow: 0 3px 18px rgba(0,0,0,.9);
+980-}
+981-
+982-/* Informações */
+983-#dadosSerie {
+984-    color: #ddd !important;
+985-    font-size: 16px !important;
+986-    font-weight: 600;
+987-    margin-bottom: 20px !important;
+988-}
+989-
+990-/* Sinopse */
+991-.sinopse-box {
+992-    max-width: 760px;
+993-    background: linear-gradient(
+994-        90deg,
+995-        rgba(0,0,0,.72),
+996-        rgba(0,0,0,.32)
+997-    ) !important;
+998-    border: 0 !important;
+999-    border-radius: 8px !important;
+1000-    padding: 20px !important;
+1001-    box-shadow: none !important;
+1002-}
+1003-
+1004-.sinopse-box h2 {
+1005-    color: #fff !important;
+1006-    font-size: 21px !important;
+1007-    margin-top: 0 !important;
+1008-}
+1009-
+1010-.sinopse {
+1011-    color: #ddd !important;
+--
+1024-}
+1025-
+1026-.temporadas h2 {
+1027-    color: #fff !important;
+1028-    font-size: 27px !important;
+1029-    font-weight: 700 !important;
+1030-    margin-bottom: 18px !important;
+1031-}
+1032-
+1033-/* Select */
+1034-#selectTemporada {
+1035-    appearance: none;
+1036-    -webkit-appearance: none;
+1037-    background: #181818 !important;
+1038-    color: #fff !important;
+1039-    border: 1px solid #555 !important;
+1040-    border-radius: 4px !important;
+1041-    padding: 13px 42px 13px 15px !important;
+1042-    font-size: 15px !important;
+1043-    font-weight: 600 !important;
+1044-    min-width: 210px;
+1045-    cursor: pointer;
+1046-}
+1047-
+1048-/* ===== EPISÓDIOS — ESTILO NETFLIX ===== */
+1049:.episodios {
+1050-    display: flex !important;
+1051-    flex-direction: column !important;
+1052-    gap: 0 !important;
+1053-    margin-top: 18px !important;
+1054-    width: 100%;
+1055-}
+1056-
+1057:.episodio {
+1058-    position: relative;
+1059-    display: flex !important;
+1060-    align-items: center !important;
+1061-    width: 100% !important;
+1062-    min-height: 145px !important;
+1063-    padding: 14px 0 !important;
+1064-    background: transparent !important;
+1065-    border: 0 !important;
+1066-    border-bottom: 1px solid rgba(255,255,255,.14) !important;
+1067-    border-radius: 0 !important;
+1068-    color: #fff !important;
+1069-    text-align: left !important;
+1070-    cursor: pointer;
+1071-    transition: background .2s ease, padding .2s ease;
+1072-    overflow: hidden;
+1073-}
+1074-
+1075:.episodio:hover {
+1076-    background: rgba(255,255,255,.055) !important;
+1077-    transform: none !important;
+1078-    padding-left: 8px !important;
+1079-    padding-right: 8px !important;
+1080-}
+1081-
+1082:.episodio-capa {
+1083-    position: relative;
+1084-    flex: 0 0 220px;
+1085-    width: 220px;
+1086-    height: 124px;
+1087-    overflow: hidden;
+1088-    border-radius: 5px;
+1089-    background: #181818;
+1090-    box-shadow: 0 8px 25px rgba(0,0,0,.45);
+1091-}
+1092-
+1093:.episodio-capa img {
+1094-    display: block;
+1095-    width: 100%;
+1096-    height: 100%;
+1097-    object-fit: cover;
+1098-    transition: transform .25s ease, filter .25s ease;
+1099-}
+1100-
+1101:.episodio:hover .episodio-capa img {
+1102-    transform: scale(1.04);
+1103-    filter: brightness(.72);
+1104-}
+1105-
+1106:.episodio-capa::after {
+1107-    content: '';
+1108-    position: absolute;
+1109-    inset: 0;
+1110-    background: linear-gradient(90deg, rgba(0,0,0,.05), rgba(0,0,0,.45));
+1111-    pointer-events: none;
+1112-}
+1113-
+1114:.episodio-capa .episodio-play {
+1115-    position: absolute;
+1116-    z-index: 2;
+1117-    left: 50%;
+1118-    top: 50%;
+1119-    transform: translate(-50%,-50%);
+1120-    display: flex;
+1121-    align-items: center;
+1122-    justify-content: center;
+1123-    width: 48px;
+1124-    height: 48px;
+1125-    border-radius: 50%;
+1126-    background: rgba(229,9,20,.95);
+1127-    color: #fff;
+1128-    font-size: 20px;
+1129-    opacity: 0;
+1130-    transition: opacity .2s ease, transform .2s ease;
+1131-    box-shadow: 0 5px 25px rgba(0,0,0,.55);
+1132-}
+1133-
+1134:.episodio:hover .episodio-play {
+1135-    opacity: 1;
+1136-    transform: translate(-50%,-50%) scale(1.05);
+1137-}
+1138-
+1139:.episodio-info {
+1140-    flex: 1;
+1141-    min-width: 0;
+1142-    padding: 0 0 0 22px;
+1143-}
+1144-
+1145:.episodio-info strong {
+1146-    display: block;
+1147-    margin: 0 0 8px;
+1148-    color: #fff !important;
+1149-    font-size: 18px !important;
+1150-    font-weight: 600;
+1151-}
+1152-
+1153:.episodio-info small {
+1154-    display: block;
+1155-    max-width: 760px;
+1156-    color: #b3b3b3 !important;
+1157-    font-size: 14px;
+1158-    line-height: 1.55;
+1159-}
+1160-
+1161-@media (max-width: 700px) {
+1162:    .episodio {
+1163-        min-height: 100px !important;
+1164-        padding: 12px 0 !important;
+1165-    }
+1166-
+1167:    .episodio:hover {
+1168-        padding-left: 4px !important;
+1169-        padding-right: 4px !important;
+1170-    }
+1171-
+1172:    .episodio-capa {
+1173-        flex-basis: 135px;
+1174-        width: 135px;
+1175-        height: 76px;
+1176-        border-radius: 4px;
+1177-    }
+1178-
+1179:    .episodio-capa .episodio-play {
+1180-        width: 36px;
+1181-        height: 36px;
+1182-        font-size: 15px;
+1183-        opacity: 1;
+1184-    }
+1185-
+1186:    .episodio-info {
+1187-        padding-left: 13px;
+1188-    }
+1189-
+1190:    .episodio-info strong {
+1191-        font-size: 15px !important;
+1192-        margin-bottom: 5px;
+1193-    }
+1194-
+1195:    .episodio-info small {
+1196-        font-size: 12px;
+1197-        line-height: 1.4;
+1198-        display: -webkit-box;
+1199-        -webkit-line-clamp: 3;
+1200-        -webkit-box-orient: vertical;
+1201-        overflow: hidden;
+1202-    }
+1203-}
+1204-
+1205-
+1206-/* ===== COMPLEMENTO NETFLIX — INFORMAÇÕES DO EPISÓDIO ===== */
+1207-
+1208:.episodio-topo {
+1209-    display: flex;
+1210-    align-items: center;
+1211-    gap: 12px;
+1212-    margin-bottom: 8px;
+1213-}
+1214-
+1215:.episodio-info h3 {
+1216-    margin: 0 0 8px;
+1217-    color: #fff;
+1218-    font-size: 18px;
+1219-    font-weight: 600;
+1220-    line-height: 1.3;
+1221-}
+1222-
+1223:.episodio-info p {
+1224-    margin: 0;
+1225-    max-width: 760px;
+1226-    color: #b3b3b3;
+1227-    font-size: 14px;
+1228-    line-height: 1.55;
+1229-}
+1230-
+1231:.episodio-duracao {
+1232-    color: #b3b3b3;
+1233-    font-size: 13px;
+1234-    white-space: nowrap;
+1235-}
+1236-
+1237:.episodio-sem-imagem {
+1238-    width: 100%;
+1239-    height: 100%;
+1240-    display: flex;
+1241-    align-items: center;
+1242-    justify-content: center;
+1243-    background: #181818;
+1244-    color: #777;
+1245-    font-size: 30px;
+1246-}
+1247-
+1248-@media (max-width: 700px) {
+1249-
+1250:    .episodio-topo {
+1251-        gap: 7px;
+1252-        margin-bottom: 5px;
+1253-    }
+1254-
+1255:    .episodio-info h3 {
+1256-        font-size: 15px;
+1257-        margin-bottom: 5px;
+1258-        line-height: 1.3;
+1259-    }
+1260-
+1261:    .episodio-info p {
+1262-        font-size: 12px;
+1263-        line-height: 1.4;
+1264-
+1265-        display: -webkit-box;
+1266-        -webkit-line-clamp: 3;
+1267-        -webkit-box-orient: vertical;
+1268-        overflow: hidden;
+1269-    }
+1270-
+1271:    .episodio-duracao {
+1272-        font-size: 11px;
+1273-    }
+1274-}
+1275-
+1276-
+1277-/* ===== PLAYER ===== */
+1278-
+1279-.player-serie {
+1280-    max-width: 1200px !important;
+1281-    margin: 0 auto 60px !important;
+1282-    padding: 25px 28px !important;
+1283-    background: #050505 !important;
+1284-    border: 0 !important;
+1285-}
+1286-
+1287-#tituloPlayer {
+1288-    color: #fff !important;
+1289-    font-size: 24px !important;
+1290-    margin-bottom: 18px !important;
+1291-}
+1292-
+1293-.player-video {
+1294-    width: 100% !important;
+1295-    aspect-ratio: 16 / 9 !important;
+1296-    background: #000 !important;
+1297-    border-radius: 6px !important;
+1298-    overflow: hidden !important;
+1299-    box-shadow: 0 15px 50px rgba(0,0,0,.8) !important;
+1300-}
+1301-
+1302-.player-video iframe {
+1303-    width: 100% !important;
+1304-    height: 100% !important;
+1305-    border: 0 !important;
+1306-}
+1307-
+1308-/* ===== CELULAR ===== */
+1309-
+1310-@media (max-width: 700px) {
+1311-
+1312-    main {
+1313-        padding: 35px 16px 25px !important;
+1314-    }
+1315-
+1316-    #posterSerie {
+1317-        width: 155px !important;
+1318-        max-width: 48vw !important;
+1319-    }
+1320-
+1321-    #tituloSerie {
+1322-        font-size: 34px !important;
+1323-        margin-top: 18px !important;
+1324-    }
+1325-
+1326-    .sinopse-box {
+1327-        padding: 15px !important;
+1328-    }
+1329-
+1330-    .temporadas {
+1331-        padding: 20px 16px 35px !important;
+1332-    }
+1333-
+1334-    .temporadas h2 {
+1335-        font-size: 22px !important;
+1336-    }
+1337-
+1338-    #selectTemporada {
+1339-        width: 100%;
+1340-    }
+1341-
+1342:    .episodio {
+1343-        min-height: 72px !important;
+1344-        padding: 12px !important;
+1345-    }
+1346-
+1347-    .player-serie {
+1348-        padding: 18px 4px !important;
+1349-        margin-left: -4px !important;
+1350-        margin-right: -4px !important;
+1351-    }
+1352-
+1353-    .player-video {
+1354-        width: 100vw !important;
+1355-        max-width: 100vw !important;
+1356-        height: 700px !important;
+1357-        aspect-ratio: auto !important;
+1358-        border-radius: 0 !important;
+1359-    }
+1360-
+1361-    .player-video iframe {
+1362-        width: 100% !important;
+1363-        height: 700px !important;
+1364-        min-height: 700px !important;
+1365-    }
+1366-
+1367-}
+1368-
+1369-</style>
+1370-
+1371-
+1372-<style id="serie-play1-play2-css">
+1373-
+1374-.players-serie-opcoes{
+1375-    display:flex;
+1376-    gap:10px;
+1377-    margin:0 0 14px;
+1378-    flex-wrap:wrap;
+1379-}
+1380-
+1381-.serie-player-btn{
+1382-    border:1px solid rgba(255,255,255,.15);
+1383-    background:#181818;
+1384-    color:#fff;
+1385-    border-radius:8px;
+1386-    padding:10px 18px;
+1387-    font-weight:700;
+1388-    cursor:pointer;
+1389-}
+1390-
+1391-.serie-player-btn.ativo{
+1392-    background:#e50914;
+1393-    border-color:#e50914;
+1394-}
+1395-
+1396-@media(max-width:700px){
+1397-
+1398-    .players-serie-opcoes{
+1399-        gap:8px;
+1400-        margin-bottom:10px;
+1401-    }
+1402-
+1403-    .serie-player-btn{
+1404-        flex:1;
+1405-        padding:10px 12px;
+1406-        font-size:13px;
+1407-    }
+1408-
+1409-}
+1410-
+1411-</style>
+1412-
+1413-
+1414-<style id="lukafilmes-serie-mega-maya">
+1415-
+1416-/* =========================================================
+1417-   LUKAFILMES — SERVIDORES DE SÉRIES
+1418-   MEGA + MAYA
+1419-   ========================================================= */
+1420-
+1421-.players-serie-opcoes {
+1422-    display: flex !important;
+1423-    flex-wrap: wrap !important;
+1424-    justify-content: center !important;
+1425-    align-items: center !important;
+1426-    gap: 10px !important;
+1427-    width: 100% !important;
+1428-    margin: 18px auto !important;
+1429-}
+1430-
+1431-.players-serie-opcoes .serie-player-btn {
+1432-    display: inline-flex !important;
+1433-    align-items: center !important;
+1434-    justify-content: center !important;
+1435-    min-width: 115px !important;
+1436-    min-height: 46px !important;
+1437-    padding: 10px 22px !important;
+1438-    border: 1px solid rgba(255,255,255,.14) !important;
+1439-    border-radius: 7px !important;
+1440-    background: #181818 !important;
+1441-    color: #fff !important;
+1442-    font-size: 14px !important;
+--
+1829-
+1830-        <div class="sinopse-box">
+1831-
+1832-            <h2>
+1833-                📝 Sinopse
+1834-            </h2>
+1835-
+1836-            <p
+1837-                id="sinopseSerie"
+1838-                class="sinopse">
+1839-                Carregando sinopse...
+1840-            </p>
+1841-
+1842-        </div>
+1843-
+1844-    </main>
+1845-
+1846-
+1847-    <!-- ==========================================
+1848-         TEMPORADAS
+1849-         ========================================== -->
+1850-
+1851-    <section class="temporadas">
+1852-
+1853-        <h2>
+1854:            📚 Temporadas e episódios
+1855-        </h2>
+1856-
+1857-        <select id="selectTemporada"></select>
+1858-
+1859-        <div
+1860:            id="episodios"
+1861:            class="episodios">
+1862-
+1863:            <div class="episodio">
+1864:                🔄 Carregando episódios...
+1865-            </div>
+1866-
+1867-        </div>
+1868-
+1869-    </section>
+1870-
+1871-
+1872-    <!-- ==========================================
+1873-         PLAYER
+1874-         ========================================== -->
+1875-
+1876-    <section
+1877-        id="playerSerie"
+1878-        class="player-serie"
+1879-        style="display: none;"
+1880-    >
+1881-
+1882-        <h2 id="tituloPlayer">
+1883-            🎬 Assistindo
+1884-        </h2>
+1885-
+1886-        
+1887-        <div class="players-serie-opcoes">
+1888-
+1889-            <button
+1890-                type="button"
+1891-                class="serie-player-btn ativo"
+1892-                data-player="1">
+1893-                <span class="serie-player-numero">PLAY 1</span>
+1894-                MegaEmbed
+1895-            </button>
+1896-
+1897-            <button
+1898-                type="button"
+1899-                class="serie-player-btn"
+1900-                data-player="2">
+1901-                <span class="serie-player-numero">PLAY 2</span>
+1902-                PipocaCine
+1903-            </button>
+1904-
+1905-            <button
+1906-                type="button"
+1907-                class="serie-player-btn"
+1908-                data-player="3">
+1909-                <span class="serie-player-numero">PLAY 3</span>
+1910-                MyEmbed
+1911-            </button>
+1912-
+1913-            <button
+1914-                type="button"
+1915-                class="serie-player-btn"
+1916-                data-player="4">
+1917-                <span class="serie-player-numero">PLAY 4</span>
+1918-                APIPlayer
+1919-            </button>
+1920-
+1921-        </div>
+1922-
+1923-
+1924-        <div class="player-video">
+1925-
+1926-            <iframe
+1927-                id="serieFrame"
+1928-                src=""
+1929-                title="Player da série"
+1930-                allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+1931-                allowfullscreen>
+1932-            </iframe>
+1933-
+1934-        </div>
+1935-
+1936-    </section>
+1937-
+1938-</div>
+1939-
+1940-
+1941-<script>
+1942-
+1943-(function () {
+1944-
+1945-    "use strict";
+1946-
+1947-
+1948-    console.log("[LUKAFILMES] Iniciando carregamento da série...");
+1949-
+1950-
+1951-    /* ==========================================
+1952-       RECUPERAR SÉRIE
+1953-       ========================================== */
+1954-
+1955-    const salvo = localStorage.getItem("serieSelecionada");
+1956-
+1957-
+1958-    if (!salvo) {
+1959-
+1960-        document.getElementById("tituloSerie").textContent =
+1961-            "Série não encontrada";
+1962-
+1963-        document.getElementById("sinopseSerie").textContent =
+1964-            "Nenhuma série foi selecionada.";
+--
+1994-        "[SERIES] Série selecionada:",
+1995-        serie
+1996-    );
+1997-
+1998-
+1999-    /* ==========================================
+2000-       ELEMENTOS
+2001-       ========================================== */
+2002-
+2003-    const tituloElemento =
+2004-        document.getElementById("tituloSerie");
+2005-
+2006-    const posterElemento =
+2007-        document.getElementById("posterSerie");
+2008-
+2009-    const sinopseElemento =
+2010-        document.getElementById("sinopseSerie");
+2011-
+2012-    const dadosElemento =
+2013-        document.getElementById("dadosSerie");
+2014-
+2015-    const select =
+2016-        document.getElementById("selectTemporada");
+2017-
+2018-    const listaEpisodios =
+2019:        document.getElementById("episodios");
+2020-
+2021-    const player =
+2022-        document.getElementById("playerSerie");
+2023-
+2024-    const frame =
+2025-        document.getElementById("serieFrame");
+2026-
+2027-    const tituloPlayer =
+2028-        document.getElementById("tituloPlayer");
+2029-
+2030-
+2031-    /* ==========================================
+2032-       DADOS BÁSICOS
+2033-       ========================================== */
+2034-
+2035-    const titulo =
+2036-        serie.titulo ||
+2037-        serie.name ||
+2038-        serie.original_name ||
+2039-        "Sem título";
+2040-
+2041-
+2042-    document.title =
+2043-        "LUKAFILMES - " + titulo;
+2044-
+2045-
+2046-    tituloElemento.textContent =
+2047-        titulo;
+2048-
+2049-
+2050-    /* ==========================================
+2051-       CAPA
+2052-       ========================================== */
+2053-
+2054-    let poster = "";
+2055-
+2056-
+2057-    if (serie.capa) {
+2058-
+2059-        poster = serie.capa;
+2060-
+2061-    } else if (serie.poster_path) {
+2062-
+2063-        poster =
+2064-            "https://image.tmdb.org/t/p/w500" +
+2065-            serie.poster_path;
+2066-
+2067-    }
+2068-
+2069-
+2070-    if (poster) {
+2071-
+2072-        posterElemento.src = poster;
+2073-
+2074-    } else {
+2075-
+2076-        posterElemento.style.display = "none";
+2077-
+2078-    }
+2079-
+2080-
+2081-    /* ==========================================
+2082-       SINOPSE
+2083-       ========================================== */
+2084-
+2085-    sinopseElemento.textContent =
+2086-        serie.sinopse ||
+2087-        serie.overview ||
+2088-        "Sinopse não disponível.";
+2089-
+2090-
+2091-    /* ==========================================
+2092-       ANO
+2093-       ========================================== */
+2094-
+2095-    const ano =
+2096-        serie.ano ||
+2097-        (
+2098-            serie.first_air_date
+2099-                ? serie.first_air_date.substring(0, 4)
+2100-                : ""
+2101-        );
+2102-
+2103-
+2104-    /* ==========================================
+2105-       NOTA
+2106-       ========================================== */
+2107-
+2108-    const valorNota =
+2109-        serie.nota ??
+2110-        serie.vote_average ??
+2111-        0;
+2112-
+2113-
+2114-    const nota =
+2115-        Number(valorNota || 0).toFixed(1);
+2116-
+2117-
+2118-    dadosElemento.textContent =
+2119-        "⭐ " +
+--
+2223-       VARIÁVEIS
+2224-       ========================================== */
+2225-
+2226-    let temporadas = [];
+2227-
+2228-
+2229-    /* ==========================================
+2230-       CARREGAR DETALHES DA SÉRIE
+2231-       ========================================== */
+2232-
+2233-    async function carregarDetalhes() {
+2234-
+2235-    console.log(
+2236-        "[SERIES] ID da série:",
+2237-        serie.id
+2238-    );
+2239-
+2240-
+2241-    if (!serie.id) {
+2242-
+2243-        console.error(
+2244-            "[SERIES] ID da série não encontrado."
+2245-        );
+2246-
+2247-        listaEpisodios.innerHTML = `
+2248:            <div class="episodio">
+2249-                ❌ ID da série não encontrado.
+2250-            </div>
+2251-        `;
+2252-
+2253-        return;
+2254-    }
+2255-
+2256-
+2257-    try {
+2258-
+2259-        const url =
+2260-            "/api/serie/" +
+2261-            encodeURIComponent(serie.id);
+2262-
+2263-
+2264-        console.log(
+2265-            "[SERIES] Buscando detalhes:",
+2266-            url
+2267-        );
+2268-
+2269-
+2270-        const resposta =
+2271-            await fetch(url, {
+2272-                method: "GET",
+2273-                credentials: "same-origin",
+2274-                cache: "no-store"
+2275-            });
+2276-
+2277-
+2278-        console.log(
+2279-            "[SERIES] Status detalhes:",
+2280-            resposta.status
+2281-        );
+2282-
+2283-
+2284-        if (!resposta.ok) {
+2285-
+2286-            throw new Error(
+2287-                "Erro HTTP " +
+2288-                resposta.status
+2289-            );
+2290-        }
+2291-
+2292-
+2293-        const dados =
+2294-            await resposta.json();
+2295-
+2296-
+2297-        console.log(
+2298-            "[SERIES] Detalhes recebidos:",
+2299-            dados
+2300-        );
+2301-
+2302-
+2303-        if (
+2304-            dados &&
+2305-            dados.sucesso &&
+2306-            dados.serie
+2307-        ) {
+2308-
+2309-            const serieDetalhes =
+2310-                dados.serie;
+2311-
+2312-
+2313-            const listaTemporadas =
+2314-                Array.isArray(serieDetalhes.temporadas)
+2315-                    ? serieDetalhes.temporadas
+2316-                    : (
+2317-                        Array.isArray(serieDetalhes.seasons)
+2318-                            ? serieDetalhes.seasons
+2319-                            : []
+2320-                    );
+2321-
+2322-
+2323-            console.log(
+2324-                "[SERIES] Lista de temporadas:",
+2325-                listaTemporadas
+2326-            );
+2327-
+2328-
+2329-            if (listaTemporadas.length > 0) {
+2330-
+2331-                console.log(
+2332-                    "[SERIES] Temporadas encontradas:",
+2333-                    listaTemporadas.length
+2334-                );
+2335-
+2336-
+2337-                preencherTemporadas(
+2338-                    listaTemporadas
+2339-                );
+2340-
+2341-
+2342-                return;
+2343-            }
+2344-
+2345-
+2346-            console.warn(
+2347-                "[SERIES] Temporadas não encontradas. Usando fallback."
+2348-            );
+--
+2478-
+2479-        if (
+2480-            !listaEpisodios ||
+2481-            !serie ||
+2482-            !serie.id
+2483-        ) {
+2484-
+2485-            console.error(
+2486-                "[SERIES] Dados da série não encontrados."
+2487-            );
+2488-
+2489-            return;
+2490-        }
+2491-
+2492-
+2493-        listaEpisodios.innerHTML = `
+2494-
+2495-            <div style="
+2496-                padding: 25px;
+2497-                text-align: center;
+2498-                color: #aaa;
+2499-                width: 100%;
+2500-                grid-column: 1 / -1;
+2501-            ">
+2502-
+2503:                🔄 Carregando episódios...
+2504-
+2505-            </div>
+2506-
+2507-        `;
+2508-
+2509-
+2510-        const url =
+2511-            "/api/serie/" +
+2512-            encodeURIComponent(serie.id) +
+2513-            "/temporada/" +
+2514-            encodeURIComponent(temporada);
+2515-
+2516-
+2517-        console.log(
+2518:            "[SERIES] Buscando episódios:",
+2519-            url
+2520-        );
+2521-
+2522-
+2523-        try {
+2524-
+2525-            const resposta =
+2526-                await fetch(url, {
+2527-                    method: "GET",
+2528-                    credentials: "same-origin",
+2529-                    cache: "no-store"
+2530-                });
+2531-
+2532-
+2533-            console.log(
+2534:                "[SERIES] Status episódios:",
+2535-                resposta.status
+2536-            );
+2537-
+2538-
+2539-            if (!resposta.ok) {
+2540-
+2541-                throw new Error(
+2542-                    "Erro HTTP " +
+2543-                    resposta.status
+2544-                );
+2545-            }
+2546-
+2547-
+2548-            const dados =
+2549-                await resposta.json();
+2550-
+2551-
+2552-            console.log(
+2553-                "[SERIES] Episódios recebidos:",
+2554-                dados
+2555-            );
+2556-
+2557-
+2558-            if (
+2559-                !dados ||
+2560-                !dados.sucesso ||
+2561:                !Array.isArray(dados.episodios)
+2562-            ) {
+2563-
+2564-                throw new Error(
+2565:                    "A API não retornou episódios."
+2566-                );
+2567-            }
+2568-
+2569-
+2570:            if (!dados.episodios.length) {
+2571-
+2572-                listaEpisodios.innerHTML = `
+2573-
+2574-                    <div style="
+2575-                        padding: 25px;
+2576-                        text-align: center;
+2577-                        color: #aaa;
+2578-                        width: 100%;
+2579-                        grid-column: 1 / -1;
+2580-                    ">
+2581-
+2582:                        Nenhum episódio encontrado.
+2583-
+2584-                    </div>
+2585-
+2586-                `;
+2587-
+2588-                return;
+2589-            }
+2590-
+2591-
+2592-            listaEpisodios.innerHTML = "";
+2593:            dados.episodios.forEach(function (ep) {
+2594-
+2595-                const numero =
+2596:                    ep.episode_number || "";
+2597-
+2598-                const nome =
+2599-                    ep.name || "Sem título";
+2600-
+2601-                const descricao =
+2602-                    ep.overview || "Descrição não disponível.";
+2603-
+2604-                const duracao =
+2605-                    ep.runtime
+2606-                        ? ep.runtime + " min"
+2607-                        : "";
+2608-
+2609-                const imagem =
+2610-                    ep.still_path
+2611-                        ? "https://image.tmdb.org/t/p/w780" + ep.still_path
+2612-                        : (
+2613-                            serie.backdrop_path
+2614-                                ? "https://image.tmdb.org/t/p/w780" + serie.backdrop_path
+2615-                                : ""
+2616-                        );
+2617-
+2618-                const item =
+2619-                    document.createElement("button");
+2620-
+2621-                item.type = "button";
+2622:                item.className = "episodio";
+2623-
+2624-                item.innerHTML = `
+2625:                    <div class="episodio-capa">
+2626-
+2627-                        ${
+2628-                            imagem
+2629-                                ? `<img
+2630-                                    src="${imagem}"
+2631-                                    alt="Episódio ${numero}"
+2632-                                    loading="lazy"
+2633-                                >`
+2634:                                : `<div class="episodio-sem-imagem">
+2635-                                    🎬
+2636-                                  </div>`
+2637-                        }
+2638-
+2639:                        <div class="episodio-play">
+2640-                            ▶
+2641-                        </div>
+2642-
+2643-                    </div>
+2644-
+2645:                    <div class="episodio-info">
+2646-
+2647:                        <div class="episodio-topo">
+2648-
+2649-                            <strong>
+2650-                                ${numero ? "Episódio " + numero : "Episódio"}
+2651-                            </strong>
+2652-
+2653-                            ${
+2654-                                duracao
+2655:                                    ? `<span class="episodio-duracao">
+2656-                                        ${duracao}
+2657-                                      </span>`
+2658-                                    : ""
+2659-                            }
+2660-
+2661-                        </div>
+2662-
+2663-                        <h3>
+2664-                            ${nome}
+2665-                        </h3>
+2666-
+2667-                        <p>
+2668-                            ${descricao}
+2669-                        </p>
+2670-
+2671-                    </div>
+2672-                `;
+2673-
+2674-                item.addEventListener("click", function () {
+2675-
+2676-                    assistirEpisodio(
+2677-                        temporada,
+2678-                        numero,
+2679-                        nome
+2680-                    );
+2681-
+2682-                });
+2683-
+2684-                listaEpisodios.appendChild(item);
+2685-
+2686-            });
+2687-
+2688-
+2689-        } catch (erro) {
+2690-
+2691-            console.error(
+2692-                "[ERRO EPISODIOS]",
+2693-                erro
+2694-            );
+2695-
+2696-
+2697-            listaEpisodios.innerHTML = `
+2698-
+2699-                <div style="
+2700-                    padding: 25px;
+2701-                    text-align: center;
+2702-                    color: #ff7777;
+2703-                    width: 100%;
+2704-                    grid-column: 1 / -1;
+2705-                ">
+2706-
+2707:                    ❌ Não foi possível carregar os episódios.
+2708-
+2709-                    <br>
+2710-
+2711-                    <small style="
+2712-                        color: #888;
+2713-                    ">
+2714-                        Verifique o console do navegador.
+2715-                    </small>
+2716-
+2717-                </div>
+2718-
+2719-            `;
+2720-
+2721-        }
+2722-
+2723-    }
+2724-
+2725-
+2726-    /* ==========================================
+2727-       TROCAR TEMPORADA
+2728-       ========================================== */
+2729-
+2730-    select.addEventListener(
+2731-        "change",
+2732-        function () {
+2733-
+2734-            const temporada =
+2735-                Number(
+2736-                    select.value
+2737-                );
+2738-
+2739-
+2740-            if (!temporada) {
+2741-
+2742-                return;
+2743-            }
+2744-
+2745-
+2746-            mostrarEpisodios(
+2747-                temporada
+2748-            );
+2749-
+2750-        }
+2751-    );
+2752-
+2753-
+2754-    /* ==========================================
+2755-       PLAYER
+2756-       ========================================== */
+2757-
+2758-    function assistirEpisodio(
+2759-        temporada,
+2760:        episodio,
+2761-        nome
+2762-    ) {
+2763-
+2764-        if (!serie || !serie.id) {
+2765-
+2766-            console.error(
+2767-                "[SERIES] ID da série não encontrado."
+2768-            );
+2769-
+2770-            return;
+2771-        }
+2772-
+2773-        const idSerie =
+2774-            String(serie.id).trim();
+2775-
+2776-        const temporadaId =
+2777-            String(temporada).trim();
+2778-
+2779:        const episodioId =
+2780:            String(episodio).trim();
+2781-
+2782:        if (!idSerie || !temporadaId || !episodioId) {
+2783-
+2784-            console.error(
+2785:                "[SERIES] Dados do episódio incompletos.",
+2786-                {
+2787-                    idSerie,
+2788-                    temporadaId,
+2789:                    episodioId
+2790-                }
+2791-            );
+2792-
+2793-            return;
+2794-        }
+2795-
+2796-        console.log(
+2797:            "[SERIES PLAYER] Abrindo episódio:",
+2798-            {
+2799-                serie: idSerie,
+2800-                temporada: temporadaId,
+2801:                episodio: episodioId,
+2802-                nome: nome || ""
+2803-            }
+2804-        );
+2805-
+2806-        const playerSerie =
+2807-            document.getElementById("playerSerie");
+2808-
+2809-        const serieFrame =
+2810-            document.getElementById("serieFrame");
+2811-
+2812-        if (!playerSerie || !serieFrame) {
+2813-
+2814-            console.error(
+2815-                "[SERIES PLAYER] Área do player não encontrada."
+2816-            );
+2817-
+2818-            return;
+2819-        }
+2820-
+2821-        /*
+2822-         * GUARDA OS DADOS DO EPISÓDIO
+2823-         */
+2824-
+2825-        playerSerie.dataset.serieId =
+2826-            idSerie;
+2827-
+2828-        playerSerie.dataset.temporada =
+2829-            temporadaId;
+2830-
+2831:        playerSerie.dataset.episodio =
+2832:            episodioId;
+2833-
+2834-        /*
+2835-         * ABRE O PLAYER
+2836-         */
+2837-
+2838-        playerSerie.style.display =
+2839-            "block";
+2840-
+2841-        /*
+2842-         * PLAY 1 — MEGA
+2843-         * INICIA COMO PADRÃO
+2844-         */
+2845-
+2846-        const play1Url =
+2847-            "https://mgeb.top/embed/" +
+2848-            idSerie +
+2849-            "/" +
+2850-            temporadaId +
+2851-            "/" +
+2852:            episodioId;
+2853-
+2854-        serieFrame.src =
+2855-            play1Url;
+2856-
+2857-        /*
+2858-         * CONTINUAR ASSISTINDO
+2859:         * Registra imediatamente o episódio clicado.
+2860:         * O episódio começa sempre no PLAY 1.
+2861-         */
+2862-        if (window.LukaRegistrarSerieContinuar) {
+2863-
+2864-            window.LukaRegistrarSerieContinuar({
+2865-
+2866-                id: idSerie,
+2867-
+2868-                titulo:
+2869-                    serie.name ||
+2870-                    serie.titulo ||
+2871-                    nome ||
+2872-                    "Série",
+2873-
+2874-                capa:
+2875-                    serie.poster_path
+2876-                        ? "https://image.tmdb.org/t/p/w500" +
+2877-                          serie.poster_path
+2878-                        : "",
+2879-
+2880-                tipo: "serie",
+2881-
+2882-                player: "1",
+2883-
+2884-                temporada:
+2885-                    temporadaId,
+2886-
+2887:                episodio:
+2888:                    episodioId
+2889-
+2890-            });
+2891-
+2892-            console.log(
+2893-                "[CONTINUAR SÉRIE] Episódio iniciado:",
+2894-                {
+2895-                    id: idSerie,
+2896-                    temporada: temporadaId,
+2897:                    episodio: episodioId,
+2898-                    player: "1"
+2899-                }
+2900-            );
+2901-        }
+2902-
+2903-        /*
+2904-         * MARCA PLAY 1
+2905-         */
+2906-
+2907-        const botoesPlayers =
+2908-            playerSerie.querySelectorAll(
+2909-                ".serie-player-btn"
+2910-            );
+2911-
+2912-        botoesPlayers.forEach(function(btn) {
+2913-
+2914-            btn.classList.remove(
+2915-                "ativo"
+2916-            );
+2917-
+2918-            btn.classList.remove(
+2919-                "player-selecionado"
+2920-            );
+2921-
+2922-        });
+2923-
+2924-        const play1 =
+2925-            playerSerie.querySelector(
+2926-                '.serie-player-btn[data-player="1"]'
+2927-            );
+2928-
+2929-        if (play1) {
+2930-
+2931-            play1.classList.add(
+2932-                "ativo"
+2933-            );
+2934-
+2935-            play1.classList.add(
+2936-                "player-selecionado"
+2937-            );
+2938-
+2939-        }
+2940-
+2941-        /*
+2942-         * CONFIGURA PLAY 1 E PLAY 2
+2943-         */
+2944-
+2945-        botoesPlayers.forEach(function(btn) {
+2946-
+2947-            if (
+2948-                btn.dataset.playerConfigurado === "1"
+2949-            ) {
+2950-                return;
+2951-            }
+2952-
+2953-            btn.dataset.playerConfigurado =
+2954-                "1";
+2955-
+2956-            btn.addEventListener(
+2957-                "click",
+2958-                function() {
+2959-
+2960-                    const numero =
+2961-                        String(
+2962-                            this.dataset.player || ""
+2963-                        );
+2964-
+2965-                    let embedUrl = "";
+2966-
+2967-                    /*
+2968-                     * PLAY 1 — MEGA
+2969-                     */
+2970-
+2971-                    if (numero === "1") {
+2972-
+2973-                        embedUrl =
+2974-                            "https://mgeb.top/embed/" +
+2975-                            idSerie +
+2976-                            "/" +
+2977-                            temporadaId +
+2978-                            "/" +
+2979:                            episodioId;
+2980-                    }
+2981-
+2982-                    /*
+2983-                     * PLAY 2 — MAYA / MYEMBED
+2984-                     */
+2985-
+2986-                    else if (numero === "2") {
+2987-
+2988-                        embedUrl =
+2989-                            "https://pipocacine.lat/embed/" +
+2990-                            String(idSerie).trim() +
+2991-                            "/" +
+2992-                            String(temporadaId).trim() +
+2993-                            "/" +
+2994:                            String(episodioId).trim();
+2995-                    }
+2996-
+2997-                    /*
+2998-                     * PLAY 3 — APIPLAYER
+2999-                     * SÉRIE / TV
+3000-                     * IDIOMA: PORTUGUÊS
+3001-                     */
+3002-
+3003-                    else if (numero === "3") {
+3004-
+3005-                        embedUrl =
+3006-                            "https://myembed.biz/serie/" +
+3007-                            idSerie +
+3008-                            "/" +
+3009-                            temporadaId +
+3010-                            "/" +
+3011:                            episodioId;
+3012-                    }
+3013-
+3014-
+3015-                    else if (numero === "4") {
+3016-
+3017-                        embedUrl =
+3018-                            "https://apiplayer.ru/embed/tv/" +
+3019-                            String(idSerie).trim() +
+3020-                            "/" +
+3021-                            String(temporadaId).trim() +
+3022-                            "/" +
+3023:                            String(episodioId).trim() +
+3024-                            "?lang=pt";
+3025-                    }
+3026-
+3027-                    if (!embedUrl) {
+3028-                        return;
+3029-                    }
+3030-
+3031-                    /*
+3032-                     * DESELECIONA OS OUTROS
+3033-                     */
+3034-
+3035-                    botoesPlayers.forEach(
+3036-                        function(item) {
+3037-
+3038-                            item.classList.remove(
+3039-                                "ativo"
+3040-                            );
+3041-
+3042-                            item.classList.remove(
+3043-                                "player-selecionado"
+3044-                            );
+3045-
+3046-                        }
+3047-                    );
+3048-
+3049-                    /*
+3050-                     * MARCA O ESCOLHIDO
+3051-                     */
+3052-
+3053-                    this.classList.add(
+3054-                        "ativo"
+3055-                    );
+3056-
+3057-                    this.classList.add(
+3058-                        "player-selecionado"
+3059-                    );
+3060-
+3061-                    /*
+3062-                     * TROCA O IFRAME
+3063-                     */
+3064-
+3065-                    serieFrame.src =
+3066-                        embedUrl;
+3067-
+3068-                    console.log(
+3069-                        "[SERIES PLAYER]",
+3070-                        "PLAY " + numero,
+3071-                        embedUrl
+3072-                    );
+3073-
+3074-                    /*
+3075-                     * CONTINUAR ASSISTINDO
+3076-                     *
+3077:                     * Atualiza somente o episódio/player atual.
+3078-                     * O storage já está isolado por conta.
+3079-                     */
+3080-                    if (window.LukaRegistrarSerieContinuar) {
+3081-
+3082-                        window.LukaRegistrarSerieContinuar({
+3083-
+3084-                            id: idSerie,
+3085-
+3086-                            titulo:
+3087-                                serie.name ||
+3088-                                serie.titulo ||
+3089-                                nome ||
+3090-                                "Série",
+3091-
+3092-                            capa:
+3093-                                serie.poster_path
+3094-                                    ? "https://image.tmdb.org/t/p/w500" +
+3095-                                      serie.poster_path
+3096-                                    : "",
+3097-
+3098-                            tipo: "serie",
+3099-
+3100-                            player: String(numero),
+3101-
+3102-                            temporada:
+3103-                                String(temporadaId),
+3104-
+3105:                            episodio:
+3106:                                String(episodioId)
+3107-
+3108-                        });
+3109-
+3110-                        console.log(
+3111-                            "[CONTINUAR SÉRIE] PLAYER ATUALIZADO:",
+3112-                            {
+3113-                                id: idSerie,
+3114-                                temporada: String(temporadaId),
+3115:                                episodio: String(episodioId),
+3116-                                player: String(numero)
+3117-                            }
+3118-                        );
+3119-                    }
+3120-
+3121-                    
+3122-
+3123-                }
+3124-            );
+3125-
+3126-        });
+3127-
+3128-        /*
+3129-         * DESCE ATÉ O PLAYER
+3130-         */
+3131-
+3132-        playerSerie.scrollIntoView({
+3133-            behavior: "smooth",
+3134-            block: "center"
+3135-        });
+3136-
+3137-        console.log(
+3138-            "[SERIES PLAYER] PLAY 1 carregado:",
+3139-            play1Url
+3140-        );
+3141-
+3142-    }
+3143-
+3144-
+3145-    /* ==========================================
+3146-       VOLTAR PARA A LISTAGEM PRESERVANDO POSIÇÃO
+3147-       ========================================== */
+3148-
+3149-    const botaoVoltarSerie =
+3150-        document.getElementById("voltarSerie");
+3151-
+3152-    if (botaoVoltarSerie) {
+3153-
+3154-        botaoVoltarSerie.addEventListener(
+3155-            "click",
+3156-            function (e) {
+3157-
+3158-                e.preventDefault();
+3159-
+3160-                window.location.href = "series.html";
+3161-
+3162-            }
+3163-        );
+3164-
+3165-    }
+3166-
+3167-    /* ==========================================
+3168-       INICIAR
+3169-       ========================================== */
+3170-
+3171-    carregarDetalhes();
+3172-
+3173-
+3174-})();
+3175-
+3176-
+3177-/* ==========================================
+3178-   DOM CARREGADO
+3179-   ========================================== */
+3180-
+3181-document.addEventListener(
+3182-    "DOMContentLoaded",
+3183-    function () {
+3184-
+3185-        console.log(
+3186-            "[LUKAFILMES] Página de série carregada."
+3187-        );
+3188-
+3189-    }
+3190-);
+3191-
+3192-</script>
+3193-
+3194-<script src="../js/navegacao.js"></script>
+3195-
+3196-<style id="serie-favoritos-topo">
+3197-#serieFavoritosTopo{
+3198-    position:fixed;
+3199-    top:18px;
+3200-    right:18px;
+3201-    left:auto;
+3202-    z-index:99999;
+3203-    display:flex;
+3204-    align-items:center;
+3205-    gap:8px;
+3206-}
+3207-
+3208-#serieFavoritosTopo button,
+3209-#serieFavoritosTopo a{
+3210-    border:1px solid rgba(255,255,255,.18);
+3211-    background:rgba(10,10,10,.82);
+3212-    color:#fff;
+3213-    padding:10px 14px;
+3214-    border-radius:8px;
+3215-    font-size:14px;
+--
+3794-        margin:0 !important;
+3795-        z-index:9999 !important;
+3796-    }
+3797-
+3798-}
+3799-</style>
+3800-
+3801-
+3802-
+3803-
+3804-
+3805-<!-- LUKAFILMES-CONTINUAR-SERIE-RESUME -->
+3806-<script>
+3807-(function () {
+3808-
+3809-    "use strict";
+3810-
+3811-    /*
+3812-     * LUKAFILMES
+3813-     * CONTINUAR ASSISTINDO — SÉRIES
+3814-     *
+3815-     * A fonte oficial da retomada é:
+3816-     * lukafilmes_continuar
+3817-     *
+3818-     * Não usa mais serieSelecionada para descobrir
+3819:     * qual episódio deve ser retomado.
+3820-     */
+3821-
+3822-    function obterSerieContinuar() {
+3823-
+3824-        try {
+3825-
+3826-            const salvo =
+3827-                localStorage.getItem("lukafilmes_continuar");
+3828-
+3829-            if (!salvo) {
+3830-                console.log(
+3831-                    "[CONTINUAR SÉRIE] Nenhum histórico encontrado."
+3832-                );
+3833-                return null;
+3834-            }
+3835-
+3836-            const lista = JSON.parse(salvo);
+3837-
+3838-            if (!Array.isArray(lista)) {
+3839-                return null;
+3840-            }
+3841-
+3842-            const serie =
+3843-                lista.find(function (item) {
+3844-
+3845-                    return (
+3846-                        item &&
+3847-                        String(item.tipo || "").toLowerCase() === "serie" &&
+3848-                        item.id != null &&
+3849-                        item.temporada != null &&
+3850:                        item.episodio != null
+3851-                    );
+3852-
+3853-                });
+3854-
+3855-            if (!serie) {
+3856-
+3857-                console.log(
+3858:                    "[CONTINUAR SÉRIE] Nenhuma série com episódio salvo.",
+3859-                    lista
+3860-                );
+3861-
+3862-                return null;
+3863-            }
+3864-
+3865-            return serie;
+3866-
+3867-        } catch (erro) {
+3868-
+3869-            console.error(
+3870-                "[CONTINUAR SÉRIE] Erro ao ler histórico:",
+3871-                erro
+3872-            );
+3873-
+3874-            return null;
+3875-        }
+3876-    }
+3877-
+3878-
+3879-    function restaurarContinuarSerie() {
+3880-
+3881-        if (window.__lukafilmesContinuarSerieExecutado) {
+3882-            return true;
+3883-        }
+3884-
+3885-        const item =
+3886-            obterSerieContinuar();
+3887-
+3888-        if (!item) {
+3889-            return false;
+3890-        }
+3891-
+3892-        if (
+3893-            typeof window.assistirEpisodio !== "function"
+3894-        ) {
+3895-            return false;
+3896-        }
+3897-
+3898-        const temporada =
+3899-            String(item.temporada).trim();
+3900-
+3901:        const episodio =
+3902:            String(item.episodio).trim();
+3903-
+3904:        if (!temporada || !episodio) {
+3905-            return false;
+3906-        }
+3907-
+3908-        window.__lukafilmesContinuarSerieExecutado = true;
+3909-
+3910-        console.log(
+3911-            "[CONTINUAR SÉRIE] RETOMANDO:",
+3912-            {
+3913-                id: item.id,
+3914-                titulo: item.titulo,
+3915-                temporada: temporada,
+3916:                episodio: episodio,
+3917-                player: item.player || "1"
+3918-            }
+3919-        );
+3920-
+3921-        /*
+3922-         * Mantém serieSelecionada sincronizada com o item
+3923-         * que realmente veio do Continuar Assistindo.
+3924-         */
+3925-        try {
+3926-
+3927-            localStorage.setItem(
+3928-                "serieSelecionada",
+3929-                JSON.stringify(item)
+3930-            );
+3931-
+3932-            localStorage.setItem(
+3933-                "seriePlayerId",
+3934-                String(item.id)
+3935-            );
+3936-
+3937-            localStorage.setItem(
+3938-                "seriePlayerTemporada",
+3939-                temporada
+3940-            );
+3941-
+3942-            localStorage.setItem(
+3943-                "seriePlayerEpisodio",
+3944:                episodio
+3945-            );
+3946-
+3947-            if (item.player != null) {
+3948-
+3949-                localStorage.setItem(
+3950-                    "seriePlayer",
+3951-                    String(item.player)
+3952-                );
+3953-
+3954-            }
+3955-
+3956-        } catch (erro) {
+3957-
+3958-            console.warn(
+3959-                "[CONTINUAR SÉRIE] Não foi possível sincronizar dados:",
+3960-                erro
+3961-            );
+3962-        }
+3963-
+3964-        /*
+3965:         * Abre exatamente a temporada e o episódio salvos.
+3966-         */
+3967-        window.assistirEpisodio(
+3968-            temporada,
+3969:            episodio,
+3970-            item.titulo || "Série"
+3971-        );
+3972-
+3973-        /*
+3974-         * assistirEpisodio() inicia no PLAY 1.
+3975-         *
+3976-         * Se o usuário estava no PLAY 2,
+3977-         * restauramos o mesmo player.
+3978-         */
+3979-        const playerSalvo =
+3980-            String(item.player || "1");
+3981-
+3982-        if (playerSalvo !== "1") {
+3983-
+3984-            let tentativasPlayer = 0;
+3985-
+3986-            const intervaloPlayer =
+3987-                setInterval(function () {
+3988-
+3989-                    tentativasPlayer++;
+3990-
+3991-                    const botao =
+3992-                        document.querySelector(
+3993-                            '.players-serie-opcoes .serie-player-btn[data-player="' +
+3994-                            playerSalvo +
+3995-                            '"]'
+3996-                        );
+3997-
+3998-                    if (botao) {
+3999-
+4000-                        botao.click();
+4001-
+4002-                        clearInterval(
+4003-                            intervaloPlayer
+4004-                        );
+4005-
+4006-                        console.log(
+4007-                            "[CONTINUAR SÉRIE] Player restaurado:",
+4008-                            playerSalvo
+4009-                        );
+4010-
+4011-                        return;
+4012-                    }
+4013-
+4014-                    if (tentativasPlayer >= 20) {
+4015-
+4016-                        clearInterval(
+4017-                            intervaloPlayer
+4018-                        );
+4019-
+4020-                        console.warn(
+4021-                            "[CONTINUAR SÉRIE] Player não encontrado:",
+4022-                            playerSalvo
+4023-                        );
+4024-
+4025-                    }
+4026-
+4027-                }, 250);
+4028-        }
+4029-
+4030-        return true;
+4031-    }
+4032-
+4033-
+4034-    /*
+4035-     * Espera assistirEpisodio existir.
+4036-     */
+4037-    let tentativas = 0;
+4038-
+4039-    const intervalo =
+4040-        setInterval(function () {
+4041-
+4042-            tentativas++;
+4043-
+4044-            if (
+4045-                restaurarContinuarSerie() ||
+4046-                tentativas >= 40
+4047-            ) {
+4048-
+4049-                clearInterval(intervalo);
+4050-
+4051-            }
+4052-
+4053-        }, 250);
+4054-
+4055-})();
+4056-</script>
+4057-
+4058-
+4059-
+4060-<script id="lukafilmes-serie-protecao-popup-final">
+4061-(function () {
+4062-    "use strict";
+4063-
+4064-    /*
+4065-     * LUKAFILMES — PROTEÇÃO DO PLAYER DE SÉRIE
+4066-     * Mesma proteção estrutural usada na página de filme.
+4067-     * Protege a página principal contra pop-ups e navegação externa.
+4068-     */
+4069-
+--
+4445-
+4446-                window.LukaContinuar.registrarInicio({
+4447-
+4448-                    id: String(dados.id),
+4449-
+4450-                    titulo:
+4451-                        dados.titulo ||
+4452-                        "Série",
+4453-
+4454-                    capa:
+4455-                        dados.capa ||
+4456-                        "",
+4457-
+4458-                    tipo: "serie",
+4459-
+4460-                    player:
+4461-                        dados.player != null
+4462-                            ? String(dados.player)
+4463-                            : "1",
+4464-
+4465-                    temporada:
+4466-                        dados.temporada != null
+4467-                            ? String(dados.temporada)
+4468-                            : null,
+4469-
+4470:                    episodio:
+4471:                        dados.episodio != null
+4472:                            ? String(dados.episodio)
+4473-                            : null
+4474-
+4475-                });
+4476-
+4477-                console.log(
+4478-                    "[CONTINUAR SÉRIE] REGISTRADO:",
+4479-                    {
+4480-                        id: String(dados.id),
+4481-                        temporada: dados.temporada,
+4482:                        episodio: dados.episodio,
+4483-                        player: dados.player
+4484-                    }
+4485-                );
+4486-
+4487-            }catch(e){
+4488-
+4489-                console.error(
+4490-                    "[CONTINUAR SÉRIE] Erro ao registrar:",
+4491-                    e
+4492-                );
+4493-            }
+4494-        }
+4495-
+4496-        /*
+4497-         * O conta-storage pode ainda estar esperando /api/eu.
+4498-         * Neste caso esperamos a conta antes de gravar.
+4499-         */
+4500-        if(
+4501-            window.LukaContaPronta &&
+4502-            typeof window.LukaContaPronta.then === "function"
+4503-        ){
+4504-
+4505-            window.LukaContaPronta
+4506-                .then(function(){
+4507-                    executar();
+4508-                })
+4509-                .catch(function(){
+4510-                    executar();
+4511-                });
+4512-
+4513-        }else{
+4514-
+4515-            executar();
+4516-        }
+4517-    }
+4518-
+4519-    window.LukaRegistrarSerieContinuar =
+4520-        registrarSerieContinuar;
+4521-
+4522-    console.log(
+4523-        "[CONTINUAR SÉRIE] Correção carregada."
+4524-    );
+4525-
+4526-})();
+4527-</script>
+4528-
+4529-</body>
+4530-
+4531-
+4532-
+4533-
+4534-</html>
+4535-
+4536-
+4537-
+4538-
+4539-
+4540-
+4541-
+4542-
+4543-
+4544-
+4545-
+4546-
+4547-
+4548-<style id="serieFavoritosTopo-mobile-tamanho-ajuste">
+4549-@media (max-width: 600px) {
+4550-    #serieFavoritosTopo {
+4551-        top: 8px !important;
+4552-        right: 8px !important;
+4553-        left: auto !important;
+4554-        gap: 4px !important;
+4555-        max-width: calc(100vw - 16px) !important;
+4556-    }
+4557-
+4558-    #serieFavoritosTopo button,
+4559-    #serieFavoritosTopo a {
+4560-        padding: 6px 8px !important;
+4561-        font-size: 10px !important;
+4562-        line-height: 1.15 !important;
+4563-        white-space: nowrap !important;
+4564-        border-radius: 6px !important;
+4565-    }
+4566-}
+4567-</style>
+4568-

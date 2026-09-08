@@ -1,0 +1,133 @@
+========== CHECK ACESSO ==========
+                usuario: sessao.usuario,
+                tipo: sessao.tipo,
+                validade: sessao.validade || null
+            },
+            pessoa: pessoa ? {
+                id: pessoa.id,
+                usuario: pessoa.usuario,
+                tipo: pessoa.tipo,
+                status: pessoa.status,
+                validade: pessoa.validade || null
+            } : null,
+            agora: new Date().toISOString()
+        });
+    } catch (erro) {
+        console.error("[DEBUG ACESSO] Erro:", erro);
+        return res.status(500).json({
+            erro: "erro_servidor"
+        });
+    }
+});
+
+app.get("/api/acesso-assistir", async (req, res) => {
+
+    try {
+
+        const sessao = lukaUsuarioOperacional(req);
+
+========== CHECK PAGAMENTO ==========
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Pagamento recusado."
+        });
+
+    } catch (erro) {
+
+        console.error("[ADMIN PAGAMENTOS] Erro ao recusar:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao recusar pagamento."
+        });
+
+    }
+
+});
+
+
+// ============================================================
+
+app.post("/api/pagamentos/criar", async (req, res) => {
+
+    try {
+
+        const sessao = lukaUsuarioOperacional(req);
+
+        if (!sessao) {
+            return res.status(401).json({
+                sucesso: false,
+                logado: false,
+                motivo: "nao_logado",
+
+========== CHECK CADASTRO ==========
+        };
+
+        usuarios.push(novoUsuario);
+
+        await salvarUsuarios(usuarios);
+
+        /*
+         * Já deixa o cliente logado depois do cadastro.
+         * O cadastro NÃO libera os filmes.
+         * A validade continua null até o pagamento ser aprovado.
+         */
+        // =====================================================
+        // MODO TESTE:
+        // mantém o ADMIN na sessão real e coloca o novo cliente
+        // somente como usuário operacional do teste.
+        // =====================================================
+        if (lukaModoTesteAtivo(req)) {
+
+            req.session.lukaTesteUsuario = {
+                id: novoUsuario.id,
+                usuario: novoUsuario.usuario,
+                tipo: novoUsuario.tipo,
+                validade: null
+            };
+
+            console.log(
+                "[LUKA TESTE] Cadastro vinculado ao teste:",
+                novoUsuario.usuario,
+                "ID:",
+                novoUsuario.id
+            );
+
+        } else if (
+            !req.session.usuario ||
+            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+        ) {
+
+            req.session.usuario = {
+                id: novoUsuario.id,
+                usuario: novoUsuario.usuario,
+                tipo: novoUsuario.tipo,
+                validade: null
+            };
+        }
+
+        /*
+         * Garante que a sessão foi gravada antes da resposta.
+         */
+        await new Promise((resolve, reject) => {
+            req.session.save(erro => {
+                if (erro) {
+                    reject(erro);
+                    return;
+                }
+
+                resolve();
+            });
+        });
+
+        console.log(
+            "[CADASTRO] Novo cliente:",
+            novoUsuario.usuario
+        );
+
+        return res.json({
+            sucesso: true,
+
+========== NODE CHECK ==========
+NODE_EXIT=0

@@ -1,0 +1,899 @@
+==================================================
+ LUKAFILMES - TRECHOS EXATOS PARA IMPLEMENTACAO 
+==================================================
+
+========== 1. PAGAMENTO CRIAR COMPLETO ==========
+});
+
+
+// ==========================================
+// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+// ==========================================
+
+app.post("/api/pagamentos/criar", async (req, res) => {
+
+    try {
+
+        if (!req.session || !req.session.usuario) {
+            return res.status(401).json({
+                sucesso: false,
+                logado: false,
+                motivo: "nao_logado",
+                mensagem: "Faça login para continuar."
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                sucesso: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado",
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const tipo = String(
+            pessoa.tipo || "usuario"
+        ).toLowerCase();
+
+        const statusUsuario = String(
+            pessoa.status || "ativo"
+        ).toLowerCase();
+
+        if (statusUsuario !== "ativo") {
+            return res.status(403).json({
+                sucesso: false,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: false,
+                motivo: "isento",
+                tipo
+            });
+        }
+
+        const pagamentosPendentes =
+            await listarPagamentosLuka(
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+            );
+
+        const pagamentoExistente =
+            pagamentosPendentes.find(
+                pagamento =>
+                    Number(pagamento.usuario_id) === Number(pessoa.id)
+            );
+
+        if (pagamentoExistente) {
+
+            let pix;
+
+            try {
+                pix = gerarPixCopiaColaLuka();
+            } catch (erroPix) {
+                console.error(
+                    "[PAGAMENTO] Erro ao gerar PIX:",
+                    erroPix
+                );
+            }
+
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: true,
+                pagamento: pagamentoExistente,
+                pix: pix || null,
+                valor: Number(
+                    process.env.PIX_VALOR ||
+                    CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+                ).toFixed(2),
+                nome: process.env.PIX_NOME || "LUKAFILMES",
+                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+            });
+        }
+
+        const idPagamento =
+            await proximoIdPagamentoLuka();
+
+        const pagamento = {
+            id: idPagamento,
+            usuario_id: Number(pessoa.id),
+            usuario: String(
+                pessoa.usuario ||
+                sessao.usuario ||
+                ""
+            ),
+            valor:
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+            criado_em:
+                new Date().toISOString(),
+            aprovado_em: null,
+            inicio_acesso: null,
+            fim_acesso: null,
+            observacao: null
+        };
+
+        await criarPagamentoLuka(pagamento);
+
+        let pix;
+
+        try {
+            pix = gerarPixCopiaColaLuka();
+        } catch (erroPix) {
+            console.error(
+                "[PAGAMENTO] Erro ao gerar PIX:",
+                erroPix
+            );
+        }
+
+        return res.json({
+            sucesso: true,
+            pagamento_necessario: true,
+            pagamento,
+            pix: pix || null,
+            valor: Number(
+                process.env.PIX_VALOR ||
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+            ).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[PAGAMENTO] Erro ao criar pagamento:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível criar o pagamento."
+        });
+
+    }
+
+});
+
+========== 2. FUNCOES SALVAR USUARIOS ==========
+396-            SET ${campos.join(", ")}
+397-            WHERE id = ?
+398-        `,
+399-        args
+400-    });
+401-
+402-    return true;
+403-}
+404-
+405-function obterBancoLocal() {
+406-
+407-    if (!Database) {
+408-        Database = require("better-sqlite3");
+409-    }
+410-
+411-    if (!bancoLocal) {
+412-
+413-        bancoLocal = new Database(
+414-            path.join(__dirname, "banco.db")
+415-        );
+416-    }
+417-
+418-    return bancoLocal;
+419-}
+420-
+421:async function carregarUsuarios() {
+422-  if (turso) {
+423-    await prepararTursoUsuarios();
+424-
+425-    const resultado = await turso.execute(
+426-      "SELECT dados FROM lukafilmes_usuarios WHERE id = 1"
+427-    );
+428-
+429-    if (resultado.rows.length > 0) {
+430-      try {
+431-        const dados = JSON.parse(resultado.rows[0].dados);
+432-        return Array.isArray(dados) ? dados : [];
+433-      } catch (erro) {
+434-        console.error("[TURSO] Erro ao ler usuários:", erro);
+435-        return [];
+436-      }
+437-    }
+438-
+439-    // Primeira execução: tenta migrar os usuários existentes do banco local.
+440-    try {
+441-      const db = obterBancoLocal();
+442-      const usuarios = db.prepare("SELECT * FROM usuarios").all();
+443-
+444-      if (Array.isArray(usuarios) && usuarios.length > 0) {
+445:        await salvarUsuarios(usuarios);
+446-        console.log("[TURSO] Usuários locais migrados:", usuarios.length);
+447-        return usuarios;
+448-      }
+449-    } catch (erro) {
+450-      console.error("[TURSO] Não foi possível migrar banco local:", erro);
+451-    }
+452-
+453-    return [];
+454-  }
+455-
+456-  if (ambienteLocal) {
+457-    const db = obterBancoLocal();
+458-    const usuarios = db
+459-      .prepare("SELECT * FROM usuarios")
+460-      .all();
+461-
+462-    return Array.isArray(usuarios) ? usuarios : [];
+463-  }
+464-
+465-  const store = getStore({
+466-    name: USUARIOS_STORE,
+467-    siteID: process.env.NETLIFY_SITE_ID,
+468-    token: process.env.NETLIFY_AUTH_TOKEN
+469-  });
+470-
+471-  const dados = await store.get(
+472-    USUARIOS_KEY,
+473-    {
+474-      type: "json"
+475-    }
+476-  );
+477-
+478-  if (!Array.isArray(dados)) {
+479-    return [];
+480-  }
+481-
+482-  return dados;
+483-}
+484-
+485:async function salvarUsuarios(usuarios) {
+486-  if (turso) {
+487-    await prepararTursoUsuarios();
+488-
+489-    await turso.execute({
+490-      sql: `
+491-        INSERT INTO lukafilmes_usuarios (id, dados)
+492-        VALUES (1, ?)
+493-        ON CONFLICT(id) DO UPDATE SET dados = excluded.dados
+494-      `,
+495-      args: [JSON.stringify(Array.isArray(usuarios) ? usuarios : [])]
+496-    });
+497-
+498-    return true;
+499-  }
+500-
+501-  if (ambienteLocal) {
+502-    const db = obterBancoLocal();
+503-
+504-    db.prepare("DELETE FROM usuarios").run();
+505-
+506-    const inserir = db.prepare(`
+507-      INSERT INTO usuarios
+508-      (id, usuario, senha, status, tipo, validade, criado_em, limite_conexoes, conexoes_utilizadas, revendedor_id)
+509-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+510-    `);
+--
+707-                mensagem: "Preencha nome, usuário, senha e telefone."
+708-            });
+709-        }
+710-
+711-        if (nome.length < 2) {
+712-            return res.status(400).json({
+713-                sucesso: false,
+714-                mensagem: "Digite seu nome completo."
+715-            });
+716-        }
+717-
+718-        if (usuario.length < 3) {
+719-            return res.status(400).json({
+720-                sucesso: false,
+721-                mensagem: "O usuário precisa ter pelo menos 3 caracteres."
+722-            });
+723-        }
+724-
+725-        if (senha.length < 6) {
+726-            return res.status(400).json({
+727-                sucesso: false,
+728-                mensagem: "A senha precisa ter pelo menos 6 caracteres."
+729-            });
+730-        }
+731-
+732:        const usuarios = await carregarUsuarios();
+733-
+734-        const existente = usuarios.find(
+735-            u =>
+736-                String(u.usuario || "")
+737-                    .trim()
+738-                    .toLowerCase() === usuario.toLowerCase()
+739-        );
+740-
+741-        if (existente) {
+742-            return res.status(409).json({
+743-                sucesso: false,
+744-                mensagem: "Esse usuário já existe. Escolha outro."
+745-            });
+746-        }
+747-
+748-        const senhaHash = await bcrypt.hash(senha, 12);
+749-
+750-        const novoUsuario = {
+751-            id: proximoId(usuarios),
+752-            nome,
+753-            usuario,
+754-            senha: senhaHash,
+755-            telefone,
+756-            status: "ativo",
+757-            tipo: "usuario",
+758-            validade: null,
+759-            criado_em: new Date().toISOString()
+760-        };
+761-
+762-        usuarios.push(novoUsuario);
+763-
+764:        await salvarUsuarios(usuarios);
+765-
+766-        /*
+767-         * Já deixa o cliente logado depois do cadastro.
+768-         * O cadastro NÃO libera os filmes.
+769-         * A validade continua null até o pagamento ser aprovado.
+770-         */
+771-        // NÃO substituir a sessão do ADMIN.
+772-        // Se um administrador estiver usando a mesma sessão,
+773-        // o cadastro cria o cliente mas mantém o ADMIN logado.
+774-        if (
+775-            !req.session.usuario ||
+776-            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+777-        ) {
+778-            req.session.usuario = {
+779-                id: novoUsuario.id,
+780-                usuario: novoUsuario.usuario,
+781-                tipo: novoUsuario.tipo,
+782-                validade: null
+783-            };
+784-        }
+785-
+786-        /*
+787-         * Garante que a sessão foi gravada antes da resposta.
+788-         */
+789-        await new Promise((resolve, reject) => {
+--
+820-    }
+821-});
+822-
+823-// ==========================================
+824-// LOGIN POST
+825-// ==========================================
+826-
+827-app.post("/login", async (req, res) => {
+828-
+829-    try {
+830-
+831-        const usuario =
+832-            String(req.body.usuario || "").trim();
+833-
+834-        const senha =
+835-            String(req.body.senha || "");
+836-
+837-        if (!usuario || !senha) {
+838-
+839-            return res.json({
+840-                sucesso: false,
+841-                mensagem: "Digite usuário e senha."
+842-            });
+843-        }
+844-
+845:                const usuarios = await carregarUsuarios();
+846-
+847-        const pessoa = usuarios.find(
+848-            u =>
+849-                String(u.usuario || "").trim().toLowerCase() ===
+850-                usuario.toLowerCase()
+851-        );
+852-        if (!pessoa) {
+853-
+854-            return res.json({
+855-                sucesso: false,
+856-                mensagem: "Usuário ou senha incorretos."
+857-            });
+858-        }
+859-
+860-        if (pessoa.status !== "ativo") {
+861-
+862-            return res.json({
+863-                sucesso: false,
+864-                mensagem: "Este usuário está suspenso."
+865-            });
+866-        }
+867-
+868-        /*
+869-         * Usuário vencido continua podendo fazer login e navegar
+870-         * pelo catálogo. O bloqueio para assistir será feito
+--
+935-        });
+936-    }
+937-
+938-    res.json({
+939-        logado: true,
+940-        usuario: req.session.usuario
+941-    });
+942-
+943-});
+944-
+945-
+946-// ==========================================
+947-// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+948-// ==========================================
+949-
+950-app.get("/api/debug-acesso", async (req, res) => {
+951-    try {
+952-        if (!req.session || !req.session.usuario) {
+953-            return res.json({
+954-                logado: false,
+955-                sessao: null
+956-            });
+957-        }
+958-
+959-        const sessao = req.session.usuario;
+960:        const usuarios = await carregarUsuarios();
+961-
+962-        const pessoa = usuarios.find(
+963-            u => Number(u.id) === Number(sessao.id)
+964-        );
+965-
+966-        return res.json({
+967-            logado: true,
+968-            sessao: {
+969-                id: sessao.id,
+970-                usuario: sessao.usuario,
+971-                tipo: sessao.tipo,
+972-                validade: sessao.validade || null
+973-            },
+974-            pessoa: pessoa ? {
+975-                id: pessoa.id,
+976-                usuario: pessoa.usuario,
+977-                tipo: pessoa.tipo,
+978-                status: pessoa.status,
+979-                validade: pessoa.validade || null
+980-            } : null,
+981-            agora: new Date().toISOString()
+982-        });
+
+========== 3. BOTAO COMPROVANTE COMPLETO ==========
+                                background:#1d1d1d;
+                                color:#fff;
+                                font-size:12px;
+                            ">${pix}</textarea>
+
+                        <button
+                            type="button"
+                            id="lukafilmesCopiarPix"
+                            style="
+                                width:100%;
+                                margin-top:10px;
+                                padding:13px;
+                                border:0;
+                                border-radius:10px;
+                                cursor:pointer;
+                                font-weight:700;
+                            ">
+                            📋 COPIAR PIX
+                        </button>
+
+                        <button
+                            type="button"
+                            id="lukafilmesPagamentoFeito"
+                            style="
+                                width:100%;
+                                margin-top:10px;
+                                padding:13px;
+                                border:0;
+                                border-radius:10px;
+                                cursor:pointer;
+                                font-weight:700;
+                            ">
+                            ✅ JÁ REALIZEI O PAGAMENTO
+                        </button>
+
+                        <p
+                            id="lukafilmesPagamentoStatus"
+                            style="
+                                display:none;
+                                margin-top:14px;
+                                font-size:14px;
+                            ">
+                        </p>
+                    `;
+
+                    playerFilme.parentNode.insertBefore(
+                        tela,
+                        playerFilme
+                    );
+
+                    tela.scrollIntoView({
+                        behavior: "auto",
+                        block: "center"
+                    });
+
+                    const areaQr =
+                        document.getElementById(
+                            "lukafilmesQrCode"
+                        );
+
+                    if (
+                        pix &&
+                        areaQr &&
+                        typeof QRCode !== "undefined"
+                    ) {
+
+                        new QRCode(
+                            areaQr,
+                            {
+                                text: pix,
+                                width: 200,
+                                height: 200
+                            }
+                        );
+
+                    }
+                    else if (areaQr) {
+
+                        areaQr.innerHTML =
+                            "<span style='color:#222;'>QR Code indisponível</span>";
+
+                    }
+
+                    const botaoCopiar =
+                        document.getElementById(
+                            "lukafilmesCopiarPix"
+                        );
+
+                    if (botaoCopiar) {
+
+                        botaoCopiar.onclick =
+
+========== 4. ESTRUTURA PRINCIPAL DO ADMIN ==========
+            <input id="editarContaValor"
+                   type="number"
+                   min="0"
+                   step="0.01"
+                   placeholder="0,00">
+        </div>
+
+        <div class="luka-edit-actions">
+            <button type="button"
+                    onclick="fecharEditorConta()">
+                Cancelar
+            </button>
+
+            <button type="button"
+                    class="salvar"
+                    id="btnSalvarEdicaoConta"
+                    onclick="salvarEdicaoConta()">
+                💾 Salvar alterações
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<div id="lukaContaOverlay" onclick="fecharContaDetalhes(event)">
+    <div id="lukaContaBox" onclick="event.stopPropagation()">
+
+        <div class="luka-conta-head">
+            <h2>👤 Detalhes da conta</h2>
+            <button class="luka-conta-close" onclick="fecharContaDetalhes()">×</button>
+        </div>
+
+        <div class="luka-conta-body">
+
+            <div class="luka-conta-user">
+                <strong id="lukaContaUsuario">—</strong>
+                <span id="lukaContaTipo">—</span>
+            </div>
+
+            <div class="luka-conta-grid">
+
+                <div class="luka-conta-item">
+                    <small>Status</small>
+                    <span id="lukaContaStatus">—</span>
+                </div>
+
+                <div class="luka-conta-item">
+                    <small>Presença</small>
+                    <span id="lukaContaOnline">—</span>
+                </div>
+
+                <div class="luka-conta-item">
+                    <small>Valor</small>
+                    <span id="lukaContaValor">—</span>
+                </div>
+
+                <div class="luka-conta-item">
+                    <small>Telefone</small>
+                    <span id="lukaContaTelefone">—</span>
+                </div>
+
+                <div class="luka-conta-item">
+                    <small>Criado em</small>
+                    <span id="lukaContaCriado">—</span>
+                </div>
+
+                <div class="luka-conta-item">
+                    <small>ID</small>
+                    <span id="lukaContaId">—</span>
+                </div>
+
+            </div>
+
+            <div class="luka-conta-expira">
+                <small>⏰ Expiração</small>
+                <strong id="lukaContaValidade">—</strong>
+            </div>
+
+            <div class="luka-conta-acoes">
+                <button onclick="abrirEditorConta()">✏️ Editar</button>
+                <button onclick="renovarContaAberta()">🔄 Renovar</button>
+                <button onclick="alternarContaAberta()">⚡ Status</button>
+                <button onclick="excluirContaAberta()">🗑️ Excluir</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+let usuarios=[];
+let timer=null;
+
+function aba(id,btn){
+
+ document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+ if(btn)btn.classList.add("active");
+
+ carregar();
+}
+
+function toast(msg){
+
+ const t=document.getElementById("toast");
+ t.textContent=msg;
+ t.classList.add("show");
+
+ clearTimeout(timer);
+ timer=setTimeout(()=>t.classList.remove("show"),2800);
+}
+
+function abrirModal(tipo){
+
+ document.getElementById("modal").classList.add("show");
+ document.getElementById("tipoCriacao").value=tipo;
+
+ document.getElementById("fUsuario").value="";
+ document.getElementById("fSenha").value="";
+
+ const escolhaTeste=document.getElementById("lukaEscolhaTeste");
+ const automaticoBox=document.getElementById("lukaAutomaticoBox");
+ const camposManuais=document.getElementById("lukaCamposManuais");
+
+ if(escolhaTeste){
+  escolhaTeste.style.display=tipo==="teste"?"block":"none";
+ }
+
+ if(automaticoBox){
+  automaticoBox.style.display="none";
+ }
+
+ if(camposManuais){
+  camposManuais.style.display=tipo==="teste"?"none":"block";
+ }
+
+ const btnSalvarInicial=document.getElementById("btnSalvar");
+
+ if(btnSalvarInicial){
+  if(tipo==="teste"){
+   btnSalvarInicial.style.display="none";
+   btnSalvarInicial.disabled=false;
+   btnSalvarInicial.textContent="Criar";
+  }else{
+   btnSalvarInicial.style.display="";
+  }
+ }
+
+ document.getElementById("fTempoLabel").textContent =
+  tipo==="teste" ? "Horas de teste" : "Dias";
+
+ document.getElementById("fDias").value =
+  tipo==="teste" ? 1 : 30;
+
+ if(document.getElementById("fValor")){
+  document.getElementById("fValor").value="";
+ }
+
+ if(document.getElementById("fTelefone")){
+  document.getElementById("fTelefone").value="";
+ }
+
+ const limite=document.getElementById("limiteBox");
+
+ limite.style.display=tipo==="revendedor"?"block":"none";
+
+========== 5. CARREGAR ADMIN ==========
+  }
+
+  fecharModal();
+
+  mostrarMensagemCriacao(
+   d,
+   {
+    usuario,
+    senha,
+    valor,
+    telefone
+   }
+  );
+
+  await carregar();
+
+ }catch(err){
+
+  toast("❌ "+err.message);
+
+ }finally{
+
+  btn.disabled=false;
+  btn.textContent="Criar";
+ }
+}
+
+async function carregar(){
+
+ iniciarGraficoTempoReal();
+
+
+ try{
+
+  const r=await fetch("/api/admin/presenca",{credentials:"include"});
+  const d=await r.json();
+
+  if(!r.ok||d.sucesso===false){
+   throw new Error(d.mensagem||"Erro ao carregar painel.");
+  }
+
+  usuarios=Array.isArray(d.usuarios)?d.usuarios:[];window.usuarios=usuarios;
+
+  (document.getElementById("cUsuarios") || {set textContent(v){}}).textContent=
+   usuarios.filter(x=>x.tipo==="usuario").length;
+
+  (document.getElementById("cTestes") || {set textContent(v){}}).textContent=
+   usuarios.filter(x=>x.tipo==="teste").length;
+
+  (document.getElementById("cRevendedores") || {set textContent(v){}}).textContent=
+   usuarios.filter(x=>x.tipo==="revendedor").length;
+
+  (document.getElementById("cOnline") || {set textContent(v){}}).textContent=
+   usuarios.filter(x=>x.online).length;
+
+  renderUsuarios();
+  renderTestes();
+  renderRevendedores();
+  renderChart();
+
+  (document.getElementById("ultimaAtualizacao") || {set textContent(v){}}).textContent=
+   "Atualizado "+new Date().toLocaleTimeString("pt-BR");
+
+ }catch(e){
+
+  console.error(e);
+  toast("⚠️ "+e.message);
+ }
+}
+
+
+function atualizarGraficoTempoReal(){
+
+    const lista =
+        Array.isArray(usuarios)
+            ? usuarios
+            : [];
+
+    const totalUsuarios =
+        lista.filter(u => u.tipo === "usuario").length;
+
+    const totalTestes =
+        lista.filter(u => u.tipo === "teste").length;
+
+    const totalOnline =
+        lista.filter(u => Boolean(u.online)).length;
+
+    const totalAtivos =
+        lista.filter(u =>
+            String(u.status || "ativo").toLowerCase() === "ativo"
+        ).length;
+
+    const totalExpirados =
+        lista.filter(u => {
+            if(!u.validade) return false;
+            const d = new Date(u.validade);
+            return !Number.isNaN(d.getTime()) &&
+                   d.getTime() <= Date.now();
+        }).length;
+
+    const valores = [
+        totalUsuarios,
+        totalTestes,
+        totalOnline,
+        totalAtivos,
+        totalExpirados,
+        totalOnline + totalTestes,
+        totalUsuarios + totalOnline,
+        lista.length
+    ];
+
+    const maior =
+        Math.max(...valores, 1);
+
+    const barras =
+        document.querySelectorAll("#lukaLiveBars div");
+
+    barras.forEach((barra, i) => {
+
+        const valor =
+            valores[i] ?? 0;
+
+        const altura =
+            Math.max(
+                12,
+                Math.min(
+                    100,
+                    (valor / maior) * 100
+                )
+            );
+
+        barra.style.height =
+            altura + "%";
+    });
+}
+
+function iniciarGraficoTempoReal(){
+
+    atualizarGraficoTempoReal();
+
+    if(window.__lukaGraficoTimer){
+        clearInterval(window.__lukaGraficoTimer);
+    }
+
+    window.__lukaGraficoTimer =
+        setInterval(() => {
+
+            atualizarGraficoTempoReal();
+
+        }, 3000);
+}
+
+function data(v){
+
+ if(!v)return"—";
+
+
+========== 6. FIM ==========

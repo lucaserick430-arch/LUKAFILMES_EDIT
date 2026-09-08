@@ -1,0 +1,142 @@
+========== RECUSAR PAGAMENTO COMPLETO ==========
+app.post("/api/admin/pagamentos/:id/recusar", async (req, res) => {
+
+    try {
+
+        if (!adminAutorizadoLuka(req)) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id < 1) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Pagamento inválido."
+            });
+        }
+
+        const pagamento = await buscarPagamentoLuka(id);
+
+        if (!pagamento) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Pagamento não encontrado."
+            });
+        }
+
+        if (
+            String(pagamento.status || "").toLowerCase() ===
+            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Não é possível recusar um pagamento já aprovado."
+            });
+        }
+
+        await atualizarPagamentoLuka(id, {
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.RECUSADO,
+            observacao:
+                "Pagamento recusado pelo administrador."
+        });
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Pagamento recusado."
+        });
+
+    } catch (erro) {
+
+        console.error("[ADMIN PAGAMENTOS] Erro ao recusar:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao recusar pagamento."
+        });
+
+    }
+
+});
+
+========== TESTE MANUAL ==========
+        if (existente) {
+
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse usuário já existe."
+            });
+
+        }
+
+        const senhaHash =
+            await bcrypt.hash(
+                senha,
+                12
+            );
+
+        const validade =
+            new Date(
+                Date.now() +
+                horas *
+                60 *
+                60 *
+                1000
+            );
+
+        const novoTeste = {
+
+            id: proximoId(usuarios),
+
+            usuario,
+
+            senha: senhaHash,
+
+            status: "ativo",
+
+            tipo: "teste",
+
+            validade:
+                validade.toISOString(),
+
+            criado_em:
+                new Date().toISOString(),
+
+            valor,
+
+            telefone,
+
+            online: false
+
+        };
+
+        usuarios.push(novoTeste);
+
+        await salvarUsuarios(usuarios);
+
+        console.log(
+            "[ADMIN] Teste criado:",
+            usuario
+        );
+
+        return res.json({
+
+            sucesso: true,
+
+            mensagem:
+                "Teste criado com sucesso.",
+
+            usuario,
+
+            tipo: "teste",
+
+            validade:
+                validade.toISOString(),
+
+            valor,
+
+            telefone

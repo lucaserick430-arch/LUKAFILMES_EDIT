@@ -1,0 +1,209 @@
+========== COOKIE PARSER ==========
+937:        req.cookies &&
+938:        req.cookies.luka_modo_teste === "1" &&
+951:        req.cookies &&
+952:        req.cookies.luka_modo_teste === "1" &&
+
+========== API EU ATUAL ==========
+        ativo: lukaModoTesteAtivo(req),
+        usuario: req.session.lukaTesteUsuario || null
+    });
+});
+
+
+app.get("/api/eu", (req, res) => {
+
+    if (!req.session.usuario) {
+
+        return res.status(401).json({
+            logado: false
+        });
+    }
+
+    res.json({
+        logado: true,
+        usuario: req.session.usuario
+    });
+
+});
+
+
+// ==========================================
+// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+// ==========================================
+
+app.get("/api/debug-acesso", async (req, res) => {
+    try {
+        if (!req.session || !req.session.usuario) {
+            return res.json({
+
+========== SESSAO TESTE ==========
+// ==========================================
+// USUÁRIO LOGADO
+// ==========================================
+
+
+// ===== LUKA MODO TESTE USUARIO V1 =====
+// Mantém a sessão ADMIN intacta e permite simular um cliente
+// no mesmo navegador através de cookie separado.
+
+function lukaUsuarioOperacional(req) {
+    if (
+        req &&
+        req.cookies &&
+        req.cookies.luka_modo_teste === "1" &&
+        req.session &&
+        req.session.lukaTesteUsuario
+    ) {
+        return req.session.lukaTesteUsuario;
+    }
+
+    return req && req.session ? req.session.usuario : null;
+}
+
+function lukaModoTesteAtivo(req) {
+    return !!(
+        req &&
+        req.cookies &&
+        req.cookies.luka_modo_teste === "1" &&
+        req.session &&
+        req.session.lukaTesteUsuario
+    );
+}
+
+app.post("/api/admin/teste/iniciar", async (req, res) => {
+    try {
+        if (
+            !req.session ||
+            !req.session.usuario ||
+            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso restrito ao administrador."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        let teste = usuarios.find(
+            u =>
+                String(u.tipo || "").toLowerCase() === "teste" &&
+                String(u.status || "").toLowerCase() === "ativo"
+        );
+
+        if (!teste) {
+            const ids = usuarios
+                .map(u => Number(u.id))
+                .filter(Number.isFinite);
+
+            const novoId = ids.length ? Math.max(...ids) + 1 : 1;
+
+            teste = {
+                id: novoId,
+                nome: "TESTE LUKAFILMES",
+                usuario: "teste_lukafilmes",
+                senha: "",
+                telefone: "",
+                status: "ativo",
+                tipo: "teste",
+                validade: null,
+                criado_em: new Date().toISOString(),
+                limite_conexoes: 1,
+                conexoes_utilizadas: 0
+            };
+
+            usuarios.push(teste);
+            await salvarUsuarios(usuarios);
+        }
+
+        req.session.lukaTesteUsuario = {
+            id: teste.id,
+            usuario: teste.usuario,
+            tipo: "teste",
+            validade: teste.validade || null
+        };
+
+        res.cookie("luka_modo_teste", "1", {
+            httpOnly: true,
+            secure: !ambienteLocal,
+            sameSite: "lax",
+            maxAge: 1000 * 60 * 60 * 6
+        });
+
+        return res.json({
+            sucesso: true,
+            usuario: {
+                id: teste.id,
+                usuario: teste.usuario,
+                tipo: "teste",
+                validade: teste.validade || null
+            },
+            destino: "/?luka_teste=1"
+        });
+
+    } catch (erro) {
+        console.error("[LUKA TESTE] Erro ao iniciar:", erro);
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível iniciar o modo de teste."
+        });
+    }
+});
+
+app.post("/api/admin/teste/encerrar", (req, res) => {
+
+    if (
+        !req.session ||
+        !req.session.usuario ||
+        String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+    ) {
+        return res.status(403).json({
+            sucesso: false,
+            mensagem: "Acesso restrito ao administrador."
+        });
+    }
+
+    delete req.session.lukaTesteUsuario;
+
+    res.clearCookie("luka_modo_teste", {
+        httpOnly: true,
+        secure: !ambienteLocal,
+        sameSite: "lax"
+    });
+
+    return res.json({
+        sucesso: true,
+        destino: "/admin.html"
+    });
+});
+
+app.get("/api/admin/teste/status", (req, res) => {
+
+    const admin =
+        req.session &&
+        req.session.usuario &&
+        String(req.session.usuario.tipo || "").toLowerCase() === "admin";
+
+    if (!admin) {
+        return res.status(403).json({
+            sucesso: false
+        });
+    }
+
+    return res.json({
+        sucesso: true,
+        ativo: lukaModoTesteAtivo(req),
+        usuario: req.session.lukaTesteUsuario || null
+    });
+});
+
+
+app.get("/api/eu", (req, res) => {
+
+    if (!req.session.usuario) {
+
+        return res.status(401).json({
+
+========== PACKAGE ==========
+22:    "express-session": "^1.19.0",

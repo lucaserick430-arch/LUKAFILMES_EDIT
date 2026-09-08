@@ -1,0 +1,126 @@
+========== ROTA PRINCIPAL / ==========
+
+===== TRECHO 5960-6065 DO SERVIDOR =====
+
+        res.json({
+
+            online: true,
+
+            servidor:
+                "LUKAFILMES",
+
+            porta:
+                PORT
+
+        });
+
+    }
+);
+
+
+// ==========================================
+// FAVICON — IDENTIDADE LUKAFILMES
+// ==========================================
+app.get("/favicon/lukafilmes.svg", (req, res) => {
+    res.sendFile(
+        require("path").join(
+            __dirname,
+            "public",
+            "favicon",
+            "lukafilmes.svg"
+        ),
+        {
+            headers: {
+                "Content-Type": "image/svg+xml",
+                "Cache-Control": "public, max-age=86400"
+            }
+        }
+    );
+});
+
+// ==========================================
+ // LUKAFILMES — ÍCONE OFICIAL ORIGINAL
+ // ==========================================
+ app.get("/favicon/file_000000006768820e93d46c5d164e8bd9.png", (req, res) => {
+     res.sendFile(
+         require("path").join(
+             __dirname,
+             "public",
+             "favicon",
+             "file_000000006768820e93d46c5d164e8bd9.png"
+         ),
+         {
+             headers: {
+                 "Content-Type": "image/png",
+                 "Cache-Control": "no-store, no-cache, must-revalidate"
+             }
+         }
+     );
+ });
+
+// ==========================================
+// PROTEÇÃO DAS PÁGINAS
+// ==========================================
+
+app.use(
+    (req, res, next) => {
+
+        console.log(
+            "[DEBUG PROTEÇÃO]",
+            "originalUrl:", req.originalUrl,
+            "url:", req.url,
+            "path:", req.path,
+            "method:", req.method
+        );
+
+        if (
+
+            req.path === "/login" ||
+            req.path === "/favicon/lukafilmes.svg" ||
+            req.path === "/favicon/lukafilmes.png" ||
+            req.path === "/favicon/file_000000006768820e93d46c5d164e8bd9.png" ||
+
+            req.path === "/admin.html" ||
+
+            req.path === "/status" ||
+
+            req.path === "/api/eu" || req.path === "/api/admin/revendedores" || req.path === "/api/revendedor/clientes" ||
+
+            req.path === "/api/pesquisar" ||
+
+            req.path === "/" ||
+
+            req.path === "/index.html" ||
+
+            req.path === "/paginas/filme.html" ||
+
+            req.path === "/paginas/filme" ||
+
+            req.path === "/paginas/filmes.html" ||
+
+            req.path === "/paginas/series.html" ||
+
+            req.path === "/paginas/series" ||
+
+            req.path === "/paginas/serie.html" ||
+
+            req.path === "/paginas/serie"
+
+        ) {
+
+===== TODOS OS INDEX.HTML NO PROJETO =====
+./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/index.html
+./index.html
+./paginas/index.html
+./public/index.html
+
+===== DATA DO INDEX PRINCIPAL =====
+2026-09-07 08:36:48.603755327 -0300 | 67729 bytes | public/index.html
+
+===== DATA DE OUTROS INDEX =====
+2026-09-05 03:53:29.330759833 -0300 | 2719 bytes | ./BACKUP-ANTES-VOLTAR-52e32ed-20260826-064330/index.html
+2026-09-05 04:08:36.418759487 -0300 | 292514 bytes | ./index.html
+2026-09-05 03:53:29.390759833 -0300 | 2719 bytes | ./paginas/index.html
+2026-09-07 08:36:48.603755327 -0300 | 67729 bytes | ./public/index.html
+
+===== FIM =====

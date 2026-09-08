@@ -1,0 +1,429 @@
+========== SERIE.HTML — JAVASCRIPT FINAL ==========
+1-
+2-    const frame = document.getElementById("serieFrame");
+3-
+4-    if (!frame) {
+5-        console.log("[SERIE PROTEÇÃO] serieFrame não encontrado.");
+6-        return;
+7-    }
+8-
+9-    /*
+10:     * Mantém o iframe configurado para reprodução.
+11-     */
+12-    frame.setAttribute(
+13-        "allow",
+14-        "autoplay; encrypted-media; picture-in-picture; fullscreen"
+15-    );
+16-
+17-    frame.setAttribute("allowfullscreen", "");
+18-
+19-    frame.setAttribute(
+20-        "referrerpolicy",
+21-        "strict-origin-when-cross-origin"
+22-    );
+23-
+24-    /*
+25-     * Impede links da página principal de abrirem
+26-     * novas abas/janelas.
+27-     */
+28:    document.addEventListener("click", function (e) {
+29-
+30-        const alvo = e.target;
+31-
+32-        if (!alvo || !alvo.closest) return;
+33-
+34-        const link = alvo.closest("a");
+35-
+36-        if (!link) return;
+37-
+38-        if (
+39-            link.target === "_blank" ||
+40-            link.target === "_new" ||
+41-            link.target === "_parent" ||
+42-            link.target === "_top"
+43-        ) {
+44-            e.preventDefault();
+45-            e.stopImmediatePropagation();
+46-
+47-            link.removeAttribute("target");
+48-
+49-            console.log(
+50-                "[SERIE PROTEÇÃO] navegação externa bloqueada:",
+51-                link.href || ""
+52-            );
+53-
+54-            return false;
+55-        }
+56-
+57-    }, true);
+58-
+59-    /*
+60-     * Bloqueia window.open usado pela página principal.
+61-     */
+62-    window.open = function () {
+63-
+64-        console.log(
+65-            "[SERIE PROTEÇÃO] popup externo bloqueado."
+66-        );
+67-
+68-        return null;
+69-    };
+70-
+71-    /*
+72-     * Confirma carregamento do player.
+73-     */
+74:    frame.addEventListener("load", function () {
+75-
+76-        console.log(
+77:            "[SERIE PROTEÇÃO] iframe carregado:",
+78-            frame.src
+79-        );
+80-
+81-    });
+82-
+83-    console.log(
+84-        "[SERIE PROTEÇÃO] proteção do player de série ativa."
+85-    );
+86-
+87-})();
+88-</script>
+89-
+90-
+91-
+92-
+93-
+94-
+95-<script id="lukafilmes-notificacao-automatica">
+96-(function(){
+97-    "use strict";
+98-
+99-    const CHAVE = "lukafilmes_notificacoes_filmes_v1";
+100-    const MAX = 10;
+101-
+102-    function lerIds(){
+103-        try {
+104-            return JSON.parse(localStorage.getItem(CHAVE) || "[]");
+105-        } catch(e) {
+106-            return [];
+107-        }
+108-    }
+109-
+110-    function salvarIds(ids){
+111-        localStorage.setItem(
+112-            CHAVE,
+113-            JSON.stringify(ids.slice(0, MAX))
+114-        );
+115-    }
+116-
+117-    function atualizarPainel(filmes){
+118-        const painel = document.getElementById("lukaNotificationPanel");
+119-        if(!painel) return;
+120-
+121-        let lista = painel.querySelector(".luka-notificacoes-lista");
+122-
+123-        if(!lista){
+124-            lista = document.createElement("div");
+125-            lista.className = "luka-notificacoes-lista";
+126-            painel.appendChild(lista);
+127-        }
+128-
+129-        lista.innerHTML = "";
+130-
+131-        if(!filmes || !filmes.length){
+132-            const vazio = document.createElement("div");
+133-            vazio.textContent = "Nenhum filme novo no momento.";
+134-            vazio.style.cssText =
+135-                "padding:16px 0;color:#aaa;font-size:14px;";
+136-            lista.appendChild(vazio);
+137-            return;
+138-        }
+139-
+140-        filmes.forEach(function(filme){
+141-
+142-            const item = document.createElement("a");
+143-
+144-            item.href = "#";
+145-            item.className = "lukafilmes-notificacao-item";
+146-
+147-            item.style.cssText =
+148-                "display:flex;" +
+149-                "align-items:center;" +
+150-                "gap:12px;" +
+151-                "padding:10px 0;" +
+152-                "border-bottom:1px solid rgba(255,255,255,.10);" +
+153-                "color:#fff;" +
+154-                "text-decoration:none;" +
+155-                "cursor:pointer;";
+156-
+157:            item.addEventListener("click", function(event){
+158-                event.preventDefault();
+159-
+160-                const id =
+161-                    filme.id ||
+162-                    filme.tmdb_id ||
+163-                    filme.id_tmdb;
+164-
+165-                if(!id) return;
+166-
+167-                const dadosFilme = {
+168-                    id: Number(id),
+169-                    tmdb_id: Number(id),
+170-                    titulo: filme.titulo || "",
+171-                    title: filme.titulo || "",
+172-                    poster: filme.poster || "",
+173-                    poster_path: filme.poster
+174-                        ? filme.poster.replace(
+175-                            "https://image.tmdb.org/t/p/w500",
+176-                            ""
+177-                          )
+178-                        : "",
+179-                    release_date: filme.data || "",
+180-                    data: filme.data || ""
+181-                };
+182-
+183-                try{
+184-                    localStorage.setItem(
+185-                        "filmeSelecionado",
+186-                        JSON.stringify(dadosFilme)
+187-                    );
+188-
+189-                    localStorage.setItem(
+190-                        "filmeSelecionadoHome_" + String(id),
+191-                        JSON.stringify(dadosFilme)
+192-                    );
+193-                }catch(e){}
+194-
+195-                window.location.href =
+196-                    "/paginas/filme.html?id=" +
+197-                    encodeURIComponent(id);
+198-            });
+199-
+200-            if(filme.poster){
+201-
+202-                const imagem = document.createElement("img");
+203-
+204-                imagem.src = filme.poster;
+205-                imagem.alt =
+206-                    "Capa de " + (filme.titulo || "filme");
+207-
+208-                imagem.loading = "lazy";
+209-
+210-                imagem.style.cssText =
+211-                    "width:58px;" +
+212-                    "height:82px;" +
+213-                    "object-fit:cover;" +
+214-                    "border-radius:7px;" +
+215-                    "flex:none;" +
+216-                    "background:#111;";
+217-
+218-                item.appendChild(imagem);
+219-
+220-            }else{
+221-
+222-                const semImagem = document.createElement("div");
+223-
+224-                semImagem.textContent = "🎬";
+225-
+226-                semImagem.style.cssText =
+227-                    "width:58px;" +
+228-                    "height:82px;" +
+229-                    "display:flex;" +
+230-                    "align-items:center;" +
+231-                    "justify-content:center;" +
+232-                    "border-radius:7px;" +
+233-                    "background:#151515;" +
+234-                    "font-size:24px;" +
+235-                    "flex:none;";
+236-
+237-                item.appendChild(semImagem);
+--
+305-                    badge.textContent =
+306-                        novos.length > 9 ? "9+" : String(novos.length);
+307-                    badge.style.display = "flex";
+308-                }else{
+309-                    badge.textContent = "";
+310-                    badge.style.display = "none";
+311-                }
+312-            }
+313-
+314-            atualizarPainel(novos.length ? novos : []);
+315-
+316-            if(novos.length){
+317-                salvarIds(
+318-                    filmes.map(function(f){ return Number(f.id); })
+319-                );
+320-            }
+321-
+322-        }catch(e){
+323-            console.warn(
+324-                "[LUKAFILMES] Não foi possível verificar novidades.",
+325-                e
+326-            );
+327-        }
+328-    }
+329-
+330-    function iniciar(){
+331-        verificarNovidades();
+332-    }
+333-
+334-    if(document.readyState === "loading"){
+335:        document.addEventListener("DOMContentLoaded", iniciar);
+336-    }else{
+337-        iniciar();
+338-    }
+339-})();
+340-</script>
+341-
+342-
+343-<script>
+344-/* ============================================================
+345-   LUKAFILMES-CORRECAO-CONTINUAR-SERIE
+346-   Garante que séries sejam registradas somente depois que
+347-   o STORAGE isolado da conta estiver pronto.
+348-   Filmes não são alterados.
+349-   ============================================================ */
+350-(function(){
+351-
+352-    "use strict";
+353-
+354-    function registrarSerieContinuar(dados){
+355-
+356-        if(!dados || !dados.id){
+357-            console.warn(
+358-                "[CONTINUAR SÉRIE] Dados inválidos para registro."
+359-            );
+360-            return;
+361-        }
+362-
+363-        function executar(){
+364-
+365-            if(!window.LukaContinuar ||
+366-               typeof window.LukaContinuar.registrarInicio !== "function"){
+367-
+368-                console.warn(
+369-                    "[CONTINUAR SÉRIE] LukaContinuar ainda não disponível."
+370-                );
+371-
+372-                setTimeout(executar, 150);
+373-                return;
+374-            }
+375-
+376-            try{
+377-
+378-                window.LukaContinuar.registrarInicio({
+379-
+380-                    id: String(dados.id),
+381-
+382-                    titulo:
+383-                        dados.titulo ||
+384-                        "Série",
+385-
+386-                    capa:
+387-                        dados.capa ||
+388-                        "",
+389-
+390-                    tipo: "serie",
+391-
+392-                    player:
+393-                        dados.player != null
+394-                            ? String(dados.player)
+395-                            : "1",
+396-
+397:                    temporada:
+398:                        dados.temporada != null
+399:                            ? String(dados.temporada)
+400-                            : null,
+401-
+402:                    episodio:
+403:                        dados.episodio != null
+404:                            ? String(dados.episodio)
+405-                            : null
+406-
+407-                });
+408-
+409-                console.log(
+410-                    "[CONTINUAR SÉRIE] REGISTRADO:",
+411-                    {
+412-                        id: String(dados.id),
+413:                        temporada: dados.temporada,
+414:                        episodio: dados.episodio,
+415-                        player: dados.player
+416-                    }
+417-                );
+418-
+419-            }catch(e){
+420-
+421-                console.error(
+422-                    "[CONTINUAR SÉRIE] Erro ao registrar:",
+423-                    e
+424-                );
+425-            }
+426-        }
+427-
+428-        /*
+429-         * O conta-storage pode ainda estar esperando /api/eu.
+430-         * Neste caso esperamos a conta antes de gravar.
+431-         */
+432-        if(
+433-            window.LukaContaPronta &&
+434-            typeof window.LukaContaPronta.then === "function"
+435-        ){
+436-
+437-            window.LukaContaPronta
+438-                .then(function(){
+439-                    executar();
+440-                })
+441-                .catch(function(){
+442-                    executar();
+443-                });
+444-
+445-        }else{
+446-
+447-            executar();
+448-        }
+449-    }
+450-
+451-    window.LukaRegistrarSerieContinuar =
+452-        registrarSerieContinuar;
+453-
+454-    console.log(
+455-        "[CONTINUAR SÉRIE] Correção carregada."
+456-    );
+457-
+458-})();
+459-</script>
+460-
+461-</body>
+462-
+463-
+464-
+465-
+466-</html>
+467-
+468-
+469-
+470-
+471-
+472-
+473-
+474-
+475-
+476-
+477-
+478-
+479-
+480-<style id="serieFavoritosTopo-mobile-tamanho-ajuste">
+481-@media (max-width: 600px) {
+482-    #serieFavoritosTopo {
+483-        top: 8px !important;
+484-        right: 8px !important;
+485-        left: auto !important;
+486-        gap: 4px !important;
+487-        max-width: calc(100vw - 16px) !important;
+488-    }
+489-
+490-    #serieFavoritosTopo button,
+491-    #serieFavoritosTopo a {
+492-        padding: 6px 8px !important;
+493-        font-size: 10px !important;
+494-        line-height: 1.15 !important;

@@ -1,0 +1,101 @@
+========== SESSION ==========
+HTTP/1.1 401 Unauthorized
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 16
+ETag: W/"10-NB1xATREIUw8kGjIYhPUKI5WBPk"
+Date: Sun, 06 Sep 2026 23:18:35 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"logado":false}
+========== LOGIN ==========
+6:const session = require("express-session");
+569:        if (!req.session || !req.session.usuario) return;
+571:        const u = req.session.usuario;
+639:app.get("/login", (req, res) => {
+641:    if (req.session.usuario) {
+656:    if (!req.session.usuario) {
+660:    if (req.session.usuario.tipo !== "admin") {
+775:            !req.session.usuario ||
+776:            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+778:            req.session.usuario = {
+827:app.post("/login", async (req, res) => {
+888:        req.session.usuario = {
+931:    if (!req.session.usuario) {
+940:        usuario: req.session.usuario
+952:        if (!req.session || !req.session.usuario) {
+959:        const sessao = req.session.usuario;
+995:        if (!req.session || !req.session.usuario) {
+1003:        const sessao = req.session.usuario;
+1095:        req.session.usuario &&
+1096:        String(req.session.usuario.tipo || "").toLowerCase() === "admin"
+1343:        if (!req.session || !req.session.usuario) {
+1352:        const sessao = req.session.usuario;
+1537:    if (!req.session || !req.session.usuario) {
+1554:            !req.session.usuario ||
+1555:            req.session.usuario.tipo !== "admin"
+3879:            !req.session.usuario ||
+3880:            req.session.usuario.tipo !== "admin"
+3927:                !req.session.usuario ||
+3928:                req.session.usuario.tipo !== "admin"
+4066:            !req.session.usuario ||
+4067:            req.session.usuario.tipo !== "admin"
+4229:            !req.session.usuario ||
+4230:            req.session.usuario.tipo !== "admin"
+4319:            !req.session.usuario ||
+4320:            req.session.usuario.tipo !== "admin"
+4416:            Number(req.session.usuario.id) === id
+4419:            req.session.usuario.usuario = usuario;
+4420:            req.session.usuario.tipo = tipo;
+4460:            !req.session.usuario ||
+4461:            req.session.usuario.tipo !== "admin"
+4526:            !req.session.usuario ||
+4527:            req.session.usuario.tipo !== "admin"
+4626:            !req.session.usuario ||
+4627:            req.session.usuario.tipo !== "admin"
+4766:            !req.session.usuario ||
+4767:            req.session.usuario.tipo !== "revendedor"
+4776:            Number(req.session.usuario.id);
+4976:    if (!req.session.usuario) {
+4986:        dados[String(req.session.usuario.id)] = {
+5014:            !req.session.usuario ||
+5015:            req.session.usuario.tipo !== "revendedor"
+5024:            Number(req.session.usuario.id);
+5101:            !req.session.usuario ||
+5102:            req.session.usuario.tipo !== "revendedor"
+5117:                    Number(req.session.usuario.id)
+5164:            !req.session.usuario ||
+5165:            req.session.usuario.tipo !== "revendedor"
+5174:            Number(req.session.usuario.id);
+5283:            !req.session.usuario ||
+5284:            req.session.usuario.tipo !== "revendedor"
+
+========== ADMIN HTML ==========
+app.get("/admin.html", (req, res) => {
+
+    if (!req.session.usuario) {
+        return res.redirect("/login");
+    }
+
+    if (req.session.usuario.tipo !== "admin") {
+        return res.status(403).send("Acesso negado.");
+    }
+
+    res.set({
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Surrogate-Control": "no-store"
+    });
+
+    res.sendFile(
+        path.join(__dirname, "public", "admin.html"),
+        {
+            cacheControl: false
+        }
+    );
+});
+
+
+// ==========================================

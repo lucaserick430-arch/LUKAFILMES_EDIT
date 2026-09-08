@@ -1,0 +1,4802 @@
+==================================================
+ LUKAFILMES - DIAGNOSTICO RESTANTE ADMIN
+==================================================
+
+========== NAVEGACAO.JS - RESTANTE criarBotaoAdmin ==========
+        if (tipo === "admin") {
+
+            texto = "⚙️ ADMIN";
+            destino = "/admin.html";
+
+        } else if (tipo === "revendedor") {
+
+            texto = "🏪 REVENDEDOR";
+            destino = "/revendedor.html";
+
+        } else {
+
+            return;
+        }
+
+        /*
+         * ==================================================
+         * MENU MOBILE
+         * ==================================================
+         */
+
+        const painel =
+            document.getElementById(
+                "lukafilmesMenuPainel"
+            );
+
+        if (painel) {
+
+            painel.href = destino;
+            painel.textContent = texto;
+            painel.style.display = "block";
+
+            painel.onclick = function(evento) {
+
+                evento.preventDefault();
+                evento.stopPropagation();
+                evento.stopImmediatePropagation();
+
+                window.location.assign(
+                    destino
+                );
+
+                return false;
+            };
+        }
+
+        /*
+         * ==================================================
+         * MENU DESKTOP
+         * ==================================================
+         */
+
+        const desktopAdmin =
+            document.getElementById(
+                "lukafilmesDesktopAdmin"
+            );
+
+        if (
+            desktopAdmin &&
+            tipo === "admin"
+        ) {
+
+            desktopAdmin.href =
+                "/admin.html";
+
+            desktopAdmin.textContent =
+                "⚙️ ADMIN";
+
+            desktopAdmin.style.display =
+                "block";
+
+            desktopAdmin.onclick =
+                function(evento) {
+
+                    evento.preventDefault();
+                    evento.stopPropagation();
+                    evento.stopImmediatePropagation();
+
+                    window.location.assign(
+                        "/admin.html"
+                    );
+
+                    return false;
+                };
+        }
+
+        /*
+         * ==================================================
+         * FALLBACK
+         * ==================================================
+         */
+
+        if (
+            !painel &&
+            !desktopAdmin &&
+            !document.querySelector(
+                ".lukafilmes-admin"
+            )
+        ) {
+
+            const botao =
+                document.createElement("a");
+
+            botao.href =
+                destino;
+
+            botao.className =
+                "lukafilmes-admin";
+
+            botao.textContent =
+                texto;
+
+========== NAVEGACAO.JS - 190 A 760 ==========
+                texto;
+
+            botao.setAttribute(
+                "data-lukafilmes-admin",
+                "true"
+            );
+
+            botao.onclick =
+                function(evento) {
+
+                    evento.preventDefault();
+                    evento.stopPropagation();
+                    evento.stopImmediatePropagation();
+
+                    window.location.assign(
+                        destino
+                    );
+
+                    return false;
+                };
+
+            document.body.appendChild(
+                botao
+            );
+        }
+
+    })
+    .catch(function(erro) {
+
+        console.warn(
+            "[NAVEGAÇÃO] Erro ao verificar usuário:",
+            erro
+        );
+
+    });
+
+}
+// ======================================================
+// BOTÃO LUKAFILMES
+// ======================================================
+
+function criarBotaoHome() {
+
+    if (!estaNaPaginaInicial()) {
+        return;
+    }
+
+    if (document.querySelector(".lukafilmes-home")) {
+        return;
+    }
+
+    const botao = document.createElement("a");
+
+    botao.href = HOME;
+    botao.className = "lukafilmes-home";
+    botao.setAttribute("data-lukafilmes-home", "true");
+
+    botao.innerHTML = "<span>LUKAFILMES</span>";
+
+    document.body.appendChild(botao);
+
+}
+
+
+// ======================================================
+// BOTÃO SAIR
+// ======================================================
+
+function criarBotaoSair() {
+
+    if (document.querySelector(".lukafilmes-sair")) {
+        return;
+    }
+
+    const botao = document.createElement("button");
+
+    botao.type = "button";
+    botao.className = "lukafilmes-sair";
+    botao.setAttribute("data-lukafilmes-sair", "true");
+
+    botao.innerHTML = "⎋ SAIR";
+
+    botao.addEventListener("click", async function () {
+
+        botao.disabled = true;
+        botao.innerHTML = "Saindo...";
+
+        try {
+
+            const resposta = await fetch(
+                "/logout",
+                {
+                    method: "POST",
+                    credentials: "same-origin"
+                }
+            );
+
+            if (!resposta.ok) {
+                throw new Error("Erro ao sair");
+            }
+
+            window.location.replace(LOGIN);
+
+        } catch (erro) {
+
+            console.error(
+                "[LUKAFILMES] Erro ao sair:",
+                erro
+            );
+
+            botao.disabled = false;
+            botao.innerHTML = "⎋ SAIR";
+
+            alert("Não foi possível sair. Tente novamente.");
+
+        }
+
+    });
+
+    document.body.appendChild(botao);
+
+}
+
+
+// ======================================================
+// ESTILO ADMIN / PAINEL
+// ======================================================
+
+function adicionarEstiloAdmin() {
+
+    if (document.getElementById("estilo-admin-lukafilmes")) {
+        return;
+    }
+
+    const style = document.createElement("style");
+
+    style.id = "estilo-admin-lukafilmes";
+
+    style.textContent = `
+
+        .lukafilmes-admin {
+
+            position: fixed;
+
+            top: 108px;
+
+            left: 20px;
+
+            z-index: 99999;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            padding: 10px 16px;
+
+            color: #fff;
+
+            background: rgba(8,8,8,.78);
+
+            border: 1px solid rgba(255,255,255,.15);
+
+            border-radius: 25px;
+
+            text-decoration: none;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            font-size: 14px;
+
+            font-weight: 900;
+
+            box-shadow: 0 8px 25px rgba(0,0,0,.35);
+
+            backdrop-filter: blur(12px);
+
+            transition: .25s ease;
+
+        }
+
+        .lukafilmes-admin:hover {
+
+            background: #e50914;
+
+            border-color: #e50914;
+
+            color: #fff;
+
+            transform: translateY(-2px);
+
+        }
+
+        @media (max-width:700px) {
+
+            .lukafilmes-admin {
+
+                top: 12px;
+
+                left: 12px;
+
+                padding: 8px 12px;
+
+                font-size: 12px;
+
+            }
+
+        }
+
+    `;
+
+    document.head.appendChild(style);
+
+}
+
+
+// ======================================================
+// ESTILO PRINCIPAL
+// ======================================================
+
+function adicionarEstilo() {
+
+    if (
+        document.getElementById(
+            "estilo-navegacao-lukafilmes"
+        )
+    ) {
+        return;
+    }
+
+    const style = document.createElement("style");
+
+    style.id = "estilo-navegacao-lukafilmes";
+
+    style.textContent = `
+
+        /* ==========================================
+           BOTÃO SAIR
+           ========================================== */
+
+        .lukafilmes-sair {
+
+            position: fixed;
+
+            top: 18px;
+
+            right: 20px;
+
+            z-index: 100000;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 10px 17px;
+
+            color: #fff;
+
+            background: rgba(8,8,8,.82);
+
+            border: 1px solid rgba(255,255,255,.16);
+
+            border-radius: 30px;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            font-size: 14px;
+
+            font-weight: 900;
+
+            letter-spacing: .3px;
+
+            cursor: pointer;
+
+            backdrop-filter: blur(14px);
+
+            -webkit-backdrop-filter: blur(14px);
+
+            box-shadow:
+                0 8px 30px rgba(0,0,0,.45);
+
+            transition:
+                transform .25s ease,
+                background .25s ease,
+                border-color .25s ease,
+                box-shadow .25s ease;
+
+        }
+
+
+        .lukafilmes-sair:hover {
+
+            background: #e50914;
+
+            border-color: #e50914;
+
+            transform: translateY(-2px) scale(1.03);
+
+            box-shadow:
+                0 10px 35px rgba(229,9,20,.35);
+
+        }
+
+
+        .lukafilmes-sair:active {
+
+            transform: scale(.96);
+
+        }
+
+
+        .lukafilmes-sair:disabled {
+
+            opacity: .65;
+
+            cursor: wait;
+
+        }
+
+
+        /* ==========================================
+           BOTÃO LUKAFILMES
+           ========================================== */
+
+        .lukafilmes-home {
+
+            position: fixed;
+
+            top: 70px;
+
+            right: 20px;
+
+            left: auto;
+
+            z-index: 99999;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 11px 17px;
+
+            color: #fff;
+
+            text-decoration: none;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            font-size: 15px;
+
+            font-weight: 900;
+
+            letter-spacing: .3px;
+
+            background: rgba(8,8,8,.78);
+
+            border: 1px solid rgba(255,255,255,.16);
+
+            border-radius: 30px;
+
+            backdrop-filter: blur(14px);
+
+            -webkit-backdrop-filter: blur(14px);
+
+            box-shadow:
+                0 8px 30px rgba(0,0,0,.45);
+
+            transition:
+                transform .25s ease,
+                background .25s ease,
+                border-color .25s ease,
+                box-shadow .25s ease;
+
+        }
+
+
+        .lukafilmes-home:hover {
+
+            background: #e50914;
+
+            border-color: #e50914;
+
+            transform: translateY(-2px) scale(1.02);
+
+            box-shadow:
+                0 10px 35px rgba(229,9,20,.35);
+
+        }
+
+
+        .lukafilmes-home:active {
+
+            transform: scale(.96);
+
+        }
+
+
+        /* ==========================================
+           CELULAR
+           ========================================== */
+
+        @media (max-width: 700px) {
+
+            .lukafilmes-sair {
+
+                top: 12px;
+
+                right: 12px;
+
+                padding: 9px 13px;
+
+                font-size: 13px;
+
+            }
+
+
+            .lukafilmes-home {
+
+                top: 58px;
+
+                right: 12px;
+
+                left: auto;
+
+                padding: 9px 13px;
+
+                font-size: 13px;
+
+            }
+
+        }
+
+    `;
+
+    document.head.appendChild(style);
+
+}
+
+
+// ======================================================
+// FECHAR PLAYER
+// ======================================================
+
+function fecharPlayer() {
+
+    let fechou = false;
+
+    const playerFilme =
+        document.getElementById("playerFilme");
+
+    const filmeFrame =
+        document.getElementById("filmeFrame");
+
+    if (
+        playerFilme &&
+        playerFilme.style.display !== "none"
+    ) {
+
+        playerFilme.style.display = "none";
+
+        if (filmeFrame) {
+            filmeFrame.src = "";
+        }
+
+        fechou = true;
+
+    }
+
+    const playerSerie =
+        document.getElementById("playerSerie");
+
+    const serieFrame =
+        document.getElementById("serieFrame");
+
+    if (
+        playerSerie &&
+        playerSerie.style.display !== "none"
+    ) {
+
+        playerSerie.style.display = "none";
+
+        if (serieFrame) {
+            serieFrame.src = "";
+        }
+
+        fechou = true;
+
+    }
+
+    return fechou;
+
+}
+
+
+// ======================================================
+// BOTÃO VOLTAR
+// ======================================================
+
+function configurarVoltar() {
+
+    const botoes =
+        document.querySelectorAll(".voltar");
+
+    botoes.forEach(function (botao) {
+
+        if (
+            botao.id === "voltarFilmes" ||
+            botao.id === "voltarSerie"
+        ) {
+            return;
+        }
+
+        botao.addEventListener(
+            "click",
+            function (evento) {
+
+                evento.preventDefault();
+
+                if (fecharPlayer()) {
+
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "smooth"
+                    });
+
+                    return;
+
+                }
+
+                irInicio();
+
+            }
+        );
+
+    });
+
+}
+
+
+// ======================================================
+// INICIALIZAÇÃO
+// ======================================================
+
+function iniciarNavegacao() {
+
+    adicionarEstilo();
+    adicionarEstiloAdmin();
+
+    criarBotaoAdmin();
+    criarBotaoHome();
+
+    configurarVoltar();
+
+}
+
+
+if (
+    document.readyState === "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        iniciarNavegacao
+    );
+
+} else {
+
+    iniciarNavegacao();
+
+========== ADMIN.HTML - TODAS AS REFERENCIAS A TESTE ==========
+1678-        <h2 id="lukaLoaderTitle">Preparando sua sessão...</h2>
+1679-        <p id="lukaLoaderText">Isso pode levar alguns segundos</p>
+1680-    </div>
+1681-</div>
+1682-
+1683-
+1684-
+1685-<div class="app">
+1686-
+1687-<aside class="sidebar">
+1688-
+1689-<div class="logo" id="adminLogo" onclick="abrirFotoPerfil()" title="Clique para alterar a foto">
+1690- <img id="adminAvatar" class="logo-avatar" alt="Perfil">
+1691- <span id="adminLogoTexto">LUKA<span>FILMES</span></span>
+1692- <input id="profileUpload" class="profile-upload" type="file" accept="image/*">
+1693-</div>
+1694-
+1695-<nav class="nav">
+1696-<button class="active" onclick="aba('dashboard',this)">🏠 Dashboard</button>
+1697-<button onclick="aba('usuarios',this)">👤 Usuários</button>
+1698:<button onclick="aba('testes',this)">🧪 Testes</button>
+1699-
+1700-<button type="button" onclick="window.location.href='/'" title="Voltar para a página inicial">🎬 Luca Filme</button>
+1701-</nav>
+1702-
+1703-</aside>
+1704-
+1705-<main class="main">
+1706-
+1707-<section id="dashboard" class="section active">
+1708-
+1709-<div class="top">
+1710-<div class="title">
+1711-<h1>Dashboard</h1>
+1712-<p>Central administrativa LUKAFILMES</p>
+1713-</div>
+1714-<div class="online"><span class="online-dot">●</span> ONLINE</div>
+1715-</div>
+1716-
+1717-<div class="cards">
+1718-<div class="card clickable-card" onclick="abrirPainelPremium('usuarios')"><small>USUÁRIOS</small><div class="num blue" id="cUsuarios">0</div><span class="card-hint">Clique para abrir →</span></div>
+--
+1727-<div></div><div></div><div></div><div></div><div></div>
+1728-<div></div><div></div><div></div>
+1729-</div>
+1730-<span class="card-hint">Dados atualizados automaticamente →</span>
+1731-</div>
+1732-<div class="card clickable-card" onclick="abrirPainelPremium('online')"><small>ONLINE AGORA</small><div class="num green" id="cOnline">0</div><span class="card-hint">Clique para ver →</span></div>
+1733-</div>
+1734-
+1735-<div class="panel">
+1736-<div class="panelHead">
+1737-<h2>Atividade</h2>
+1738-<span id="ultimaAtualizacao" style="color:var(--muted);font-size:12px">Atualizando...</span>
+1739-</div>
+1740-<div class="chart" id="chart"></div>
+1741-</div>
+1742-
+1743-<div class="panel">
+1744-<div class="panelHead"><h2>Ações rápidas</h2></div>
+1745-<div class="quick">
+1746-<button class="btn primary" onclick="abrirModal('usuario')">＋ Criar usuário</button>
+1747:<button class="btn yellow" onclick="abrirModal('teste')">＋ Criar teste</button>
+1748-
+1749-
+1750-</div>
+1751-</div>
+1752-
+1753-</section>
+1754-
+1755-<section id="usuarios" class="section">
+1756:<button class="admin-back" onclick="voltarDashboardAdmin()">← Voltar ao Dashboard</button>
+1757-
+1758-
+1759-<div class="top">
+1760-<div class="title">
+1761-<h1>Usuários</h1>
+1762-<p>Gerencie as contas do sistema</p>
+1763-</div>
+1764-<button class="btn primary" onclick="abrirModal('usuario')">＋ Novo usuário</button>
+1765-</div>
+1766-
+1767-<div class="panel">
+1768-<div class="panelHead">
+1769-<h2>Contas</h2>
+1770-<div class="tools">
+1771-<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+1772-<button class="btn" onclick="carregar()">↻ Atualizar</button>
+1773-</div>
+1774-</div>
+1775-<div class="tableWrap">
+1776-<table>
+1777-<thead>
+1778-<tr>
+1779-<th>Usuário</th>
+1780-<th>Tipo</th>
+1781-<th>Status</th>
+1782-<th>Validade</th>
+1783-<th>Presença</th>
+1784-<th>Ações</th>
+1785-</tr>
+1786-</thead>
+1787-<tbody id="tabelaUsuarios"></tbody>
+1788-</table>
+1789-</div>
+1790-</div>
+1791-
+1792-</section>
+1793-
+1794:<section id="testes" class="section">
+1795:<button class="admin-back" onclick="voltarDashboardAdmin()">← Voltar ao Dashboard</button>
+1796-
+1797-
+1798-<div class="top">
+1799-<div class="title">
+1800:<h1>Testes</h1>
+1801:<p>Contas de teste e acessos temporários</p>
+1802-</div>
+1803-
+1804-</div>
+1805-
+1806-<div class="panel">
+1807:<div class="panelHead"><h2>Contas de teste</h2></div>
+1808-<div class="tableWrap">
+1809-<table>
+1810-<thead>
+1811-<tr><th>Usuário</th><th>Status</th><th>Validade</th><th>Online</th><th>Ações</th></tr>
+1812-</thead>
+1813:<tbody id="tabelaTestes"></tbody>
+1814-</table>
+1815-</div>
+1816-</div>
+1817-
+1818-</section>
+1819-
+1820-<section id="revendedores" class="section">
+1821:<button class="admin-back" onclick="voltarDashboardAdmin()">← Voltar ao Dashboard</button>
+1822-
+1823-
+1824-<div class="top">
+1825-<div class="title">
+1826-<h1>Revendedores</h1>
+1827-<p>Controle seus parceiros e limites de conexão</p>
+1828-</div>
+1829-
+1830-</div>
+1831-
+1832-<div class="panel">
+1833-<div class="panelHead">
+1834-<h2>Revendedores</h2>
+1835-<button class="btn" onclick="carregar()">↻ Atualizar</button>
+1836-</div>
+1837-<div class="tableWrap">
+1838-<table>
+1839-<thead>
+1840-<tr>
+1841-<th>Usuário</th>
+--
+1870-        id="fValor"
+1871-        type="number"
+1872-        min="0"
+1873-        step="0.01"
+1874-        placeholder="Ex.: 20.00"
+1875-    >
+1876-</div>
+1877-
+1878-<div class="form-group">
+1879-    <label for="fTelefone">📱 Telefone</label>
+1880-    <input
+1881-        id="fTelefone"
+1882-        type="tel"
+1883-        placeholder="Ex.: (11) 99999-9999"
+1884-        autocomplete="tel"
+1885-    >
+1886-</div>
+1887-
+1888-<input type="hidden" id="tipoCriacao">
+1889-
+1890:<div id="lukaEscolhaTeste" style="display:none;margin:0 0 18px;">
+1891:  <div style="font-weight:800;margin-bottom:10px;">🧪 Como deseja criar o teste?</div>
+1892-
+1893-  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+1894-    <button type="button"
+1895-            id="lukaModoManual"
+1896:            onclick="LUKA_MODO_TESTE('manual')"
+1897-            style="flex:1;min-width:130px;padding:12px;border-radius:12px;
+1898-                   border:1px solid rgba(255,255,255,.15);cursor:pointer;
+1899-                   font-weight:800;">
+1900-      👤 Manual
+1901-    </button>
+1902-
+1903-    <button type="button"
+1904-            id="lukaModoAutomatico"
+1905:            onclick="LUKA_MODO_TESTE('automatico')"
+1906-            style="flex:1;min-width:160px;padding:12px;border-radius:12px;
+1907-                   border:0;cursor:pointer;font-weight:800;">
+1908-      ⚡ Automático
+1909-    </button>
+1910-  </div>
+1911-</div>
+1912-
+1913-<div id="lukaAutomaticoBox"
+1914-     style="display:none;margin:0 0 18px;padding:16px;border-radius:14px;
+1915-            background:rgba(255,255,255,.05);
+1916-            border:1px solid rgba(255,255,255,.10);">
+1917-
+1918-  <div style="font-weight:800;margin-bottom:12px;">
+1919:    ⚡ Gerar testes automaticamente
+1920-  </div>
+1921-
+1922-  <label>⏱️ Duração (horas)</label>
+1923-  <input id="lukaAutoHoras"
+1924-         type="number"
+1925-         min="1"
+1926-         max="72"
+1927-         value="1">
+1928-
+1929-  <label style="display:block;margin-top:10px;">
+1930-    🔌 Limite de conexões
+1931-  </label>
+1932-  <input id="lukaAutoConexoes"
+1933-         type="number"
+1934-         min="1"
+1935-         value="1">
+1936-
+1937-  <label style="display:block;margin-top:10px;">
+1938:    🔢 Quantidade de testes
+1939-  </label>
+1940-  <input id="lukaAutoQuantidade"
+1941-         type="number"
+1942-         min="1"
+1943-         max="100"
+1944-         value="1">
+1945-
+1946-  <div style="margin-top:12px;opacity:.75;font-size:13px;line-height:1.4;">
+1947:    O sistema irá gerar automaticamente usuário e senha exclusivos para cada teste.
+1948-  </div>
+1949-</div>
+1950-
+1951-<div id="lukaCamposManuais">
+1952-
+1953-<label>Usuário</label>
+1954-<input id="fUsuario" required autocomplete="off">
+1955-
+1956-<label>Senha</label>
+1957-<input id="fSenha" type="password" required>
+1958-
+1959-<label id="fTempoLabel">Dias</label>
+1960-<input id="fDias" type="number" min="1" value="30" required>
+1961-
+1962-</div>
+1963-
+1964-<div id="limiteBox" style="display:none">
+1965-<label>Limite de conexões</label>
+1966-<input id="fLimite" type="number" min="1" value="1">
+1967-</div>
+--
+1985-                    type="button"
+1986-                    onclick="fecharEditorConta()">×</button>
+1987-        </div>
+1988-
+1989-        <div class="luka-edit-group">
+1990-            <label>Usuário</label>
+1991-            <input id="editarContaUsuario" autocomplete="off">
+1992-        </div>
+1993-
+1994-        <div class="luka-edit-group">
+1995-            <label>Nova senha</label>
+1996-            <input id="editarContaSenha"
+1997-                   type="password"
+1998-                   placeholder="Deixe vazio para manter a atual">
+1999-        </div>
+2000-
+2001-        <div class="luka-edit-group">
+2002-            <label>Tipo</label>
+2003-            <select id="editarContaTipo">
+2004-                <option value="usuario">Usuário</option>
+2005:                <option value="teste">Teste</option>
+2006-                <option value="revendedor">Revendedor</option>
+2007-                <option value="admin">Administrador</option>
+2008-            </select>
+2009-        </div>
+2010-
+2011-        <div class="luka-edit-group">
+2012-            <label>Telefone</label>
+2013-            <input id="editarContaTelefone"
+2014-                   type="tel"
+2015-                   placeholder="Telefone">
+2016-        </div>
+2017-
+2018-        <div class="luka-edit-group">
+2019-            <label>Valor mensal</label>
+2020-            <input id="editarContaValor"
+2021-                   type="number"
+2022-                   min="0"
+2023-                   step="0.01"
+2024-                   placeholder="0,00">
+2025-        </div>
+--
+2126-}
+2127-
+2128-function toast(msg){
+2129-
+2130- const t=document.getElementById("toast");
+2131- t.textContent=msg;
+2132- t.classList.add("show");
+2133-
+2134- clearTimeout(timer);
+2135- timer=setTimeout(()=>t.classList.remove("show"),2800);
+2136-}
+2137-
+2138-function abrirModal(tipo){
+2139-
+2140- document.getElementById("modal").classList.add("show");
+2141- document.getElementById("tipoCriacao").value=tipo;
+2142-
+2143- document.getElementById("fUsuario").value="";
+2144- document.getElementById("fSenha").value="";
+2145-
+2146: const escolhaTeste=document.getElementById("lukaEscolhaTeste");
+2147- const automaticoBox=document.getElementById("lukaAutomaticoBox");
+2148- const camposManuais=document.getElementById("lukaCamposManuais");
+2149-
+2150: if(escolhaTeste){
+2151:  escolhaTeste.style.display=tipo==="teste"?"block":"none";
+2152- }
+2153-
+2154- if(automaticoBox){
+2155-  automaticoBox.style.display="none";
+2156- }
+2157-
+2158- if(camposManuais){
+2159:  camposManuais.style.display=tipo==="teste"?"none":"block";
+2160- }
+2161-
+2162- const btnSalvarInicial=document.getElementById("btnSalvar");
+2163-
+2164- if(btnSalvarInicial){
+2165:  if(tipo==="teste"){
+2166-   btnSalvarInicial.style.display="none";
+2167-   btnSalvarInicial.disabled=false;
+2168-   btnSalvarInicial.textContent="Criar";
+2169-  }else{
+2170-   btnSalvarInicial.style.display="";
+2171-  }
+2172- }
+2173-
+2174- document.getElementById("fTempoLabel").textContent =
+2175:  tipo==="teste" ? "Horas de teste" : "Dias";
+2176-
+2177- document.getElementById("fDias").value =
+2178:  tipo==="teste" ? 1 : 30;
+2179-
+2180- if(document.getElementById("fValor")){
+2181-  document.getElementById("fValor").value="";
+2182- }
+2183-
+2184- if(document.getElementById("fTelefone")){
+2185-  document.getElementById("fTelefone").value="";
+2186- }
+2187-
+2188- const limite=document.getElementById("limiteBox");
+2189-
+2190- limite.style.display=tipo==="revendedor"?"block":"none";
+2191-
+2192- (document.getElementById("modalTitulo") || {set textContent(v){}}).textContent=
+2193- tipo==="usuario"?"Criar usuário":
+2194: tipo==="teste"?"Criar teste":
+2195- "Criar revendedor";
+2196-}
+2197-
+2198-function fecharModal(){
+2199- document.getElementById("modal").classList.remove("show");
+2200-
+2201: const escolha=document.getElementById("lukaEscolhaTeste");
+2202- const auto=document.getElementById("lukaAutomaticoBox");
+2203- const manual=document.getElementById("lukaCamposManuais");
+2204-
+2205- if(escolha) escolha.style.display="none";
+2206- if(auto) auto.style.display="none";
+2207- if(manual) manual.style.display="block";
+2208-
+2209- const campoUsuario=document.getElementById("fUsuario");
+2210- const campoSenha=document.getElementById("fSenha");
+2211- const campoDias=document.getElementById("fDias");
+2212- const btnSalvar=document.getElementById("btnSalvar");
+2213-
+2214- if(campoUsuario) campoUsuario.required=true;
+2215- if(campoSenha) campoSenha.required=true;
+2216- if(campoDias) campoDias.required=true;
+2217- if(btnSalvar){
+2218-  btnSalvar.style.display="";
+2219-  btnSalvar.disabled=false;
+2220-  btnSalvar.textContent="Criar";
+2221- }
+2222-}
+2223-
+2224:function LUKA_MODO_TESTE(modo){
+2225-
+2226- const auto=document.getElementById("lukaAutomaticoBox");
+2227- const manual=document.getElementById("lukaCamposManuais");
+2228- const btnManual=document.getElementById("lukaModoManual");
+2229- const btnAuto=document.getElementById("lukaModoAutomatico");
+2230- const btnSalvar=document.getElementById("btnSalvar");
+2231-
+2232- if(!auto || !manual) return;
+2233-
+2234- if(modo==="automatico"){
+2235-
+2236-  auto.style.display="block";
+2237-  manual.style.display="none";
+2238-
+2239-  /*
+2240-   * Os campos manuais possuem required.
+2241-   * Quando ficam escondidos, o navegador poderia impedir
+2242-   * o envio do formulário antes do JavaScript executar.
+2243-   */
+2244-  const campoUsuario=document.getElementById("fUsuario");
+--
+2247-
+2248-  if(campoUsuario) campoUsuario.required=false;
+2249-  if(campoSenha) campoSenha.required=false;
+2250-  if(campoDias) campoDias.required=false;
+2251-
+2252-  if(btnSalvar){
+2253-   btnSalvar.style.display="";
+2254-  }
+2255-
+2256-  if(btnAuto){
+2257-   btnAuto.style.transform="scale(1.02)";
+2258-   btnAuto.style.boxShadow="0 8px 25px rgba(0,0,0,.25)";
+2259-  }
+2260-
+2261-  if(btnManual){
+2262-   btnManual.style.transform="";
+2263-   btnManual.style.boxShadow="";
+2264-  }
+2265-
+2266-  if(btnSalvar){
+2267:   btnSalvar.textContent="⚡ Gerar testes";
+2268-  }
+2269-
+2270- }else{
+2271-
+2272-  auto.style.display="none";
+2273-  manual.style.display="block";
+2274-
+2275-  const campoUsuario=document.getElementById("fUsuario");
+2276-  const campoSenha=document.getElementById("fSenha");
+2277-  const campoDias=document.getElementById("fDias");
+2278-
+2279-  if(campoUsuario) campoUsuario.required=true;
+2280-  if(campoSenha) campoSenha.required=true;
+2281-  if(campoDias) campoDias.required=true;
+2282-
+2283-  if(btnSalvar){
+2284-   btnSalvar.style.display="";
+2285-  }
+2286-
+2287-  if(btnManual){
+2288-   btnManual.style.transform="scale(1.02)";
+2289-   btnManual.style.boxShadow="0 8px 25px rgba(0,0,0,.25)";
+2290-  }
+2291-
+2292-  if(btnAuto){
+2293-   btnAuto.style.transform="";
+2294-   btnAuto.style.boxShadow="";
+2295-  }
+2296-
+2297-  if(btnSalvar){
+2298-   btnSalvar.textContent="Criar";
+2299-  }
+2300- }
+2301-}
+2302-
+2303:async function LUKA_CRIAR_TESTES_AUTOMATICOS(){
+2304-
+2305- const horas=Number(document.getElementById("lukaAutoHoras").value);
+2306- const quantidade=Number(document.getElementById("lukaAutoQuantidade").value);
+2307- const limite_conexoes=Number(document.getElementById("lukaAutoConexoes").value);
+2308-
+2309- if(!Number.isInteger(horas) || horas<1 || horas>72){
+2310-  toast("Escolha uma duração entre 1 e 72 horas.");
+2311-  return;
+2312- }
+2313-
+2314- if(!Number.isInteger(quantidade) || quantidade<1 || quantidade>100){
+2315:  toast("A quantidade deve estar entre 1 e 100 testes.");
+2316-  return;
+2317- }
+2318-
+2319- if(!Number.isInteger(limite_conexoes) || limite_conexoes<1){
+2320-  toast("O limite de conexões deve ser no mínimo 1.");
+2321-  return;
+2322- }
+2323-
+2324- const btn=document.getElementById("btnSalvar");
+2325-
+2326- if(btn){
+2327-  btn.disabled=true;
+2328-  btn.textContent="⚡ Gerando...";
+2329- }
+2330-
+2331- try{
+2332-
+2333:  const r=await fetch("/api/admin/usuarios/teste-auto",{
+2334-   method:"POST",
+2335-   credentials:"include",
+2336-   headers:{"Content-Type":"application/json"},
+2337-   body:JSON.stringify({
+2338-    horas,
+2339-    quantidade,
+2340-    limite_conexoes
+2341-   })
+2342-  });
+2343-
+2344-  const d=await r.json().catch(()=>({}));
+2345-
+2346-  if(!r.ok || d.sucesso===false){
+2347:   throw new Error(d.mensagem || "Não foi possível gerar os testes.");
+2348-  }
+2349-
+2350-  fecharModal();
+2351-
+2352:  if(typeof window.LUKA_MOSTRAR_RESULTADO_TESTE==="function"){
+2353:   window.LUKA_MOSTRAR_RESULTADO_TESTE(d.testes || []);
+2354-  }else{
+2355-   mostrarMensagemCriacao(d,{
+2356-    usuario:"",
+2357-    senha:"",
+2358-    valor:0,
+2359-    telefone:""
+2360-   });
+2361-  }
+2362-
+2363-  if(typeof carregar==="function"){
+2364-   await carregar();
+2365-  }
+2366-
+2367- }catch(err){
+2368-
+2369-  toast("❌ "+err.message);
+2370-
+2371- }finally{
+2372-
+2373-  if(btn){
+2374-   btn.disabled=false;
+2375:   btn.textContent="⚡ Gerar testes";
+2376-  }
+2377- }
+2378-}
+2379-
+2380-
+2381-function escaparTextoMensagem(v){
+2382- return String(v ?? "");
+2383-}
+2384-
+2385-function formatarDataMensagem(v){
+2386-
+2387- const d=new Date(v);
+2388-
+2389- if(Number.isNaN(d.getTime())){
+2390-  return String(v || "");
+2391- }
+2392-
+2393- return d.toLocaleString("pt-BR",{
+2394-  dateStyle:"short",
+2395-  timeStyle:"short"
+--
+2584-
+2585-    area.focus();
+2586-    area.select();
+2587-
+2588-    document.execCommand("copy");
+2589-
+2590-    this.textContent="✅ Copiado!";
+2591-   }
+2592-
+2593- };
+2594-}
+2595-
+2596-async function salvar(e){
+2597-
+2598- e.preventDefault();
+2599-
+2600- const tipo=document.getElementById("tipoCriacao").value;
+2601-
+2602- const autoBox=document.getElementById("lukaAutomaticoBox");
+2603-
+2604: if(tipo==="teste" && autoBox && autoBox.style.display==="block"){
+2605:  await LUKA_CRIAR_TESTES_AUTOMATICOS();
+2606-  return;
+2607- }
+2608-
+2609- const usuario=document.getElementById("fUsuario").value.trim();
+2610- const senha=document.getElementById("fSenha").value;
+2611- const dias=Number(document.getElementById("fDias").value);
+2612-
+2613- const valorInput=document.getElementById("fValor");
+2614- const telefoneInput=document.getElementById("fTelefone");
+2615-
+2616- const valor=valorInput
+2617-  ? Number(valorInput.value || 0)
+2618-  : 0;
+2619-
+2620- const telefone=telefoneInput
+2621-  ? telefoneInput.value.trim()
+2622-  : "";
+2623-
+2624- if(
+2625-  !usuario ||
+--
+2632-  toast("Preencha os dados corretamente.");
+2633-  return;
+2634- }
+2635-
+2636- const btn=document.getElementById("btnSalvar");
+2637- btn.disabled=true;
+2638- btn.textContent="Criando...";
+2639-
+2640- try{
+2641-
+2642-  let url="/api/admin/usuarios";
+2643-  let body={usuario,senha,dias,valor,telefone};
+2644-
+2645-  if(tipo==="revendedor"){
+2646-   url="/api/admin/revendedores";
+2647-   body.limite_conexoes=Number(document.getElementById("fLimite").value);
+2648-  }
+2649-
+2650-  /*
+2651-   O endpoint de usuário existente cria uma conta normal.
+2652:   O teste será tratado pelo servidor quando a rota específica
+2653-   estiver disponível.
+2654-  */
+2655:  if(tipo==="teste"){
+2656:   url="/api/admin/usuarios/teste";
+2657-  }
+2658-
+2659-  const r=await fetch(url,{
+2660-   method:"POST",
+2661-   credentials:"include",
+2662-   headers:{"Content-Type":"application/json"},
+2663-   body:JSON.stringify(body)
+2664-  });
+2665-
+2666-  const d=await r.json().catch(()=>({}));
+2667-
+2668-  if(!r.ok||d.sucesso===false){
+2669-   throw new Error(d.mensagem||"Não foi possível criar.");
+2670-  }
+2671-
+2672-  fecharModal();
+2673-
+2674-  mostrarMensagemCriacao(
+2675-   d,
+2676-   {
+--
+2696-
+2697-async function carregar(){
+2698-
+2699- iniciarGraficoTempoReal();
+2700-
+2701-
+2702- try{
+2703-
+2704-  const r=await fetch("/api/admin/presenca",{credentials:"include"});
+2705-  const d=await r.json();
+2706-
+2707-  if(!r.ok||d.sucesso===false){
+2708-   throw new Error(d.mensagem||"Erro ao carregar painel.");
+2709-  }
+2710-
+2711-  usuarios=Array.isArray(d.usuarios)?d.usuarios:[];window.usuarios=usuarios;
+2712-
+2713-  (document.getElementById("cUsuarios") || {set textContent(v){}}).textContent=
+2714-   usuarios.filter(x=>x.tipo==="usuario").length;
+2715-
+2716:  (document.getElementById("cTestes") || {set textContent(v){}}).textContent=
+2717:   usuarios.filter(x=>x.tipo==="teste").length;
+2718-
+2719-  (document.getElementById("cRevendedores") || {set textContent(v){}}).textContent=
+2720-   usuarios.filter(x=>x.tipo==="revendedor").length;
+2721-
+2722-  (document.getElementById("cOnline") || {set textContent(v){}}).textContent=
+2723-   usuarios.filter(x=>x.online).length;
+2724-
+2725-  renderUsuarios();
+2726:  renderTestes();
+2727-  renderRevendedores();
+2728-  renderChart();
+2729-
+2730-  (document.getElementById("ultimaAtualizacao") || {set textContent(v){}}).textContent=
+2731-   "Atualizado "+new Date().toLocaleTimeString("pt-BR");
+2732-
+2733- }catch(e){
+2734-
+2735-  console.error(e);
+2736-  toast("⚠️ "+e.message);
+2737- }
+2738-}
+2739-
+2740-
+2741-function atualizarGraficoTempoReal(){
+2742-
+2743-    const lista =
+2744-        Array.isArray(usuarios)
+2745-            ? usuarios
+2746-            : [];
+2747-
+2748-    const totalUsuarios =
+2749-        lista.filter(u => u.tipo === "usuario").length;
+2750-
+2751:    const totalTestes =
+2752:        lista.filter(u => u.tipo === "teste").length;
+2753-
+2754-    const totalOnline =
+2755-        lista.filter(u => Boolean(u.online)).length;
+2756-
+2757-    const totalAtivos =
+2758-        lista.filter(u =>
+2759-            String(u.status || "ativo").toLowerCase() === "ativo"
+2760-        ).length;
+2761-
+2762-    const totalExpirados =
+2763-        lista.filter(u => {
+2764-            if(!u.validade) return false;
+2765-            const d = new Date(u.validade);
+2766-            return !Number.isNaN(d.getTime()) &&
+2767-                   d.getTime() <= Date.now();
+2768-        }).length;
+2769-
+2770-    const valores = [
+2771-        totalUsuarios,
+2772:        totalTestes,
+2773-        totalOnline,
+2774-        totalAtivos,
+2775-        totalExpirados,
+2776:        totalOnline + totalTestes,
+2777-        totalUsuarios + totalOnline,
+2778-        lista.length
+2779-    ];
+2780-
+2781-    const maior =
+2782-        Math.max(...valores, 1);
+2783-
+2784-    const barras =
+2785-        document.querySelectorAll("#lukaLiveBars div");
+2786-
+2787-    barras.forEach((barra, i) => {
+2788-
+2789-        const valor =
+2790-            valores[i] ?? 0;
+2791-
+2792-        const altura =
+2793-            Math.max(
+2794-                12,
+2795-                Math.min(
+2796-                    100,
+--
+2859-  u.tipo==="usuario" &&
+2860-  String(u.usuario||"").toLowerCase().includes(q)
+2861- );
+2862-
+2863- if(!lista.length){
+2864-  el.innerHTML='<tr><td colspan="6" class="empty">Nenhum usuário encontrado.</td></tr>';
+2865-  return;
+2866- }
+2867-
+2868- el.innerHTML=lista.map(u=>`
+2869- <tr>
+2870- <td><b>${escapeHtml(u.usuario)}</b></td>
+2871- <td>Usuário</td>
+2872- <td>${status(u)}</td>
+2873- <td>${data(u.validade)}</td>
+2874- <td>${u.online?'<span class="badge active">● Online</span>':'<span class="badge off">○ Offline</span>'}</td>
+2875- <td>${acoes(u)}</td>
+2876- </tr>`).join("");
+2877-}
+2878-
+2879:function renderTestes(){
+2880-
+2881: const el=document.getElementById("tabelaTestes");
+2882- if(!el)return;
+2883-
+2884: const lista=usuarios.filter(u=>u.tipo==="teste");
+2885-
+2886- if(!lista.length){
+2887:  el.innerHTML='<tr><td colspan="5" class="empty">Nenhum teste encontrado.</td></tr>';
+2888-  return;
+2889- }
+2890-
+2891- el.innerHTML=lista.map(u=>`
+2892- <tr>
+2893- <td><b>${escapeHtml(u.usuario)}</b></td>
+2894- <td>${status(u)}</td>
+2895- <td>${data(u.validade)}</td>
+2896- <td>${u.online?'🟢 Online':'⚪ Offline'}</td>
+2897- <td>${acoes(u)}</td>
+2898- </tr>`).join("");
+2899-}
+2900-
+2901-function renderRevendedores(){
+2902-
+2903- const el=document.getElementById("tabelaRevendedores");
+2904- if(!el)return;
+2905-
+2906- const lista=usuarios.filter(u=>u.tipo==="revendedor");
+2907-
+--
+2911- }
+2912-
+2913- el.innerHTML=lista.map(u=>`
+2914- <tr>
+2915- <td><b>${escapeHtml(u.usuario)}</b></td>
+2916- <td>${status(u)}</td>
+2917- <td>${data(u.validade)}</td>
+2918- <td>${u.conexoes_utilizadas??0}/${u.limite_conexoes??0}</td>
+2919- <td>${u.online?'🟢 Online':'⚪ Offline'}</td>
+2920- <td>${acoes(u)}</td>
+2921- </tr>`).join("");
+2922-}
+2923-
+2924-function renderChart(){
+2925-
+2926- const el=document.getElementById("chart");
+2927- if(!el)return;
+2928-
+2929- const valores=[
+2930-  usuarios.filter(x=>x.tipo==="usuario").length,
+2931:  usuarios.filter(x=>x.tipo==="teste").length,
+2932-  usuarios.filter(x=>x.tipo==="revendedor").length,
+2933-  usuarios.filter(x=>x.online).length
+2934- ];
+2935-
+2936- const max=Math.max(...valores,1);
+2937-
+2938- el.innerHTML=valores.map((v,i)=>`
+2939- <div class="bar"
+2940-      title="${v}"
+2941-      style="height:${Math.max(8,(v/max)*100)}%">
+2942- </div>`).join("");
+2943-}
+2944-
+2945-function escapeHtml(v){
+2946-
+2947- return String(v??"")
+2948- .replaceAll("&","&amp;")
+2949- .replaceAll("<","&lt;")
+2950- .replaceAll(">","&gt;")
+2951- .replaceAll('"',"&quot;")
+--
+3643-  toast("🗑️ Usuário excluído.");
+3644-  carregar();
+3645-
+3646- }catch(e){
+3647-  toast("❌ "+e.message);
+3648- }
+3649-}
+3650-
+3651-carregar();
+3652-setInterval(carregar,15000);
+3653-
+3654-</script>
+3655-
+3656-
+3657-<script id="admin-clickable-navigation">
+3658-function abrirAbaAdmin(abaNome){
+3659-    const botoes = [...document.querySelectorAll(".nav button")];
+3660-
+3661-    const mapa = {
+3662-        usuarios: /usu[aá]rios/i,
+3663:        testes: /testes/i,
+3664-        revendedores: /revendedores/i
+3665-    };
+3666-
+3667-    if(abaNome === "online"){
+3668-        const botao = botoes.find(b => /usu[aá]rios/i.test(b.textContent));
+3669-        if(typeof aba === "function" && botao){
+3670-            aba("usuarios", botao);
+3671-        }
+3672-        setTimeout(() => {
+3673-            const el = document.querySelector("#usuariosOnline, .usuarios-online, [data-online='usuarios']");
+3674-            if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+3675-        },150);
+3676-        return;
+3677-    }
+3678-
+3679-    const botao = botoes.find(b => mapa[abaNome] && mapa[abaNome].test(b.textContent));
+3680-
+3681-    if(typeof aba === "function" && botao){
+3682-        aba(abaNome, botao);
+3683-    }
+3684-}
+3685-</script>
+3686-
+3687-<script id="admin-back-navigation">
+3688:function voltarDashboardAdmin(){
+3689-    const botao=[...document.querySelectorAll(".nav button")]
+3690-        .find(b=>/dashboard/i.test(b.textContent));
+3691-
+3692-    if(typeof aba==="function" && botao){
+3693-        aba("dashboard",botao);
+3694-    }else{
+3695-        document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+3696-        const dash=document.getElementById("dashboard");
+3697-        if(dash) dash.classList.add("active");
+3698-        document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+3699-        if(botao) botao.classList.add("active");
+3700-    }
+3701-
+3702-    window.scrollTo({top:0,behavior:"smooth"});
+3703-}
+3704-</script>
+3705-
+3706-<script>
+3707-/* ==========================================
+3708-   CORREÇÃO GLOBAL — ELEMENTOS INEXISTENTES
+--
+4413-        if(progresso < 1){
+4414-            requestAnimationFrame(frame);
+4415-        }else{
+4416-            el.classList.remove("luka-counter-flash");
+4417-            void el.offsetWidth;
+4418-            el.classList.add("luka-counter-flash");
+4419-        }
+4420-    }
+4421-
+4422-    requestAnimationFrame(frame);
+4423-}
+4424-
+4425-/* ============================================================
+4426-   ATUALIZAÇÃO DOS CARDS
+4427-============================================================ */
+4428-
+4429-function atualizarCards(){
+4430-
+4431-    const mapa = [
+4432-        ["cUsuarios","lukaModernUsuarios"],
+4433:        ["cTestes","lukaModernTestes"],
+4434-        ["cRevendedores","lukaModernRevendedores"],
+4435-        ["cOnline","lukaModernOnline"]
+4436-    ];
+4437-
+4438-    mapa.forEach(([origem,destino])=>{
+4439-
+4440-        const a = document.getElementById(origem);
+4441-        const b = document.getElementById(destino);
+4442-
+4443-        if(a && b){
+4444-            animarNumero(b,a.textContent.trim());
+4445-        }
+4446-
+4447-    });
+4448-
+4449-}
+4450-
+4451-/* ============================================================
+4452-   RELÓGIO DO PAINEL
+4453-============================================================ */
+--
+4601-/* ============================================================
+4602-   OBSERVADOR DO PAINEL
+4603-============================================================ */
+4604-
+4605-function iniciarObserver(){
+4606-
+4607-    /*
+4608-     * IMPORTANTE:
+4609-     * A V3 do painel já possui seu próprio MutationObserver.
+4610-     * A camada Ultra não precisa observar o document.body inteiro.
+4611-     *
+4612-     * Isso evita atualizações em cascata durante o carregamento.
+4613-     */
+4614-
+4615-    let ultimo = "";
+4616-
+4617-    setInterval(function(){
+4618-
+4619-        const dados = [
+4620-            document.getElementById("cUsuarios")?.textContent || "",
+4621:            document.getElementById("cTestes")?.textContent || "",
+4622-            document.getElementById("cRevendedores")?.textContent || "",
+4623-            document.getElementById("cOnline")?.textContent || ""
+4624-        ].join("|");
+4625-
+4626-        if(dados !== ultimo){
+4627-
+4628-            ultimo = dados;
+4629-
+4630-            atualizarCards();
+4631-            melhorarOnline();
+4632-
+4633-        }
+4634-
+4635-    },1000);
+4636-}
+4637-
+4638-/* ============================================================
+4639-   INICIALIZAÇÃO
+4640-============================================================ */
+4641-
+--
+4673-            abrirContaDetalhes(id);
+4674-            setTimeout(function(){ renovarContaAberta(); },120);
+4675-        },120);
+4676-    }
+4677-};
+4678-
+4679-window.alternarContaPremium=function(id){
+4680-    if(typeof alternarConta==='function'){
+4681-        alternarConta(id);
+4682-        return;
+4683-    }
+4684-    if(typeof alternarContaAberta==='function'){
+4685-        fecharPainelPremium();
+4686-        setTimeout(function(){
+4687-            abrirContaDetalhes(id);
+4688-            setTimeout(function(){ alternarContaAberta(); },120);
+4689-        },120);
+4690-    }
+4691-};
+4692-
+4693:window.renderPainelPremium=function(){let a=(Array.isArray(window.usuarios)&&window.usuarios.length?window.usuarios:Array.isArray(window.listaUsuarios)&&window.listaUsuarios.length?window.listaUsuarios:Array.isArray(window.usuariosCache)&&window.usuariosCache.length?window.usuariosCache:[]),m={usuarios:["👤","Usuários","Contas de clientes"],testes:["🧪","Testes","Acessos temporários"],revendedores:["🤝","Revendedores","Parceiros"],online:["🟢","Online agora","Contas conectadas"]},c=m[tipo]||m.usuarios,l=tipo==="online"?a.filter(u=>u.online):a.filter(u=>u.tipo===(tipo==="usuarios"?"usuario":tipo)),q=(document.getElementById("lpSearch").value||"").toLowerCase();l=l.filter(u=>String(u.usuario||"").toLowerCase().includes(q));document.getElementById("lpIcon").textContent=c[0];document.getElementById("lpTitle").textContent=c[1];document.getElementById("lpSub").textContent=c[2];document.getElementById("lpStats").innerHTML=`<div class="lpStat"><small>TOTAL</small><strong>${l.length}</strong></div><div class="lpStat"><small>ATIVOS</small><strong>${l.filter(u=>(u.status||"ativo")==="ativo").length}</strong></div><div class="lpStat"><small>ONLINE</small><strong>${l.filter(u=>u.online).length}</strong></div><div class="lpStat"><small>EXPIRADOS</small><strong>${l.filter(u=>u.validade&&new Date(u.validade)<=Date.now()).length}</strong></div>`;let b=document.getElementById("lpList");if(!l.length){b.innerHTML=`<div class="lpEmpty">Nenhuma conta encontrada.</div>`;return}b.innerHTML=l.map(u=>`<div class="lpUser"><div class="lpTop"><span class="lpName">${esc(u.usuario)}</span><span class="lpPill ${u.online?"on":""}">${u.online?"● ONLINE":"○ OFFLINE"}</span></div><div class="lpMeta"><div><small>STATUS</small><span>${esc((u.status||"ativo").toUpperCase())}</span></div><div><small>VALIDADE</small><span>${esc(rest(u.validade))}</span></div><div><small>TELEFONE</small><span>${esc(u.telefone||u.whatsapp||"Não informado")}</span></div><div><small>TIPO</small><span>${esc((u.tipo||"usuario").toUpperCase())}</span></div></div><div class="lpActions"><button onclick="event.stopPropagation();fecharPainelPremium();setTimeout(()=>abrirContaDetalhes(${Number(u.id)}),120)">👁️ Detalhes</button><button onclick="event.stopPropagation();renovarContaPremium(${Number(u.id)})">🔄 Renovar</button><button onclick="event.stopPropagation();alternarContaPremium(${Number(u.id)})">⚡ Status</button></div></div>`).join("")};document.addEventListener("keydown",e=>{if(e.key==="Escape")fecharPainelPremium()})})();</script>
+4694:<!-- LUKAFILMES — RESULTADO AUTOMÁTICO DO TESTE -->
+4695:<div id="luka-teste-resultado"
+4696-     style="display:none;position:fixed;inset:0;z-index:999999;
+4697-            background:rgba(0,0,0,.84);align-items:center;
+4698-            justify-content:center;padding:20px;box-sizing:border-box;">
+4699-
+4700-  <div style="
+4701-      width:min(560px,100%);
+4702-      max-height:90vh;
+4703-      overflow:auto;
+4704-      background:#151515;
+4705-      color:#fff;
+4706-      border:1px solid rgba(255,255,255,.14);
+4707-      border-radius:18px;
+4708-      padding:24px;
+4709-      box-sizing:border-box;
+4710-      box-shadow:0 25px 90px rgba(0,0,0,.65);">
+4711-
+4712-    <div style="text-align:center;margin-bottom:20px;">
+4713-
+4714-      <div style="
+4715-          font-size:23px;
+4716-          font-weight:900;
+4717-          line-height:1.25;">
+4718:        🎉 TESTE CRIADO COM SUCESSO!
+4719-      </div>
+4720-
+4721-      <div style="
+4722-          font-size:18px;
+4723-          font-weight:800;
+4724-          margin-top:10px;">
+4725-        🎬 SEJA BEM-VINDO À LUKAFILMES!
+4726-      </div>
+4727-
+4728-      <div style="
+4729-          opacity:.82;
+4730-          margin-top:10px;
+4731-          line-height:1.5;
+4732-          font-size:14px;">
+4733:        Aproveite bastante o teste gratuito, teste filmes e séries
+4734-        à vontade e conheça tudo que a LUKAFILMES oferece.
+4735-      </div>
+4736-
+4737-    </div>
+4738-
+4739:    <div id="luka-teste-resultado-conteudo"></div>
+4740-
+4741-    <div style="
+4742-        margin-top:16px;
+4743-        padding:15px;
+4744-        border-radius:12px;
+4745-        background:rgba(255,255,255,.06);
+4746-        line-height:1.55;
+4747-        font-size:14px;">
+4748-
+4749:      🍿 Teste bastante para depois decidir com calma se quer contratar.
+4750-
+4751-      <br><br>
+4752-
+4753-      💰 <b>Plano completo: R$ 18,00 mensais.</b>
+4754-
+4755-    </div>
+4756-
+4757-    <div style="
+4758-        display:flex;
+4759-        gap:10px;
+4760-        margin-top:18px;
+4761-        flex-wrap:wrap;">
+4762-
+4763-      <button type="button"
+4764:              onclick="LUKA_COPIAR_TESTE()"
+4765-              style="
+4766-                flex:1;
+4767-                min-width:180px;
+4768-                padding:14px;
+4769-                border:0;
+4770-                border-radius:11px;
+4771-                cursor:pointer;
+4772-                font-weight:900;
+4773-                font-size:15px;">
+4774-        📋 Copiar tudo
+4775-      </button>
+4776-
+4777-      <button type="button"
+4778:              onclick="LUKA_FECHAR_TESTE()"
+4779-              style="
+4780-                flex:1;
+4781-                min-width:120px;
+4782-                padding:14px;
+4783-                border:1px solid rgba(255,255,255,.15);
+4784-                background:rgba(255,255,255,.07);
+4785-                color:#fff;
+4786-                border-radius:11px;
+4787-                cursor:pointer;
+4788-                font-weight:800;
+4789-                font-size:15px;">
+4790-        Fechar
+4791-      </button>
+4792-
+4793-    </div>
+4794-
+4795-  </div>
+4796-</div>
+4797-
+4798-<script>
+4799-(function(){
+4800-
+4801:window.LUKA_TESTE_TEXTO = "";
+4802-
+4803:window.LUKA_MOSTRAR_RESULTADO_TESTE = function(testes){
+4804-
+4805:    if(!Array.isArray(testes) || !testes.length){
+4806-
+4807-        if(typeof toast === "function"){
+4808:            toast("❌ O servidor não retornou os dados do teste.");
+4809-        }else{
+4810:            alert("O servidor não retornou os dados do teste.");
+4811-        }
+4812-
+4813-        return;
+4814-    }
+4815-
+4816-    var blocos = [];
+4817-
+4818:    testes.forEach(function(t, i){
+4819-
+4820-        var usuario = String(t.usuario || "");
+4821-        var senha = String(t.senha || "");
+4822-        var validade = t.validade || "";
+4823-
+4824-        try{
+4825-            validade = new Date(validade).toLocaleString("pt-BR",{
+4826-                dateStyle:"short",
+4827-                timeStyle:"short"
+4828-            });
+4829-        }catch(e){}
+4830-
+4831-        blocos.push(
+4832-            '<div style="' +
+4833-            'padding:17px;' +
+4834-            'margin-bottom:12px;' +
+4835-            'border-radius:14px;' +
+4836-            'background:rgba(255,255,255,.055);' +
+4837-            'border:1px solid rgba(255,255,255,.10);' +
+4838-            '">' +
+4839-
+4840-            '<div style="' +
+4841-            'font-size:16px;' +
+4842-            'font-weight:900;' +
+4843-            'margin-bottom:13px;' +
+4844-            '">' +
+4845-
+4846:            '🎬 TESTE ' +
+4847:            (testes.length > 1 ? (i + 1) : '') +
+4848-
+4849-            '</div>' +
+4850-
+4851-            '<div style="margin:7px 0;">' +
+4852-            '👤 <b>Usuário:</b> ' +
+4853-            '<span style="font-family:monospace;">' +
+4854-            usuario +
+4855-            '</span>' +
+4856-            '</div>' +
+4857-
+4858-            '<div style="margin:7px 0;">' +
+4859-            '🔑 <b>Senha:</b> ' +
+4860-            '<span style="font-family:monospace;">' +
+4861-            senha +
+4862-            '</span>' +
+4863-            '</div>' +
+4864-
+4865-            '<div style="margin:7px 0;">' +
+4866-            '⏱️ <b>Expira em:</b> ' +
+4867-            validade +
+4868-            '</div>' +
+4869-
+4870-            '</div>'
+4871-        );
+4872-    });
+4873-
+4874-    var texto =
+4875:`🎉 TESTE CRIADO COM SUCESSO!
+4876-
+4877-🎬 SEJA BEM-VINDO À LUKAFILMES!
+4878-
+4879:🍿 Aproveite bastante o teste gratuito.
+4880:Teste filmes e séries à vontade, explore a plataforma e conheça tudo que a LUKAFILMES oferece.
+4881-
+4882-`;
+4883-
+4884:    testes.forEach(function(t, i){
+4885-
+4886-        var validade = t.validade || "";
+4887-
+4888-        try{
+4889-            validade = new Date(validade).toLocaleString("pt-BR",{
+4890-                dateStyle:"short",
+4891-                timeStyle:"short"
+4892-            });
+4893-        }catch(e){}
+4894-
+4895:        if(testes.length > 1){
+4896:            texto += "🎬 TESTE " + (i + 1) + "\n";
+4897-        }
+4898-
+4899-        texto +=
+4900-            "👤 Usuário: " + String(t.usuario || "") + "\n" +
+4901-            "🔑 Senha: " + String(t.senha || "") + "\n" +
+4902-            "⏱️ Expira em: " + validade + "\n\n";
+4903-    });
+4904-
+4905-    texto +=
+4906:`🍿 Teste bastante para depois decidir com calma se quer contratar.
+4907-
+4908-💰 Plano completo: R$ 18,00 mensais.
+4909-
+4910-🎬 Aproveite a LUKAFILMES!`;
+4911-
+4912:    window.LUKA_TESTE_TEXTO = texto;
+4913-
+4914-    var el = document.getElementById(
+4915:        "luka-teste-resultado-conteudo"
+4916-    );
+4917-
+4918-    if(el){
+4919-        el.innerHTML = blocos.join("");
+4920-    }
+4921-
+4922-    var modal = document.getElementById(
+4923:        "luka-teste-resultado"
+4924-    );
+4925-
+4926-    if(modal){
+4927-        modal.style.display = "flex";
+4928-    }
+4929-
+4930-};
+4931-
+4932:window.LUKA_COPIAR_TESTE = async function(){
+4933-
+4934:    var texto = window.LUKA_TESTE_TEXTO || "";
+4935-
+4936-    if(!texto){
+4937-        return;
+4938-    }
+4939-
+4940-    var copiado = false;
+4941-
+4942-    try{
+4943-
+4944-        if(navigator.clipboard &&
+4945-           navigator.clipboard.writeText){
+4946-
+4947-            await navigator.clipboard.writeText(texto);
+4948-            copiado = true;
+4949-        }
+4950-
+4951-    }catch(e){}
+4952-
+4953-    if(!copiado){
+4954-
+4955-        try{
+4956-
+4957-            var area = document.createElement("textarea");
+4958-
+4959-            area.value = texto;
+4960-            area.style.position = "fixed";
+4961-            area.style.left = "-9999px";
+4962-
+4963-            document.body.appendChild(area);
+4964-            area.focus();
+4965-            area.select();
+4966-
+4967-            copiado = document.execCommand("copy");
+4968-
+4969-            area.remove();
+4970-
+4971-        }catch(e){}
+4972-    }
+4973-
+4974-    var botoes = document.querySelectorAll(
+4975:        '#luka-teste-resultado button'
+4976-    );
+4977-
+4978-    var botao = botoes.length ? botoes[0] : null;
+4979-
+4980-    if(copiado){
+4981-
+4982-        if(botao){
+4983-
+4984-            var original = botao.innerHTML;
+4985-
+4986-            botao.innerHTML = "✅ Copiado!";
+4987-
+4988-            setTimeout(function(){
+4989-                botao.innerHTML = original;
+4990-            },1800);
+4991-
+4992-        }
+4993-
+4994-        if(typeof toast === "function"){
+4995-            toast("✅ Dados copiados!");
+4996-        }
+4997-
+4998-    }else{
+4999-
+5000-        if(typeof toast === "function"){
+5001-            toast("❌ Não foi possível copiar.");
+5002-        }
+5003-
+5004-    }
+5005-
+5006-};
+5007-
+5008:window.LUKA_FECHAR_TESTE = function(){
+5009-
+5010-    var modal = document.getElementById(
+5011:        "luka-teste-resultado"
+5012-    );
+5013-
+5014-    if(modal){
+5015-        modal.style.display = "none";
+5016-    }
+5017-
+5018-};
+5019-
+5020-})();
+5021-</script>
+5022-
+5023-</body>
+5024-</html>
+5025-
+5026-<style id="luka-conta-tech-upgrade">
+5027-
+5028-#lukaContaOverlay{
+5029-    background:
+5030-        radial-gradient(circle at 50% 20%,rgba(229,9,20,.10),transparent 42%),
+5031-        rgba(0,0,0,.88);
+--
+6764-</style>
+6765-
+6766-
+6767-<script id="luka-admin-modern-js">
+6768-(function(){
+6769-
+6770-    function lukaModernDashboard(){
+6771-
+6772-        /*
+6773-         * Dashboard superior removido.
+6774-         * A Dashboard principal existente abaixo permanece como
+6775-         * estrutura única do painel.
+6776-         */
+6777-        return;
+6778-    }
+6779-
+6780-    function lukaAtualizarCards(){
+6781-
+6782-        const ids=[
+6783-            ["cUsuarios","lukaModernUsuarios"],
+6784:            ["cTestes","lukaModernTestes"],
+6785-            ["cRevendedores","lukaModernRevendedores"],
+6786-            ["cOnline","lukaModernOnline"]
+6787-        ];
+6788-
+6789-        ids.forEach(([origem,destino])=>{
+6790-            const a=document.getElementById(origem);
+6791-            const b=document.getElementById(destino);
+6792-
+6793-            if(a && b){
+6794-                b.textContent=a.textContent || "0";
+6795-            }
+6796-        });
+6797-    }
+6798-
+6799-    const observer=new MutationObserver(function(){
+6800-        lukaAtualizarCards();
+6801-    });
+6802-
+6803-    document.addEventListener("DOMContentLoaded",function(){
+6804-
+--
+7125-        if(titulo && !document.getElementById("lukaV4Live")){
+7126-
+7127-            const live=document.createElement("span");
+7128-            live.id="lukaV4Live";
+7129-            live.className="luka-v4-live";
+7130-            live.innerHTML="<i></i> SISTEMA ONLINE";
+7131-
+7132-            titulo.appendChild(live);
+7133-        }
+7134-
+7135-        /* Atualiza tooltip das ações */
+7136-        document.querySelectorAll(".actions button").forEach(btn=>{
+7137-            if(!btn.getAttribute("aria-label")){
+7138-                const title=btn.getAttribute("title");
+7139-                if(title) btn.setAttribute("aria-label",title);
+7140-            }
+7141-        });
+7142-
+7143-        /* Animação numérica sem interferir no valor real */
+7144-        document.querySelectorAll(
+7145:            "#cUsuarios,#cTestes,#cRevendedores,#cOnline"
+7146-        ).forEach(el=>{
+7147-
+7148-            if(el.dataset.v4Ready) return;
+7149-            el.dataset.v4Ready="1";
+7150-
+7151-            const observer=new MutationObserver(()=>{
+7152-                el.animate(
+7153-                    [
+7154-                        {transform:"scale(.96)",opacity:.72},
+7155-                        {transform:"scale(1.05)",opacity:1},
+7156-                        {transform:"scale(1)",opacity:1}
+7157-                    ],
+7158-                    {
+7159-                        duration:280,
+7160-                        easing:"cubic-bezier(.2,.8,.2,1)"
+7161-                    }
+7162-                );
+7163-            });
+7164-
+7165-            observer.observe(el,{
+--
+7657-            </div>
+7658-        `;
+7659-
+7660-        overlay.onclick=function(e){
+7661-            if(e.target===overlay){
+7662-                lukaFecharCentral();
+7663-            }
+7664-        };
+7665-
+7666-        document.body.appendChild(overlay);
+7667-    }
+7668-
+7669-    function dados(tipo){
+7670-
+7671-        const lista=getUsuarios();
+7672-
+7673-        if(tipo==="usuarios"){
+7674-            return lista.filter(u=>u.tipo==="usuario");
+7675-        }
+7676-
+7677:        if(tipo==="testes"){
+7678:            return lista.filter(u=>u.tipo==="teste");
+7679-        }
+7680-
+7681-        if(tipo==="revendedores"){
+7682-            return lista.filter(u=>u.tipo==="revendedor");
+7683-        }
+7684-
+7685-        if(tipo==="online"){
+7686-            return lista.filter(u=>u.online);
+7687-        }
+7688-
+7689-        return [];
+7690-    }
+7691-
+7692-    function config(tipo){
+7693-
+7694-        const configs={
+7695-
+7696-            usuarios:{
+7697-                icon:"👤",
+7698-                titulo:"Central de Usuários",
+7699-                subtitulo:"Gerencie todas as contas de clientes",
+7700-                label:"USUÁRIOS CADASTRADOS"
+7701-            },
+7702-
+7703:            testes:{
+7704-                icon:"🧪",
+7705:                titulo:"Central de Testes",
+7706-                subtitulo:"Controle acessos temporários",
+7707:                label:"TESTES DISPONÍVEIS"
+7708-            },
+7709-
+7710-            revendedores:{
+7711-                icon:"🤝",
+7712-                titulo:"Central de Revendedores",
+7713-                subtitulo:"Gerencie parceiros e conexões",
+7714-                label:"REVENDEDORES"
+7715-            },
+7716-
+7717-            online:{
+7718-                icon:"🟢",
+7719-                titulo:"Central Online",
+7720-                subtitulo:"Acompanhe a presença em tempo real",
+7721-                label:"CONECTADOS AGORA"
+7722-            }
+7723-
+7724-        };
+7725-
+7726-        return configs[tipo] || configs.usuarios;
+7727-    }
+--
+7940-    };
+7941-
+7942-    window.lukaAbrirContaCentral=function(id){
+7943-
+7944-        lukaFecharCentral();
+7945-
+7946-        setTimeout(function(){
+7947-
+7948-            if(typeof abrirContaDetalhes==="function"){
+7949-                abrirContaDetalhes(id);
+7950-            }
+7951-
+7952-        },180);
+7953-    };
+7954-
+7955-    function ligarCards(){
+7956-
+7957-        const mapa={
+7958-
+7959-            usuarios:"👤",
+7960:            testes:"🧪",
+7961-            revendedores:"🤝",
+7962-            online:"🟢"
+7963-
+7964-        };
+7965-
+7966-        document.querySelectorAll(
+7967-            ".clickable-card"
+7968-        ).forEach(card=>{
+7969-
+7970-            if(card.dataset.lukaCentral==="1") return;
+7971-
+7972-            const texto=card.innerText.toLowerCase();
+7973-
+7974-            let tipo=null;
+7975-
+7976-            if(texto.includes("usuário") ||
+7977-               texto.includes("usuarios") ||
+7978-               texto.includes("usuários")){
+7979-                tipo="usuarios";
+7980-            }
+7981-
+7982:            else if(texto.includes("teste")){
+7983:                tipo="testes";
+7984-            }
+7985-
+7986-            else if(texto.includes("revendedor")){
+7987-                tipo="revendedores";
+7988-            }
+7989-
+7990-            else if(texto.includes("online")){
+7991-                tipo="online";
+7992-            }
+7993-
+7994-            if(!tipo) return;
+7995-
+7996-            card.dataset.lukaCentral="1";
+7997-
+7998-            card.setAttribute(
+7999-                "role",
+8000-                "button"
+8001-            );
+8002-
+8003-            card.setAttribute(
+
+========== ADMIN.HTML - TODAS AS CHAMADAS DE API ==========
+2321-  return;
+2322- }
+2323-
+2324- const btn=document.getElementById("btnSalvar");
+2325-
+2326- if(btn){
+2327-  btn.disabled=true;
+2328-  btn.textContent="⚡ Gerando...";
+2329- }
+2330-
+2331- try{
+2332-
+2333:  const r=await fetch("/api/admin/usuarios/teste-auto",{
+2334-   method:"POST",
+2335-   credentials:"include",
+2336-   headers:{"Content-Type":"application/json"},
+2337-   body:JSON.stringify({
+2338-    horas,
+2339-    quantidade,
+2340-    limite_conexoes
+2341-   })
+2342-  });
+2343-
+2344-  const d=await r.json().catch(()=>({}));
+2345-
+--
+2647-   body.limite_conexoes=Number(document.getElementById("fLimite").value);
+2648-  }
+2649-
+2650-  /*
+2651-   O endpoint de usuário existente cria uma conta normal.
+2652-   O teste será tratado pelo servidor quando a rota específica
+2653-   estiver disponível.
+2654-  */
+2655-  if(tipo==="teste"){
+2656-   url="/api/admin/usuarios/teste";
+2657-  }
+2658-
+2659:  const r=await fetch(url,{
+2660-   method:"POST",
+2661-   credentials:"include",
+2662-   headers:{"Content-Type":"application/json"},
+2663-   body:JSON.stringify(body)
+2664-  });
+2665-
+2666-  const d=await r.json().catch(()=>({}));
+2667-
+2668-  if(!r.ok||d.sucesso===false){
+2669-   throw new Error(d.mensagem||"Não foi possível criar.");
+2670-  }
+2671-
+--
+2692-  btn.disabled=false;
+2693-  btn.textContent="Criar";
+2694- }
+2695-}
+2696-
+2697-async function carregar(){
+2698-
+2699- iniciarGraficoTempoReal();
+2700-
+2701-
+2702- try{
+2703-
+2704:  const r=await fetch("/api/admin/presenca",{credentials:"include"});
+2705-  const d=await r.json();
+2706-
+2707-  if(!r.ok||d.sucesso===false){
+2708-   throw new Error(d.mensagem||"Erro ao carregar painel.");
+2709-  }
+2710-
+2711-  usuarios=Array.isArray(d.usuarios)?d.usuarios:[];window.usuarios=usuarios;
+2712-
+2713-  (document.getElementById("cUsuarios") || {set textContent(v){}}).textContent=
+2714-   usuarios.filter(x=>x.tipo==="usuario").length;
+2715-
+2716-  (document.getElementById("cTestes") || {set textContent(v){}}).textContent=
+--
+3466-    }
+3467-
+3468-    const btn =
+3469-        document.getElementById("btnSalvarEdicaoConta");
+3470-
+3471-    if(btn){
+3472-        btn.disabled = true;
+3473-        btn.textContent = "Salvando...";
+3474-    }
+3475-
+3476-    try{
+3477-
+3478:        const r = await fetch(
+3479-            "/api/admin/usuarios/editar",
+3480-            {
+3481-                method:"POST",
+3482-                credentials:"include",
+3483-                headers:{
+3484-                    "Content-Type":"application/json"
+3485-                },
+3486-                body:JSON.stringify({
+3487-                    id,
+3488-                    usuario,
+3489-                    senha,
+3490-                    tipo,
+--
+3557-
+3558- if(dias===null)return;
+3559-
+3560- const n=Number(dias);
+3561-
+3562- if(!Number.isInteger(n)||n<1){
+3563-  toast("Quantidade inválida.");
+3564-  return;
+3565- }
+3566-
+3567- try{
+3568-
+3569:  const r=await fetch("/api/admin/usuarios/renovar",{
+3570-   method:"POST",
+3571-   credentials:"include",
+3572-   headers:{"Content-Type":"application/json"},
+3573-   body:JSON.stringify({id,dias:n})
+3574-  });
+3575-
+3576-  const d=await r.json();
+3577-
+3578-  if(!r.ok||d.sucesso===false)throw new Error(d.mensagem);
+3579-
+3580-  toast("✅ Usuário renovado.");
+3581-  carregar();
+--
+3587-
+3588-async function alternar(id){
+3589-
+3590- const u=usuarios.find(x=>Number(x.id)===Number(id));
+3591- if(!u)return;
+3592-
+3593- const novo=u.status==="ativo"?"suspenso":"ativo";
+3594-
+3595- if(!confirm((novo==="ativo"?"Ativar ":"Suspender ")+u.usuario+"?"))return;
+3596-
+3597- try{
+3598-
+3599:  const r=await fetch("/api/admin/usuarios/status",{
+3600-   method:"POST",
+3601-   credentials:"include",
+3602-   headers:{"Content-Type":"application/json"},
+3603-   body:JSON.stringify({id,status:novo})
+3604-  });
+3605-
+3606-  const d=await r.json();
+3607-
+3608-  if(!r.ok||d.sucesso===false)throw new Error(d.mensagem);
+3609-
+3610-  toast("✅ Status atualizado.");
+3611-  carregar();
+--
+3620- const u=usuarios.find(x=>Number(x.id)===Number(id));
+3621- if(!u)return;
+3622-
+3623- if(u.tipo==="admin"){
+3624-  toast("O administrador não pode ser excluído.");
+3625-  return;
+3626- }
+3627-
+3628- if(!confirm('Excluir definitivamente "'+u.usuario+'"?'))return;
+3629-
+3630- try{
+3631-
+3632:  const r=await fetch("/api/admin/usuarios/excluir",{
+3633-   method:"POST",
+3634-   credentials:"include",
+3635-   headers:{"Content-Type":"application/json"},
+3636-   body:JSON.stringify({id})
+3637-  });
+3638-
+3639-  const d=await r.json();
+3640-
+3641-  if(!r.ok||d.sucesso===false)throw new Error(d.mensagem);
+3642-
+3643-  toast("🗑️ Usuário excluído.");
+3644-  carregar();
+
+========== SERVER - ROTAS TESTE ==========
+3764-            };
+3765-
+3766-            usuarios.push(novoUsuario);
+3767-
+3768-            await salvarUsuarios(usuarios);
+3769-
+3770-            console.log(
+3771-                "[ADMIN] Usuário criado:",
+3772-                usuario
+3773-            );
+3774-
+3775-            return res.json({
+3776-
+3777-                sucesso: true,
+3778-
+3779-                mensagem:
+3780-                    "Usuário criado com sucesso."
+3781-
+3782-            });
+3783-
+3784-        } catch (erro) {
+3785-
+3786-            console.error(
+3787-                "[ERRO CRIAR USUARIO]",
+3788-                erro
+3789-            );
+3790-
+3791-            return res.status(500).json({
+3792-
+3793-                sucesso: false,
+3794-
+3795-                mensagem:
+3796-                    "Erro interno ao criar usuário."
+3797-
+3798-            });
+3799-
+3800-        }
+3801-
+3802-    }
+3803-);
+3804-
+3805-// ==========================================
+3806-// ADMIN — CRIAR TESTE
+3807-// ==========================================
+3808-
+3809:app.post("/api/admin/usuarios/teste", async (req, res) => {
+3810-
+3811-    try {
+3812-
+3813-        if (
+3814-            !req.session.usuario ||
+3815-            req.session.usuario.tipo !== "admin"
+3816-        ) {
+3817-
+3818-            return res.status(403).json({
+3819-                sucesso: false,
+3820-                mensagem: "Acesso negado."
+3821-            });
+3822-
+3823-        }
+3824-
+3825-        const usuario =
+3826-            String(req.body.usuario || "").trim();
+3827-
+3828-        const senha =
+3829-            String(req.body.senha || "");
+3830-
+3831-        const horas =
+3832-            Number(req.body.horas ?? req.body.dias);
+3833-
+3834-        const valor =
+3835-            Number(req.body.valor || 0);
+3836-
+3837-        const telefone =
+3838-            String(req.body.telefone || "").trim();
+3839-
+3840-        if (
+3841-            !usuario ||
+3842-            !senha ||
+3843-            !Number.isInteger(horas) ||
+3844-            horas < 1 ||
+3845-            !Number.isFinite(valor) ||
+3846-            valor < 0
+3847-        ) {
+3848-
+3849-            return res.status(400).json({
+3850-                sucesso: false,
+3851-                mensagem: "Preencha os dados corretamente."
+3852-            });
+3853-
+3854-        }
+
+========== SERVER - PAGAMENTOS ==========
+196-
+197-    return payloadSemCRC + crc16PixLuka(payloadSemCRC);
+198-}
+199-
+200-const USUARIOS_STORE = "lukafilmes-usuarios";
+201-const USUARIOS_KEY = "usuarios";
+202-
+203-const ambienteLocal =
+204-    process.env.NETLIFY_DEV === "true" ||
+205-    process.env.RENDER === "true" ||
+206-    process.env.NETLIFY_LOCAL === "true" ||
+207-    (
+208-        !process.env.NETLIFY &&
+209-        !process.env.AWS_LAMBDA_FUNCTION_NAME &&
+210-        process.env.NODE_ENV !== "production"
+211-    );
+212-console.log("[DIAGNOSTICO] ambienteLocal =", ambienteLocal);
+213-let bancoLocal = null;
+214-
+215-const turso = process.env.TURSO_DATABASE_URL
+216-  ? createClient({
+217-      url: process.env.TURSO_DATABASE_URL,
+218-      authToken: process.env.TURSO_AUTH_TOKEN
+219-    })
+220-  : null;
+221-
+222-let tursoUsuariosPreparado = false;
+223-
+224-async function prepararTursoUsuarios() {
+225-  if (!turso || tursoUsuariosPreparado) return;
+226-
+227-  await turso.execute(`
+228-    CREATE TABLE IF NOT EXISTS lukafilmes_usuarios (
+229-      id INTEGER PRIMARY KEY,
+230-      dados TEXT NOT NULL
+231-    )
+232-  `);
+233-
+234-  tursoUsuariosPreparado = true;
+235-}
+236-
+237-async function prepararTursoPagamentos() {
+238-  if (!turso) return;
+239-
+240-  await turso.execute(`
+241:    CREATE TABLE IF NOT EXISTS lukafilmes_pagamentos (
+242-      id INTEGER PRIMARY KEY,
+243-      usuario_id INTEGER,
+244-      usuario TEXT NOT NULL,
+245-      valor REAL NOT NULL,
+246-      status TEXT NOT NULL DEFAULT 'pendente',
+247-      criado_em TEXT NOT NULL,
+248-      aprovado_em TEXT,
+249-      inicio_acesso TEXT,
+250-      fim_acesso TEXT,
+251-      observacao TEXT
+252-    )
+253-  `);
+254-}
+255-
+256-async function criarPagamentoLuka(dados) {
+257-    await prepararTursoPagamentos();
+258-
+259-    if (!turso) {
+260-        throw new Error("Turso não configurado.");
+261-    }
+262-
+263-    const resultado = await turso.execute({
+264-        sql: `
+265:            INSERT INTO lukafilmes_pagamentos
+266-            (
+267-                id,
+268-                usuario_id,
+269-                usuario,
+270-                valor,
+271-                status,
+272-                criado_em,
+273-                aprovado_em,
+274-                inicio_acesso,
+275-                fim_acesso,
+276-                observacao
+277-            )
+278-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+279-        `,
+280-        args: [
+281-            Number(dados.id),
+282-            dados.usuario_id == null ? null : Number(dados.usuario_id),
+283-            String(dados.usuario || ""),
+284-            Number(dados.valor || CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal),
+285-            String(dados.status || CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE),
+286-            String(dados.criado_em || new Date().toISOString()),
+287-            dados.aprovado_em || null,
+288-            dados.inicio_acesso || null,
+289-            dados.fim_acesso || null,
+290-            dados.observacao || null
+291-        ]
+292-    });
+293-
+294-    return resultado;
+295-}
+296-
+297-async function proximoIdPagamentoLuka() {
+298-    await prepararTursoPagamentos();
+299-
+300-    if (!turso) {
+301-        throw new Error("Turso não configurado.");
+302-    }
+303-
+304-    const resultado = await turso.execute(`
+305-        SELECT COALESCE(MAX(id), 0) + 1 AS proximo_id
+306:        FROM lukafilmes_pagamentos
+307-    `);
+308-
+309-    return Number(resultado.rows?.[0]?.proximo_id || 1);
+310-}
+311-
+312-async function listarPagamentosLuka(status = null) {
+313-    await prepararTursoPagamentos();
+314-
+315-    if (!turso) {
+316-        throw new Error("Turso não configurado.");
+317-    }
+318-
+319-    if (status) {
+320-        const resultado = await turso.execute({
+321-            sql: `
+322-                SELECT *
+323:                FROM lukafilmes_pagamentos
+324-                WHERE status = ?
+325-                ORDER BY id DESC
+326-            `,
+327-            args: [String(status)]
+328-        });
+329-
+330-        return resultado.rows || [];
+331-    }
+332-
+333-    const resultado = await turso.execute(`
+334-        SELECT *
+335:        FROM lukafilmes_pagamentos
+336-        ORDER BY id DESC
+337-    `);
+338-
+339-    return resultado.rows || [];
+340-}
+341-
+342-async function buscarPagamentoLuka(id) {
+343-    await prepararTursoPagamentos();
+344-
+345-    if (!turso) {
+346-        throw new Error("Turso não configurado.");
+347-    }
+348-
+349-    const resultado = await turso.execute({
+350-        sql: `
+351-            SELECT *
+352:            FROM lukafilmes_pagamentos
+353-            WHERE id = ?
+354-            LIMIT 1
+355-        `,
+356-        args: [Number(id)]
+357-    });
+358-
+359-    return resultado.rows?.[0] || null;
+360-}
+361-
+362-async function atualizarPagamentoLuka(id, dados) {
+363-    await prepararTursoPagamentos();
+364-
+365-    if (!turso) {
+366-        throw new Error("Turso não configurado.");
+367-    }
+368-
+369-    const campos = [];
+370-    const args = [];
+371-
+372-    const permitidos = [
+373-        "status",
+374-        "aprovado_em",
+375-        "inicio_acesso",
+376-        "fim_acesso",
+377-        "observacao"
+378-    ];
+379-
+380-    for (const campo of permitidos) {
+381-        if (Object.prototype.hasOwnProperty.call(dados, campo)) {
+382-            campos.push(`${campo} = ?`);
+383-            args.push(dados[campo] == null ? null : String(dados[campo]));
+384-        }
+385-    }
+386-
+387-    if (campos.length === 0) {
+388-        return false;
+389-    }
+390-
+391-    args.push(Number(id));
+392-
+393-    await turso.execute({
+394-        sql: `
+395:            UPDATE lukafilmes_pagamentos
+396-            SET ${campos.join(", ")}
+397-            WHERE id = ?
+398-        `,
+399-        args
+400-    });
+401-
+402-    return true;
+403-}
+404-
+405-function obterBancoLocal() {
+406-
+407-    if (!Database) {
+408-        Database = require("better-sqlite3");
+409-    }
+410-
+411-    if (!bancoLocal) {
+412-
+413-        bancoLocal = new Database(
+414-            path.join(__dirname, "banco.db")
+415-        );
+416-    }
+417-
+418-    return bancoLocal;
+419-}
+420-
+421-async function carregarUsuarios() {
+422-  if (turso) {
+423-    await prepararTursoUsuarios();
+424-
+425-    const resultado = await turso.execute(
+426-      "SELECT dados FROM lukafilmes_usuarios WHERE id = 1"
+427-    );
+428-
+429-    if (resultado.rows.length > 0) {
+430-      try {
+431-        const dados = JSON.parse(resultado.rows[0].dados);
+432-        return Array.isArray(dados) ? dados : [];
+433-      } catch (erro) {
+434-        console.error("[TURSO] Erro ao ler usuários:", erro);
+435-        return [];
+436-      }
+437-    }
+438-
+439-    // Primeira execução: tenta migrar os usuários existentes do banco local.
+440-    try {
+--
+1042-        if (
+1043-            pessoa.validade &&
+1044-            new Date(pessoa.validade).getTime() > Date.now()
+1045-        ) {
+1046-            return res.json({
+1047-                permitido: true,
+1048-                logado: true,
+1049-                tipo,
+1050-                validade: pessoa.validade
+1051-            });
+1052-        }
+1053-
+1054-        return res.json({
+1055-            permitido: false,
+1056-            logado: true,
+1057-            tipo,
+1058-            motivo: "expirado",
+1059-            valor: CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+1060-            dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+1061-            validade: pessoa.validade || null
+1062-        });
+1063-
+1064-    } catch (erro) {
+1065-
+1066-        console.error(
+1067-            "[ACESSO ASSISTIR] Erro:",
+1068-            erro
+1069-        );
+1070-
+1071-        return res.status(500).json({
+1072-            permitido: false,
+1073-            logado: true,
+1074-            motivo: "erro_servidor",
+1075-            mensagem: "Erro interno ao verificar o acesso."
+1076-        });
+1077-
+1078-    }
+1079-
+1080-});
+1081-
+1082-
+1083-// ==========================================
+1084-// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+1085-// ==========================================
+1086-
+1087:app.post("/api/pagamentos/criar", async (req, res) => {
+1088-
+1089-    try {
+1090-
+1091-        if (!req.session || !req.session.usuario) {
+1092-            return res.status(401).json({
+1093-                sucesso: false,
+1094-                logado: false,
+1095-                motivo: "nao_logado",
+1096-                mensagem: "Faça login para continuar."
+1097-            });
+1098-        }
+1099-
+1100-        const sessao = req.session.usuario;
+1101-        const usuarios = await carregarUsuarios();
+1102-
+1103-        const pessoa = usuarios.find(
+1104-            u => Number(u.id) === Number(sessao.id)
+1105-        );
+1106-
+1107-        if (!pessoa) {
+1108-            return res.status(404).json({
+1109-                sucesso: false,
+1110-                logado: true,
+1111-                motivo: "usuario_nao_encontrado",
+1112-                mensagem: "Usuário não encontrado."
+1113-            });
+1114-        }
+1115-
+1116-        const tipo = String(
+1117-            pessoa.tipo || "usuario"
+1118-        ).toLowerCase();
+1119-
+1120-        const statusUsuario = String(
+1121-            pessoa.status || "ativo"
+1122-        ).toLowerCase();
+1123-
+1124-        if (statusUsuario !== "ativo") {
+1125-            return res.status(403).json({
+1126-                sucesso: false,
+1127-                motivo: "inativo",
+1128-                mensagem: "Seu acesso está desativado."
+1129-            });
+1130-        }
+1131-
+1132-        if (
+--
+5462-
+5463-            req.path === "/api/pesquisar" ||
+5464-
+5465-            req.path === "/" ||
+5466-
+5467-            req.path === "/index.html" ||
+5468-
+5469-            req.path === "/paginas/filme.html" ||
+5470-
+5471-            req.path === "/paginas/filme" ||
+5472-
+5473-            req.path === "/paginas/filmes.html" ||
+5474-
+5475-            req.path === "/paginas/series.html" ||
+5476-
+5477-            req.path === "/paginas/series" ||
+5478-
+5479-            req.path === "/paginas/serie.html" ||
+5480-
+5481-            req.path === "/paginas/serie"
+5482-
+5483-        ) {
+5484-
+5485-            return next();
+5486-
+5487-        }
+5488-
+5489-        /*
+5490-         * TODAS AS PÁGINAS DO SITE SÃO PROTEGIDAS.
+5491-         *
+5492-         * Primeiro verifica se existe sessão.
+5493-         * Depois verifica se a validade do usuário expirou.
+5494-         *
+5495-         * Admin não possui expiração.
+5496-         */
+5497-
+5498-
+5499-        /*
+5500-         * APIs de séries devem responder diretamente em JSON.
+5501-         * Não redirecionar detalhes, temporadas e episódios para /login.
+5502-         */
+5503-        if (
+5504-            req.path.startsWith("/api/serie/") ||
+5505-            req.path.startsWith("/api/series") ||
+5506-            req.path === "/api/acesso-assistir" ||
+5507:            req.path === "/api/pagamentos/criar"
+5508-        ) {
+5509-            return next();
+5510-        }
+5511-
+5512-        if (!req.session || !req.session.usuario) {
+5513-
+5514-            return res.redirect("/login");
+5515-
+5516-        }
+5517-
+5518-        const usuarioSessao = req.session.usuario;
+5519-
+5520-        /*
+5521-         * Usuário vencido continua logado e pode navegar pelo catálogo.
+5522-         * A verificação de acesso para assistir será feita no botão
+5523-         * principal "ASSISTIR".
+5524-         *
+5525-         * Admin e isento nunca dependem de validade.
+5526-         */
+5527-
+5528-        next();
+5529-
+5530-    }
+5531-);
+5532-
+5533-// ==========================================
+5534-// ARQUIVOS DO SITE
+5535-// ==========================================
+5536-
+5537-app.get("/revendedor.html", (req, res) => {
+5538-    res.sendFile(
+5539-        require("path").join(__dirname, "public", "revendedor.html")
+5540-    );
+5541-});
+5542-
+5543-
+5544-app.get("/paginas/minha-lista", (req, res) => {
+5545-    res.sendFile(
+5546-        require("path").join(__dirname, "paginas", "minha-lista.html")
+5547-    );
+5548-});
+5549-
+5550-app.use(
+5551-    express.static(__dirname)
+5552-);
+
+========== SERVER - APROVAR / RECUSAR ==========
+98-                `sess_${sid}`,
+99-                sess
+100-            );
+101-
+102-            callback(null);
+103-
+104-        } catch (erro) {
+105-
+106-            callback(erro);
+107-
+108-        }
+109-
+110-    }
+111-
+112-}
+113-
+114-let Database = null;
+115-const { createClient } = require("@libsql/client/http");
+116-
+117-// ==========================================
+118-// CONFIGURACAO DO NOVO SISTEMA DE ACESSO
+119-// ==========================================
+120-
+121-const CONFIGURACAO_ACESSO_LUKAFILMES = {
+122-    valorMensal: 18.00,
+123-    diasAcesso: 30,
+124-
+125-    tipos: {
+126-        ADMIN: "admin",
+127-        CLIENTE: "usuario",
+128-        ISENTO: "isento",
+129-        TESTE: "teste"
+130-    },
+131-
+132-    pagamentos: {
+133:        PENDENTE: "pendente",
+134:        APROVADO: "aprovado",
+135:        RECUSADO: "recusado"
+136-    }
+137-};
+138-
+139-
+140-// ==========================================
+141-// PIX FIXO LUKAFILMES - COPIA E COLA
+142-// ==========================================
+143-
+144-function crc16PixLuka(str) {
+145-    let crc = 0xFFFF;
+146-
+147-    for (let i = 0; i < str.length; i++) {
+148-        crc ^= str.charCodeAt(i) << 8;
+149-
+150-        for (let j = 0; j < 8; j++) {
+151-            if (crc & 0x8000) {
+152-                crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+153-            } else {
+154-                crc = (crc << 1) & 0xFFFF;
+155-            }
+156-        }
+157-    }
+158-
+159-    return crc.toString(16).toUpperCase().padStart(4, "0");
+160-}
+161-
+162-function campoPixLuka(id, valor) {
+163-    const texto = String(valor ?? "");
+164-    return id + String(texto.length).padStart(2, "0") + texto;
+165-}
+166-
+167-function gerarPixCopiaColaLuka() {
+168-    const chave = String(process.env.PIX_CHAVE || "").trim();
+169-    const nome = String(process.env.PIX_NOME || "LUKAFILMES")
+170-        .trim()
+--
+211-    );
+212-console.log("[DIAGNOSTICO] ambienteLocal =", ambienteLocal);
+213-let bancoLocal = null;
+214-
+215-const turso = process.env.TURSO_DATABASE_URL
+216-  ? createClient({
+217-      url: process.env.TURSO_DATABASE_URL,
+218-      authToken: process.env.TURSO_AUTH_TOKEN
+219-    })
+220-  : null;
+221-
+222-let tursoUsuariosPreparado = false;
+223-
+224-async function prepararTursoUsuarios() {
+225-  if (!turso || tursoUsuariosPreparado) return;
+226-
+227-  await turso.execute(`
+228-    CREATE TABLE IF NOT EXISTS lukafilmes_usuarios (
+229-      id INTEGER PRIMARY KEY,
+230-      dados TEXT NOT NULL
+231-    )
+232-  `);
+233-
+234-  tursoUsuariosPreparado = true;
+235-}
+236-
+237-async function prepararTursoPagamentos() {
+238-  if (!turso) return;
+239-
+240-  await turso.execute(`
+241-    CREATE TABLE IF NOT EXISTS lukafilmes_pagamentos (
+242-      id INTEGER PRIMARY KEY,
+243-      usuario_id INTEGER,
+244-      usuario TEXT NOT NULL,
+245-      valor REAL NOT NULL,
+246:      status TEXT NOT NULL DEFAULT 'pendente',
+247-      criado_em TEXT NOT NULL,
+248:      aprovado_em TEXT,
+249-      inicio_acesso TEXT,
+250-      fim_acesso TEXT,
+251-      observacao TEXT
+252-    )
+253-  `);
+254-}
+255-
+256-async function criarPagamentoLuka(dados) {
+257-    await prepararTursoPagamentos();
+258-
+259-    if (!turso) {
+260-        throw new Error("Turso não configurado.");
+261-    }
+262-
+263-    const resultado = await turso.execute({
+264-        sql: `
+265-            INSERT INTO lukafilmes_pagamentos
+266-            (
+267-                id,
+268-                usuario_id,
+269-                usuario,
+270-                valor,
+271-                status,
+272-                criado_em,
+273:                aprovado_em,
+274-                inicio_acesso,
+275-                fim_acesso,
+276-                observacao
+277-            )
+278-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+279-        `,
+280-        args: [
+281-            Number(dados.id),
+282-            dados.usuario_id == null ? null : Number(dados.usuario_id),
+283-            String(dados.usuario || ""),
+284-            Number(dados.valor || CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal),
+285:            String(dados.status || CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE),
+286-            String(dados.criado_em || new Date().toISOString()),
+287:            dados.aprovado_em || null,
+288-            dados.inicio_acesso || null,
+289-            dados.fim_acesso || null,
+290-            dados.observacao || null
+291-        ]
+292-    });
+293-
+294-    return resultado;
+295-}
+296-
+297-async function proximoIdPagamentoLuka() {
+298-    await prepararTursoPagamentos();
+299-
+300-    if (!turso) {
+301-        throw new Error("Turso não configurado.");
+302-    }
+303-
+304-    const resultado = await turso.execute(`
+305-        SELECT COALESCE(MAX(id), 0) + 1 AS proximo_id
+306-        FROM lukafilmes_pagamentos
+307-    `);
+308-
+309-    return Number(resultado.rows?.[0]?.proximo_id || 1);
+310-}
+311-
+312-async function listarPagamentosLuka(status = null) {
+313-    await prepararTursoPagamentos();
+314-
+315-    if (!turso) {
+316-        throw new Error("Turso não configurado.");
+317-    }
+318-
+319-    if (status) {
+320-        const resultado = await turso.execute({
+321-            sql: `
+322-                SELECT *
+--
+339-    return resultado.rows || [];
+340-}
+341-
+342-async function buscarPagamentoLuka(id) {
+343-    await prepararTursoPagamentos();
+344-
+345-    if (!turso) {
+346-        throw new Error("Turso não configurado.");
+347-    }
+348-
+349-    const resultado = await turso.execute({
+350-        sql: `
+351-            SELECT *
+352-            FROM lukafilmes_pagamentos
+353-            WHERE id = ?
+354-            LIMIT 1
+355-        `,
+356-        args: [Number(id)]
+357-    });
+358-
+359-    return resultado.rows?.[0] || null;
+360-}
+361-
+362-async function atualizarPagamentoLuka(id, dados) {
+363-    await prepararTursoPagamentos();
+364-
+365-    if (!turso) {
+366-        throw new Error("Turso não configurado.");
+367-    }
+368-
+369-    const campos = [];
+370-    const args = [];
+371-
+372-    const permitidos = [
+373-        "status",
+374:        "aprovado_em",
+375-        "inicio_acesso",
+376-        "fim_acesso",
+377-        "observacao"
+378-    ];
+379-
+380-    for (const campo of permitidos) {
+381-        if (Object.prototype.hasOwnProperty.call(dados, campo)) {
+382-            campos.push(`${campo} = ?`);
+383-            args.push(dados[campo] == null ? null : String(dados[campo]));
+384-        }
+385-    }
+386-
+387-    if (campos.length === 0) {
+388-        return false;
+389-    }
+390-
+391-    args.push(Number(id));
+392-
+393-    await turso.execute({
+394-        sql: `
+395-            UPDATE lukafilmes_pagamentos
+396-            SET ${campos.join(", ")}
+397-            WHERE id = ?
+398-        `,
+399-        args
+400-    });
+401-
+402-    return true;
+403-}
+404-
+405-function obterBancoLocal() {
+406-
+407-    if (!Database) {
+408-        Database = require("better-sqlite3");
+409-    }
+--
+734-        const existente = usuarios.find(
+735-            u =>
+736-                String(u.usuario || "")
+737-                    .trim()
+738-                    .toLowerCase() === usuario.toLowerCase()
+739-        );
+740-
+741-        if (existente) {
+742-            return res.status(409).json({
+743-                sucesso: false,
+744-                mensagem: "Esse usuário já existe. Escolha outro."
+745-            });
+746-        }
+747-
+748-        const senhaHash = await bcrypt.hash(senha, 12);
+749-
+750-        const novoUsuario = {
+751-            id: proximoId(usuarios),
+752-            nome,
+753-            usuario,
+754-            senha: senhaHash,
+755-            telefone,
+756-            status: "ativo",
+757-            tipo: "usuario",
+758-            validade: null,
+759-            criado_em: new Date().toISOString()
+760-        };
+761-
+762-        usuarios.push(novoUsuario);
+763-
+764-        await salvarUsuarios(usuarios);
+765-
+766-        /*
+767-         * Já deixa o cliente logado depois do cadastro.
+768-         * O cadastro NÃO libera os filmes.
+769:         * A validade continua null até o pagamento ser aprovado.
+770-         */
+771-        // NÃO substituir a sessão do ADMIN.
+772-        // Se um administrador estiver usando a mesma sessão,
+773-        // o cadastro cria o cliente mas mantém o ADMIN logado.
+774-        if (
+775-            !req.session.usuario ||
+776-            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+777-        ) {
+778-            req.session.usuario = {
+779-                id: novoUsuario.id,
+780-                usuario: novoUsuario.usuario,
+781-                tipo: novoUsuario.tipo,
+782-                validade: null
+783-            };
+784-        }
+785-
+786-        /*
+787-         * Garante que a sessão foi gravada antes da resposta.
+788-         */
+789-        await new Promise((resolve, reject) => {
+790-            req.session.save(erro => {
+791-                if (erro) {
+792-                    reject(erro);
+793-                    return;
+794-                }
+795-
+796-                resolve();
+797-            });
+798-        });
+799-
+800-        console.log(
+801-            "[CADASTRO] Novo cliente:",
+802-            novoUsuario.usuario
+803-        );
+804-
+--
+1109-                sucesso: false,
+1110-                logado: true,
+1111-                motivo: "usuario_nao_encontrado",
+1112-                mensagem: "Usuário não encontrado."
+1113-            });
+1114-        }
+1115-
+1116-        const tipo = String(
+1117-            pessoa.tipo || "usuario"
+1118-        ).toLowerCase();
+1119-
+1120-        const statusUsuario = String(
+1121-            pessoa.status || "ativo"
+1122-        ).toLowerCase();
+1123-
+1124-        if (statusUsuario !== "ativo") {
+1125-            return res.status(403).json({
+1126-                sucesso: false,
+1127-                motivo: "inativo",
+1128-                mensagem: "Seu acesso está desativado."
+1129-            });
+1130-        }
+1131-
+1132-        if (
+1133-            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+1134-            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+1135-        ) {
+1136-            return res.json({
+1137-                sucesso: true,
+1138-                pagamento_necessario: false,
+1139-                motivo: "isento",
+1140-                tipo
+1141-            });
+1142-        }
+1143-
+1144:        const pagamentosPendentes =
+1145-            await listarPagamentosLuka(
+1146:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+1147-            );
+1148-
+1149-        const pagamentoExistente =
+1150:            pagamentosPendentes.find(
+1151-                pagamento =>
+1152-                    Number(pagamento.usuario_id) === Number(pessoa.id)
+1153-            );
+1154-
+1155-        if (pagamentoExistente) {
+1156-
+1157-            let pix;
+1158-
+1159-            try {
+1160-                pix = gerarPixCopiaColaLuka();
+1161-            } catch (erroPix) {
+1162-                console.error(
+1163-                    "[PAGAMENTO] Erro ao gerar PIX:",
+1164-                    erroPix
+1165-                );
+1166-            }
+1167-
+1168-            return res.json({
+1169-                sucesso: true,
+1170-                pagamento_necessario: true,
+1171-                pagamento: pagamentoExistente,
+1172-                pix: pix || null,
+1173-                valor: Number(
+1174-                    process.env.PIX_VALOR ||
+1175-                    CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+1176-                ).toFixed(2),
+1177-                nome: process.env.PIX_NOME || "LUKAFILMES",
+1178-                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+1179-            });
+1180-        }
+1181-
+1182-        const idPagamento =
+1183-            await proximoIdPagamentoLuka();
+1184-
+1185-        const pagamento = {
+1186-            id: idPagamento,
+1187-            usuario_id: Number(pessoa.id),
+1188-            usuario: String(
+1189-                pessoa.usuario ||
+1190-                sessao.usuario ||
+1191-                ""
+1192-            ),
+1193-            valor:
+1194-                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+1195-            status:
+1196:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+1197-            criado_em:
+1198-                new Date().toISOString(),
+1199:            aprovado_em: null,
+1200-            inicio_acesso: null,
+1201-            fim_acesso: null,
+1202-            observacao: null
+1203-        };
+1204-
+1205-        await criarPagamentoLuka(pagamento);
+1206-
+1207-        let pix;
+1208-
+1209-        try {
+1210-            pix = gerarPixCopiaColaLuka();
+1211-        } catch (erroPix) {
+1212-            console.error(
+1213-                "[PAGAMENTO] Erro ao gerar PIX:",
+1214-                erroPix
+1215-            );
+1216-        }
+1217-
+1218-        return res.json({
+1219-            sucesso: true,
+1220-            pagamento_necessario: true,
+1221-            pagamento,
+1222-            pix: pix || null,
+1223-            valor: Number(
+1224-                process.env.PIX_VALOR ||
+1225-                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+1226-            ).toFixed(2),
+1227-            nome: process.env.PIX_NOME || "LUKAFILMES",
+1228-            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+1229-        });
+1230-
+1231-    } catch (erro) {
+1232-
+1233-        console.error(
+1234-            "[PAGAMENTO] Erro ao criar pagamento:",
+
+========== SERVER - ACESSO ASSISTIR ==========
+921-    }
+922-
+923-});
+924-
+925-// ==========================================
+926-// USUÁRIO LOGADO
+927-// ==========================================
+928-
+929-app.get("/api/eu", (req, res) => {
+930-
+931-    if (!req.session.usuario) {
+932-
+933-        return res.status(401).json({
+934-            logado: false
+935-        });
+936-    }
+937-
+938-    res.json({
+939-        logado: true,
+940-        usuario: req.session.usuario
+941-    });
+942-
+943-});
+944-
+945-
+946-// ==========================================
+947-// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+948-// ==========================================
+949-
+950-app.get("/api/debug-acesso", async (req, res) => {
+951-    try {
+952-        if (!req.session || !req.session.usuario) {
+953-            return res.json({
+954-                logado: false,
+955-                sessao: null
+956-            });
+957-        }
+958-
+959-        const sessao = req.session.usuario;
+960-        const usuarios = await carregarUsuarios();
+961-
+962-        const pessoa = usuarios.find(
+963-            u => Number(u.id) === Number(sessao.id)
+964-        );
+965-
+966-        return res.json({
+967-            logado: true,
+968-            sessao: {
+969-                id: sessao.id,
+970-                usuario: sessao.usuario,
+971-                tipo: sessao.tipo,
+972-                validade: sessao.validade || null
+973-            },
+974-            pessoa: pessoa ? {
+975-                id: pessoa.id,
+976-                usuario: pessoa.usuario,
+977-                tipo: pessoa.tipo,
+978-                status: pessoa.status,
+979-                validade: pessoa.validade || null
+980-            } : null,
+981-            agora: new Date().toISOString()
+982-        });
+983-    } catch (erro) {
+984-        console.error("[DEBUG ACESSO] Erro:", erro);
+985-        return res.status(500).json({
+986-            erro: "erro_servidor"
+987-        });
+988-    }
+989-});
+990-
+991:app.get("/api/acesso-assistir", async (req, res) => {
+992-
+993-    try {
+994-
+995-        if (!req.session || !req.session.usuario) {
+996-            return res.status(401).json({
+997-                permitido: false,
+998-                logado: false,
+999-                motivo: "nao_logado"
+1000-            });
+1001-        }
+1002-
+1003-        const sessao = req.session.usuario;
+1004-        const usuarios = await carregarUsuarios();
+1005-
+1006-        const pessoa = usuarios.find(
+1007-            u => Number(u.id) === Number(sessao.id)
+1008-        );
+1009-
+1010-        if (!pessoa) {
+1011-            return res.status(404).json({
+1012-                permitido: false,
+1013-                logado: true,
+1014-                motivo: "usuario_nao_encontrado"
+1015-            });
+1016-        }
+1017-
+1018-        const tipo = String(pessoa.tipo || "usuario").toLowerCase();
+1019-        const status = String(pessoa.status || "ativo").toLowerCase();
+1020-
+1021-        if (status !== "ativo") {
+1022-            return res.json({
+1023-                permitido: false,
+1024-                logado: true,
+1025-                motivo: "inativo",
+1026-                mensagem: "Seu acesso está desativado."
+1027-            });
+1028-        }
+1029-
+1030-        if (
+1031-            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+1032-            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+1033-        ) {
+1034-            return res.json({
+1035-                permitido: true,
+1036-                logado: true,
+1037-                tipo,
+1038-                validade: pessoa.validade || null
+1039-            });
+1040-        }
+1041-
+1042-        if (
+1043-            pessoa.validade &&
+1044-            new Date(pessoa.validade).getTime() > Date.now()
+1045-        ) {
+1046-            return res.json({
+1047-                permitido: true,
+1048-                logado: true,
+1049-                tipo,
+1050-                validade: pessoa.validade
+1051-            });
+1052-        }
+1053-
+1054-        return res.json({
+1055-            permitido: false,
+1056-            logado: true,
+1057-            tipo,
+1058-            motivo: "expirado",
+1059-            valor: CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+1060-            dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+1061-            validade: pessoa.validade || null
+--
+5436-// PROTEÇÃO DAS PÁGINAS
+5437-// ==========================================
+5438-
+5439-app.use(
+5440-    (req, res, next) => {
+5441-
+5442-        console.log(
+5443-            "[DEBUG PROTEÇÃO]",
+5444-            "originalUrl:", req.originalUrl,
+5445-            "url:", req.url,
+5446-            "path:", req.path,
+5447-            "method:", req.method
+5448-        );
+5449-
+5450-        if (
+5451-
+5452-            req.path === "/login" ||
+5453-            req.path === "/favicon/lukafilmes.svg" ||
+5454-            req.path === "/favicon/lukafilmes.png" ||
+5455-            req.path === "/favicon/file_000000006768820e93d46c5d164e8bd9.png" ||
+5456-
+5457-            req.path === "/admin.html" ||
+5458-
+5459-            req.path === "/status" ||
+5460-
+5461-            req.path === "/api/eu" || req.path === "/api/admin/revendedores" || req.path === "/api/revendedor/clientes" ||
+5462-
+5463-            req.path === "/api/pesquisar" ||
+5464-
+5465-            req.path === "/" ||
+5466-
+5467-            req.path === "/index.html" ||
+5468-
+5469-            req.path === "/paginas/filme.html" ||
+5470-
+5471-            req.path === "/paginas/filme" ||
+5472-
+5473-            req.path === "/paginas/filmes.html" ||
+5474-
+5475-            req.path === "/paginas/series.html" ||
+5476-
+5477-            req.path === "/paginas/series" ||
+5478-
+5479-            req.path === "/paginas/serie.html" ||
+5480-
+5481-            req.path === "/paginas/serie"
+5482-
+5483-        ) {
+5484-
+5485-            return next();
+5486-
+5487-        }
+5488-
+5489-        /*
+5490-         * TODAS AS PÁGINAS DO SITE SÃO PROTEGIDAS.
+5491-         *
+5492-         * Primeiro verifica se existe sessão.
+5493-         * Depois verifica se a validade do usuário expirou.
+5494-         *
+5495-         * Admin não possui expiração.
+5496-         */
+5497-
+5498-
+5499-        /*
+5500-         * APIs de séries devem responder diretamente em JSON.
+5501-         * Não redirecionar detalhes, temporadas e episódios para /login.
+5502-         */
+5503-        if (
+5504-            req.path.startsWith("/api/serie/") ||
+5505-            req.path.startsWith("/api/series") ||
+5506:            req.path === "/api/acesso-assistir" ||
+5507-            req.path === "/api/pagamentos/criar"
+5508-        ) {
+5509-            return next();
+5510-        }
+5511-
+5512-        if (!req.session || !req.session.usuario) {
+5513-
+5514-            return res.redirect("/login");
+5515-
+5516-        }
+5517-
+5518-        const usuarioSessao = req.session.usuario;
+5519-
+5520-        /*
+5521-         * Usuário vencido continua logado e pode navegar pelo catálogo.
+5522-         * A verificação de acesso para assistir será feita no botão
+5523-         * principal "ASSISTIR".
+5524-         *
+5525-         * Admin e isento nunca dependem de validade.
+5526-         */
+5527-
+5528-        next();
+5529-
+5530-    }
+5531-);
+5532-
+5533-// ==========================================
+5534-// ARQUIVOS DO SITE
+5535-// ==========================================
+5536-
+5537-app.get("/revendedor.html", (req, res) => {
+5538-    res.sendFile(
+5539-        require("path").join(__dirname, "public", "revendedor.html")
+5540-    );
+5541-});
+5542-
+5543-
+5544-app.get("/paginas/minha-lista", (req, res) => {
+5545-    res.sendFile(
+5546-        require("path").join(__dirname, "paginas", "minha-lista.html")
+5547-    );
+5548-});
+5549-
+5550-app.use(
+5551-    express.static(__dirname)
+5552-);
+5553-
+5554-app.get("/paginas/filme",(req,res)=>{res.sendFile(require("path").join(__dirname,"paginas","filme.html"));});
+5555-
+5556-
+5557-
+5558-
+5559-
+5560-
+5561-
+5562-
+5563-
+5564-
+5565-
+5566-
+5567-
+5568-
+5569-
+5570-
+5571-
+5572-
+5573-
+5574-
+5575-
+5576-
+
+========== SERVER - API EU ==========
+904-                    ? "/admin.html"
+905-                    : pessoa.tipo === "revendedor"
+906-                        ? "/revendedor.html"
+907-                        : "/"
+908-        });
+909-
+910-    } catch (erro) {
+911-
+912-        console.error(
+913-            "[ERRO LOGIN]",
+914-            erro
+915-        );
+916-
+917-        return res.status(500).json({
+918-            sucesso: false,
+919-            mensagem: "Erro interno no servidor."
+920-        });
+921-    }
+922-
+923-});
+924-
+925-// ==========================================
+926-// USUÁRIO LOGADO
+927-// ==========================================
+928-
+929:app.get("/api/eu", (req, res) => {
+930-
+931-    if (!req.session.usuario) {
+932-
+933-        return res.status(401).json({
+934-            logado: false
+935-        });
+936-    }
+937-
+938-    res.json({
+939-        logado: true,
+940-        usuario: req.session.usuario
+941-    });
+942-
+943-});
+944-
+945-
+946-// ==========================================
+947-// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+948-// ==========================================
+949-
+950-app.get("/api/debug-acesso", async (req, res) => {
+951-    try {
+952-        if (!req.session || !req.session.usuario) {
+953-            return res.json({
+954-                logado: false,
+--
+5436-// PROTEÇÃO DAS PÁGINAS
+5437-// ==========================================
+5438-
+5439-app.use(
+5440-    (req, res, next) => {
+5441-
+5442-        console.log(
+5443-            "[DEBUG PROTEÇÃO]",
+5444-            "originalUrl:", req.originalUrl,
+5445-            "url:", req.url,
+5446-            "path:", req.path,
+5447-            "method:", req.method
+5448-        );
+5449-
+5450-        if (
+5451-
+5452-            req.path === "/login" ||
+5453-            req.path === "/favicon/lukafilmes.svg" ||
+5454-            req.path === "/favicon/lukafilmes.png" ||
+5455-            req.path === "/favicon/file_000000006768820e93d46c5d164e8bd9.png" ||
+5456-
+5457-            req.path === "/admin.html" ||
+5458-
+5459-            req.path === "/status" ||
+5460-
+5461:            req.path === "/api/eu" || req.path === "/api/admin/revendedores" || req.path === "/api/revendedor/clientes" ||
+5462-
+5463-            req.path === "/api/pesquisar" ||
+5464-
+5465-            req.path === "/" ||
+5466-
+5467-            req.path === "/index.html" ||
+5468-
+5469-            req.path === "/paginas/filme.html" ||
+5470-
+5471-            req.path === "/paginas/filme" ||
+5472-
+5473-            req.path === "/paginas/filmes.html" ||
+5474-
+5475-            req.path === "/paginas/series.html" ||
+5476-
+5477-            req.path === "/paginas/series" ||
+5478-
+5479-            req.path === "/paginas/serie.html" ||
+5480-
+5481-            req.path === "/paginas/serie"
+5482-
+5483-        ) {
+5484-
+5485-            return next();
+5486-
+
+========== SERVER - CADASTRO ==========
+662-    }
+663-
+664-    res.set({
+665-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+666-        "Pragma": "no-cache",
+667-        "Expires": "0",
+668-        "Surrogate-Control": "no-store"
+669-    });
+670-
+671-    res.sendFile(
+672-        path.join(__dirname, "public", "admin.html"),
+673-        {
+674-            cacheControl: false
+675-        }
+676-    );
+677-});
+678-
+679-
+680-// ==========================================
+681-// LUKAFILMES — CADASTRO DE CLIENTE
+682-// ==========================================
+683-
+684-app.get("/cadastro", (req, res) => {
+685-    res.sendFile(
+686-        path.join(__dirname, "public", "cadastro.html"),
+687-        {
+688-            cacheControl: false
+689-        }
+690-    );
+691-});
+692-
+693-// ==========================================
+694-// LUKAFILMES — API CADASTRO DE CLIENTE
+695-// ==========================================
+696-
+697:app.post("/api/cadastro", async (req, res) => {
+698-    try {
+699-        const nome = String(req.body.nome || "").trim();
+700-        const usuario = String(req.body.usuario || "").trim();
+701-        const senha = String(req.body.senha || "");
+702-        const telefone = String(req.body.telefone || "").trim();
+703-
+704-        if (!nome || !usuario || !senha || !telefone) {
+705-            return res.status(400).json({
+706-                sucesso: false,
+707-                mensagem: "Preencha nome, usuário, senha e telefone."
+708-            });
+709-        }
+710-
+711-        if (nome.length < 2) {
+712-            return res.status(400).json({
+713-                sucesso: false,
+714-                mensagem: "Digite seu nome completo."
+715-            });
+716-        }
+717-
+718-        if (usuario.length < 3) {
+719-            return res.status(400).json({
+720-                sucesso: false,
+721-                mensagem: "O usuário precisa ter pelo menos 3 caracteres."
+722-            });
+723-        }
+724-
+725-        if (senha.length < 6) {
+726-            return res.status(400).json({
+727-                sucesso: false,
+728-                mensagem: "A senha precisa ter pelo menos 6 caracteres."
+729-            });
+730-        }
+731-
+732-        const usuarios = await carregarUsuarios();
+
+========== SERVER - SESSAO ==========
+557-    ) + 1;
+558-}
+559-const app = express();
+560-app.use((req,res,next)=>{ console.log("[TRACE ENTRADA]",req.method,req.url); next(); });
+561-
+562-const LUKA_PRESENCA_ONLINE_2026 = new Map();
+563-
+564-// Presença temporária em memória.
+565-// O usuário é considerado online enquanto houver atividade
+566-// recente na sessão. Após 45 segundos sem atividade, fica offline.
+567-function lukaRegistrarPresenca(req) {
+568-    try {
+569:        if (!req.session || !req.session.usuario) return;
+570-
+571:        const u = req.session.usuario;
+572-
+573-        LUKA_PRESENCA_ONLINE_2026.set(Number(u.id), {
+574-            id: Number(u.id),
+575-            usuario: u.usuario,
+576-            tipo: u.tipo,
+577-            last_seen: Date.now()
+578-        });
+579-    } catch (erro) {
+580-        console.error("[LUKA PRESENÇA]", erro);
+581-    }
+582-}
+583-
+--
+629-    .then(() => console.log("[TURSO] Tabela de pagamentos preparada."))
+630-    .catch(erro => console.error("[TURSO PAGAMENTOS] Erro ao preparar tabela:", erro));
+631-
+632-console.log("[DIAGNOSTICO] session middleware carregado");
+633-
+634-app.use(session(configuracaoSessao));
+635-console.log("[DIAGNOSTICO] rota /login registrada");
+636-// LOGIN
+637-// ==========================================
+638-
+639-app.get("/login", (req, res) => {
+640-
+641:    if (req.session.usuario) {
+642-        return res.redirect("/");
+643-    }
+644-
+645-    res.sendFile(
+646-        path.join(__dirname, "public", "login.html")
+647-    );
+648-});
+649-
+650-// ==========================================
+651-// ADMIN
+652-// ==========================================
+653-
+654-app.get("/admin.html", (req, res) => {
+655-
+656:    if (!req.session.usuario) {
+657-        return res.redirect("/login");
+658-    }
+659-
+660:    if (req.session.usuario.tipo !== "admin") {
+661-        return res.status(403).send("Acesso negado.");
+662-    }
+663-
+664-    res.set({
+665-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+666-        "Pragma": "no-cache",
+667-        "Expires": "0",
+668-        "Surrogate-Control": "no-store"
+669-    });
+670-
+671-    res.sendFile(
+672-        path.join(__dirname, "public", "admin.html"),
+--
+763-
+764-        await salvarUsuarios(usuarios);
+765-
+766-        /*
+767-         * Já deixa o cliente logado depois do cadastro.
+768-         * O cadastro NÃO libera os filmes.
+769-         * A validade continua null até o pagamento ser aprovado.
+770-         */
+771-        // NÃO substituir a sessão do ADMIN.
+772-        // Se um administrador estiver usando a mesma sessão,
+773-        // o cadastro cria o cliente mas mantém o ADMIN logado.
+774-        if (
+775:            !req.session.usuario ||
+776:            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+777-        ) {
+778:            req.session.usuario = {
+779-                id: novoUsuario.id,
+780-                usuario: novoUsuario.usuario,
+781-                tipo: novoUsuario.tipo,
+782-                validade: null
+783-            };
+784-        }
+785-
+786-        /*
+787-         * Garante que a sessão foi gravada antes da resposta.
+788-         */
+789-        await new Promise((resolve, reject) => {
+790-            req.session.save(erro => {
+--
+876-                senha,
+877-                pessoa.senha
+878-            );
+879-
+880-        if (!senhaCorreta) {
+881-
+882-            return res.json({
+883-                sucesso: false,
+884-                mensagem: "Usuário ou senha incorretos."
+885-            });
+886-        }
+887-
+888:        req.session.usuario = {
+889-
+890-            id: pessoa.id,
+891-
+892-            usuario: pessoa.usuario,
+893-
+894-            tipo: pessoa.tipo,
+895-
+896-            validade: pessoa.validade || null
+897-
+898-        };
+899-
+900-        return res.json({
+--
+919-            mensagem: "Erro interno no servidor."
+920-        });
+921-    }
+922-
+923-});
+924-
+925-// ==========================================
+926-// USUÁRIO LOGADO
+927-// ==========================================
+928-
+929-app.get("/api/eu", (req, res) => {
+930-
+931:    if (!req.session.usuario) {
+932-
+933-        return res.status(401).json({
+934-            logado: false
+935-        });
+936-    }
+937-
+938-    res.json({
+939-        logado: true,
+940:        usuario: req.session.usuario
+941-    });
+942-
+943-});
+944-
+945-
+946-// ==========================================
+947-// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+948-// ==========================================
+949-
+950-app.get("/api/debug-acesso", async (req, res) => {
+951-    try {
+952:        if (!req.session || !req.session.usuario) {
+953-            return res.json({
+954-                logado: false,
+955-                sessao: null
+956-            });
+957-        }
+958-
+959:        const sessao = req.session.usuario;
+960-        const usuarios = await carregarUsuarios();
+961-
+962-        const pessoa = usuarios.find(
+963-            u => Number(u.id) === Number(sessao.id)
+964-        );
+965-
+966-        return res.json({
+967-            logado: true,
+968-            sessao: {
+969-                id: sessao.id,
+970-                usuario: sessao.usuario,
+971-                tipo: sessao.tipo,
+--
+983-    } catch (erro) {
+984-        console.error("[DEBUG ACESSO] Erro:", erro);
+985-        return res.status(500).json({
+986-            erro: "erro_servidor"
+987-        });
+988-    }
+989-});
+990-
+991-app.get("/api/acesso-assistir", async (req, res) => {
+992-
+993-    try {
+994-
+995:        if (!req.session || !req.session.usuario) {
+996-            return res.status(401).json({
+997-                permitido: false,
+998-                logado: false,
+999-                motivo: "nao_logado"
+1000-            });
+1001-        }
+1002-
+1003:        const sessao = req.session.usuario;
+1004-        const usuarios = await carregarUsuarios();
+1005-
+1006-        const pessoa = usuarios.find(
+1007-            u => Number(u.id) === Number(sessao.id)
+1008-        );
+1009-
+1010-        if (!pessoa) {
+1011-            return res.status(404).json({
+1012-                permitido: false,
+1013-                logado: true,
+1014-                motivo: "usuario_nao_encontrado"
+1015-            });
+--
+1079-
+1080-});
+1081-
+1082-
+1083-// ==========================================
+1084-// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+1085-// ==========================================
+1086-
+1087-app.post("/api/pagamentos/criar", async (req, res) => {
+1088-
+1089-    try {
+1090-
+1091:        if (!req.session || !req.session.usuario) {
+1092-            return res.status(401).json({
+1093-                sucesso: false,
+1094-                logado: false,
+1095-                motivo: "nao_logado",
+1096-                mensagem: "Faça login para continuar."
+1097-            });
+1098-        }
+1099-
+1100:        const sessao = req.session.usuario;
+1101-        const usuarios = await carregarUsuarios();
+1102-
+1103-        const pessoa = usuarios.find(
+1104-            u => Number(u.id) === Number(sessao.id)
+1105-        );
+1106-
+1107-        if (!pessoa) {
+1108-            return res.status(404).json({
+1109-                sucesso: false,
+1110-                logado: true,
+1111-                motivo: "usuario_nao_encontrado",
+1112-                mensagem: "Usuário não encontrado."
+--
+1273-        });
+1274-
+1275-    }
+1276-
+1277-});
+1278-
+1279-
+1280-// ==========================================
+1281-// LUKAFILMES — PRESENÇA EM TEMPO REAL
+1282-// ==========================================
+1283-
+1284-app.post("/api/presenca", (req, res) => {
+1285:    if (!req.session || !req.session.usuario) {
+1286-        return res.status(401).json({
+1287-            sucesso: false
+1288-        });
+1289-    }
+1290-
+1291-    lukaRegistrarPresenca(req);
+1292-
+1293-    res.json({
+1294-        sucesso: true,
+1295-        online: true
+1296-    });
+1297-});
+1298-
+1299-app.get("/api/admin/presenca", async (req, res) => {
+1300-    try {
+1301-        if (
+1302:            !req.session.usuario ||
+1303:            req.session.usuario.tipo !== "admin"
+1304-        ) {
+1305-            return res.status(403).json({
+1306-                sucesso: false,
+1307-                mensagem: "Acesso negado."
+1308-            });
+1309-        }
+1310-
+1311-        const agora = Date.now();
+1312-        const usuarios = await carregarUsuarios();
+1313-
+1314-        const resultado = usuarios.map(u => {
+1315-            const p = LUKA_PRESENCA_ONLINE_2026.get(Number(u.id));
+--
+3615-            sucesso: false,
+3616-            encontrado: false
+3617-        });
+3618-    }
+3619-});
+3620-
+3621-// ==========================================
+3622-// ADMIN — LISTAR USUÁRIOS
+3623-// ==========================================
+3624-app.get("/api/admin/usuarios", async (req, res) => {
+3625-    try {
+3626-        if (
+3627:            !req.session.usuario ||
+3628:            req.session.usuario.tipo !== "admin"
+3629-        ) {
+3630-            return res.status(403).json({
+3631-                sucesso: false,
+3632-                mensagem: "Acesso negado."
+3633-            });
+3634-        }
+3635-
+3636-        const usuarios = await carregarUsuarios();
+3637-
+3638-        const lista = usuarios.map(u => ({
+3639-            id: u.id,
+3640-            usuario: u.usuario,
+--
+3663-});
+3664-
+3665-// ADMIN — CRIAR USUÁRIO
+3666-// ==========================================
+3667-
+3668-app.post(
+3669-    "/api/admin/usuarios",
+3670-    async (req, res) => {
+3671-
+3672-        try {
+3673-
+3674-            if (
+3675:                !req.session.usuario ||
+3676:                req.session.usuario.tipo !== "admin"
+3677-            ) {
+3678-
+3679-                return res.status(403).json({
+3680-                    sucesso: false,
+3681-                    mensagem: "Acesso negado."
+3682-                });
+3683-
+3684-            }
+3685-
+3686-            const usuario =
+3687-                String(req.body.usuario || "").trim();
+3688-
+--
+3802-    }
+3803-);
+3804-
+3805-// ==========================================
+3806-// ADMIN — CRIAR TESTE
+3807-// ==========================================
+3808-
+3809-app.post("/api/admin/usuarios/teste", async (req, res) => {
+3810-
+3811-    try {
+3812-
+3813-        if (
+3814:            !req.session.usuario ||
+3815:            req.session.usuario.tipo !== "admin"
+3816-        ) {
+3817-
+3818-            return res.status(403).json({
+3819-                sucesso: false,
+3820-                mensagem: "Acesso negado."
+3821-            });
+3822-
+3823-        }
+3824-
+3825-        const usuario =
+3826-            String(req.body.usuario || "").trim();
+3827-
+--
+3965-// ==========================================
+3966-/*
+3967-==========================================
+3968-ADMIN — EXCLUIR USUÁRIO
+3969-==========================================
+3970-*/
+3971-
+3972-app.post("/api/admin/usuarios/excluir", async (req, res) => {
+3973-
+3974-    try {
+3975-
+3976-        if (
+3977:            !req.session.usuario ||
+3978:            req.session.usuario.tipo !== "admin"
+3979-        ) {
+3980-
+3981-            return res.status(403).json({
+3982-                sucesso: false,
+3983-                mensagem: "Acesso negado."
+3984-            });
+3985-
+3986-        }
+3987-
+3988-        const id = Number(req.body.id);
+3989-
+3990-        if (!Number.isInteger(id) || id < 1) {
+--
+4055-// ==========================================
+4056-// ADMIN — EDITAR USUÁRIO
+4057-// ==========================================
+4058-
+4059-// ==========================================
+4060-// ==========================================
+4061-
+4062-app.post("/api/admin/usuarios/editar", async (req, res) => {
+4063-
+4064-    try {
+4065-
+4066-        if (
+4067:            !req.session.usuario ||
+4068:            req.session.usuario.tipo !== "admin"
+4069-        ) {
+4070-            return res.status(403).json({
+4071-                sucesso: false,
+4072-                mensagem: "Acesso negado."
+4073-            });
+4074-        }
+4075-
+4076-        const id = Number(req.body.id);
+4077-
+4078-        const usuario =
+4079-            String(req.body.usuario ?? "").trim();
+4080-
+--
+4152-            usuarios[indice].tipo = tipo;
+4153-
+4154-        } else {
+4155-
+4156-            usuarios[indice].usuario = usuario;
+4157-            usuarios[indice].tipo = tipo;
+4158-
+4159-        }
+4160-
+4161-        await salvarUsuarios(usuarios);
+4162-
+4163-        if (
+4164:            Number(req.session.usuario.id) === id
+4165-        ) {
+4166-
+4167:            req.session.usuario.usuario = usuario;
+4168:            req.session.usuario.tipo = tipo;
+4169-
+4170-            req.session.save(() => {});
+4171-        }
+4172-
+4173-        return res.json({
+4174-            sucesso: true,
+4175-            mensagem: "Usuário atualizado com sucesso.",
+4176-            usuario: {
+4177-                id,
+4178-                usuario,
+4179-                tipo
+4180-            }
+--
+4196-
+4197-});
+4198-
+4199-// ==========================================
+4200-// ADMIN — SUSPENDER / ATIVAR USUÁRIO
+4201-// ==========================================
+4202-// ==========================================
+4203-// ==========================================
+4204-
+4205-app.post("/api/admin/usuarios/status", async (req, res) => {
+4206-    try {
+4207-        if (
+4208:            !req.session.usuario ||
+4209:            req.session.usuario.tipo !== "admin"
+4210-        ) {
+4211-            return res.status(403).json({
+4212-                sucesso: false,
+4213-                mensagem: "Acesso negado."
+4214-            });
+4215-        }
+4216-
+4217-        const id = Number(req.body.id);
+4218-        const status = String(req.body.status || "").trim();
+4219-
+4220-        if (
+4221-            !Number.isInteger(id) ||
+--
+4262-    }
+4263-});
+4264-
+4265-// ==========================================
+4266-// ADMIN — RENOVAR USUÁRIO
+4267-// ==========================================
+4268-
+4269-app.post("/api/admin/usuarios/renovar", async (req, res) => {
+4270-
+4271-    try {
+4272-
+4273-        if (
+4274:            !req.session.usuario ||
+4275:            req.session.usuario.tipo !== "admin"
+4276-        ) {
+4277-            return res.status(403).json({
+4278-                sucesso: false,
+4279-                mensagem: "Acesso negado."
+4280-            });
+4281-        }
+4282-
+4283-        const id = Number(req.body.id);
+4284-        const dias = Number(req.body.dias);
+4285-
+4286-        if (
+4287-            !Number.isInteger(id) ||
+--
+4362-});// ==========================================
+4363-
+4364-
+4365-// ==========================================
+4366-// REVENDEDORES — CRIAR
+4367-// ==========================================
+4368-
+4369-app.post("/api/admin/revendedores", async (req, res) => {
+4370-
+4371-    try {
+4372-
+4373-        if (
+4374:            !req.session.usuario ||
+4375:            req.session.usuario.tipo !== "admin"
+4376-        ) {
+4377-            return res.status(403).json({
+4378-                sucesso: false,
+4379-                mensagem: "Acesso negado."
+4380-            });
+4381-        }
+4382-
+4383-        const usuario =
+4384-            String(req.body.usuario || "").trim();
+4385-
+4386-        const senha =
+4387-            String(req.body.senha || "");
+--
+4502-});
+4503-
+4504-
+4505-// ==========================================
+4506-// REVENDEDOR — CRIAR CLIENTE
+4507-// ==========================================
+4508-
+4509-app.post("/api/revendedor/clientes", async (req, res) => {
+4510-
+4511-    try {
+4512-
+4513-        if (
+4514:            !req.session.usuario ||
+4515:            req.session.usuario.tipo !== "revendedor"
+4516-        ) {
+4517-            return res.status(403).json({
+4518-                sucesso: false,
+4519-                mensagem: "Acesso permitido somente para revendedores."
+4520-            });
+4521-        }
+4522-
+4523-        const revendedorId =
+4524:            Number(req.session.usuario.id);
+4525-
+4526-        const usuario =
+4527-            String(req.body.usuario || "").trim();
+4528-
+4529-        const senha =
+4530-            String(req.body.senha || "");
+4531-
+4532-        const dias =
+4533-            Number(req.body.dias);
+4534-
+4535-        if (
+4536-            !usuario ||
+--
+4712-}
+4713-
+4714-function usuarioEstaOnline(lastSeen) {
+4715-    const tempo = Number(lastSeen || 0);
+4716-
+4717-    return (
+4718-        tempo > 0 &&
+4719-        Date.now() - tempo <= 45000
+4720-    );
+4721-}
+4722-
+4723-app.post("/api/presenca", (req, res) => {
+4724:    if (!req.session.usuario) {
+4725-        return res.status(401).json({
+4726-            sucesso: false,
+4727-            mensagem: "Não logado."
+4728-        });
+4729-    }
+4730-
+4731-    try {
+4732-        const dados = lerPresenca();
+4733-
+4734:        dados[String(req.session.usuario.id)] = {
+4735-            last_seen: Date.now()
+4736-        };
+4737-
+4738-        salvarPresenca(dados);
+4739-
+4740-        return res.json({
+4741-            sucesso: true
+4742-        });
+4743-
+4744-    } catch (erro) {
+4745-        console.error(
+4746-            "[ERRO PRESENCA]",
+--
+4750-        return res.status(500).json({
+4751-            sucesso: false
+4752-        });
+4753-    }
+4754-});
+4755-
+4756-
+4757-app.get("/api/revendedor/clientes", async (req, res) => {
+4758-
+4759-    try {
+4760-
+4761-        if (
+4762:            !req.session.usuario ||
+4763:            req.session.usuario.tipo !== "revendedor"
+4764-        ) {
+4765-            return res.status(403).json({
+4766-                sucesso: false,
+4767-                mensagem: "Acesso negado."
+4768-            });
+4769-        }
+4770-
+4771-        const revendedorId =
+4772:            Number(req.session.usuario.id);
+4773-
+4774-        const usuarios =
+4775-            await carregarUsuarios();
+4776-
+4777-        const revendedor =
+4778-            usuarios.find(
+4779-                u =>
+4780-                    Number(u.id) === revendedorId &&
+4781-                    u.tipo === "revendedor"
+4782-            );
+4783-
+4784-        if (!revendedor) {
+--
+4837-});
+4838-
+4839-
+4840-// ==========================================
+4841-// REVENDEDOR — EU
+4842-// ==========================================
+4843-
+4844-app.get("/api/revendedor/eu", async (req, res) => {
+4845-
+4846-    try {
+4847-
+4848-        if (
+4849:            !req.session.usuario ||
+4850:            req.session.usuario.tipo !== "revendedor"
+4851-        ) {
+4852-            return res.status(403).json({
+4853-                sucesso: false,
+4854-                mensagem: "Acesso negado."
+4855-            });
+4856-        }
+4857-
+4858-        const usuarios =
+4859-            await carregarUsuarios();
+4860-
+4861-        const revendedor =
+4862-            usuarios.find(
+4863-                u =>
+4864-                    Number(u.id) ===
+4865:                    Number(req.session.usuario.id)
+4866-            );
+4867-
+4868-        if (!revendedor) {
+4869-            return res.status(404).json({
+4870-                sucesso: false,
+4871-                mensagem: "Revendedor não encontrado."
+4872-            });
+4873-        }
+4874-
+4875-        return res.json({
+4876-            sucesso: true,
+4877-            usuario: {
+--
+4900-
+4901-
+4902-
+4903-// ==========================================
+4904-// REVENDEDOR — EDITAR CLIENTE
+4905-// ==========================================
+4906-
+4907-app.post("/api/revendedor/clientes/editar", async (req, res) => {
+4908-
+4909-    try {
+4910-
+4911-        if (
+4912:            !req.session.usuario ||
+4913:            req.session.usuario.tipo !== "revendedor"
+4914-        ) {
+4915-            return res.status(403).json({
+4916-                sucesso: false,
+4917-                mensagem: "Acesso negado."
+4918-            });
+4919-        }
+4920-
+4921-        const revendedorId =
+4922:            Number(req.session.usuario.id);
+4923-
+4924-        const id =
+4925-            Number(req.body.id);
+4926-
+4927-        const usuario =
+4928-            String(req.body.usuario || "").trim();
+4929-
+4930-        const senha =
+4931-            String(req.body.senha || "");
+4932-
+4933-        if (!Number.isInteger(id) || id < 1) {
+4934-            return res.status(400).json({
+--
+5019-});
+5020-
+5021-
+5022-// ==========================================
+5023-// REVENDEDOR — SUSPENDER / ATIVAR CLIENTE
+5024-// ==========================================
+5025-
+5026-app.post("/api/revendedor/clientes/status", async (req, res) => {
+5027-
+5028-    try {
+5029-
+5030-        if (
+5031:            !req.session.usuario ||
+5032:            req.session.usuario.tipo !== "revendedor"
+5033-        ) {
+5034-            return res.status(403).json({
+5035-                sucesso: false,
+5036-                mensagem: "Acesso negado."
+5037-            });
+5038-        }
+5039-
+5040-        const revendedorId =
+5041:            Number(req.session.usuario.id);
+5042-
+5043-        const id =
+5044-            Number(req.body.id);
+5045-
+5046-        const status =
+5047-            String(req.body.status || "").trim();
+5048-
+5049-        if (
+5050-            !Number.isInteger(id) ||
+5051-            id < 1 ||
+5052-            !["ativo", "suspenso"].includes(status)
+5053-        ) {
+--
+5107-});
+5108-
+5109-
+5110-// ==========================================
+5111-// REVENDEDOR — EXCLUIR CLIENTE
+5112-// ==========================================
+5113-
+5114-app.post("/api/revendedor/clientes/excluir", async (req, res) => {
+5115-
+5116-    try {
+5117-
+5118-        if (
+5119:            !req.session.usuario ||
+5120:            req.session.usuario.tipo !== "revendedor"
+5121-        ) {
+5122-            return res.status(403).json({
+5123-                sucesso: false,
+5124-                mensagem: "Acesso negado."
+5125-            });
+5126-        }
+5127-
+5128-        const revendedorId =
+5129:            Number(req.session.usuario.id);
+5130-
+5131-        const id =
+5132-            Number(req.body.id);
+5133-
+5134-        if (!Number.isInteger(id) || id < 1) {
+5135-            return res.status(400).json({
+5136-                sucesso: false,
+5137-                mensagem: "ID inválido."
+5138-            });
+5139-        }
+5140-
+5141-        const usuarios =
+--
+5187-});
+5188-
+5189-
+5190-// ==========================================
+5191-// REVENDEDOR — RENOVAR CLIENTE
+5192-// ==========================================
+5193-
+5194-app.post("/api/revendedor/clientes/renovar", async (req, res) => {
+5195-
+5196-    try {
+5197-
+5198-        if (
+5199:            !req.session.usuario ||
+5200:            req.session.usuario.tipo !== "revendedor"
+5201-        ) {
+5202-            return res.status(403).json({
+5203-                sucesso: false,
+5204-                mensagem: "Acesso negado."
+5205-            });
+5206-        }
+5207-
+5208-        const revendedorId =
+5209:            Number(req.session.usuario.id);
+5210-
+5211-        const id =
+5212-            Number(req.body.id);
+5213-
+5214-        const dias =
+5215-            Number(req.body.dias);
+5216-
+5217-        if (
+5218-            !Number.isInteger(id) ||
+5219-            id < 1 ||
+5220-            !Number.isInteger(dias) ||
+5221-            dias < 1
+--
+5295-
+5296-
+5297-// ADMIN — LISTAR USUÁRIOS
+5298-// ==========================================
+5299-
+5300-app.get(
+5301-    "/api/admin/usuarios",
+5302-    async (req, res) => {
+5303-
+5304-        try {
+5305-
+5306-            if (
+5307:                !req.session.usuario ||
+5308:                req.session.usuario.tipo !== "admin"
+5309-            ) {
+5310-
+5311-                return res.status(403).json({
+5312-
+5313-                    sucesso: false,
+5314-
+5315-                    mensagem:
+5316-                        "Acesso negado."
+5317-
+5318-                });
+5319-
+5320-            }
+--
+5500-         * APIs de séries devem responder diretamente em JSON.
+5501-         * Não redirecionar detalhes, temporadas e episódios para /login.
+5502-         */
+5503-        if (
+5504-            req.path.startsWith("/api/serie/") ||
+5505-            req.path.startsWith("/api/series") ||
+5506-            req.path === "/api/acesso-assistir" ||
+5507-            req.path === "/api/pagamentos/criar"
+5508-        ) {
+5509-            return next();
+5510-        }
+5511-
+5512:        if (!req.session || !req.session.usuario) {
+5513-
+5514-            return res.redirect("/login");
+5515-
+5516-        }
+5517-
+5518:        const usuarioSessao = req.session.usuario;
+5519-
+5520-        /*
+5521-         * Usuário vencido continua logado e pode navegar pelo catálogo.
+5522-         * A verificação de acesso para assistir será feita no botão
+5523-         * principal "ASSISTIR".
+5524-         *
+5525-         * Admin e isento nunca dependem de validade.
+5526-         */
+5527-
+5528-        next();
+5529-
+5530-    }
+
+========== CHECK ==========
+
+========== FIM ==========

@@ -1,0 +1,8 @@
+3667:                                await mostrarPagamentoLuka(
+3739:            async function mostrarPagamentoLuka(acesso) {
+3747:                            "/api/pagamentos/criar",
+3850:                            id="lukafilmesQrCode"
+3873:                            id="lukafilmesPix"
+3950:                            "lukafilmesQrCode"
+4006:                                            "lukafilmesPix"
+4085:                                        "🎬 LUKAFILMES — COMPROVANTE DE PAGAMENTO",

@@ -1,0 +1,556 @@
+===== API PAGAMENTOS/CRIAR =====
+INICIO: 44786
+FIM: -1
+
+app.post("/api/pagamentos/criar", async (req, res) => {
+
+    try {
+
+        const sessao = lukaUsuarioOperacional(req);
+
+        if (!sessao) {
+            return res.status(401).json({
+                sucesso: false,
+                logado: false,
+                motivo: "nao_logado",
+                mensagem: "Faça login para continuar."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                sucesso: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado",
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const tipo = String(
+            pessoa.tipo || "usuario"
+        ).toLowerCase();
+
+        const statusUsuario = String(
+            pessoa.status || "ativo"
+        ).toLowerCase();
+
+        if (statusUsuario !== "ativo") {
+            return res.status(403).json({
+                sucesso: false,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: false,
+                motivo: "isento",
+                tipo
+            });
+        }
+
+        const pagamentosPendentes =
+            await listarPagamentosLuka(
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+            );
+
+        const pagamentoExistente =
+            pagamentosPendentes.find(
+                pagamento =>
+                    Number(pagamento.usuario_id) === Number(pessoa.id)
+            );
+
+        if (pagamentoExistente) {
+
+            let pix;
+
+            try {
+                pix = gerarPixCopiaColaLuka();
+            } catch (erroPix) {
+                console.error(
+                    "[PAGAMENTO] Erro ao gerar PIX:",
+                    erroPix
+                );
+            }
+
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: true,
+                pagamento: pagamentoExistente,
+                pix: pix || null,
+                valor: Number(
+                    process.env.PIX_VALOR ||
+                    CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+                ).toFixed(2),
+                nome: process.env.PIX_NOME || "LUKAFILMES",
+                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+            });
+        }
+
+        const idPagamento =
+            await proximoIdPagamentoLuka();
+
+        const pagamento = {
+            id: idPagamento,
+            usuario_id: Number(pessoa.id),
+            usuario: String(
+                pessoa.usuario ||
+                sessao.usuario ||
+                ""
+            ),
+            valor:
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+
+            /*
+             * primeiro_acesso = fluxo normal de cadastro
+             * renovacao      = cliente já existente renovando
+             */
+            tipo_pagamento:
+                tipoPagamentoSolicitado,
+
+            renovacao:
+                renovacaoSolicitada,
+
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+            criado_em:
+                new Date().toISOString(),
+            aprovado_em: null,
+            inicio_acesso: null,
+            fim_acesso: null,
+            observacao: null
+        };
+
+        await criarPagamentoLuka(pagamento);
+
+        let pix;
+
+        try {
+            pix = gerarPixCopiaColaLuka();
+        } catch (erroPix) {
+            console.error(
+                "[PAGAMENTO] Erro ao gerar PIX:",
+                erroPix
+            );
+        }
+
+        return res.json({
+            sucesso: true,
+            pagamento_necessario: true,
+            pagamento,
+            pix: pix || null,
+            valor: Number(
+                process.env.PIX_VALOR ||
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+            ).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[PAGAMENTO] Erro ao criar pagamento:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível criar o pagamento."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// PIX LUKAFILMES — COPIA E COLA
+// ==========================================
+
+app.get("/api/pix", (req, res) => {
+
+    try {
+
+        const pix = gerarPixCopiaColaLuka();
+
+        return res.json({
+            sucesso: true,
+            valor: Number(process.env.PIX_VALOR || 18).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA",
+            pix
+        });
+
+    } catch (erro) {
+
+        console.error("[PIX] Erro ao gerar Pix:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível gerar o Pix."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// LUKAFILMES — PRESENÇA EM TEMPO REAL
+// ==========================================
+
+app.post("/api/presenca", (req, res) => {
+    if (!req.session || !req.session.usuario) {
+        return res.status(401).json({
+            sucesso: false
+        });
+    }
+
+    lukaRegistrarPresenca(req);
+
+    res.json({
+        sucesso: true,
+        online: true
+    });
+});
+
+app.get("/api/admin/presenca", async (req, res) => {
+    try {
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const agora = Date.now();
+        const usuarios = await carregarUsuarios();
+
+        const resultado = usuarios.map(u => {
+            const p = LUKA_PRESENCA_ONLINE_2026.get(Number(u.id));
+
+            const lastSeen = p
+                ? Number(p.last_seen || 0)
+                : 0;
+
+            const online =
+                lastSeen > 0 &&
+                (agora - lastSeen) <= 45000 &&
+                u.status === "ativo";
+
+            return {
+                id: u.id,
+                usuario: u.usuario,
+                tipo: u.tipo || "usuario",
+                status: u.status,
+                validade: u.validade || null,
+                online,
+                last_seen: lastSeen
+            };
+        });
+
+        res.json({
+            sucesso: true,
+            agora,
+            usuarios: resultado,
+            online: resultado.filter(u => u.online).length,
+            usuariosOnline: resultado.filter(
+                u => u.online && u.tipo !== "teste" && u.tipo !== "revendedor"
+            ).length,
+            testesOnline: resultado.filter(
+                u => u.online && u.tipo === "teste"
+            ).length,
+            revendedoresOnline: resultado.filter(
+                u => u.online && u.tipo === "revendedor"
+            ).length
+        });
+
+    } catch (erro) {
+        console.error("[LUKA STATUS ONLINE]", erro);
+
+        res.status(500).json({
+            sucesso: false,
+            usuarios: []
+        });
+    }
+});
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+app.post("/logout", (req, res) => {
+
+    req.session.destroy(() => {
+
+        res.json({
+            sucesso: true
+        });
+
+    });
+
+});
+
+// ==========================================
+// TMDB
+// ==========================================
+
+const TMDB_BASE =
+    "https://api.themoviedb.org/3";
+
+const TMDB_IMAGE =
+    "https://image.tmdb.org/t/p/w500";
+
+// ==========================================
+// BUSCAR FILMES DO TMDB
+// ==========================================
+
+async function tmdb(endpoint) {
+
+    const token =
+        process.env.TMDB_TOKEN;
+
+    if (!token) {
+
+        throw new Error(
+            "TMDB_TOKEN não configurado."
+        );
+    }
+
+    const resposta =
+        await fetch(
+            TMDB_BASE + endpoint,
+            {
+                method: "GET",
+
+                headers: {
+                    Authorization:
+                        "Bearer " + token,
+
+                    accept:
+                        "application/json"
+                }
+            }
+        );
+
+    const dados =
+        await resposta.json();
+
+    if (!resposta.ok) {
+
+        console.error(
+            "[TMDB ERRO]",
+            dados
+        );
+
+        throw new Error(
+            dados.status_message ||
+            "Erro no TMDB."
+        );
+    }
+
+    return dados;
+}
+
+// ==========================================
+// GÊNEROS
+// ==========================================
+
+const generosTMDB = {
+
+    28: "Ação",
+
+    12: "Aventura",
+
+    16: "Animação",
+
+    35: "Comédia",
+
+    80: "Crime",
+
+    99: "Documentário",
+
+    18: "Drama",
+
+    10751: "Família",
+
+    14: "Fantasia",
+
+    36: "História",
+
+    27: "Terror",
+
+    10402: "Música",
+
+    9648: "Mistério",
+
+    10749: "Romance",
+
+    878: "Ficção científica",
+
+    10770: "Cinema TV",
+
+    53: "Thriller",
+
+    10752: "Guerra",
+
+    37: "Faroeste"
+
+};
+
+// ==========================================
+// CONVERTER FILME
+// ==========================================
+
+function converterFilme(filme) {
+
+    const generos =
+        Array.isArray(filme.genre_ids)
+
+            ? filme.genre_ids
+                .map(
+                    id => generosTMDB[id]
+                )
+                .filter(Boolean)
+
+            : [];
+
+    const titulo =
+        filme.title ||
+        filme.original_title ||
+        "Sem título";
+
+    const ano =
+        filme.release_date
+            ? Number(
+                filme.release_date.substring(0, 4)
+            )
+            : "";
+
+    return {
+
+        id: filme.id,
+
+        titulo,
+
+        tituloOriginal:
+            filme.original_title || "",
+
+        ano,
+
+        generos,
+
+        categoria:
+            generos.join(", "),
+
+        nota:
+            Number(
+                filme.vote_average || 0
+            ),
+
+        votos:
+            Number(
+                filme.vote_count || 0
+            ),
+
+        capa:
+            filme.poster_path
+                ? TMDB_IMAGE +
+                  filme.poster_path
+                : "",
+
+        fundo:
+            filme.backdrop_path
+                ? "https://image.tmdb.org/t/p/w1280" +
+                  filme.backdrop_path
+                : "",
+
+        sinopse:
+            filme.overview ||
+            "Sinopse não disponível."
+
+    };
+
+}
+
+// ==========================================
+// CACHE DE PESQUISAS
+// ==========================================
+
+const pesquisaCache = new Map();
+
+// LINKS DE FILMES DO SITE DE ORIGEM
+const fs = require("fs");
+const caminhoLinksFilmes = require("path").join(__dirname, "links_filmes.json");
+
+let linksFilmes = {};
+
+try {
+    linksFilmes = JSON.parse(
+        fs.readFileSync(caminhoLinksFilmes, "utf8")
+    );
+
+    console.log(
+        "[LINKS FILMES] Carregados:",
+        Object.keys(linksFilmes).length
+    );
+
+} catch (erro) {
+
+    console.error(
+        "[LINKS FILMES] Erro ao carregar links_filmes.json:",
+        erro.message
+    );
+
+    linksFilmes = {};
+}
+
+const PESQUISA_CACHE_MS =
+    5 * 60 * 1000;
+
+const PESQUISA_CACHE_MAX =
+    100;
+// ==========================================
+// API DE PESQUISA
+// ==========================================
+
+app.get(
+    "/api/pesquisar",
+    async (req, res) => {
+
+        const busca =
+            String(req.query.q || "").trim();
+
+        if (!busca) {
+            return res.json({
+                resultados: []
+            });
+        }
+
+        co
+
+===== OCORRÊNCIAS RENOVAÇÃO =====
+1194: app.get("/api/renovacao-status", async (req, res) => {
+1300:             dias_renovacao:
+1309:             "[RENOVACAO STATUS] Erro:",
+1655:                 pagamento.renovacao === true ||
+1656:                 pagamento.tipo_pagamento === "renovacao"
+1919:              * renovacao      = cliente já existente renovando
+1921:             tipo_pagamento:
+1924:             renovacao:
+1925:                 renovacaoSolicitada,

@@ -1,0 +1,180 @@
+126-    align-items:center;
+127-    justify-content:center;
+128-    font-size:14px;
+129-    font-weight:bold;
+130-}
+131-
+132-
+133-
+134-/* ================= HERO ================= */
+135-
+136:.hero{
+137-    height:92vh;
+138-    min-height:570px;
+139-    position:relative;
+140-    display:flex;
+141-    align-items:center;
+142-    overflow:hidden;
+143-    background:
+144-        radial-gradient(circle at 75% 35%,rgba(229,9,20,.25),transparent 28%),
+145-        linear-gradient(90deg,#050505 0%,rgba(5,5,5,.9) 25%,rgba(5,5,5,.2) 65%,#050505 100%);
+146-}
+147-
+148:.hero-bg{
+149-    position:absolute;
+150-    inset:0;
+151-    background-size:cover;
+152-    background-position:center;
+153-    opacity:.62;
+154-    transform:scale(1.03);
+155-}
+156-
+157:.hero-overlay{
+158-    position:absolute;
+159-    inset:0;
+160-    background:
+161-        linear-gradient(90deg,#050505 0%,rgba(5,5,5,.8) 25%,rgba(5,5,5,.2) 65%,#050505 100%),
+162-        linear-gradient(0deg,#050505 0%,transparent 35%,rgba(0,0,0,.15) 100%);
+163-}
+164-
+165:.hero-content{
+166-    position:relative;
+167-    z-index:2;
+168-    width:min(650px,90%);
+169-    margin-left:6%;
+170-    padding-top:80px;
+171-}
+172-
+173:.hero-badge{
+174-    display:inline-flex;
+175-    align-items:center;
+176-    gap:8px;
+177-    color:#ddd;
+178-    font-size:13px;
+179-    font-weight:bold;
+180-    margin-bottom:15px;
+181-}
+182-
+183:.hero-badge strong{
+184-    color:#e50914;
+185-}
+186-
+187:.hero-title{
+188-    font-size:clamp(42px,6vw,78px);
+189-    line-height:.95;
+190-    font-weight:900;
+191-    letter-spacing:-3px;
+192-    margin-bottom:20px;
+193-    text-shadow:0 5px 25px #000;
+194-}
+195-
+196:.hero-description{
+197-    color:#ddd;
+198-    max-width:560px;
+199-    font-size:17px;
+200-    line-height:1.55;
+201-    margin-bottom:25px;
+202-}
+203-
+204:.hero-info{
+205-    display:flex;
+206-    gap:14px;
+207-    align-items:center;
+208-    margin-bottom:22px;
+209-    color:#ddd;
+210-    font-size:14px;
+211-}
+212-
+213:.hero-info .age{
+214-    border:1px solid #777;
+215-    padding:2px 6px;
+216-}
+217-
+218:.hero-buttons{
+219-    display:flex;
+220-    gap:12px;
+221-}
+222-
+223-.btn{
+224-    border:0;
+225-    border-radius:5px;
+226-    padding:13px 24px;
+227-    font-size:15px;
+228-    font-weight:800;
+229-    cursor:pointer;
+230-    display:flex;
+231-    align-items:center;
+232-    gap:9px;
+233-    transition:.2s;
+234-}
+235-
+236-.btn:hover{
+237-    transform:scale(1.04);
+238-}
+239-
+240-.btn-watch{
+241-    background:#fff;
+242-    color:#000;
+243-}
+--
+428-    }
+429-
+430-    .menu-btn{
+431-        display:block;
+432-    }
+433-
+434-    .header-right{
+435-        gap:12px;
+436-    }
+437-
+438:    .hero{
+439-        height:75vh;
+440-        min-height:500px;
+441-        align-items:flex-end;
+442-    }
+443-
+444:    .hero-content{
+445-        margin-left:18px;
+446-        margin-bottom:70px;
+447-        padding-top:0;
+448-        width:calc(100% - 36px);
+449-    }
+450-
+451:    .hero-title{
+452-        font-size:43px;
+453-        letter-spacing:-2px;
+454-    }
+455-
+456:    .hero-description{
+457-        font-size:14px;
+458-        line-height:1.45;
+459-        max-height:84px;
+460-        overflow:hidden;
+461-    }
+462-
+463:    .hero-info{
+464-        font-size:12px;
+465-    }
+466-
+467-    .btn{
+468-        padding:11px 17px;
+469-        font-size:13px;
+470-    }
+471-
+472-    .content{
+473-        margin-top:-45px;
+474-    }
+475-
+476-    .section{
+477-        margin-bottom:24px;
+478-    }
+479-
+480-    .section-title{
+481-        font-size:18px;
+482-        padding:0 18px;
+483-    }
+484-
+485-    .row{
+486-        padding-left:18px;
+487-        padding-right:18px;
+488-        gap:7px;

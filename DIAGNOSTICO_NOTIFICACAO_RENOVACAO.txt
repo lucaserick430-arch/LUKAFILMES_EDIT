@@ -1,0 +1,150 @@
+public/index.html:26:    position:fixed;
+public/index.html:139:    position:relative;
+public/index.html:149:    position:absolute;
+public/index.html:152:    background-position:center;
+public/index.html:158:    position:absolute;
+public/index.html:166:    position:relative;
+public/index.html:253:    position:relative;
+public/index.html:290:    position:relative;
+public/index.html:312:    position:absolute;
+public/index.html:323:    position:absolute;
+public/index.html:346:    position:absolute;
+public/index.html:368:    position:absolute;
+public/index.html:522:    position:fixed !important;
+public/index.html:588:    position:fixed;
+public/index.html:616:    position:absolute;
+public/index.html:752:    position: relative;
+public/index.html:805:    position: relative;
+public/index.html:811:    position: absolute;
+public/index.html:872:    position: relative;
+public/index.html:890:    position: relative;
+public/index.html:901:    position: relative;
+public/index.html:916:        position: absolute;
+public/index.html:1079:    position: fixed;
+public/index.html:1143:        position: relative !important;
+public/index.html:1144:        z-index: 100001 !important;
+public/index.html:1197:        position:absolute !important;
+public/index.html:1208:        position:absolute !important;
+public/index.html:1221:        position:relative !important;
+public/index.html:1236:        position:relative !important;
+public/index.html:1264:        position:absolute !important;
+public/index.html:1275:        position:absolute !important;
+public/index.html:1289:        position:absolute !important;
+public/index.html:1309:        position:relative !important;
+public/index.html:2766:                        "[HERO TRAILER] Erro ao renovar fila:",
+public/index.html:2936:    position: absolute;
+public/index.html:2992:    position: fixed !important;
+public/index.html:3163:<style id="lukafilmes-renovacao-notificacao-style">
+public/index.html:3166:    position: fixed;
+public/index.html:3184:#lukaRenovacaoNotificacao .luka-renovacao-titulo {
+public/index.html:3190:#lukaRenovacaoNotificacao .luka-renovacao-texto {
+public/index.html:3196:#lukaRenovacaoNotificacao .luka-renovacao-dias {
+public/index.html:3202:#lukaRenovacaoNotificacao .luka-renovacao-acoes {
+public/index.html:3218:#lukaRenovacaoNotificacao .luka-renovar {
+public/index.html:3244:    #lukaRenovacaoNotificacao .luka-renovacao-titulo {
+public/index.html:3248:    #lukaRenovacaoNotificacao .luka-renovacao-texto {
+public/index.html:3255:<script id="lukafilmes-renovacao-notificacao-script">
+public/index.html:3260:    const TEMPO = 10000;
+public/index.html:3314:            <div class="luka-renovacao-titulo">
+public/index.html:3318:            <div class="luka-renovacao-texto">
+public/index.html:3324:                ${Number(dados.dias_renovacao || 30)} dias.
+public/index.html:3327:            <div class="luka-renovacao-dias">
+public/index.html:3331:            <div class="luka-renovacao-acoes">
+public/index.html:3334:                    class="luka-renovar"
+public/index.html:3336:                    🔄 RENOVAR
+public/index.html:3343:                    FECHAR
+public/index.html:3366:                     * renovacao=true.
+public/index.html:3370:                            "luka:renovar",
+public/index.html:3409:                    "/api/renovacao-status",
+public/index.html:3437:                "[LUKAFILMES] Falha ao verificar renovação:",
+paginas/filme.html:32:    position: relative;
+paginas/filme.html:48:    position: absolute;
+paginas/filme.html:68:    background-position: center top;
+paginas/filme.html:83:    position: absolute;
+paginas/filme.html:106:    position: relative;
+paginas/filme.html:154:    position: relative;
+paginas/filme.html:391:    position: relative;
+paginas/filme.html:438:    position: relative;
+paginas/filme.html:811:    background-position:center top !important;
+paginas/filme.html:1105:        background-position:center top !important;
+paginas/filme.html:1274:    position: relative !important;
+paginas/filme.html:1288:    position: absolute !important;
+paginas/filme.html:1341:    position:relative;
+paginas/filme.html:1345:    position:absolute;
+paginas/filme.html:1516:    position: relative !important;
+paginas/filme.html:1546:    position: absolute !important;
+paginas/filme.html:1565:    position: relative !important;
+paginas/filme.html:1603:    position: relative !important;
+paginas/filme.html:1775:    position: relative !important;
+paginas/filme.html:1822:    position: relative !important;
+paginas/filme.html:2092:    position:relative !important;
+paginas/filme.html:2118:    position:absolute !important;
+paginas/filme.html:2135:    position:relative !important;
+paginas/filme.html:2163:    position:relative !important;
+paginas/filme.html:2306:    position:relative !important;
+paginas/filme.html:2343:    position:relative !important;
+paginas/filme.html:2445:        background-position:center top !important;
+paginas/filme.html:2536:    position:relative !important;
+paginas/filme.html:2599:        position:static !important;
+paginas/filme.html:2605:        position:relative !important;
+paginas/filme.html:2674:        position:relative !important;
+paginas/filme.html:2748:        position:relative !important;
+paginas/filme.html:2803:        position:relative !important;
+paginas/filme.html:2826:        position:relative !important;
+paginas/filme.html:2885:        position:relative !important;
+paginas/filme.html:2951:        position: relative !important;
+paginas/filme.html:3006:        position: relative !important;
+paginas/filme.html:3057:        position:relative !important;
+paginas/filme.html:3077:        position:relative !important;
+paginas/filme.html:3739:            async function mostrarPagamentoLuka(acesso, renovacao = false) {
+paginas/filme.html:3756:                                    renovacao
+paginas/filme.html:3757:                                        ? { renovacao: true }
+paginas/filme.html:3828:                        position: relative;
+paginas/filme.html:3834:                            ${renovacao ? "🔄 Renovar acesso" : "🔒 Acesso expirado"}
+paginas/filme.html:3838:                            ${renovacao
+paginas/filme.html:4090:                                    renovacao
+paginas/filme.html:4100:                                            "📅 Solicito a renovação do meu acesso por mais 30 dias.",
+paginas/filme.html:4102:                                            "Estou enviando o comprovante para conferência e aprovação da renovação."
+paginas/filme.html:4178:                "luka:renovar",
+paginas/filme.html:4197:                            "[LUKAFILMES] Erro ao abrir renovação:",
+paginas/filme.html:4264:                                        "Seu acesso expirou. É necessário renovar para assistir."
+paginas/filme.html:4669:    position:fixed;
+paginas/filme.html:4962:    position: relative !important;
+paginas/filme.html:5107:    position: relative;
+paginas/filme.html:5116:    position: relative !important;
+paginas/filme.html:5129:    position: relative !important;
+paginas/filme.html:5154:    position: relative;
+paginas/filme.html:5685:<style id="lukafilmes-renovacao-notificacao-style">
+paginas/filme.html:5688:    position: fixed;
+paginas/filme.html:5706:#lukaRenovacaoNotificacao .luka-renovacao-titulo {
+paginas/filme.html:5712:#lukaRenovacaoNotificacao .luka-renovacao-texto {
+paginas/filme.html:5718:#lukaRenovacaoNotificacao .luka-renovacao-dias {
+paginas/filme.html:5724:#lukaRenovacaoNotificacao .luka-renovacao-acoes {
+paginas/filme.html:5740:#lukaRenovacaoNotificacao .luka-renovar {
+paginas/filme.html:5766:    #lukaRenovacaoNotificacao .luka-renovacao-titulo {
+paginas/filme.html:5770:    #lukaRenovacaoNotificacao .luka-renovacao-texto {
+paginas/filme.html:5777:<script id="lukafilmes-renovacao-notificacao-script">
+paginas/filme.html:5782:    const TEMPO = 10000;
+paginas/filme.html:5836:            <div class="luka-renovacao-titulo">
+paginas/filme.html:5840:            <div class="luka-renovacao-texto">
+paginas/filme.html:5846:                ${Number(dados.dias_renovacao || 30)} dias.
+paginas/filme.html:5849:            <div class="luka-renovacao-dias">
+paginas/filme.html:5853:            <div class="luka-renovacao-acoes">
+paginas/filme.html:5856:                    class="luka-renovar"
+paginas/filme.html:5858:                    🔄 RENOVAR
+paginas/filme.html:5865:                    FECHAR
+paginas/filme.html:5888:                     * renovacao=true.
+paginas/filme.html:5892:                            "luka:renovar",
+paginas/filme.html:5931:                    "/api/renovacao-status",
+paginas/filme.html:5959:                "[LUKAFILMES] Falha ao verificar renovação:",
+paginas/filme.html:6037:    position:absolute !important;
+paginas/filme.html:6061:    background-position:center top !important;
+paginas/filme.html:6073:    position:absolute !important;
+paginas/filme.html:6092:    position:relative !important;
+paginas/filme.html:6123:    position:relative !important;
+paginas/filme.html:6300:    position:relative !important;
+paginas/filme.html:6341:    position:relative !important;
+paginas/filme.html:6396:        background-position:center top !important;
+paginas/filme.html:6547:    position:relative !important;
+paginas/filme.html:6556:    position:absolute !important;
+paginas/filme.html:6581:    background-position:center top !important;

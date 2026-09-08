@@ -1,0 +1,177 @@
+========== FORM LOGIN ==========
+631-
+632-
+633-
+634-<script id="lukafilmes-login-funcional">
+635-document
+636:        .getElementById("loginForm")
+637-        .addEventListener("submit", async function(event) {
+638-
+639-            event.preventDefault();
+640-
+641-            const usuario =
+642-                document.getElementById("usuario").value.trim();
+643-
+644-            const senha =
+645-                document.getElementById("senha").value;
+646-
+647-            const mensagem =
+648-                document.getElementById("mensagem");
+649-
+650-            const botao =
+651-                document.getElementById("botaoEntrar");
+652-
+653-            mensagem.textContent = "";
+654-            botao.disabled = true;
+655-            botao.textContent = "ENTRANDO...";
+656-
+657-            try {
+658-
+659-                const resposta = await fetch(
+660-                    "/login",
+661-                    {
+662-                        method: "POST",
+663-
+664-                        headers: {
+665-                            "Content-Type": "application/json"
+666-                        },
+667-
+668-                        body: JSON.stringify({
+669-                            usuario,
+670-                            senha
+671-                        })
+--
+708-
+709-<script id="lukafilmes-login-loader-js">
+710-(function(){
+711-
+712-    var loader = document.getElementById("lukafilmesLoginLoader");
+713:    var form = document.getElementById("loginForm");
+714-
+715-    function mostrarLoginLoader(){
+716-        if(!loader)return;
+717-        loader.classList.add("ativo");
+718-        loader.setAttribute("aria-hidden","false");
+719-    }
+720-
+721-    function esconderLoginLoader(){
+722-        if(!loader)return;
+723-        loader.classList.remove("ativo");
+724-        loader.setAttribute("aria-hidden","true");
+725-    }
+726-
+727-    window.lukafilmesMostrarLoginLoader = mostrarLoginLoader;
+728-    window.lukafilmesEsconderLoginLoader = esconderLoginLoader;
+729-
+730-    if(form){
+731-        form.addEventListener("submit",function(){
+732-            mostrarLoginLoader();
+733-        },true);
+734-    }
+735-
+736-    window.addEventListener("pageshow",function(){
+737-        esconderLoginLoader();
+738-    });
+739-
+740-})();
+741-</script>
+742-
+743-
+744-
+745-
+746-</body>
+747-</html>
+748-
+
+========== SCRIPT LOGIN ==========
+        </div>
+        <div id="lukafilmesLoginLoaderSpinner"></div>
+        <h2 id="lukafilmesLoginLoaderTitle">Entrando no LUKAFILMES...</h2>
+        <p id="lukafilmesLoginLoaderText">Preparando sua sessão...</p>
+    </div>
+</div>
+
+
+
+<script id="lukafilmes-login-funcional">
+document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const usuario =
+                document.getElementById("usuario").value.trim();
+
+            const senha =
+                document.getElementById("senha").value;
+
+            const mensagem =
+                document.getElementById("mensagem");
+
+            const botao =
+                document.getElementById("botaoEntrar");
+
+            mensagem.textContent = "";
+            botao.disabled = true;
+            botao.textContent = "ENTRANDO...";
+
+            try {
+
+                const resposta = await fetch(
+                    "/login",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            usuario,
+                            senha
+                        })
+                    }
+                );
+
+                const dados = await resposta.json();
+
+                if (dados.sucesso) {
+
+                    window.location.href = "/";
+
+                } else {
+
+                    mensagem.textContent =
+                        dados.mensagem ||
+                        "Usuário ou senha incorretos.";
+
+                }
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro no login:",
+                    erro
+                );
+
+                mensagem.textContent =
+                    "Não foi possível conectar ao servidor.";
+
+            } finally {
+
+                botao.disabled = false;
+                botao.textContent = "ENTRAR";
+
+            }
+
+        });
+</script>
+
+<script id="lukafilmes-login-loader-js">
+(function(){
+
+    var loader = document.getElementById("lukafilmesLoginLoader");
+    var form = document.getElementById("loginForm");
+
+    function mostrarLoginLoader(){

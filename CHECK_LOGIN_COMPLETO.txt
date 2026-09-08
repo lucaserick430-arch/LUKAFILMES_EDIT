@@ -1,0 +1,385 @@
+========== ROTAS DE LOGIN NO SERVER ==========
+624-if (!ambienteLocal) {
+625-    configuracaoSessao.store = new NetlifyBlobSessionStore();
+626-}
+627-
+628-prepararTursoPagamentos()
+629-    .then(() => console.log("[TURSO] Tabela de pagamentos preparada."))
+630-    .catch(erro => console.error("[TURSO PAGAMENTOS] Erro ao preparar tabela:", erro));
+631-
+632-console.log("[DIAGNOSTICO] session middleware carregado");
+633-
+634-app.use(session(configuracaoSessao));
+635-console.log("[DIAGNOSTICO] rota /login registrada");
+636-// LOGIN
+637-// ==========================================
+638-
+639:app.get("/login", (req, res) => {
+640-
+641-    if (req.session.usuario) {
+642-        return res.redirect("/");
+643-    }
+644-
+645-    res.sendFile(
+646:        path.join(__dirname, "public", "login.html")
+647-    );
+648-});
+649-
+650-// ==========================================
+651-// ADMIN
+652-// ==========================================
+653-
+654-app.get("/admin.html", (req, res) => {
+655-
+656-    if (!req.session.usuario) {
+657-        return res.redirect("/login");
+658-    }
+659-
+660-    if (req.session.usuario.tipo !== "admin") {
+661-        return res.status(403).send("Acesso negado.");
+662-    }
+663-
+664-    res.set({
+665-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+666-        "Pragma": "no-cache",
+667-        "Expires": "0",
+668-        "Surrogate-Control": "no-store"
+669-    });
+670-
+671-    res.sendFile(
+672-        path.join(__dirname, "public", "admin.html"),
+673-        {
+674-            cacheControl: false
+675-        }
+676-    );
+677-});
+678-
+679-
+680-// ==========================================
+681-// LUKAFILMES — CADASTRO DE CLIENTE
+--
+839-
+840-    } catch (erro) {
+841-        console.error("[CADASTRO] Erro:", erro);
+842-
+843-        return res.status(500).json({
+844-            sucesso: false,
+845-            mensagem: "Não foi possível criar sua conta."
+846-        });
+847-    }
+848-});
+849-
+850-// ==========================================
+851-// LOGIN POST
+852-// ==========================================
+853-
+854:app.post("/login", async (req, res) => {
+855-
+856-    try {
+857-
+858-        const usuario =
+859-            String(req.body.usuario || "").trim();
+860-
+861-        const senha =
+862-            String(req.body.senha || "");
+863-
+864-        if (!usuario || !senha) {
+865-
+866-            return res.json({
+867-                sucesso: false,
+868-                mensagem: "Digite usuário e senha."
+869-            });
+870-        }
+871-
+872-                const usuarios = await carregarUsuarios();
+873-
+874-        const pessoa = usuarios.find(
+875-            u =>
+876-                String(u.usuario || "").trim().toLowerCase() ===
+877-                usuario.toLowerCase()
+878-        );
+879-        if (!pessoa) {
+880-
+881-            return res.json({
+882-                sucesso: false,
+883-                mensagem: "Usuário ou senha incorretos."
+884-            });
+885-        }
+886-
+887-        if (pessoa.status !== "ativo") {
+888-
+889-            return res.json({
+--
+1934-
+1935-    } catch (erro) {
+1936-        console.error("[LUKA STATUS ONLINE]", erro);
+1937-
+1938-        res.status(500).json({
+1939-            sucesso: false,
+1940-            usuarios: []
+1941-        });
+1942-    }
+1943-});
+1944-
+1945-// ==========================================
+1946-// LOGOUT
+1947-// ==========================================
+1948-
+1949:app.post("/logout", (req, res) => {
+1950-
+1951-    req.session.destroy(() => {
+1952-
+1953-        res.json({
+1954-            sucesso: true
+1955-        });
+1956-
+1957-    });
+1958-
+1959-});
+1960-
+1961-// ==========================================
+1962-// TMDB
+1963-// ==========================================
+1964-
+1965-const TMDB_BASE =
+1966-    "https://api.themoviedb.org/3";
+1967-
+1968-const TMDB_IMAGE =
+1969-    "https://image.tmdb.org/t/p/w500";
+1970-
+1971-// ==========================================
+1972-// BUSCAR FILMES DO TMDB
+1973-// ==========================================
+1974-
+1975-async function tmdb(endpoint) {
+1976-
+1977-    const token =
+1978-        process.env.TMDB_TOKEN;
+1979-
+1980-    if (!token) {
+1981-
+1982-        throw new Error(
+1983-            "TMDB_TOKEN não configurado."
+1984-        );
+
+========== LOGIN.HTML ==========
+76-        min-height: 100vh;
+77-        background: #080808;
+78-        color: white;
+79-        font-family: Arial, sans-serif;
+80-
+81-        display: flex;
+82-        align-items: center;
+83-        justify-content: center;
+84-    }
+85-
+86:    .login {
+87-        position: relative;
+88-        z-index: 5;
+89-        width: 90%;
+90-        max-width: 400px;
+91-        background: rgba(10, 10, 10, 0.82);
+92-        backdrop-filter: blur(12px);
+93-        -webkit-backdrop-filter: blur(12px);
+94-        border: 1px solid rgba(255,255,255,.12);
+95-        width: 90%;
+96-        max-width: 400px;
+97-        background: #151515;
+98-        padding: 35px;
+99-        border-radius: 10px;
+100-        box-shadow: 0 0 30px rgba(229, 9, 20, 0.15);
+101-    }
+102-
+103-    .logo {
+104-        text-align: center;
+105-        font-size: 30px;
+106-        font-weight: bold;
+107-        margin-bottom: 30px;
+108-    }
+109-
+110-    .logo span {
+111-        color: #e50914;
+--
+358-    #mensagem {
+359-        margin-top: 15px;
+360-        text-align: center;
+361-        color: #ff5555;
+362-        min-height: 20px;
+363-    }
+364-</style>
+365-
+366-
+367-
+368:<style id="lukafilmes-login-loader-premium">
+369-#lukafilmesLoginLoader{
+370-    position:fixed;
+371-    inset:0;
+372-    z-index:9999999;
+373-    display:none;
+374-    align-items:center;
+375-    justify-content:center;
+376-    background:rgba(0,0,0,.94);
+377-    backdrop-filter:blur(8px);
+378-    -webkit-backdrop-filter:blur(8px);
+379-    opacity:0;
+380-    transition:opacity .25s ease;
+381-}
+382-
+383-#lukafilmesLoginLoader.ativo{
+384-    display:flex;
+385-    opacity:1;
+386-}
+387-
+388-#lukafilmesLoginLoaderBox{
+389-    width:min(540px,88vw);
+390-    min-height:340px;
+391-    box-sizing:border-box;
+392-    border:1px solid #292929;
+393-    border-radius:18px;
+--
+472-
+473-    #lukafilmesLoginLoaderTitle{
+474-        font-size:18px;
+475-    }
+476-
+477-    #lukafilmesLoginLoaderText{
+478-        font-size:14px;
+479-    }
+480-}
+481-
+482:    .premium-login-campos {
+483-        display: flex;
+484-        flex-direction: column;
+485-        gap: 10px;
+486-        width: 100%;
+487-        margin-bottom: 14px;
+488-    }
+489-
+490:    .premium-login-campos input {
+491-        width: 100%;
+492-        box-sizing: border-box;
+493-        min-height: 52px;
+494-        padding: 15px 16px;
+495-        border: 1px solid rgba(255,255,255,.10);
+496-        border-radius: 7px;
+497-        outline: none;
+498-        background: rgba(15,15,15,.82);
+499-        color: #fff;
+500-        font-size: 14px;
+501-        transition:
+502-            border-color .2s ease,
+503-            box-shadow .2s ease,
+504-            background .2s ease;
+505-    }
+506-
+507:    .premium-login-campos input::placeholder {
+508-        color: #777;
+509-    }
+510-
+511:    .premium-login-campos input:focus {
+512-        border-color: rgba(229,9,20,.75);
+513-        background: rgba(20,20,20,.95);
+514-        box-shadow: 0 0 0 2px rgba(229,9,20,.12);
+515-    }
+516-
+517-    #mensagem {
+518-        margin-top: 13px;
+519-        text-align: center;
+520-        color: #ff5555;
+521-        min-height: 20px;
+522-        font-size: 11px;
+523-        font-weight: 700;
+524-    }
+525-
+526-    @media(max-width:600px) {
+527:        .premium-login-campos input {
+528-            min-height: 50px;
+529-            font-size: 14px;
+530-        }
+531-    }
+532-
+533-</style>
+534-
+535-
+536-<style id="luka-entrada-opcoes-css">
+537-
+538-.luka-entrada-opcoes{
+539-    width:100%;
+540-    max-width:520px;
+541-    margin:0 auto 22px;
+542-    display:grid;
+543-    grid-template-columns:1fr 1fr;
+544-    gap:12px;
+545-}
+546-
+547-.luka-entrada-btn{
+548-    min-height:76px;
+549-    padding:13px 14px;
+550-    border-radius:12px;
+551-    display:flex;
+552-    align-items:center;
+--
+629-    }
+630-
+631-    .luka-entrada-btn strong{
+632-        font-size:10px;
+633-    }
+634-}
+635-
+636-</style>
+637-
+638-
+639:<style id="luka-login-form-inicialmente-oculto">
+640:#loginForm{
+641-    display:none;
+642-}
+643-
+644:#loginForm.luka-login-form-visivel{
+645-    display:block;
+646-}
+647-</style>
+648-
+649-
+650-<style id="luka-cadastro-escondido-inicial">
+651:#loginForm a[href*="cadastro"],
+652:#loginForm a[href*="/cadastro"],
+653-a[href*="cadastro"]:has-text("CRIAR MINHA CONTA"){
+654-    display:none !important;
+655-}
+656-
+657:#loginForm.luka-login-form-visivel a[href*="cadastro"],
+658:#loginForm.luka-login-form-visivel a[href*="/cadastro"]{
+659-    display:flex !important;
+660-}
+661-</style>
+662-
+663-
+664-<style id="luka-cadastro-cliente-only-css">
+665-.luka-cadastro-cliente-only{
+666-    display:none !important;
+667-}
+668-
+669:#loginForm.luka-login-form-visivel .luka-cadastro-cliente-only{
+670-    display:flex !important;
+671-}
+672-</style>
+673-
+674-
+675-<style id="luka-entrada-polimento-final">
+676-/* LUKAFILMES — entrada premium responsiva */
+677-.premium-entrada{
+678-    width:min(100%, 680px);
+679-    margin:0 auto;
+680-    padding:clamp(24px,5vw,48px) clamp(16px,5vw,34px);
+681-    box-sizing:border-box;
+682-}
+683-
+684-.premium-kicker{
+685-    letter-spacing:1.8px !important;
+686-    font-size:clamp(8px,1.8vw,10px) !important;
+687-    line-height:1.4 !important;
+688-    opacity:.82;
+689-}
+690-
+691-.premium-entrada h1{
+692-    margin:14px 0 13px !important;

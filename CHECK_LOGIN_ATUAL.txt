@@ -1,0 +1,273 @@
+========== LOGIN COMPLETO ==========
+187-        align-items: center;
+188-        justify-content: center;
+189-        gap: 10px;
+190-        color: #8e8e8e;
+191-        font-size: 9px;
+192-        font-weight: 800;
+193-        letter-spacing: 1.6px;
+194-        margin-bottom: 29px;
+195-        white-space: nowrap;
+196-    }
+197-
+198-    .premium-tags i {
+199-        width: 3px;
+200-        height: 3px;
+201-        border-radius: 50%;
+202-        background: #e50914;
+203-        display: inline-block;
+204-        box-shadow: 0 0 7px rgba(229,9,20,.8);
+205-    }
+206-
+207:    #botaoEntrar {
+208-        position: relative;
+209-        overflow: hidden;
+210-        display: flex;
+211-        align-items: center;
+212-        justify-content: center;
+213-        gap: 11px;
+214-        width: 100%;
+215-        min-height: 58px;
+216-        padding: 16px 22px;
+217-        border: 1px solid rgba(255,255,255,.08);
+218-        border-radius: 7px;
+219-        background: linear-gradient(135deg,#e50914,#b20710);
+220-        box-shadow:
+221-            0 12px 35px rgba(229,9,20,.25),
+222-            inset 0 1px 0 rgba(255,255,255,.12);
+223-        color: #fff;
+224-        font-size: 12px;
+225-        font-weight: 900;
+226-        letter-spacing: 1.2px;
+227-        transition:
+228-            transform .2s ease,
+229-            box-shadow .2s ease,
+230-            filter .2s ease;
+231-    }
+232-
+233:    #botaoEntrar::before {
+234-        content: "";
+235-        position: absolute;
+236-        top: 0;
+237-        left: -120%;
+238-        width: 70%;
+239-        height: 100%;
+240-        background: linear-gradient(
+241-            90deg,
+242-            transparent,
+243-            rgba(255,255,255,.16),
+244-            transparent
+245-        );
+246-        transform: skewX(-20deg);
+247-        transition: left .7s ease;
+248-    }
+249-
+250:    #botaoEntrar:hover::before {
+251-        left: 150%;
+252-    }
+253-
+254:    #botaoEntrar:hover {
+255-        transform: translateY(-2px);
+256-        filter: brightness(1.08);
+257-        box-shadow:
+258-            0 16px 45px rgba(229,9,20,.34),
+259-            inset 0 1px 0 rgba(255,255,255,.15);
+260-    }
+261-
+262:    #botaoEntrar:active {
+263-        transform: scale(.985);
+264-    }
+265-
+266:    #botaoEntrar:disabled {
+267-        cursor: wait;
+268-        opacity: .9;
+269-        transform: none;
+270-    }
+271-
+272-    .icone-play {
+273-        width: 25px;
+274-        height: 25px;
+275-        display: inline-flex;
+276-        align-items: center;
+277-        justify-content: center;
+278-        border-radius: 50%;
+279-        background: rgba(255,255,255,.13);
+280-        font-size: 10px;
+281-        line-height: 1;
+282-    }
+283-
+284-    .premium-mensagem {
+285-        color: #707070;
+286-        font-size: 10px;
+--
+313-
+314-        .premium-kicker {
+315-            font-size: 8px;
+316-            letter-spacing: 2.5px;
+317-        }
+318-
+319-        .premium-entrada h1 {
+320-            font-size: 25px;
+321-        }
+322-
+323-        .premium-subtitulo {
+324-            font-size: 14px;
+325-        }
+326-
+327-        .premium-tags {
+328-            gap: 7px;
+329-            font-size: 7.5px;
+330-            letter-spacing: 1.2px;
+331-        }
+332-
+333:        #botaoEntrar {
+334-            min-height: 55px;
+335-            font-size: 11px;
+336-        }
+337-    }
+338-
+339-    @media(min-width:1200px) {
+340-
+341-        .premium-logo {
+342-            font-size: 42px;
+343-        }
+344-
+345-        .premium-entrada h1 {
+346-            font-size: 34px;
+347-        }
+348-
+349-        .premium-subtitulo {
+350-            font-size: 16px;
+351-        }
+352-
+353:        #botaoEntrar {
+354-            min-height: 60px;
+355-        }
+356-    }
+357-
+358-    #mensagem {
+359-        margin-top: 15px;
+360-        text-align: center;
+361-        color: #ff5555;
+362-        min-height: 20px;
+363-    }
+364-</style>
+365-
+366-
+367-
+368-<style id="lukafilmes-login-loader-premium">
+369-#lukafilmesLoginLoader{
+370-    position:fixed;
+371-    inset:0;
+372-    z-index:9999999;
+373-    display:none;
+--
+510-        </div>
+511-
+512-        <h1>
+513-            Sua próxima história<br>
+514-            <strong>começa agora.</strong>
+515-        </h1>
+516-
+517-        <p class="premium-subtitulo">
+518-            Filmes, séries e grandes histórias.<br>
+519-            Tudo em um só lugar.
+520-        </p>
+521-
+522-        <div class="premium-tags">
+523-            <span>FILMES</span>
+524-            <i></i>
+525-            <span>SÉRIES</span>
+526-            <i></i>
+527-            <span>ENTRETENIMENTO</span>
+528-        </div>
+529-
+530:        <button id="botaoEntrar" type="button">
+531-            <span class="icone-play">▶</span>
+532-            <span>COMEÇAR A ASSISTIR</span>
+533-        </button>
+534-
+535-        <div class="premium-mensagem">
+536-            Explore o catálogo e descubra seu próximo filme.
+537-        </div>
+538-
+539-    </div>
+540-
+541-</div>
+542-
+543-
+544-
+545-
+546-
+547-<div id="lukafilmesLoginLoader" aria-hidden="true">
+548-    <div id="lukafilmesLoginLoaderBox">
+549-        <div id="lukafilmesLoginLoaderLogo">
+550-            <span class="luka">LUKA</span><span class="filmes">FILMES</span>
+551-        </div>
+552-        <div id="lukafilmesLoginLoaderSpinner"></div>
+553-        <h2 id="lukafilmesLoginLoaderTitle">Entrando no LUKAFILMES...</h2>
+554-        <p id="lukafilmesLoginLoaderText">Preparando sua sessão...</p>
+555-    </div>
+556-</div>
+557-
+558-
+559-<script id="lukafilmes-login-loader-js">
+560-(function(){
+561-
+562-    var loader = document.getElementById("lukafilmesLoginLoader");
+563:    var form = document.getElementById("loginForm");
+564-
+565-    function mostrarLoginLoader(){
+566-        if(!loader)return;
+567-        loader.classList.add("ativo");
+568-        loader.setAttribute("aria-hidden","false");
+569-    }
+570-
+571-    function esconderLoginLoader(){
+572-        if(!loader)return;
+573-        loader.classList.remove("ativo");
+574-        loader.setAttribute("aria-hidden","true");
+575-    }
+576-
+577-    window.lukafilmesMostrarLoginLoader = mostrarLoginLoader;
+578-    window.lukafilmesEsconderLoginLoader = esconderLoginLoader;
+579-
+580-    if(form){
+581-        form.addEventListener("submit",function(){
+582-            mostrarLoginLoader();
+583-        },true);
+584-    }
+585-
+586-    window.addEventListener("pageshow",function(){
+587-        esconderLoginLoader();
+588-    });
+589-
+590-})();
+591-</script>
+592-
+593-
+594-<script>
+595-(function () {
+596-
+597-    function iniciarLukafilmes() {
+598:        var botao = document.getElementById("botaoEntrar");
+599-
+600-        if (!botao) return;
+601-
+602-        botao.onclick = function (evento) {
+603-            evento.preventDefault();
+604-
+605-            if (botao.dataset.abrindo === "1") return;
+606-
+607-            botao.dataset.abrindo = "1";
+608-            botao.disabled = true;
+609-
+610-            botao.innerHTML =
+611-                '<span class="icone-play">▶</span>' +
+612-                '<span>ABRINDO LUKAFILMES...</span>';
+613-
+614-            try {
+615-                if (typeof window.lukafilmesMostrarLoginLoader === "function") {
+616-                    window.lukafilmesMostrarLoginLoader();
+617-                }
+618-            } catch (e) {}

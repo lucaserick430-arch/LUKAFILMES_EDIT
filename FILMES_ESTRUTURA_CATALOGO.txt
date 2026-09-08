@@ -1,0 +1,350 @@
+324-    }
+325-}
+326-
+327-
+328-/* =========================================================
+329-   AJUSTE FINAL — FILMES OCUPANDO TODA A LARGURA
+330-   ========================================================= */
+331-
+332:.catalogo-netflix {
+333-    width: 100% !important;
+334-    max-width: none !important;
+335-    margin: 0 auto !important;
+336-    padding-left: 2.5% !important;
+337-    padding-right: 2.5% !important;
+338-    box-sizing: border-box !important;
+339-}
+340-
+341-.grade {
+342-    width: 100% !important;
+343-    display: grid !important;
+344-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+345-    gap: 22px 16px !important;
+346-    box-sizing: border-box !important;
+347-}
+348-
+349-.linha-filmes {
+350-    width: 100% !important;
+351-    box-sizing: border-box !important;
+352-}
+353-
+354-.filme {
+355-    width: 100% !important;
+356-    min-width: 0 !important;
+357-}
+--
+360-    width: 100% !important;
+361-    aspect-ratio: 2 / 3 !important;
+362-    height: auto !important;
+363-    object-fit: cover !important;
+364-}
+365-
+366-@media (max-width: 700px) {
+367-
+368:    .catalogo-netflix {
+369-        width: 100% !important;
+370-        padding-left: 8px !important;
+371-        padding-right: 8px !important;
+372-    }
+373-
+374-    .grade {
+375-        width: 100% !important;
+376-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+377-        gap: 14px 8px !important;
+378-    }
+379-
+380-    .filme {
+381-        width: 100% !important;
+382-    }
+383-
+384-    .filme img {
+385-        width: 100% !important;
+386-        aspect-ratio: 2 / 3 !important;
+387-        height: auto !important;
+388-    }
+389-
+390-    .info {
+391-        padding: 7px !important;
+392-    }
+393-
+--
+397-
+398-    .info p {
+399-        font-size: 11px !important;
+400-    }
+401-}
+402-
+403-@media (max-width: 380px) {
+404-
+405:    .catalogo-netflix {
+406-        padding-left: 5px !important;
+407-        padding-right: 5px !important;
+408-    }
+409-
+410-    .grade {
+411-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+412-        gap: 10px 6px !important;
+413-    }
+414-}
+415-
+416-
+417-/* =========================================================
+418-   CORREÇÃO DEFINITIVA — FILMES SEM FAIXA VAZIA À ESQUERDA
+419-   ========================================================= */
+420-
+421-html,
+422-body {
+423-    width: 100% !important;
+424-    max-width: 100% !important;
+425-    margin: 0 !important;
+426-    padding: 0 !important;
+427-    overflow-x: hidden !important;
+428-}
+429-
+430-.pagina {
+431-    width: 100% !important;
+432-    max-width: none !important;
+433-    margin: 0 !important;
+434-    padding-left: 0 !important;
+435-    padding-right: 0 !important;
+436-    box-sizing: border-box !important;
+437-}
+438-
+439:.catalogo-netflix {
+440-    width: 100% !important;
+441-    max-width: none !important;
+442-    margin-left: 0 !important;
+443-    margin-right: 0 !important;
+444-    padding-left: 2% !important;
+445-    padding-right: 2% !important;
+446-    box-sizing: border-box !important;
+447-}
+448-
+449-.grade {
+450-    width: 100% !important;
+451-    max-width: none !important;
+452-    margin-left: 0 !important;
+453-    margin-right: 0 !important;
+454-    box-sizing: border-box !important;
+455-}
+456-
+457-.linha-filmes {
+458-    width: 100% !important;
+459-    max-width: none !important;
+460-    margin-left: 0 !important;
+461-    margin-right: 0 !important;
+462-    box-sizing: border-box !important;
+463-}
+464-
+465-@media (max-width: 700px) {
+466-
+467:    .catalogo-netflix {
+468-        width: 100% !important;
+469-        margin-left: 0 !important;
+470-        margin-right: 0 !important;
+471-        padding-left: 6px !important;
+472-        padding-right: 6px !important;
+473-    }
+474-
+475-    .grade {
+476-        width: 100% !important;
+477-        margin-left: 0 !important;
+478-        margin-right: 0 !important;
+479-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+480-        gap: 12px 7px !important;
+481-    }
+482-
+483-    .filme {
+484-        width: 100% !important;
+485-        min-width: 0 !important;
+486-    }
+487-
+488-    .filme img {
+489-        width: 100% !important;
+490-        aspect-ratio: 2 / 3 !important;
+491-        height: auto !important;
+492-        object-fit: cover !important;
+--
+716-}
+717-
+718-.btn-favorito.favoritado{
+719-    background:rgba(220,30,70,.92);
+720-    color:#fff;
+721-    border-color:transparent;
+722-}
+723-
+724:.catalogo-netflix{
+725-    position:relative;
+726-    z-index:10;
+727-    margin-top:-30px;
+728-    padding:0 4% 70px;
+729-}
+730-
+731:.catalogo-netflix h2{
+732-    font-size:21px;
+733-    margin:28px 0 12px;
+734-}
+735-
+736-/* =========================================================
+737-   GRADE DE FILMES
+738-   MESMA ESTRUTURA VISUAL DA PÁGINA DE SÉRIES
+739-   ========================================================= */
+740-
+741-#grade.filmes-grade-series {
+742-    display: grid !important;
+743-
+744-    grid-template-columns:
+745-        repeat(auto-fill, minmax(170px, 1fr)) !important;
+746-
+747-    gap: 22px !important;
+748-
+749-    width: 100%;
+750-}
+751-
+752-/* =========================================================
+753-   CARD DE FILME — PADRÃO SÉRIES
+754-   ========================================================= */
+755-
+756-#grade.filmes-grade-series .filme {
+--
+948-        font-size:38px;
+949-    }
+950-
+951-    .hero-conteudo p{
+952-        font-size:14px;
+953-        -webkit-line-clamp:3;
+954-    }
+955-
+956:    .catalogo-netflix{
+957-        margin-top:0;
+958-        padding:0 14px 50px;
+959-    }
+960-
+961:    .catalogo-netflix h2{
+962-        font-size:18px;
+963-        margin-top:25px;
+964-    }
+965-
+966-    .linha-filmes .filme{
+967-        flex-basis:130px;
+968-    }
+969-
+970-    .linha-filmes .filme img{
+971-        height:195px;
+972-    }
+973-
+974-    .grade{
+975-        grid-template-columns:repeat(2,minmax(0,1fr));
+976-        gap:13px 9px;
+977-    }
+978-
+979-    .grade .filme img{
+980-        height:235px;
+981-    }
+982-
+983-    .filme:hover{
+984-        transform:none;
+985-    }
+986-
+--
+1155-
+1156-
+1157-
+1158-/* =========================================================
+1159-   LUKAFILMES — GRADE DE FILMES EM TELA AMPLA
+1160-   Mesmo aproveitamento de largura da página de séries
+1161-   ========================================================= */
+1162-
+1163:.catalogo-netflix {
+1164-    width: 100% !important;
+1165-    max-width: none !important;
+1166-    margin-left: 0 !important;
+1167-    margin-right: 0 !important;
+1168-    padding-left: 4% !important;
+1169-    padding-right: 4% !important;
+1170-    box-sizing: border-box !important;
+1171-}
+1172-
+1173-#linhaFilmes,
+1174-#grade,
+1175-.grade {
+1176-    width: 100% !important;
+1177-    max-width: none !important;
+1178-    box-sizing: border-box !important;
+1179-}
+1180-
+1181-.grade {
+1182-    display: grid !important;
+1183-    grid-template-columns: repeat(
+1184-        auto-fill,
+1185-        minmax(180px, 1fr)
+1186-    ) !important;
+1187-    gap: 22px !important;
+1188-}
+--
+1196-    width: 100% !important;
+1197-    height: auto !important;
+1198-    aspect-ratio: 2 / 3 !important;
+1199-    object-fit: cover !important;
+1200-}
+1201-
+1202-@media (max-width: 768px) {
+1203-
+1204:    .catalogo-netflix {
+1205-        width: 100% !important;
+1206-        padding-left: 12px !important;
+1207-        padding-right: 12px !important;
+1208-    }
+1209-
+1210-    .grade {
+1211-        grid-template-columns:
+1212-            repeat(2, minmax(0, 1fr)) !important;
+1213-        gap: 14px !important;
+1214-    }
+1215-
+1216-    .grade .filme img {
+1217-        width: 100% !important;
+1218-        aspect-ratio: 2 / 3 !important;
+1219-        height: auto !important;
+1220-    }
+1221-
+1222-}
+1223-
+1224-
+1225-
+1226-/* =========================================================
+1227-   FILMES — MESMA ESTRUTURA VISUAL DAS SÉRIES
+1228-   ========================================================= */
+1229-
+1230:.catalogo-netflix {
+1231-    width: 100% !important;
+1232-    max-width: 1500px !important;
+1233-    margin: 0 auto !important;
+1234-    padding: 0 4% 70px !important;
+1235-    box-sizing: border-box !important;
+1236-}
+1237-
+1238-.grade {
+1239-    width: 100% !important;
+1240-    display: grid !important;
+1241-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+1242-    gap: 18px !important;
+1243-}
+1244-
+1245-.grade .filme {
+1246-    width: 100% !important;
+1247-    min-width: 0 !important;
+1248-    overflow: hidden !important;
+1249-}
+1250-
+1251-.grade .filme img {
+1252-    width: 100% !important;
+1253-    height: auto !important;
+1254-    aspect-ratio: 2 / 3 !important;
+1255-    object-fit: cover !important;
+--
+1298-}
+1299-
+1300-/* =========================================================
+1301-   MOBILE — 3 FILMES POR LINHA
+1302-   ========================================================= */

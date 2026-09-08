@@ -1,0 +1,206 @@
+========== LINHAS COM FILME/PLAYERFILME ==========
+44:                         playerFilme.style.display =
+102:                                 : "Para assistir este filme, renove seu acesso."}
+206:                     playerFilme.parentNode.insertBefore(
+208:                         playerFilme
+540:                                 String(filme.id).trim();
+560:                                 id: filme.id,
+561:                                 titulo: filme.titulo || "Filme",
+562:                                 capa: filme.capa || "",
+563:                                 tipo: "filme",
+631:                             String(filme.id).trim();
+664:                                 "https://myembed.biz/filme/" +
+718:                         if (playerFilme) {
+719:                             playerFilme.style.display = "block";
+744:                                 id: filme.id,
+745:                                 titulo: filme.titulo || "Filme",
+746:                                 capa: filme.capa || "",
+747:                                 tipo: "filme",
+752:                         playerFilme.scrollIntoView({
+768:         if (botaoOrigem && filme.id) {
+774:                 "/api/filme/" +
+775:                 filme.id +
+828:         if (filme.id) {
+831:                 "/api/filme/" +
+832:                 filme.id +
+867:                         "Trailer do filme";
+896:             "Erro ao carregar filme";
+900:             "Não foi possível carregar os dados deste filme.";
+920: <style id="filme-minha-lista-desktop-hide">
+929: <style id="filme-favoritos-topo">
+994: <script id="filme-favoritos-topo-script">
+1006:             let filme = null;
+1008:             /* PRIMEIRA FONTE: filme específico pelo ID */
+1012:                     filme = JSON.parse(
+1022:             if(!filme){
+1025:                     filme = JSON.parse(
+1035:             if(!filme && id){
+1037:                 filme = {
+1046:                     tipo: "filme"
+1051:             if(filme){
+1053:                 filme.id =
+1054:                     filme.id ||
+1055:                     filme.tmdb_id ||
+1058:                 filme.titulo =
+1059:                     filme.titulo ||
+1060:                     filme.title ||
+1064:                 filme.capa =
+1065:                     filme.capa ||
+1070:                 filme.tipo = "filme";
+1076:                         JSON.stringify(filme)
+1079:                     if(filme.id){
+1081:                             "filmeSelecionadoHome_" + String(filme.id),
+1082:                             JSON.stringify(filme)
+1091:                 filme
+1094:             return filme;
+1099:                 "[FAVORITOS] Erro ao obter filme:",
+1125:     function idDoFilme(filme){
+1127:             filme &&
+1129:                 filme.id ||
+1130:                 filme.tmdb_id ||
+1131:                 filme.titulo ||
+1132:                 filme.title
+1145:         const filme = obterFilme();
+1146:         const id = idDoFilme(filme);
+1175:             const filme = obterFilme();
+1177:             if(!filme) return;
+1179:             const id = idDoFilme(filme);
+1193:                     ...filme,
+1194:                     tipo: "filme"
+1293: .player-filme h2,
+1347:     O player do filme e um iframe externo.
+1367: #playerFilme {
+1377: #playerFilme > .player-video {
+1389: #playerFilme > .player-video > #filmeFrame {
+1404: #playerFilme > .player-video > #playCentralFilme {
+1409: #playerFilme > .player-video > #playCentralFilme.oculto {
+1415: #playerFilme .lista-plays {
+1420: #playerFilme .player-btn {
+1427:     #playerFilme > .player-video {
+1732:             vazio.textContent = "Nenhum filme novo no momento.";
+1739:         filmes.forEach(function(filme){
+1760:                     filme.id ||
+1761:                     filme.tmdb_id ||
+1762:                     filme.id_tmdb;
+1769:                     titulo: filme.titulo || "",
+1770:                     title: filme.titulo || "",
+1771:                     poster: filme.poster || "",
+1772:                     poster_path: filme.poster
+1773:                         ? filme.poster.replace(
+1778:                     release_date: filme.data || "",
+1779:                     data: filme.data || ""
+1795:                     "/paginas/filme.html?id=" +
+1799:             if(filme.poster){
+1803:                 imagem.src = filme.poster;
+1805:                     "Capa de " + (filme.titulo || "filme");
+1850:                 "🎬 " + (filme.titulo || "Novo filme");
+1862:                 "Novo filme disponível • Toque para assistir";
+1894:             const novos = filmes.filter(function(filme){
+1895:                 return !vistos.includes(Number(filme.id));
+2290: .pagina-filme{
+2297: .pagina-filme::before{
+2320:         var(--fundo-filme) !important;
+2333: .pagina-filme::after{
+2561: .player-filme{
+2584: .player-filme h2{
+2644:     .pagina-filme::before{
+2656:             var(--fundo-filme) !important;
+2740:     .player-filme{
+2753:     .player-filme h2{
+2808: .pagina-filme{
+2816: .pagina-filme::before{
+2840:         var(--fundo-filme) !important;
+2851: .pagina-filme::after{
+3034: .player-filme{
+3053: .player-filme h2{
+3082:     .pagina-filme::before{
+3094:             var(--fundo-filme) !important;
+3162:     .player-filme{
+3171:     .player-filme h2{
+3194: .player-filme{
+3240:     .player-filme{
+3446: #playerFilme > .player-video {
+3454: #playerFilme > .player-video > #filmeFrame {
+3467:     #playerFilme > .player-video {
+3477:     #playerFilme > .player-video > #filmeFrame {
+
+========== LINHAS COM DOM/PAGAMENTO ==========
+44:                         playerFilme.style.display =
+65:                         document.getElementById(
+79:                     tela.style.cssText = `
+94:                     tela.innerHTML = `
+217:                         document.getElementById(
+239:                         areaQr.innerHTML =
+245:                         document.getElementById(
+273:                                         document.getElementById(
+297:                                     botaoCopiar.innerHTML =
+302:                                             botaoCopiar.innerHTML =
+310:                                     botaoCopiar.innerHTML =
+315:                                             botaoCopiar.innerHTML =
+328:                         document.getElementById(
+383:                                     document.getElementById(
+389:                                     status.style.display =
+392:                                     status.innerHTML =
+399:                                 botaoFeito.innerHTML =
+406:                                     botaoFeito.innerHTML =
+473:                 document.getElementById(
+573:                             document.querySelector(
+580:                                 .querySelectorAll(
+594:                         botao.innerHTML =
+617:                 document.querySelectorAll(
+628:                             this.dataset.player;
+719:                             playerFilme.style.display = "block";
+723:                             filmeFrame.style.display = "block";
+724:                             filmeFrame.style.visibility = "visible";
+725:                             filmeFrame.style.opacity = "1";
+766:             document.getElementById("botaoAssistirOrigem");
+770:             botaoOrigem.style.display =
+799:                     botaoOrigem.style.display =
+810:                     botaoOrigem.style.display =
+822:                 botaoOrigem.style.display =
+843:                     document.getElementById(
+848:                     document.getElementById(
+869:                     container.style.display =
+894:         document.getElementById("titulo")
+895:             .textContent =
+898:         document.getElementById("sinopse")
+899:             .textContent =
+908: document.getElementById("voltarFilmes").addEventListener(
+1040:                         document.querySelector("h1")?.textContent?.trim()
+1043:                         document.getElementById("poster")?.src
+1044:                         || document.querySelector("img")?.src
+1061:                     document.querySelector("h1")?.textContent?.trim()
+1066:                     document.getElementById("poster")?.src
+1067:                     || document.querySelector("img")?.src
+1141:             document.getElementById("filmeAdicionarFavorito");
+1149:             botao.style.display = "none";
+1160:             botao.textContent = "♥ Remover dos favoritos";
+1163:             botao.textContent = "＋ Adicionar aos favoritos";
+1169:         document.getElementById("filmeAdicionarFavorito");
+1449:     const frame = document.getElementById("filmeFrame");
+1519:     const iframe = document.getElementById("filmeFrame");
+1585:     const frame = document.getElementById("filmeFrame");
+1717:         const painel = document.getElementById("lukaNotificationPanel");
+1720:         let lista = painel.querySelector(".luka-notificacoes-lista");
+1728:         lista.innerHTML = "";
+1732:             vazio.textContent = "Nenhum filme novo no momento.";
+1733:             vazio.style.cssText =
+1746:             item.style.cssText =
+1809:                 imagem.style.cssText =
+1823:                 semImagem.textContent = "🎬";
+1825:                 semImagem.style.cssText =
+1841:             texto.style.cssText =
+1849:             titulo.textContent =
+1852:             titulo.style.cssText =
+1861:             descricao.textContent =
+1864:             descricao.style.cssText =
+1898:             const badge = document.getElementById(
+1904:                     badge.textContent =
+1906:                     badge.style.display = "flex";
+1908:                     badge.textContent = "";
+1909:                     badge.style.display = "none";
+2057:             document.getElementById(
+2097:         caixa.innerHTML = `
+2134:         caixa.style.display = "block";
+2137:             document.getElementById(
+2167:             document.getElementById(

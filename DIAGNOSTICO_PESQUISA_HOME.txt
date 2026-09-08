@@ -1,0 +1,134 @@
+1355-
+1356-    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+1357-</div>
+1358-
+1359-<div class="search-box" id="searchBox">
+1360-    <input
+1361-        id="searchInput"
+1362-        type="search"
+1363:        placeholder="Pesquisar filmes"
+1364-        autocomplete="off"
+1365-        onkeydown="if(event.key==='Enter') pesquisar()"
+1366-    >
+1367-</div>
+1368-
+1369-<div class="mobile-menu" id="mobileMenu">
+1370-    <a href="#">Início</a>
+1371-    <a href="paginas/filmes.html">Filmes</a>
+1372-    <a href="paginas/series.html">Séries</a>
+1373-    <a href="/login" class="lukafilmes-entrar-btn-mobile">🔐 Entrar</a>
+1374-
+1375-    <a
+1376-        href="/admin.html"
+1377-        id="lukafilmesMenuPainel"
+1378-        style="display:none;"
+1379-        data-lukafilmes-painel="true"
+1380-    >ADMIN</a>
+1381-
+1382-    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+1383-</div>
+1384-
+1385-
+1386-<!-- ================= BARRA ENTRADA CLIENTE ================= -->
+1387-<section class="hero">
+1388-
+1389-    <div
+1390-        class="hero-bg"
+1391-        id="heroBg"
+1392-        style="background-image:url('https://image.tmdb.org/t/p/original');">
+1393-    </div>
+1394-
+1395-    
+1396-<iframe
+1397-    id="heroTrailer"
+1398-    title="Trailer do filme"
+--
+3023-            .replace(/'/g, "&#039;");
+3024-    }
+3025-
+3026-    function esconder() {
+3027-        area.innerHTML = "";
+3028-        area.style.display = "none";
+3029-    }
+3030-
+3031:    async function pesquisarHome(termo) {
+3032-
+3033-        const pesquisaAtual = ++contador;
+3034-
+3035-        if (!termo) {
+3036-            esconder();
+3037-            return;
+3038-        }
+3039-
+3040-        area.style.display = "block";
+3041-        area.innerHTML =
+3042-            '<div class="busca-home-status">🔎 Pesquisando...</div>';
+3043-
+3044-        try {
+3045-
+3046-            const resposta = await fetch(
+3047-                "/api/pesquisar?q=" +
+3048-                encodeURIComponent(termo)
+3049-            );
+3050-
+3051-            if (!resposta.ok) {
+3052-                throw new Error("HTTP " + resposta.status);
+3053-            }
+3054-
+3055-            const dados = await resposta.json();
+3056-
+3057-            if (pesquisaAtual !== contador) return;
+3058-
+3059-            const lista = Array.isArray(dados.resultados)
+3060-                ? dados.resultados
+3061-                : [];
+3062-
+3063-            area.innerHTML = "";
+3064-
+3065-            if (!lista.length) {
+3066-                area.innerHTML =
+--
+3116-            );
+3117-
+3118-            area.innerHTML =
+3119-                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+3120-        }
+3121-    }
+3122-
+3123-    input.addEventListener("input", function () {
+3124:        pesquisarHome(input.value.trim());
+3125-    });
+3126-
+3127-    input.addEventListener("keydown", function (event) {
+3128-
+3129-        if (event.key === "Enter") {
+3130-
+3131-            event.preventDefault();
+3132-
+3133-            const primeiro =
+3134-                area.querySelector(".busca-home-item");
+3135-
+3136-            if (primeiro) {
+3137-                primeiro.click();
+3138-            }
+3139-        }
+3140-    });
+3141-
+3142-    document.addEventListener("click", function (event) {
+3143-
+3144-        if (!box.contains(event.target)) {
+3145-            esconder();
+3146-        }
+3147-
+3148-    });
+3149-
+3150-    console.log(
+3151-        "[PESQUISA HOME] Sistema ativo."
+3152-    );
+3153-
+3154-})();
+3155-</script>
+3156-
+3157-
+3158-
+3159-<!-- =========================================================

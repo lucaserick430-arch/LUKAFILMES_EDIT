@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>LUKAFILMES — Sua próxima história começa agora</title>
+
+<style>
+
+    #fundoTrailer {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -3;
+        background: #000;
+    }
+
+    #fundoTrailer iframe {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120vw;
+        height: 67.5vw;
+        min-width: 177.78vh;
+        min-height: 100vh;
+        transform: translate(-50%, -50%) scale(1.12);
+        border: 0;
+        pointer-events: none;
+    }
+
+    #escuro {
+        position: fixed;
+        inset: 0;
+        background:
+            linear-gradient(
+                90deg,
+                rgba(0,0,0,.88),
+                rgba(0,0,0,.58),
+                rgba(0,0,0,.88)
+            ),
+            linear-gradient(
+                180deg,
+                rgba(0,0,0,.35),
+                rgba(0,0,0,.72)
+            );
+        z-index: -2;
+        pointer-events: none;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        min-height: 100vh;
+        overflow: hidden;
+        position: relative;
+        background: #000;
+        color: white;
+        font-family: Arial, sans-serif;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #080808;
+        color: white;
+        font-family: Arial, sans-serif;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login {
+        position: relative;
+        z-index: 5;
+        width: 90%;
+        max-width: 400px;
+        background: rgba(10, 10, 10, 0.82);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,.12);
+        width: 90%;
+        max-width: 400px;
+        background: #151515;
+        padding: 35px;
+        border-radius: 10px;
+        box-shadow: 0 0 30px rgba(229, 9, 20, 0.15);
+    }
+
+    .logo {
+        text-align: center;
+        font-size: 30px;
+        font-weight: bold;
+        margin-bottom: 30px;
+    }
+
+    .logo span {
+        color: #e50914;
+    }
+
+    .boas-vindas {
+        text-align: center;
+    }
+
+    .premium-entrada {
+        width: 100%;
+        text-align: center;
+        position: relative;
+        animation: premiumEntrada .9s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    .premium-logo {
+        font-size: 38px;
+        font-weight: 900;
+        letter-spacing: -2.5px;
+        line-height: 1;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        text-shadow: 0 4px 25px rgba(0,0,0,.45);
+    }
+
+    .premium-logo span {
+        color: #fff;
+    }
+
+    .premium-logo b {
+        color: #e50914;
+        font-weight: 900;
+    }
+
+    .premium-linha {
+        width: 54px;
+        height: 2px;
+        margin: 0 auto 27px;
+        background: #e50914;
+        box-shadow:
+            0 0 8px rgba(229,9,20,.7),
+            0 0 22px rgba(229,9,20,.3);
+    }
+
+    .premium-kicker {
+        color: #a6a6a6;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 3.2px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+    }
+
+    .premium-entrada h1 {
+        color: #fff;
+        font-size: 30px;
+        line-height: 1.12;
+        letter-spacing: -.9px;
+        margin: 0 0 17px;
+        font-weight: 400;
+        text-shadow: 0 3px 20px rgba(0,0,0,.5);
+    }
+
+    .premium-entrada h1 strong {
+        font-weight: 900;
+    }
+
+    .premium-subtitulo {
+        color: #d0d0d0;
+        font-size: 15px;
+        line-height: 1.55;
+        margin: 0 0 23px;
+        text-shadow: 0 2px 12px rgba(0,0,0,.5);
+    }
+
+    .premium-tags {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: #8e8e8e;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 1.6px;
+        margin-bottom: 29px;
+        white-space: nowrap;
+    }
+
+    .premium-tags i {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: #e50914;
+        display: inline-block;
+        box-shadow: 0 0 7px rgba(229,9,20,.8);
+    }
+
+    #botaoEntrar {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 11px;
+        width: 100%;
+        min-height: 58px;
+        padding: 16px 22px;
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 7px;
+        background: linear-gradient(135deg,#e50914,#b20710);
+        box-shadow:
+            0 12px 35px rgba(229,9,20,.25),
+            inset 0 1px 0 rgba(255,255,255,.12);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 1.2px;
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease,
+            filter .2s ease;
+    }
+
+    #botaoEntrar::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -120%;
+        width: 70%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.16),
+            transparent
+        );
+        transform: skewX(-20deg);
+        transition: left .7s ease;
+    }
+
+    #botaoEntrar:hover::before {
+        left: 150%;
+    }
+
+    #botaoEntrar:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.08);
+        box-shadow:
+            0 16px 45px rgba(229,9,20,.34),
+            inset 0 1px 0 rgba(255,255,255,.15);
+    }
+
+    #botaoEntrar:active {
+        transform: scale(.985);
+    }
+
+    #botaoEntrar:disabled {
+        cursor: wait;
+        opacity: .9;
+        transform: none;
+    }
+
+    .icone-play {
+        width: 25px;
+        height: 25px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255,255,255,.13);
+        font-size: 10px;
+        line-height: 1;
+    }
+
+    .premium-mensagem {
+        color: #707070;
+        font-size: 10px;
+        line-height: 1.5;
+        margin-top: 18px;
+        letter-spacing: .15px;
+    }
+
+    @keyframes premiumEntrada {
+        from {
+            opacity: 0;
+            transform: translateY(18px) scale(.985);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @media(max-width:600px) {
+
+        .premium-logo {
+            font-size: 32px;
+            letter-spacing: -2px;
+        }
+
+        .premium-linha {
+            margin-bottom: 23px;
+        }
+
+        .premium-kicker {
+            font-size: 8px;
+            letter-spacing: 2.5px;
+        }
+
+        .premium-entrada h1 {
+            font-size: 25px;
+        }
+
+        .premium-subtitulo {
+            font-size: 14px;
+        }
+
+        .premium-tags {
+            gap: 7px;
+            font-size: 7.5px;
+            letter-spacing: 1.2px;
+        }
+
+        #botaoEntrar {
+            min-height: 55px;
+            font-size: 11px;
+        }
+    }
+
+    @media(min-width:1200px) {
+
+        .premium-logo {
+            font-size: 42px;
+        }
+
+        .premium-entrada h1 {
+            font-size: 34px;
+        }
+
+        .premium-subtitulo {
+            font-size: 16px;
+        }
+
+        #botaoEntrar {
+            min-height: 60px;
+        }
+    }
+
+    #mensagem {
+        margin-top: 15px;
+        text-align: center;
+        color: #ff5555;
+        min-height: 20px;
+    }
+</style>
+
+
+
+<style id="lukafilmes-login-loader-premium">
+#lukafilmesLoginLoader{
+    position:fixed;
+    inset:0;
+    z-index:9999999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.94);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    opacity:0;
+    transition:opacity .25s ease;
+}
+
+#lukafilmesLoginLoader.ativo{
+    display:flex;
+    opacity:1;
+}
+
+#lukafilmesLoginLoaderBox{
+    width:min(540px,88vw);
+    min-height:340px;
+    box-sizing:border-box;
+    border:1px solid #292929;
+    border-radius:18px;
+    background:#030303;
+    box-shadow:0 25px 80px rgba(0,0,0,.8);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:42px 30px;
+    text-align:center;
+}
+
+#lukafilmesLoginLoaderLogo{
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:34px;
+    font-weight:900;
+    letter-spacing:-1.8px;
+    margin-bottom:32px;
+    line-height:1;
+    text-transform:uppercase;
+}
+
+#lukafilmesLoginLoaderLogo .luka{
+    color:#fff;
+}
+
+#lukafilmesLoginLoaderLogo .filmes{
+    color:#e50914;
+}
+
+#lukafilmesLoginLoaderSpinner{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    border:7px solid #242424;
+    border-top-color:#e50914;
+    border-right-color:#e50914;
+    box-sizing:border-box;
+    animation:lukafilmesLoginLoaderSpin .85s linear infinite;
+    margin-bottom:27px;
+}
+
+#lukafilmesLoginLoaderTitle{
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:20px;
+    font-weight:700;
+    margin:0 0 10px;
+}
+
+#lukafilmesLoginLoaderText{
+    color:#858585;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:16px;
+    margin:0;
+}
+
+@keyframes lukafilmesLoginLoaderSpin{
+    to{transform:rotate(360deg)}
+}
+
+@media(max-width:600px){
+    #lukafilmesLoginLoaderBox{
+        width:88vw;
+        min-height:300px;
+        padding:35px 22px;
+        border-radius:16px;
+    }
+
+    #lukafilmesLoginLoaderLogo{
+        font-size:30px;
+        margin-bottom:28px;
+    }
+
+    #lukafilmesLoginLoaderSpinner{
+        width:52px;
+        height:52px;
+        border-width:6px;
+        margin-bottom:24px;
+    }
+
+    #lukafilmesLoginLoaderTitle{
+        font-size:18px;
+    }
+
+    #lukafilmesLoginLoaderText{
+        font-size:14px;
+    }
+}
+
+    .premium-login-campos {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        margin-bottom: 14px;
+    }
+
+    .premium-login-campos input {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 52px;
+        padding: 15px 16px;
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 7px;
+        outline: none;
+        background: rgba(15,15,15,.82);
+        color: #fff;
+        font-size: 14px;
+        transition:
+            border-color .2s ease,
+            box-shadow .2s ease,
+            background .2s ease;
+    }
+
+    .premium-login-campos input::placeholder {
+        color: #777;
+    }
+
+    .premium-login-campos input:focus {
+        border-color: rgba(229,9,20,.75);
+        background: rgba(20,20,20,.95);
+        box-shadow: 0 0 0 2px rgba(229,9,20,.12);
+    }
+
+    #mensagem {
+        margin-top: 13px;
+        text-align: center;
+        color: #ff5555;
+        min-height: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    @media(max-width:600px) {
+        .premium-login-campos input {
+            min-height: 50px;
+            font-size: 14px;
+        }
+    }
+
+</style>
+
+
+<style id="luka-entrada-opcoes-css">
+
+.luka-entrada-opcoes{
+    width:100%;
+    max-width:520px;
+    margin:0 auto 22px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.luka-entrada-btn{
+    min-height:76px;
+    padding:13px 14px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    gap:11px;
+    text-align:left;
+    text-decoration:none;
+    cursor:pointer;
+    font-family:inherit;
+    transition:all .2s ease;
+}
+
+.luka-entrada-btn strong{
+    display:block;
+    color:#fff;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.5px;
+}
+
+.luka-entrada-btn small{
+    display:block;
+    margin-top:5px;
+    color:#999;
+    font-size:9px;
+    line-height:1.3;
+}
+
+.luka-entrada-icone{
+    width:38px;
+    height:38px;
+    flex:0 0 38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:10px;
+    font-size:18px;
+}
+
+.luka-entrada-visitante{
+    background:rgba(255,255,255,.055);
+    border:1px solid rgba(255,255,255,.16);
+}
+
+.luka-entrada-visitante .luka-entrada-icone{
+    background:rgba(255,255,255,.08);
+}
+
+.luka-entrada-cliente{
+    background:linear-gradient(135deg,#e50914,#a8050e);
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:0 8px 25px rgba(229,9,20,.20);
+}
+
+.luka-entrada-cliente .luka-entrada-icone{
+    background:rgba(0,0,0,.16);
+}
+
+.luka-entrada-btn:hover{
+    transform:translateY(-2px);
+}
+
+.luka-entrada-visitante:hover{
+    background:rgba(255,255,255,.10);
+    border-color:rgba(255,255,255,.28);
+}
+
+.luka-entrada-cliente:hover{
+    filter:brightness(1.08);
+}
+
+@media(max-width:560px){
+    .luka-entrada-opcoes{
+        grid-template-columns:1fr;
+        gap:9px;
+    }
+
+    .luka-entrada-btn{
+        min-height:64px;
+        padding:11px 13px;
+    }
+
+    .luka-entrada-btn strong{
+        font-size:10px;
+    }
+}
+
+</style>
+
+
+<style id="luka-login-form-inicialmente-oculto">
+#loginForm{
+    display:none;
+}
+
+#loginForm.luka-login-form-visivel{
+    display:block;
+}
+</style>
+
+
+<style id="luka-cadastro-escondido-inicial">
+#loginForm a[href*="cadastro"],
+#loginForm a[href*="/cadastro"],
+a[href*="cadastro"]:has-text("CRIAR MINHA CONTA"){
+    display:none !important;
+}
+
+#loginForm.luka-login-form-visivel a[href*="cadastro"],
+#loginForm.luka-login-form-visivel a[href*="/cadastro"]{
+    display:flex !important;
+}
+</style>
+
+
+<style id="luka-cadastro-cliente-only-css">
+.luka-cadastro-cliente-only{
+    display:none !important;
+}
+
+#loginForm.luka-login-form-visivel .luka-cadastro-cliente-only{
+    display:flex !important;
+}
+</style>
+
+
+<style id="luka-entrada-polimento-final">
+/* LUKAFILMES — entrada premium responsiva */
+.premium-entrada{
+    width:min(100%, 680px);
+    margin:0 auto;
+    padding:clamp(24px,5vw,48px) clamp(16px,5vw,34px);
+    box-sizing:border-box;
+}
+
+.premium-kicker{
+    letter-spacing:1.8px !important;
+    font-size:clamp(8px,1.8vw,10px) !important;
+    line-height:1.4 !important;
+    opacity:.82;
+}
+
+.premium-entrada h1{
+    margin:14px 0 13px !important;
+    font-size:clamp(31px,6vw,52px) !important;
+    line-height:1.04 !important;
+    letter-spacing:-1.5px;
+}
+
+.premium-entrada h1 strong{
+    letter-spacing:-2px;
+}
+
+.premium-subtitulo{
+    max-width:520px;
+    margin:0 auto 25px !important;
+    font-size:clamp(11px,2.4vw,14px) !important;
+    line-height:1.65 !important;
+    color:rgba(255,255,255,.66) !important;
+}
+
+.luka-entrada-opcoes{
+    width:100%;
+    max-width:560px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:13px;
+}
+
+.luka-entrada-btn{
+    min-width:0;
+    min-height:82px;
+    padding:15px 16px;
+    box-sizing:border-box;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-align:left;
+    overflow:hidden;
+}
+
+.luka-entrada-btn strong{
+    font-size:clamp(10px,2vw,12px);
+    line-height:1.25;
+}
+
+.luka-entrada-btn small{
+    margin-top:6px;
+    font-size:clamp(9px,1.8vw,10px);
+    line-height:1.35;
+}
+
+.luka-entrada-icone{
+    width:42px;
+    height:42px;
+    flex:0 0 42px;
+    border-radius:11px;
+    font-size:19px;
+}
+
+.luka-entrada-btn:active{
+    transform:scale(.98);
+}
+
+@media(max-width:560px){
+    .premium-entrada{
+        padding:22px 16px 30px;
+    }
+
+    .premium-entrada h1{
+        margin-top:12px !important;
+        margin-bottom:11px !important;
+        font-size:clamp(30px,9vw,42px) !important;
+    }
+
+    .premium-subtitulo{
+        margin-bottom:21px !important;
+        font-size:11px !important;
+    }
+
+    .luka-entrada-opcoes{
+        grid-template-columns:1fr;
+        gap:10px;
+    }
+
+    .luka-entrada-btn{
+        min-height:68px;
+        padding:12px 14px;
+    }
+
+    .luka-entrada-icone{
+        width:39px;
+        height:39px;
+        flex-basis:39px;
+        font-size:17px;
+    }
+}
+
+@media(min-width:900px){
+    .premium-entrada{
+        padding-top:42px;
+        padding-bottom:42px;
+    }
+
+    .luka-entrada-btn:hover{
+        transform:translateY(-3px);
+    }
+}
+</style>
+
+
+<style id="luka-entrada-refino-tipografico">
+.premium-entrada{
+    width:min(100%, 700px);
+    padding:clamp(26px,5vh,52px) clamp(18px,5vw,38px);
+}
+
+.premium-kicker{
+    margin-bottom:16px !important;
+    font-size:clamp(8px,1.7vw,10px) !important;
+    letter-spacing:2.2px !important;
+    line-height:1.5 !important;
+    white-space:normal;
+}
+
+.premium-entrada h1{
+    max-width:620px;
+    margin:0 auto 16px !important;
+    font-size:clamp(34px,7vw,58px) !important;
+    line-height:.99 !important;
+    letter-spacing:-2.2px !important;
+    text-wrap:balance;
+}
+
+.premium-entrada h1 strong{
+    display:inline-block;
+    margin-top:4px;
+    letter-spacing:-2.5px !important;
+}
+
+.premium-subtitulo{
+    max-width:560px;
+    margin:0 auto 28px !important;
+    font-size:clamp(11px,2.2vw,14px) !important;
+    line-height:1.65 !important;
+    text-wrap:balance;
+}
+
+.luka-entrada-opcoes{
+    max-width:570px;
+    margin:0 auto;
+    gap:14px;
+}
+
+.luka-entrada-btn{
+    min-height:84px;
+    padding:15px 17px;
+    border-radius:15px;
+}
+
+.luka-entrada-btn strong{
+    letter-spacing:.65px;
+}
+
+.luka-entrada-btn small{
+    color:rgba(255,255,255,.58);
+}
+
+@media(max-width:560px){
+    .premium-entrada{
+        padding:24px 16px 30px;
+    }
+
+    .premium-kicker{
+        margin-bottom:13px !important;
+        letter-spacing:1.7px !important;
+    }
+
+    .premium-entrada h1{
+        margin-bottom:13px !important;
+        font-size:clamp(32px,10vw,43px) !important;
+        letter-spacing:-1.6px !important;
+    }
+
+    .premium-entrada h1 strong{
+        letter-spacing:-1.9px !important;
+    }
+
+    .premium-subtitulo{
+        margin-bottom:22px !important;
+        font-size:11px !important;
+        line-height:1.6 !important;
+    }
+
+    .luka-entrada-opcoes{
+        gap:10px;
+    }
+
+    .luka-entrada-btn{
+        min-height:70px;
+        padding:12px 14px;
+        border-radius:13px;
+    }
+}
+
+@media(min-width:561px){
+    .luka-entrada-btn{
+        min-height:88px;
+    }
+}
+</style>
+
+
+<style id="luka-entrada-premium-v2">
+:root{
+    --luka-red:#e50914;
+    --luka-red2:#ff3340;
+    --luka-white:#ffffff;
+    --luka-muted:rgba(255,255,255,.68);
+    --luka-glass:rgba(10,10,12,.58);
+}
+
+html,body{
+    margin:0!important;
+    padding:0!important;
+    width:100%;
+    min-height:100%;
+    background:#050505!important;
+    overflow-x:hidden;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif!important;
+}
+
+/* Fundo cinematográfico */
+#fundoTrailer{
+    position:fixed!important;
+    inset:0!important;
+    width:100vw!important;
+    height:100vh!important;
+    z-index:0!important;
+    overflow:hidden!important;
+    background:#050505!important;
+}
+
+#fundoTrailer iframe{
+    position:absolute!important;
+    width:100vw!important;
+    height:100vh!important;
+    min-width:177.78vh!important;
+    min-height:56.25vw!important;
+    left:50%!important;
+    top:50%!important;
+    transform:translate(-50%,-50%) scale(1.08)!important;
+    border:0!important;
+    pointer-events:none!important;
+    opacity:.72!important;
+}
+
+#escuro{
+    position:fixed!important;
+    inset:0!important;
+    z-index:1!important;
+    pointer-events:none!important;
+    background:
+        radial-gradient(circle at 50% 42%,rgba(229,9,20,.10),transparent 32%),
+        linear-gradient(90deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.52) 45%,rgba(0,0,0,.88) 100%),
+        linear-gradient(180deg,rgba(0,0,0,.48) 0%,rgba(0,0,0,.08) 42%,rgba(0,0,0,.94) 100%)!important;
+}
+
+/* Pequeno brilho cinematográfico */
+body::before{
+    content:"";
+    position:fixed;
+    width:55vw;
+    height:55vw;
+    max-width:720px;
+    max-height:720px;
+    left:50%;
+    top:42%;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(229,9,20,.12),transparent 68%);
+    filter:blur(20px);
+    z-index:2;
+    pointer-events:none;
+}
+
+/* Entrada */
+.login{
+    position:relative!important;
+    z-index:5!important;
+    min-height:100vh!important;
+    width:100%!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    box-sizing:border-box!important;
+    padding:40px 24px!important;
+}
+
+/* Painel novo */
+.premium-entrada{
+    position:relative!important;
+    width:min(940px,100%)!important;
+    box-sizing:border-box!important;
+    padding:54px 58px 48px!important;
+    border:1px solid rgba(255,255,255,.16)!important;
+    border-radius:30px!important;
+    background:
+        linear-gradient(145deg,rgba(20,20,23,.76),rgba(5,5,7,.60))!important;
+    backdrop-filter:blur(22px) saturate(130%)!important;
+    -webkit-backdrop-filter:blur(22px) saturate(130%)!important;
+    box-shadow:
+        0 35px 100px rgba(0,0,0,.72),
+        inset 0 1px 0 rgba(255,255,255,.10)!important;
+    overflow:hidden!important;
+    text-align:center!important;
+    animation:lukaEntradaIn .8s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.premium-entrada::before{
+    content:"";
+    position:absolute;
+    left:10%;
+    right:10%;
+    top:0;
+    height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);
+    opacity:.55;
+}
+
+.premium-entrada::after{
+    content:"";
+    position:absolute;
+    width:340px;
+    height:340px;
+    right:-180px;
+    top:-180px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(229,9,20,.20),transparent 68%);
+    pointer-events:none;
+}
+
+/* Logo */
+.premium-logo{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    font-size:clamp(32px,5vw,56px)!important;
+    line-height:1!important;
+    letter-spacing:-2px!important;
+    font-weight:900!important;
+    color:#fff!important;
+    text-shadow:0 8px 35px rgba(0,0,0,.65)!important;
+}
+
+.premium-logo span{
+    color:#fff!important;
+}
+
+.premium-logo b{
+    color:#e50914!important;
+    font-weight:950!important;
+}
+
+.premium-linha{
+    width:74px!important;
+    height:3px!important;
+    margin:22px auto 20px!important;
+    border-radius:99px!important;
+    background:linear-gradient(90deg,#e50914,#ff4550)!important;
+    box-shadow:0 0 20px rgba(229,9,20,.45)!important;
+}
+
+.premium-kicker{
+    color:rgba(255,255,255,.55)!important;
+    font-size:11px!important;
+    font-weight:800!important;
+    letter-spacing:3px!important;
+    margin-bottom:18px!important;
+}
+
+.premium-entrada h1{
+    margin:0!important;
+    color:#fff!important;
+    font-size:clamp(38px,6vw,70px)!important;
+    line-height:.98!important;
+    letter-spacing:-3px!important;
+    font-weight:800!important;
+}
+
+.premium-entrada h1 strong{
+    color:#fff!important;
+    background:linear-gradient(90deg,#fff 15%,#ff6972 65%,#e50914 100%)!important;
+    -webkit-background-clip:text!important;
+    background-clip:text!important;
+    -webkit-text-fill-color:transparent!important;
+}
+
+.premium-subtitulo{
+    margin:23px auto 34px!important;
+    max-width:620px!important;
+    color:rgba(255,255,255,.64)!important;
+    font-size:15px!important;
+    line-height:1.7!important;
+}
+
+/* Duas experiências */
+.luka-entrada-opcoes{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:16px!important;
+    width:100%!important;
+    margin:0 auto 26px!important;
+}
+
+.luka-entrada-btn{
+    position:relative!important;
+    min-height:104px!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:18px!important;
+    box-sizing:border-box!important;
+    padding:22px 24px!important;
+    border-radius:20px!important;
+    border:1px solid rgba(255,255,255,.13)!important;
+    color:#fff!important;
+    text-decoration:none!important;
+    cursor:pointer!important;
+    text-align:left!important;
+    background:rgba(255,255,255,.055)!important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.06),
+        0 14px 35px rgba(0,0,0,.28)!important;
+    transition:
+        transform .28s ease,
+        border-color .28s ease,
+        background .28s ease,
+        box-shadow .28s ease!important;
+    overflow:hidden!important;
+}
+
+.luka-entrada-btn::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.08),transparent 80%);
+    transform:translateX(-120%);
+    transition:transform .6s ease;
+}
+
+.luka-entrada-btn:hover{
+    transform:translateY(-5px)!important;
+    border-color:rgba(255,255,255,.32)!important;
+    background:rgba(255,255,255,.095)!important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.10),
+        0 20px 45px rgba(0,0,0,.42)!important;
+}
+
+.luka-entrada-btn:hover::before{
+    transform:translateX(120%);
+}
+
+.luka-entrada-visitante:hover{
+    border-color:rgba(255,255,255,.35)!important;
+}
+
+.luka-entrada-cliente{
+    background:linear-gradient(135deg,rgba(229,9,20,.90),rgba(132,0,8,.78))!important;
+    border-color:rgba(255,110,118,.42)!important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.18),
+        0 18px 45px rgba(229,9,20,.22)!important;
+}
+
+.luka-entrada-cliente:hover{
+    background:linear-gradient(135deg,#ef101b,#a5000a)!important;
+    border-color:rgba(255,255,255,.42)!important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.20),
+        0 22px 55px rgba(229,9,20,.32)!important;
+}
+
+.luka-entrada-icone{
+    flex:0 0 52px!important;
+    width:52px!important;
+    height:52px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border-radius:16px!important;
+    background:rgba(255,255,255,.09)!important;
+    border:1px solid rgba(255,255,255,.12)!important;
+    font-size:24px!important;
+}
+
+.luka-entrada-btn strong{
+    display:block!important;
+    font-size:14px!important;
+    letter-spacing:.7px!important;
+    font-weight:900!important;
+}
+
+.luka-entrada-btn small{
+    display:block!important;
+    margin-top:7px!important;
+    color:rgba(255,255,255,.58)!important;
+    font-size:11px!important;
+    line-height:1.4!important;
+}
+
+.luka-entrada-cliente small{
+    color:rgba(255,255,255,.78)!important;
+}
+
+/* Formulário escondido até escolher cliente */
+#loginForm{
+    display:none!important;
+    margin-top:10px!important;
+    padding-top:26px!important;
+    border-top:1px solid rgba(255,255,255,.10)!important;
+    animation:lukaFormIn .4s ease both;
+}
+
+#loginForm.luka-login-form-visivel{
+    display:block!important;
+}
+
+.premium-tags{
+    opacity:.65!important;
+    margin-bottom:18px!important;
+}
+
+.premium-login-campos{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:12px!important;
+}
+
+.premium-login-campos input{
+    width:100%!important;
+    box-sizing:border-box!important;
+    padding:16px 17px!important;
+    border-radius:13px!important;
+    border:1px solid rgba(255,255,255,.14)!important;
+    outline:none!important;
+    background:rgba(0,0,0,.35)!important;
+    color:#fff!important;
+    font-size:14px!important;
+}
+
+.premium-login-campos input:focus{
+    border-color:rgba(229,9,20,.75)!important;
+    box-shadow:0 0 0 3px rgba(229,9,20,.10)!important;
+}
+
+#botaoEntrar{
+    width:100%!important;
+    margin-top:13px!important;
+    padding:16px!important;
+    border:0!important;
+    border-radius:13px!important;
+    background:#e50914!important;
+    color:#fff!important;
+    font-weight:900!important;
+    font-size:14px!important;
+    cursor:pointer!important;
+    box-shadow:0 12px 30px rgba(229,9,20,.22)!important;
+}
+
+#botaoEntrar:hover{
+    background:#f20d18!important;
+}
+
+.premium-mensagem{
+    color:rgba(255,255,255,.42)!important;
+    font-size:11px!important;
+    margin-top:18px!important;
+}
+
+#mensagem{
+    color:#ff7b82!important;
+    margin-top:12px!important;
+    font-size:13px!important;
+}
+
+/* Rodapé visual */
+.premium-entrada .premium-tags{
+    letter-spacing:2px!important;
+    font-size:9px!important;
+}
+
+@keyframes lukaEntradaIn{
+    from{
+        opacity:0;
+        transform:translateY(25px) scale(.975);
+        filter:blur(8px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+        filter:blur(0);
+    }
+}
+
+@keyframes lukaFormIn{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@media(max-width:720px){
+    .login{
+        padding:22px 15px!important;
+        align-items:center!important;
+    }
+
+    .premium-entrada{
+        padding:38px 20px 30px!important;
+        border-radius:24px!important;
+    }
+
+    .premium-kicker{
+        font-size:8px!important;
+        letter-spacing:2px!important;
+    }
+
+    .premium-entrada h1{
+        font-size:clamp(35px,11vw,52px)!important;
+        letter-spacing:-2px!important;
+    }
+
+    .premium-subtitulo{
+        font-size:13px!important;
+        margin-bottom:26px!important;
+    }
+
+    .luka-entrada-opcoes{
+        grid-template-columns:1fr!important;
+        gap:11px!important;
+    }
+
+    .luka-entrada-btn{
+        min-height:88px!important;
+        padding:17px!important;
+    }
+
+    .luka-entrada-icone{
+        width:46px!important;
+        height:46px!important;
+        flex-basis:46px!important;
+    }
+
+    .premium-login-campos{
+        grid-template-columns:1fr!important;
+    }
+}
+
+@media(min-width:1100px){
+    .premium-entrada{
+        transform:translateY(-1vh);
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="fundoTrailer">
+    <iframe
+        src="https://www.youtube.com/embed/c51ND9Hdbw0?autoplay=1&mute=1&controls=0&loop=1&playlist=c51ND9Hdbw0&modestbranding=1&rel=0"
+        allow="autoplay; fullscreen"
+        frameborder="0">
+    </iframe>
+</div>
+
+<div id="escuro"></div>
+
+
+<div class="login">
+
+    <div class="premium-entrada">
+
+        <div class="premium-logo">
+            <span>LUKA</span><b>FILMES</b>
+        </div>
+
+        <div class="premium-linha"></div>
+
+        <div class="premium-kicker">
+            LUKAFILMES • ENTRETENIMENTO SEM COMPLICAÇÃO
+        </div>
+
+        <h1>
+            Tudo o que você<br>
+            <strong>quer assistir.</strong>
+        </h1>
+
+        <p class="premium-subtitulo">
+            Filmes, séries e entretenimento em um só lugar.<br>
+            Entre, explore e encontre sua próxima história.
+        </p>
+
+        
+        <div class="luka-entrada-opcoes">
+
+            <a
+                href="/"
+                class="luka-entrada-btn luka-entrada-visitante"
+                aria-label="Entrar como visitante"
+            >
+                <span class="luka-entrada-icone">👤</span>
+                <span>
+                    <strong>ENTRAR COMO VISITANTE</strong>
+                    <small>Conhecer o LUKAFILMES</small>
+                </span>
+            </a>
+
+            <button
+                type="button"
+                class="luka-entrada-btn luka-entrada-cliente"
+                onclick="(function(){var f=document.getElementById('loginForm');if(f){f.classList.add('luka-login-form-visivel');setTimeout(function(){f.scrollIntoView({behavior:'smooth',block:'center'});var c=document.getElementById('usuario');if(c)c.focus();},100);}})();"
+                aria-label="Entrar como cliente"
+            >
+                <span class="luka-entrada-icone">🔐</span>
+                <span>
+                    <strong>ENTRAR COMO CLIENTE</strong>
+                    <small>Usar usuário e senha</small>
+                </span>
+            </button>
+
+        </div>
+
+<form id="loginForm">
+
+        <div class="premium-tags">
+            <span>FILMES</span>
+            <i></i>
+            <span>SÉRIES</span>
+            <i></i>
+            <span>ENTRETENIMENTO</span>
+        </div>
+
+        <div class="premium-login-campos">
+
+            <input
+            id="usuario"
+            type="text"
+            placeholder="Usuário"
+            autocomplete="username"
+            required
+        >
+
+            <input
+            id="senha"
+            type="password"
+            placeholder="Senha"
+            autocomplete="current-password"
+            required
+        >
+
+        </div>
+
+        <button id="botaoEntrar" type="submit">
+            <span class="icone-play">▶</span>
+            <span>COMEÇAR A ASSISTIR</span>
+        </button>
+
+        <div id="mensagem"></div>
+
+        <div class="premium-mensagem">
+            Explore o catálogo e descubra seu próximo filme.
+        </div>
+
+        </form>
+
+        
+
+    </div>
+
+</div>
+
+
+
+
+
+<div id="lukafilmesLoginLoader" aria-hidden="true">
+    <div id="lukafilmesLoginLoaderBox">
+        <div id="lukafilmesLoginLoaderLogo">
+            <span class="luka">LUKA</span><span class="filmes">FILMES</span>
+        </div>
+        <div id="lukafilmesLoginLoaderSpinner"></div>
+        <h2 id="lukafilmesLoginLoaderTitle">Entrando no LUKAFILMES...</h2>
+        <p id="lukafilmesLoginLoaderText">Preparando sua sessão...</p>
+    </div>
+</div>
+
+
+
+<script id="lukafilmes-login-funcional">
+document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const usuario =
+                document.getElementById("usuario").value.trim();
+
+            const senha =
+                document.getElementById("senha").value;
+
+            const mensagem =
+                document.getElementById("mensagem");
+
+            const botao =
+                document.getElementById("botaoEntrar");
+
+            mensagem.textContent = "";
+            botao.disabled = true;
+            botao.textContent = "ENTRANDO...";
+
+            try {
+
+                const resposta = await fetch(
+                    "/login",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            usuario,
+                            senha
+                        })
+                    }
+                );
+
+                const dados = await resposta.json();
+
+                if (dados.sucesso) {
+
+                    window.location.href = dados.destino || "/";
+
+                } else {
+
+                    mensagem.textContent =
+                        dados.mensagem ||
+                        "Usuário ou senha incorretos.";
+
+                }
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro no login:",
+                    erro
+                );
+
+                mensagem.textContent =
+                    "Não foi possível conectar ao servidor.";
+
+            } finally {
+
+                botao.disabled = false;
+                botao.textContent = "ENTRAR";
+
+            }
+
+        });
+</script>
+
+<script id="lukafilmes-login-loader-js">
+(function(){
+
+    var loader = document.getElementById("lukafilmesLoginLoader");
+    var form = document.getElementById("loginForm");
+
+    function mostrarLoginLoader(){
+        if(!loader)return;
+        loader.classList.add("ativo");
+        loader.setAttribute("aria-hidden","false");
+    }
+
+    function esconderLoginLoader(){
+        if(!loader)return;
+        loader.classList.remove("ativo");
+        loader.setAttribute("aria-hidden","true");
+    }
+
+    window.lukafilmesMostrarLoginLoader = mostrarLoginLoader;
+    window.lukafilmesEsconderLoginLoader = esconderLoginLoader;
+
+    if(form){
+        form.addEventListener("submit",function(){
+            mostrarLoginLoader();
+        },true);
+    }
+
+    window.addEventListener("pageshow",function(){
+        esconderLoginLoader();
+    });
+
+})();
+</script>
+
+
+
+
+
+<script id="luka-entrada-premium-v2-js">
+(function(){
+
+    var cliente = document.querySelector(".luka-entrada-cliente");
+    var form = document.getElementById("loginForm");
+    var opcoes = document.querySelector(".luka-entrada-opcoes");
+
+    if(cliente && form){
+        cliente.onclick = function(){
+
+            form.classList.add("luka-login-form-visivel");
+
+            cliente.style.opacity = ".78";
+
+            setTimeout(function(){
+                var campo = document.getElementById("usuario");
+
+                if(campo){
+                    campo.focus();
+                }
+
+                form.scrollIntoView({
+                    behavior:"smooth",
+                    block:"center"
+                });
+            },120);
+        };
+    }
+
+})();
+</script>
+
+</body>
+</html>
+
+
+
+

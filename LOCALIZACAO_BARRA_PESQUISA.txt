@@ -1,0 +1,250 @@
+public/admin.html:1771:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html:1856:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html:8542:                placeholder="🔎 Pesquisar nesta central..."
+public/index.html:1337:        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+public/index.html:1363:        placeholder="Pesquisar filmes"
+public/index.html:1365:        onkeydown="if(event.key==='Enter') pesquisar()"
+public/index.html:1636:async function buscarJSON(url){
+public/index.html:1931:                await buscarTrailerDoHero(item);
+public/index.html:2295:                buscarJSON(
+public/index.html:2305:                buscarJSON(
+public/index.html:2440:    async function buscarTrailerDoHero(item){
+public/index.html:2596:                        buscarTrailerDoHero(item)
+public/index.html:3031:    async function pesquisarHome(termo) {
+public/index.html:3047:                "/api/pesquisar?q=" +
+public/index.html:3119:                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+public/index.html:3124:        pesquisarHome(input.value.trim());
+public/admin.html.BACKUP-20260903-074719:1538:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-20260903-074719:1623:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-20260903-074719:4502:<input id="l6Busca" class="l6input" placeholder="Pesquisar usuário..." oninput="l6Render()">
+public/admin.html.BACKUP-20260903-074719:7734:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ANTES-CORRIGIR-EDITOR-20260903-085529:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ANTES-CORRIGIR-EDITOR-20260903-085529:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ANTES-CORRIGIR-EDITOR-20260903-085529:7190:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ANTES-EDICAO-COMPLETA-20260903-085451:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ANTES-EDICAO-COMPLETA-20260903-085451:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ANTES-EDICAO-COMPLETA-20260903-085451:7080:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ANTES-LIGAR-CENTRAL-ONLINE-20260903-091322:1561:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ANTES-LIGAR-CENTRAL-ONLINE-20260903-091322:1646:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ANTES-LIGAR-CENTRAL-ONLINE-20260903-091322:5009:                placeholder="⌕ Pesquisar usuário conectado..."
+public/admin.html.BACKUP-ANTES-LIGAR-CENTRAL-ONLINE-20260903-091322:8033:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ANTES-LIGAR-CENTRAL-ONLINE-20260903-091342:1561:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ANTES-LIGAR-CENTRAL-ONLINE-20260903-091342:1646:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ANTES-LIGAR-CENTRAL-ONLINE-20260903-091342:5009:                placeholder="⌕ Pesquisar usuário conectado..."
+public/admin.html.BACKUP-ANTES-LIGAR-CENTRAL-ONLINE-20260903-091342:8033:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ANTES-ONLINE-TECH-20260903-090451:1267:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ANTES-ONLINE-TECH-20260903-090451:1352:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ANTES-ONLINE-TECH-20260903-090451:7309:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ANTES-REMOVER-ALTERACOES-ONLINE-20260903-091638:1561:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ANTES-REMOVER-ALTERACOES-ONLINE-20260903-091638:1646:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ANTES-REMOVER-ALTERACOES-ONLINE-20260903-091638:5009:                placeholder="⌕ Pesquisar usuário conectado..."
+public/admin.html.BACKUP-ANTES-REMOVER-ALTERACOES-ONLINE-20260903-091638:8033:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ANTES-REMOVER-BOTAO-REVENDEDOR-20260903-092156:1267:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ANTES-REMOVER-BOTAO-REVENDEDOR-20260903-092156:1352:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ANTES-REMOVER-BOTAO-REVENDEDOR-20260903-092156:7309:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ANTES-REMOVER-DASHBOARD-SUPERIOR-20260903-090213:1267:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ANTES-REMOVER-DASHBOARD-SUPERIOR-20260903-090213:1352:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ANTES-REMOVER-DASHBOARD-SUPERIOR-20260903-090213:7377:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ANTES-REMOVER-DASHBOARD-SUPERIOR-20260903-090237:1267:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ANTES-REMOVER-DASHBOARD-SUPERIOR-20260903-090237:1352:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ANTES-REMOVER-DASHBOARD-SUPERIOR-20260903-090237:7309:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ANTES-REMOVER-MENU-REVENDEDOR-20260903-092136:1267:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ANTES-REMOVER-MENU-REVENDEDOR-20260903-092136:1352:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ANTES-REMOVER-MENU-REVENDEDOR-20260903-092136:7309:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ANTES-RESTAURAR-20260903-081206:1189:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-ANTES-SEPARAR-TESTES-20260903-081554:1189:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-ANTES-VOLTA-PAINEL-20260903-082147:1189:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-AUTO-TESTE-20260903-083222:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-AUTO-TESTE-20260903-083222:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-AUTO-TESTE-20260903-083222:6676:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-CORRECAO-CELULAR-20260903-092516:1481:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-CORRECAO-CELULAR-20260903-092516:1566:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-CORRECAO-CELULAR-20260903-092516:7523:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-CORRECAO-TESTE-FINAL-20260903-082041:1189:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-CORRIGIR-ONLINE-CENTRAL-20260903-091408:1561:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-CORRIGIR-ONLINE-CENTRAL-20260903-091408:1646:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-CORRIGIR-ONLINE-CENTRAL-20260903-091408:5009:                placeholder="⌕ Pesquisar usuário conectado..."
+public/admin.html.BACKUP-CORRIGIR-ONLINE-CENTRAL-20260903-091408:8033:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-DASHBOARD-GRAFICO-20260903-085802:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-DASHBOARD-GRAFICO-20260903-085802:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-DASHBOARD-GRAFICO-20260903-085802:7182:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-LUZ-RGB-20260903-092311:1267:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-LUZ-RGB-20260903-092311:1352:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-LUZ-RGB-20260903-092311:7309:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-LUZ-RGB-CORRECAO-20260903-092359:1555:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-LUZ-RGB-CORRECAO-20260903-092359:1640:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-LUZ-RGB-CORRECAO-20260903-092359:7597:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-MENSAGEM-TESTE-20260903-082639:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-MENSAGEM-TESTE-20260903-082639:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-MENSAGEM-TESTE-20260903-082639:6470:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-MINI-FINAL-20260903-080118:818:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-MINIPAINEIS-20260903-075642:578:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-MOBILE-20260903-080505:865:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-NAVEGACAO-20260903-075409:514:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-NO-SCROLL-20260903-075528:578:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP_ANTES_REFORMA:1538:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP_ANTES_REFORMA:1623:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP_ANTES_REFORMA:7110:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ONLINE-20260903-091055:1441:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ONLINE-20260903-091055:1526:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ONLINE-20260903-091055:7527:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-ORGANIZAR-AUTO-20260903-083433:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-ORGANIZAR-AUTO-20260903-083433:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-ORGANIZAR-AUTO-20260903-083433:6901:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-PAINEL-LIMPO-20260903-080326:818:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-PREMIUM-20260903-075058:110:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-PREMIUM-20260903-081045:1189:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-RESULTADO-AUTO-20260903-083647:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-RESULTADO-AUTO-20260903-083647:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-RESULTADO-AUTO-20260903-083647:6956:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-SOMENTE-NOVO-20260903-074907:1538:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-SOMENTE-NOVO-20260903-074907:1623:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-SOMENTE-NOVO-20260903-074907:4502:<input id="l6Busca" class="l6input" placeholder="Pesquisar usuário..." oninput="l6Render()">
+public/admin.html.BACKUP-SOMENTE-NOVO-20260903-074907:7734:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-SOMENTE-NOVO-20260903-074907:8083:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-TESTE-AUTOMATICO-20260903-082344:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.BACKUP-TESTE-AUTOMATICO-20260903-082344:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.BACKUP-TESTE-AUTOMATICO-20260903-082344:6470:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.BACKUP-TESTE-NOTIFICACAO-20260903-081855:1189:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-TESTES-20260903-080719:1189:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin.html.BACKUP-TURSO-MINIPAINEIS-20260903-075857:818:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/index.html.bkp:1337:        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+public/index.html.bkp:1355:        placeholder="Pesquisar filmes"
+public/index.html.bkp:1357:        onkeydown="if(event.key==='Enter') pesquisar()"
+public/index.html.bkp:1603:async function buscarJSON(url){
+public/index.html.bkp:1898:                await buscarTrailerDoHero(item);
+public/index.html.bkp:2262:                buscarJSON(
+public/index.html.bkp:2272:                buscarJSON(
+public/index.html.bkp:2407:    async function buscarTrailerDoHero(item){
+public/index.html.bkp:2563:                        buscarTrailerDoHero(item)
+public/index.html.bkp:2998:    async function pesquisarHome(termo) {
+public/index.html.bkp:3014:                "/api/pesquisar?q=" +
+public/index.html.bkp:3086:                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+public/index.html.bkp:3091:        pesquisarHome(input.value.trim());
+public/index.html.bkp2:1337:        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+public/index.html.bkp2:1355:        placeholder="Pesquisar filmes"
+public/index.html.bkp2:1357:        onkeydown="if(event.key==='Enter') pesquisar()"
+public/index.html.bkp2:1603:async function buscarJSON(url){
+public/index.html.bkp2:1898:                await buscarTrailerDoHero(item);
+public/index.html.bkp2:2262:                buscarJSON(
+public/index.html.bkp2:2272:                buscarJSON(
+public/index.html.bkp2:2407:    async function buscarTrailerDoHero(item){
+public/index.html.bkp2:2563:                        buscarTrailerDoHero(item)
+public/index.html.bkp2:2998:    async function pesquisarHome(termo) {
+public/index.html.bkp2:3014:                "/api/pesquisar?q=" +
+public/index.html.bkp2:3086:                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+public/index.html.bkp2:3091:        pesquisarHome(input.value.trim());
+public/admin.html.BACKUP-ULTRA-20260903-075240:124:<input id="lc-search" class="lc-input" placeholder="Pesquisar usuário, telefone ou WhatsApp..." oninput="LC.render()">
+public/admin_backup_152k_antes_novo.html:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin_backup_152k_antes_novo.html:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin_backup_152k_antes_novo.html:6697:                placeholder="🔎 Pesquisar nesta central..."
+public/admin_backup_antes_aplicacao_nova_2026.html:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin_backup_antes_aplicacao_nova_2026.html:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin_backup_antes_aplicacao_nova_2026.html:6697:                placeholder="🔎 Pesquisar nesta central..."
+public/admin_backup_antes_painel_novo.html:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin_backup_antes_painel_novo.html:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin_backup_antes_painel_novo.html:6697:                placeholder="🔎 Pesquisar nesta central..."
+public/admin_backup_painel_premium_2026.html:1157:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin_backup_painel_premium_2026.html:1242:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin_backup_painel_premium_2026.html:6729:                placeholder="🔎 Pesquisar nesta central..."
+public/admin_backup_painel_total_2026.html:1504:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin_backup_painel_total_2026.html:1589:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin_backup_painel_total_2026.html:7076:                placeholder="🔎 Pesquisar nesta central..."
+public/admin_backup_visual_futurista.html:1470:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin_backup_visual_futurista.html:1555:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin_backup_visual_futurista.html:7042:                placeholder="🔎 Pesquisar nesta central..."
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1345:        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1363:        placeholder="Buscar filmes e séries..."
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1365:        onkeydown="if(event.key==='Enter') pesquisar()"
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1611:async function buscarJSON(url){
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1906:                await buscarTrailerDoHero(item);
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2270:                buscarJSON(
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2280:                buscarJSON(
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2415:    async function buscarTrailerDoHero(item){
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2571:                        buscarTrailerDoHero(item)
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:3006:    async function pesquisarHome(termo) {
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:3022:                "/api/pesquisar?q=" +
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:3094:                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:3099:        pesquisarHome(input.value.trim());
+public/index.html.BACKUP-BUSCA-20260903_094508:1337:        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+public/index.html.BACKUP-BUSCA-20260903_094508:1355:        placeholder="Buscar filmes e séries..."
+public/index.html.BACKUP-BUSCA-20260903_094508:1357:        onkeydown="if(event.key==='Enter') pesquisar()"
+public/index.html.BACKUP-BUSCA-20260903_094508:1603:async function buscarJSON(url){
+public/index.html.BACKUP-BUSCA-20260903_094508:1898:                await buscarTrailerDoHero(item);
+public/index.html.BACKUP-BUSCA-20260903_094508:2262:                buscarJSON(
+public/index.html.BACKUP-BUSCA-20260903_094508:2272:                buscarJSON(
+public/index.html.BACKUP-BUSCA-20260903_094508:2407:    async function buscarTrailerDoHero(item){
+public/index.html.BACKUP-BUSCA-20260903_094508:2563:                        buscarTrailerDoHero(item)
+public/index.html.BACKUP-BUSCA-20260903_094508:2998:    async function pesquisarHome(termo) {
+public/index.html.BACKUP-BUSCA-20260903_094508:3014:                "/api/pesquisar?q=" +
+public/index.html.BACKUP-BUSCA-20260903_094508:3086:                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+public/index.html.BACKUP-BUSCA-20260903_094508:3091:        pesquisarHome(input.value.trim());
+public/index.html.backup_admin_menu_20260906_191113:1337:        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+public/index.html.backup_admin_menu_20260906_191113:1355:        placeholder="Pesquisar filmes"
+public/index.html.backup_admin_menu_20260906_191113:1357:        onkeydown="if(event.key==='Enter') pesquisar()"
+public/index.html.backup_admin_menu_20260906_191113:1603:async function buscarJSON(url){
+public/index.html.backup_admin_menu_20260906_191113:1898:                await buscarTrailerDoHero(item);
+public/index.html.backup_admin_menu_20260906_191113:2262:                buscarJSON(
+public/index.html.backup_admin_menu_20260906_191113:2272:                buscarJSON(
+public/index.html.backup_admin_menu_20260906_191113:2407:    async function buscarTrailerDoHero(item){
+public/index.html.backup_admin_menu_20260906_191113:2563:                        buscarTrailerDoHero(item)
+public/index.html.backup_admin_menu_20260906_191113:2998:    async function pesquisarHome(termo) {
+public/index.html.backup_admin_menu_20260906_191113:3014:                "/api/pesquisar?q=" +
+public/index.html.backup_admin_menu_20260906_191113:3086:                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+public/index.html.backup_admin_menu_20260906_191113:3091:        pesquisarHome(input.value.trim());
+public/admin.html.bak_pagamentos_20260906_201140:1771:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.bak_pagamentos_20260906_201140:1856:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.bak_pagamentos_20260906_201140:7813:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.ANTES_MODO_TESTE_20260906_203246:1771:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.ANTES_MODO_TESTE_20260906_203246:1856:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.ANTES_MODO_TESTE_20260906_203246:8389:                placeholder="🔎 Pesquisar nesta central..."
+public/admin.html.bak-pagamentos-fluxo-20260907-090735:1771:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.bak-pagamentos-fluxo-20260907-090735:1856:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.bak-pagamentos-fluxo-20260907-090735:8506:                placeholder="🔎 Pesquisar nesta central..."
+public/index.html.seguro_20260907_154449:1497:        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+public/index.html.seguro_20260907_154449:1523:        placeholder="Pesquisar filmes"
+public/index.html.seguro_20260907_154449:1525:        onkeydown="if(event.key==='Enter') pesquisar()"
+public/index.html.seguro_20260907_154449:1822:async function buscarJSON(url){
+public/index.html.seguro_20260907_154449:2117:                await buscarTrailerDoHero(item);
+public/index.html.seguro_20260907_154449:2481:                buscarJSON(
+public/index.html.seguro_20260907_154449:2491:                buscarJSON(
+public/index.html.seguro_20260907_154449:2626:    async function buscarTrailerDoHero(item){
+public/index.html.seguro_20260907_154449:2782:                        buscarTrailerDoHero(item)
+public/index.html.seguro_20260907_154449:3217:    async function pesquisarHome(termo) {
+public/index.html.seguro_20260907_154449:3233:                "/api/pesquisar?q=" +
+public/index.html.seguro_20260907_154449:3305:                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+public/index.html.seguro_20260907_154449:3310:        pesquisarHome(input.value.trim());
+public/index.html.backup_renovacao_20260907_161806:1337:        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+public/index.html.backup_renovacao_20260907_161806:1363:        placeholder="Pesquisar filmes"
+public/index.html.backup_renovacao_20260907_161806:1365:        onkeydown="if(event.key==='Enter') pesquisar()"
+public/index.html.backup_renovacao_20260907_161806:1636:async function buscarJSON(url){
+public/index.html.backup_renovacao_20260907_161806:1931:                await buscarTrailerDoHero(item);
+public/index.html.backup_renovacao_20260907_161806:2295:                buscarJSON(
+public/index.html.backup_renovacao_20260907_161806:2305:                buscarJSON(
+public/index.html.backup_renovacao_20260907_161806:2440:    async function buscarTrailerDoHero(item){
+public/index.html.backup_renovacao_20260907_161806:2596:                        buscarTrailerDoHero(item)
+public/index.html.backup_renovacao_20260907_161806:3031:    async function pesquisarHome(termo) {
+public/index.html.backup_renovacao_20260907_161806:3047:                "/api/pesquisar?q=" +
+public/index.html.backup_renovacao_20260907_161806:3119:                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+public/index.html.backup_renovacao_20260907_161806:3124:        pesquisarHome(input.value.trim());
+public/admin.html.backup_renovacao_20260907_162139:1771:<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+public/admin.html.backup_renovacao_20260907_162139:1856:<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+public/admin.html.backup_renovacao_20260907_162139:8516:                placeholder="🔎 Pesquisar nesta central..."
+paginas/filmes.html:240:    input[placeholder*="buscar" i] {
+paginas/filmes.html:302:    input[placeholder*="buscar" i] {
+paginas/filmes.html:2759: * Assim o infinite scroll pode buscar:
+paginas/filmes.html:3580:async function buscarTrailer(filme){
+paginas/filmes.html:3776:async function buscarFilmes(){
+paginas/filmes.html:3927:                await buscarTrailer(
+paginas/filmes.html:4029:            await buscarFilmes();
+paginas/filmes.html.BACKUP-ANTES-AUDIO-MOBILE-20260903-141850:240:    input[placeholder*="buscar" i] {
+paginas/filmes.html.BACKUP-ANTES-AUDIO-MOBILE-20260903-141850:302:    input[placeholder*="buscar" i] {
+paginas/filmes.html.BACKUP-ANTES-AUDIO-MOBILE-20260903-141850:2637: * Assim o infinite scroll pode buscar:
+paginas/filmes.html.BACKUP-ANTES-AUDIO-MOBILE-20260903-141850:3398:async function buscarTrailer(filme){
+paginas/filmes.html.BACKUP-ANTES-AUDIO-MOBILE-20260903-141850:3534:async function buscarFilmes(){
+paginas/filmes.html.BACKUP-ANTES-AUDIO-MOBILE-20260903-141850:3685:                await buscarTrailer(
+paginas/filmes.html.BACKUP-ANTES-AUDIO-MOBILE-20260903-141850:3786:            await buscarFilmes();
+paginas/filmes.html.BACKUP-AUDIO-MOBILE-20260903-141910:240:    input[placeholder*="buscar" i] {
+paginas/filmes.html.BACKUP-AUDIO-MOBILE-20260903-141910:302:    input[placeholder*="buscar" i] {
+paginas/filmes.html.BACKUP-AUDIO-MOBILE-20260903-141910:2637: * Assim o infinite scroll pode buscar:
+paginas/filmes.html.BACKUP-AUDIO-MOBILE-20260903-141910:3398:async function buscarTrailer(filme){

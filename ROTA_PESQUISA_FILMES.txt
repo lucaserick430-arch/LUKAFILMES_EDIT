@@ -1,0 +1,140 @@
+2348-const PESQUISA_CACHE_MS =
+2349-    5 * 60 * 1000;
+2350-
+2351-const PESQUISA_CACHE_MAX =
+2352-    100;
+2353-// ==========================================
+2354-// API DE PESQUISA
+2355-// ==========================================
+2356-
+2357-app.get(
+2358:    "/api/pesquisar",
+2359-    async (req, res) => {
+2360-
+2361-        const busca =
+2362-            String(req.query.q || "").trim();
+2363-
+2364-        if (!busca) {
+2365-            return res.json({
+2366-                resultados: []
+2367-            });
+2368-        }
+2369-
+2370-        const chavePesquisa =
+2371-            busca.toLowerCase();
+2372-
+2373-        const cachePesquisa =
+2374-            pesquisaCache.get(chavePesquisa);
+2375-
+2376-        if (
+2377-            cachePesquisa &&
+2378-            (Date.now() - cachePesquisa.tempo) < PESQUISA_CACHE_MS
+2379-        ) {
+2380-
+2381-            console.log(
+2382-                "[PESQUISA] Cache:",
+2383-                busca
+2384-            );
+2385-
+2386-            return res.json(cachePesquisa.dados);
+2387-        }
+2388-
+2389-        try {
+2390-
+2391-            const dados =
+2392-                await tmdb(
+2393-                    "/search/movie" +
+--
+2796-            resultados: [],
+2797-            erro: 'Não foi possível consultar as séries.'
+2798-        });
+2799-    }
+2800-});
+2801-
+2802-// ==========================================
+2803-// PESQUISAR SÉRIES — TMDB
+2804-// ==========================================
+2805-
+2806:app.get('/api/pesquisar-series', async (req, res) => {
+2807-    try {
+2808-
+2809-        const busca = String(req.query.q || '').trim();
+2810-
+2811-        if (!busca) {
+2812-            return res.json({
+2813-                sucesso: true,
+2814-                resultados: []
+2815-            });
+2816-        }
+2817-
+2818-        const dados = await tmdb(
+2819-            '/search/tv' +
+2820-            '?query=' + encodeURIComponent(busca) +
+2821-            '&language=pt-BR' +
+2822-            '&page=1' +
+2823-            '&include_adult=false'
+2824-        );
+2825-
+2826-        const series = Array.isArray(dados.results) ? dados.results.map(serie => ({
+2827-                id: serie.id,
+2828-                titulo: serie.name || serie.original_name || 'Sem título',
+2829-                capa: serie.poster_path
+2830-                    ? TMDB_IMAGE + serie.poster_path
+2831-                    : '',
+2832-                fundo: serie.backdrop_path
+2833-                    ? 'https://image.tmdb.org/t/p/w1280' + serie.backdrop_path
+2834-                    : '',
+2835-                nota: serie.vote_average || 0,
+2836-                votos: serie.vote_count || 0,
+2837-                ano: serie.first_air_date
+2838-                    ? serie.first_air_date.substring(0, 4)
+2839-                    : '',
+2840-                sinopse: serie.overview || ''
+2841-            }))
+--
+6208-            req.path === "/favicon/lukafilmes.svg" ||
+6209-            req.path === "/favicon/lukafilmes.png" ||
+6210-            req.path === "/favicon/file_000000006768820e93d46c5d164e8bd9.png" ||
+6211-
+6212-            req.path === "/admin.html" ||
+6213-
+6214-            req.path === "/status" ||
+6215-
+6216-            req.path === "/api/eu" || req.path === "/api/admin/revendedores" || req.path === "/api/revendedor/clientes" ||
+6217-
+6218:            req.path === "/api/pesquisar" ||
+6219-
+6220-            req.path === "/" ||
+6221-
+6222-            req.path === "/index.html" ||
+6223-
+6224-            req.path === "/paginas/filme.html" ||
+6225-
+6226-            req.path === "/paginas/filme" ||
+6227-
+6228-            req.path === "/paginas/filmes.html" ||
+6229-
+6230-            req.path === "/paginas/series.html" ||
+6231-
+6232-            req.path === "/paginas/series" ||
+6233-
+6234-            req.path === "/paginas/serie.html" ||
+6235-
+6236-            req.path === "/paginas/serie"
+6237-
+6238-        ) {
+6239-
+6240-            return next();
+6241-
+6242-        }
+6243-
+6244-        /*
+6245-         * TODAS AS PÁGINAS DO SITE SÃO PROTEGIDAS.
+6246-         *
+6247-         * Primeiro verifica se existe sessão.
+6248-         * Depois verifica se a validade do usuário expirou.
+6249-         *
+6250-         * Admin não possui expiração.
+6251-         */
+6252-
+6253-

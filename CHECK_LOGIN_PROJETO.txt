@@ -1,0 +1,232 @@
+========== ROTAS LOGIN ==========
+629-    .then(() => console.log("[TURSO] Tabela de pagamentos preparada."))
+630-    .catch(erro => console.error("[TURSO PAGAMENTOS] Erro ao preparar tabela:", erro));
+631-
+632-console.log("[DIAGNOSTICO] session middleware carregado");
+633-
+634-app.use(session(configuracaoSessao));
+635-console.log("[DIAGNOSTICO] rota /login registrada");
+636-// LOGIN
+637-// ==========================================
+638-
+639:app.get("/login", (req, res) => {
+640-
+641-    if (req.session.usuario) {
+642-        return res.redirect("/");
+643-    }
+644-
+645-    res.sendFile(
+646-        path.join(__dirname, "public", "login.html")
+647-    );
+648-});
+649-
+650-// ==========================================
+651-// ADMIN
+652-// ==========================================
+653-
+654-app.get("/admin.html", (req, res) => {
+655-
+656-    if (!req.session.usuario) {
+657-        return res.redirect("/login");
+658-    }
+659-
+660-    if (req.session.usuario.tipo !== "admin") {
+661-        return res.status(403).send("Acesso negado.");
+662-    }
+663-
+664-    res.set({
+665-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+666-        "Pragma": "no-cache",
+667-        "Expires": "0",
+668-        "Surrogate-Control": "no-store"
+669-    });
+670-
+671-    res.sendFile(
+672-        path.join(__dirname, "public", "admin.html"),
+673-        {
+674-            cacheControl: false
+675-        }
+676-    );
+677-});
+678-
+679-
+680-// ==========================================
+681-// LUKAFILMES — CADASTRO DE CLIENTE
+682-// ==========================================
+683-
+684-app.get("/cadastro", (req, res) => {
+--
+817-            sucesso: false,
+818-            mensagem: "Não foi possível criar sua conta."
+819-        });
+820-    }
+821-});
+822-
+823-// ==========================================
+824-// LOGIN POST
+825-// ==========================================
+826-
+827:app.post("/login", async (req, res) => {
+828-
+829-    try {
+830-
+831-        const usuario =
+832-            String(req.body.usuario || "").trim();
+833-
+834-        const senha =
+835-            String(req.body.senha || "");
+836-
+837-        if (!usuario || !senha) {
+838-
+839-            return res.json({
+840-                sucesso: false,
+841-                mensagem: "Digite usuário e senha."
+842-            });
+843-        }
+844-
+845-                const usuarios = await carregarUsuarios();
+846-
+847-        const pessoa = usuarios.find(
+848-            u =>
+849-                String(u.usuario || "").trim().toLowerCase() ===
+850-                usuario.toLowerCase()
+851-        );
+852-        if (!pessoa) {
+853-
+854-            return res.json({
+855-                sucesso: false,
+856-                mensagem: "Usuário ou senha incorretos."
+857-            });
+858-        }
+859-
+860-        if (pessoa.status !== "ativo") {
+861-
+862-            return res.json({
+863-                sucesso: false,
+864-                mensagem: "Este usuário está suspenso."
+865-            });
+866-        }
+867-
+868-        /*
+869-         * Usuário vencido continua podendo fazer login e navegar
+870-         * pelo catálogo. O bloqueio para assistir será feito
+871-         * somente no botão principal "ASSISTIR".
+872-         */
+
+========== REFERÊNCIAS LOGIN ==========
+public/admin.html:2643:  let body={usuario,senha,dias,valor,telefone};
+public/index.html:2925:        window.location.href = "/login";
+public/admin.html.BACKUP-20260903-074719:2357:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ANTES-CORRIGIR-EDITOR-20260903-085529:2029:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ANTES-EDICAO-COMPLETA-20260903-085451:2029:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ANTES-LIGAR-CENTRAL-ONLINE-20260903-091322:2433:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ANTES-LIGAR-CENTRAL-ONLINE-20260903-091342:2433:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ANTES-ONLINE-TECH-20260903-090451:2139:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ANTES-REMOVER-ALTERACOES-ONLINE-20260903-091638:2433:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ANTES-REMOVER-BOTAO-REVENDEDOR-20260903-092156:2139:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ANTES-REMOVER-DASHBOARD-SUPERIOR-20260903-090213:2139:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ANTES-REMOVER-DASHBOARD-SUPERIOR-20260903-090237:2139:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ANTES-REMOVER-MENU-REVENDEDOR-20260903-092136:2139:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ANTES-RESTAURAR-20260903-081206:2160:window.location.href='/login.html';
+public/admin.html.BACKUP-ANTES-SEPARAR-TESTES-20260903-081554:1435:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-ANTES-SEPARAR-TESTES-20260903-081554:1741:window.location.href='/login.html';
+public/admin.html.BACKUP-ANTES-VOLTA-PAINEL-20260903-082147:1435:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-ANTES-VOLTA-PAINEL-20260903-082147:2218:window.location.href='/login.html';
+public/admin.html.BACKUP-AUTO-TESTE-20260903-083222:1749:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-CORRECAO-CELULAR-20260903-092516:2353:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-CORRECAO-TESTE-FINAL-20260903-082041:1435:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-CORRECAO-TESTE-FINAL-20260903-082041:2100:window.location.href='/login.html';
+public/admin.html.BACKUP-CORRIGIR-ONLINE-CENTRAL-20260903-091408:2433:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-DASHBOARD-GRAFICO-20260903-085802:2029:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-LUZ-RGB-20260903-092311:2139:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-LUZ-RGB-CORRECAO-20260903-092359:2427:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-MENSAGEM-TESTE-20260903-082639:1749:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-MINI-FINAL-20260903-080118:943:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-MINI-FINAL-20260903-080118:1201:      window.location.href='/login.html';
+public/admin.html.BACKUP-MINIPAINEIS-20260903-075642:703:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-MINIPAINEIS-20260903-075642:961:      window.location.href='/login.html';
+public/admin.html.BACKUP-MOBILE-20260903-080505:1110:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-NAVEGACAO-20260903-075409:639:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-NO-SCROLL-20260903-075528:703:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-NO-SCROLL-20260903-075528:964:      window.location.href='/login.html';
+public/admin.html.BACKUP_ANTES_REFORMA:2357:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ONLINE-20260903-091055:2313:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-ORGANIZAR-AUTO-20260903-083433:1974:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-PAINEL-LIMPO-20260903-080326:943:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-PAINEL-LIMPO-20260903-080326:1201:      window.location.href='/login.html';
+public/admin.html.BACKUP-PREMIUM-20260903-075058:235:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-PREMIUM-20260903-081045:1435:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-PREMIUM-20260903-081045:1741:window.location.href='/login.html';
+public/admin.html.BACKUP-RESULTADO-AUTO-20260903-083647:2029:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-SOMENTE-NOVO-20260903-074907:2357:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-SOMENTE-NOVO-20260903-074907:8208:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-TESTE-AUTOMATICO-20260903-082344:1749:  let body={usuario,senha,dias,valor,telefone};
+public/admin.html.BACKUP-TESTE-NOTIFICACAO-20260903-081855:1435:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-TESTE-NOTIFICACAO-20260903-081855:1741:window.location.href='/login.html';
+public/admin.html.BACKUP-TESTES-20260903-080719:1434:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-TESTES-20260903-080719:1699:window.location.href='/login.html';
+public/admin.html.BACKUP-TURSO-MINIPAINEIS-20260903-075857:943:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin.html.BACKUP-TURSO-MINIPAINEIS-20260903-075857:1201:      window.location.href='/login.html';
+public/index.html.bkp:2895:        window.location.href = "/login";
+public/index.html.bkp2:2895:        window.location.href = "/login";
+public/admin.html.BACKUP-ULTRA-20260903-075240:249:const body={usuario:document.getElementById('lc-u').value,senha:document.getElementById('lc-p').value,dias:Number(document.getElementById('lc-days').value)||30,tipo:document.getElementById('lc-type').value,telefone:document.getElementById('lc-phone').value,whatsapp:document.getElementById('lc-phone').value,valor:Number(document.getElementById('lc-value').value)||0,valor_mensal:Number(document.getElementById('lc-value').value)||0,limite_conexoes:Number(document.getElementById('lc-limit').value)||1};
+public/admin_backup_152k_antes_novo.html:1976:  let body={usuario,senha,dias,valor,telefone};
+public/admin_backup_antes_aplicacao_nova_2026.html:1976:  let body={usuario,senha,dias,valor,telefone};
+public/admin_backup_antes_painel_novo.html:1976:  let body={usuario,senha,dias,valor,telefone};
+public/admin_backup_painel_premium_2026.html:1976:  let body={usuario,senha,dias,valor,telefone};
+public/admin_backup_painel_total_2026.html:2323:  let body={usuario,senha,dias,valor,telefone};
+public/admin_backup_visual_futurista.html:2289:  let body={usuario,senha,dias,valor,telefone};
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2903:        window.location.href = "/login";
+public/index.html.BACKUP-BUSCA-20260903_094508:2895:        window.location.href = "/login";
+public/login.html:207:    #botaoEntrar {
+public/login.html:233:    #botaoEntrar::before {
+public/login.html:250:    #botaoEntrar:hover::before {
+public/login.html:254:    #botaoEntrar:hover {
+public/login.html:262:    #botaoEntrar:active {
+public/login.html:266:    #botaoEntrar:disabled {
+public/login.html:333:        #botaoEntrar {
+public/login.html:353:        #botaoEntrar {
+public/login.html:530:        <button id="botaoEntrar" type="button">
+public/login.html:563:    var form = document.getElementById("loginForm");
+public/login.html:598:        var botao = document.getElementById("botaoEntrar");
+public/login.html.backup-20260905:295:    <form id="loginForm">
+public/login.html.backup-20260905:328:        .getElementById("loginForm")
+public/login.html.backup-20260905:352:                    "/login",
+public/login.html.backup-20260905:419:    var form = document.getElementById("loginForm");
+public/login.html.backup-premium-20260905:149:    #botaoEntrar {
+public/login.html.backup-premium-20260905:308:        <button id="botaoEntrar" type="button">
+public/login.html.backup-premium-20260905:319:        .getElementById("botaoEntrar")
+public/login.html.backup-premium-20260905:355:    var form = document.getElementById("loginForm");
+public/login.html.backup-premium-final-20260905:199:    #botaoEntrar {
+public/login.html.backup-premium-final-20260905:213:    #botaoEntrar:hover {
+public/login.html.backup-premium-final-20260905:219:    #botaoEntrar:active {
+public/login.html.backup-premium-final-20260905:437:        <button id="botaoEntrar" type="button">
+public/login.html.backup-premium-final-20260905:453:    var botao = document.getElementById("botaoEntrar");
+public/login.html.backup-premium-final-20260905:496:    var form = document.getElementById("loginForm");
+public/login.html.backup-botao-20260905:207:    #botaoEntrar {
+public/login.html.backup-botao-20260905:233:    #botaoEntrar::before {
+public/login.html.backup-botao-20260905:250:    #botaoEntrar:hover::before {
+public/login.html.backup-botao-20260905:254:    #botaoEntrar:hover {
+public/login.html.backup-botao-20260905:262:    #botaoEntrar:active {
+public/login.html.backup-botao-20260905:266:    #botaoEntrar:disabled {
+public/login.html.backup-botao-20260905:333:        #botaoEntrar {
+public/login.html.backup-botao-20260905:353:        #botaoEntrar {
+public/login.html.backup-botao-20260905:530:        <button id="botaoEntrar" type="button">
+public/login.html.backup-botao-20260905:546:    var botao = document.getElementById("botaoEntrar");
+public/login.html.backup-botao-20260905:591:    var form = document.getElementById("loginForm");
+public/login.html.backup-home-final-20260905:207:    #botaoEntrar {
+public/login.html.backup-home-final-20260905:233:    #botaoEntrar::before {
+public/login.html.backup-home-final-20260905:250:    #botaoEntrar:hover::before {
+public/login.html.backup-home-final-20260905:254:    #botaoEntrar:hover {
+public/login.html.backup-home-final-20260905:262:    #botaoEntrar:active {
+public/login.html.backup-home-final-20260905:266:    #botaoEntrar:disabled {
+public/login.html.backup-home-final-20260905:333:        #botaoEntrar {
+public/login.html.backup-home-final-20260905:353:        #botaoEntrar {
+public/login.html.backup-home-final-20260905:530:        <button id="botaoEntrar" type="button">
+public/login.html.backup-home-final-20260905:563:    var form = document.getElementById("loginForm");
+public/login.html.backup-home-final-20260905:598:        var botao = document.getElementById("botaoEntrar");
+public/cadastro.html:360:    if (!nome || !usuario || !senha || !telefone) {
+public/index.html.backup_admin_menu_20260906_191113:2895:        window.location.href = "/login";
+js/navegacao.js:6:const LOGIN = "/login";
+js/navegacao_backup_antes_painel.js:6:const LOGIN = "/login";
+js/navegacao.js.backup_admin_menu_20260906_191113:6:const LOGIN = "/login";

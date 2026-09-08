@@ -1,0 +1,863 @@
+============================================================
+LUKAFILMES — LOCALIZANDO API DE ACESSO / VALIDADE
+============================================================
+
+===== ROTAS DE ACESSO =====
+1133-            logado: false
+1134-        });
+1135-    }
+1136-
+1137-    res.json({
+1138-        logado: true,
+1139-        usuario
+1140-    });
+1141-
+1142-});
+1143-
+1144-// ==========================================
+1145-// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+1146-// ==========================================
+1147-
+1148:app.get("/api/debug-acesso", async (req, res) => {
+1149-    try {
+1150-        if (!req.session || !req.session.usuario) {
+1151-            return res.json({
+1152-                logado: false,
+1153-                sessao: null
+1154-            });
+1155-        }
+1156-
+1157-        const sessao = req.session.usuario;
+1158-        const usuarios = await carregarUsuarios();
+1159-
+1160-        const pessoa = usuarios.find(
+1161-            u => Number(u.id) === Number(sessao.id)
+1162-        );
+1163-
+1164-        return res.json({
+1165-            logado: true,
+1166-            sessao: {
+1167-                id: sessao.id,
+1168-                usuario: sessao.usuario,
+1169-                tipo: sessao.tipo,
+1170-                validade: sessao.validade || null
+1171-            },
+1172-            pessoa: pessoa ? {
+1173-                id: pessoa.id,
+1174-                usuario: pessoa.usuario,
+1175-                tipo: pessoa.tipo,
+1176-                status: pessoa.status,
+1177-                validade: pessoa.validade || null
+1178-            } : null,
+1179-            agora: new Date().toISOString()
+1180-        });
+1181-    } catch (erro) {
+1182-        console.error("[DEBUG ACESSO] Erro:", erro);
+1183-        return res.status(500).json({
+1184-            erro: "erro_servidor"
+1185-        });
+1186-    }
+1187-});
+1188-
+1189:app.get("/api/acesso-assistir", async (req, res) => {
+1190-
+1191-    try {
+1192-
+1193-        /*
+1194-         * LUKAFILMES — TIPO DO PAGAMENTO
+1195-         *
+1196-         * O fluxo antigo continua funcionando quando
+1197-         * renovacao não é enviada.
+1198-         *
+1199-         * renovacao=true identifica somente pagamentos
+1200-         * feitos por clientes que estão renovando.
+1201-         */
+1202-        const renovacaoSolicitada =
+1203-            req.body &&
+1204-            (
+1205-                req.body.renovacao === true ||
+1206-                String(req.body.renovacao || "").toLowerCase() === "true"
+1207-            );
+1208-
+1209-        const tipoPagamentoSolicitado =
+1210-            renovacaoSolicitada
+1211-                ? "renovacao"
+1212-                : "primeiro_acesso";
+1213-
+1214-        const sessao = lukaUsuarioOperacional(req);
+1215-
+1216-        if (!sessao) {
+1217-            return res.status(401).json({
+1218-                permitido: false,
+1219-                logado: false,
+1220-                motivo: "nao_logado"
+1221-            });
+1222-        }
+1223-
+1224-        const usuarios = await carregarUsuarios();
+1225-
+1226-        const pessoa = usuarios.find(
+1227-            u => Number(u.id) === Number(sessao.id)
+1228-        );
+1229-
+1230-        if (!pessoa) {
+1231-            return res.status(404).json({
+1232-                permitido: false,
+1233-                logado: true,
+1234-                motivo: "usuario_nao_encontrado"
+--
+1263-            pessoa.validade &&
+1264-            new Date(pessoa.validade).getTime() > Date.now()
+1265-        ) {
+1266-            return res.json({
+1267-                permitido: true,
+1268-                logado: true,
+1269-                tipo,
+1270-                validade: pessoa.validade
+1271-            });
+1272-        }
+1273-
+1274-        return res.json({
+1275-            permitido: false,
+1276-            logado: true,
+1277-            tipo,
+1278:            motivo: "expirado",
+1279-            valor: CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+1280-            dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+1281-            validade: pessoa.validade || null
+1282-        });
+1283-
+1284-    } catch (erro) {
+1285-
+1286-        console.error(
+1287-            "[ACESSO ASSISTIR] Erro:",
+1288-            erro
+1289-        );
+1290-
+1291-        return res.status(500).json({
+1292-            permitido: false,
+1293-            logado: true,
+1294-            motivo: "erro_servidor",
+1295-            mensagem: "Erro interno ao verificar o acesso."
+1296-        });
+1297-
+1298-    }
+1299-
+1300-});
+1301-
+1302-
+1303-// ==========================================
+1304-// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+1305-// ==========================================
+1306-
+1307-
+1308-
+1309-// ============================================================
+1310-// ADMIN — LIMPAR TESTES ANTIGOS
+1311-// ============================================================
+1312-
+1313-app.post("/api/admin/testes/limpar", async (req, res) => {
+1314-
+1315-    try {
+1316-
+1317-        if (!adminAutorizadoLuka(req)) {
+1318-            return res.status(403).json({
+1319-                sucesso: false,
+1320-                mensagem: "Acesso negado."
+1321-            });
+1322-        }
+1323-
+--
+4227-        console.error(
+4228-            '[ERRO LINK ORIGEM]',
+4229-            erro
+4230-        );
+4231-
+4232-        return res.status(500).json({
+4233-            sucesso: false,
+4234-            encontrado: false
+4235-        });
+4236-    }
+4237-});
+4238-
+4239-// ==========================================
+4240-// ADMIN — LISTAR USUÁRIOS
+4241-// ==========================================
+4242:app.get("/api/admin/usuarios", async (req, res) => {
+4243-    try {
+4244-        if (
+4245-            !req.session.usuario ||
+4246-            req.session.usuario.tipo !== "admin"
+4247-        ) {
+4248-            return res.status(403).json({
+4249-                sucesso: false,
+4250-                mensagem: "Acesso negado."
+4251-            });
+4252-        }
+4253-
+4254-        const usuarios = await carregarUsuarios();
+4255-
+4256-        const lista = usuarios.map(u => ({
+4257-            id: u.id,
+4258-            usuario: u.usuario,
+4259-            tipo: u.tipo || "usuario",
+4260-            status: u.status || "ativo",
+4261-            validade: u.validade || null,
+4262-            criado_em: u.criado_em || null,
+4263-            online: Boolean(u.online)
+4264-        }));
+4265-
+4266-        return res.json({
+4267-            sucesso: true,
+4268-            usuarios: lista,
+4269-            total: lista.length
+4270-        });
+4271-
+4272-    } catch (erro) {
+4273-        console.error("[ERRO LISTAR USUARIOS]", erro);
+4274-
+4275-        return res.status(500).json({
+4276-            sucesso: false,
+4277-            mensagem: "Erro interno ao carregar usuários.",
+4278-            usuarios: []
+4279-        });
+4280-    }
+4281-});
+4282-
+4283-// ADMIN — CRIAR USUÁRIO
+4284-// ==========================================
+4285-
+4286-app.post(
+4287:    "/api/admin/usuarios",
+4288-    async (req, res) => {
+4289-
+4290-        try {
+4291-
+4292-            if (
+4293-                !req.session.usuario ||
+4294-                req.session.usuario.tipo !== "admin"
+4295-            ) {
+4296-
+4297-                return res.status(403).json({
+4298-                    sucesso: false,
+4299-                    mensagem: "Acesso negado."
+4300-                });
+4301-
+4302-            }
+4303-
+4304-            const usuario =
+4305-                String(req.body.usuario || "").trim();
+4306-
+4307-            const senha =
+4308-                String(req.body.senha || "");
+4309-
+4310-            const dias =
+4311-                Number(req.body.dias);
+4312-
+4313-            if (
+4314-                !usuario ||
+4315-                !senha ||
+4316-                !Number.isInteger(dias) ||
+4317-                dias < 1
+4318-            ) {
+4319-
+4320-                return res.json({
+4321-                    sucesso: false,
+4322-                    mensagem:
+4323-                        "Preencha usuário, senha e dias corretamente."
+4324-                });
+4325-
+4326-            }
+4327-
+4328-            const usuarios =
+4329-                await carregarUsuarios();
+4330-
+4331-            const existente =
+4332-                usuarios.find(
+--
+4412-
+4413-                mensagem:
+4414-                    "Erro interno ao criar usuário."
+4415-
+4416-            });
+4417-
+4418-        }
+4419-
+4420-    }
+4421-);
+4422-
+4423-// ==========================================
+4424-// ADMIN — CRIAR TESTE
+4425-// ==========================================
+4426-
+4427:app.post("/api/admin/usuarios/teste", async (req, res) => {
+4428-
+4429-    try {
+4430-
+4431-        if (
+4432-            !req.session.usuario ||
+4433-            req.session.usuario.tipo !== "admin"
+4434-        ) {
+4435-
+4436-            return res.status(403).json({
+4437-                sucesso: false,
+4438-                mensagem: "Acesso negado."
+4439-            });
+4440-
+4441-        }
+4442-
+4443-        const usuario =
+4444-            String(req.body.usuario || "").trim();
+4445-
+4446-        const senha =
+4447-            String(req.body.senha || "");
+4448-
+4449-        const horas =
+4450-            Number(req.body.horas ?? req.body.dias);
+4451-
+4452-        const valor =
+4453-            Number(req.body.valor || 0);
+4454-
+4455-        const telefone =
+4456-            String(req.body.telefone || "").trim();
+4457-
+4458-        if (
+4459-            !usuario ||
+4460-            !senha ||
+4461-            !Number.isInteger(horas) ||
+4462-            horas < 1 ||
+4463-            !Number.isFinite(valor) ||
+4464-            valor < 0
+4465-        ) {
+4466-
+4467-            return res.status(400).json({
+4468-                sucesso: false,
+4469-                mensagem: "Preencha os dados corretamente."
+4470-            });
+4471-
+4472-        }
+--
+4575-                "Erro interno ao criar teste."
+4576-
+4577-        });
+4578-
+4579-    }
+4580-
+4581-});
+4582-
+4583-// ==========================================
+4584-/*
+4585-==========================================
+4586-ADMIN — EXCLUIR USUÁRIO
+4587-==========================================
+4588-*/
+4589-
+4590:app.post("/api/admin/usuarios/excluir", async (req, res) => {
+4591-
+4592-    try {
+4593-
+4594-        if (
+4595-            !req.session.usuario ||
+4596-            req.session.usuario.tipo !== "admin"
+4597-        ) {
+4598-
+4599-            return res.status(403).json({
+4600-                sucesso: false,
+4601-                mensagem: "Acesso negado."
+4602-            });
+4603-
+4604-        }
+4605-
+4606-        const id = Number(req.body.id);
+4607-
+4608-        if (!Number.isInteger(id) || id < 1) {
+4609-
+4610-            return res.status(400).json({
+4611-                sucesso: false,
+4612-                mensagem: "ID do usuário inválido."
+4613-            });
+4614-
+4615-        }
+4616-
+4617-        const usuarios = await carregarUsuarios();
+4618-
+4619-        const usuario = usuarios.find(
+4620-            u => Number(u.id) === id
+4621-        );
+4622-
+4623-        if (!usuario) {
+4624-
+4625-            return res.status(404).json({
+4626-                sucesso: false,
+4627-                mensagem: "Usuário não encontrado."
+4628-            });
+4629-
+4630-        }
+4631-
+4632-        if (usuario.tipo === "admin") {
+4633-
+4634-            return res.status(403).json({
+4635-                sucesso: false,
+--
+4665-            sucesso: false,
+4666-            mensagem: "Erro interno ao excluir usuário."
+4667-        });
+4668-
+4669-    }
+4670-
+4671-});
+4672-
+4673-// ==========================================
+4674-// ADMIN — EDITAR USUÁRIO
+4675-// ==========================================
+4676-
+4677-// ==========================================
+4678-// ==========================================
+4679-
+4680:app.post("/api/admin/usuarios/editar", async (req, res) => {
+4681-
+4682-    try {
+4683-
+4684-        if (
+4685-            !req.session.usuario ||
+4686-            req.session.usuario.tipo !== "admin"
+4687-        ) {
+4688-            return res.status(403).json({
+4689-                sucesso: false,
+4690-                mensagem: "Acesso negado."
+4691-            });
+4692-        }
+4693-
+4694-        const id = Number(req.body.id);
+4695-
+4696-        const usuario =
+4697-            String(req.body.usuario ?? "").trim();
+4698-
+4699-        const senha =
+4700-            String(req.body.senha ?? "");
+4701-
+4702-        const tipo =
+4703-            String(req.body.tipo ?? "usuario")
+4704-                .trim()
+4705-                .toLowerCase();
+4706-
+4707-        if (
+4708-            !Number.isInteger(id) ||
+4709-            id < 1
+4710-        ) {
+4711-            return res.status(400).json({
+4712-                sucesso: false,
+4713-                mensagem: "ID do usuário inválido."
+4714-            });
+4715-        }
+4716-
+4717-        if (!usuario) {
+4718-            return res.status(400).json({
+4719-                sucesso: false,
+4720-                mensagem: "Informe um nome de usuário."
+4721-            });
+4722-        }
+4723-
+4724-        if (!["usuario", "teste", "revendedor", "admin"].includes(tipo)) {
+4725-            return res.status(400).json({
+--
+4808-        return res.status(500).json({
+4809-            sucesso: false,
+4810-            mensagem: "Erro interno ao editar usuário."
+4811-        });
+4812-
+4813-    }
+4814-
+4815-});
+4816-
+4817-// ==========================================
+4818-// ADMIN — SUSPENDER / ATIVAR USUÁRIO
+4819-// ==========================================
+4820-// ==========================================
+4821-// ==========================================
+4822-
+4823:app.post("/api/admin/usuarios/status", async (req, res) => {
+4824-    try {
+4825-        if (
+4826-            !req.session.usuario ||
+4827-            req.session.usuario.tipo !== "admin"
+4828-        ) {
+4829-            return res.status(403).json({
+4830-                sucesso: false,
+4831-                mensagem: "Acesso negado."
+4832-            });
+4833-        }
+4834-
+4835-        const id = Number(req.body.id);
+4836-        const status = String(req.body.status || "").trim();
+4837-
+4838-        if (
+4839-            !Number.isInteger(id) ||
+4840-            id < 1 ||
+4841-            !["ativo", "suspenso"].includes(status)
+4842-        ) {
+4843-            return res.json({
+4844-                sucesso: false,
+4845-                mensagem: "Dados inválidos."
+4846-            });
+4847-        }
+4848-
+4849-        const usuarios = await carregarUsuarios();
+4850-
+4851-        const indice = usuarios.findIndex(
+4852-            u => Number(u.id) === id
+4853-        );
+4854-
+4855-        if (indice === -1) {
+4856-            return res.json({
+4857-                sucesso: false,
+4858-                mensagem: "Usuário não encontrado."
+4859-            });
+4860-        }
+4861-
+4862-        usuarios[indice].status = status;
+4863-
+4864-        await salvarUsuarios(usuarios);
+4865-        return res.json({
+4866-            sucesso: true,
+4867-            mensagem:
+4868-                status === "ativo"
+--
+4872-
+4873-    } catch (erro) {
+4874-        console.error("[ERRO STATUS USUARIO]", erro);
+4875-
+4876-        return res.status(500).json({
+4877-            sucesso: false,
+4878-            mensagem: "Erro interno ao alterar status."
+4879-        });
+4880-    }
+4881-});
+4882-
+4883-// ==========================================
+4884-// ADMIN — RENOVAR USUÁRIO
+4885-// ==========================================
+4886-
+4887:app.post("/api/admin/usuarios/renovar", async (req, res) => {
+4888-
+4889-    try {
+4890-
+4891-        if (
+4892-            !req.session.usuario ||
+4893-            req.session.usuario.tipo !== "admin"
+4894-        ) {
+4895-            return res.status(403).json({
+4896-                sucesso: false,
+4897-                mensagem: "Acesso negado."
+4898-            });
+4899-        }
+4900-
+4901-        const id = Number(req.body.id);
+4902-        const dias = Number(req.body.dias);
+4903-
+4904-        if (
+4905-            !Number.isInteger(id) ||
+4906-            id < 1 ||
+4907-            !Number.isInteger(dias) ||
+4908-            dias < 1
+4909-        ) {
+4910-            return res.json({
+4911-                sucesso: false,
+4912-                mensagem: "Informe uma quantidade válida de dias."
+4913-            });
+4914-        }
+4915-
+4916-        const usuarios = await carregarUsuarios();
+4917-
+4918-        const indice = usuarios.findIndex(
+4919-            u => Number(u.id) === id
+4920-        );
+4921-
+4922-        if (indice === -1) {
+4923-            return res.json({
+4924-                sucesso: false,
+4925-                mensagem: "Usuário não encontrado."
+4926-            });
+4927-        }
+4928-
+4929-        const usuario = usuarios[indice];
+4930-
+4931-        let inicio = Date.now();
+4932-
+--
+5904-        );
+5905-
+5906-        return res.status(500).json({
+5907-            sucesso: false,
+5908-            mensagem: "Erro interno ao renovar cliente."
+5909-        });
+5910-    }
+5911-});
+5912-
+5913-
+5914-
+5915-// ADMIN — LISTAR USUÁRIOS
+5916-// ==========================================
+5917-
+5918-app.get(
+5919:    "/api/admin/usuarios",
+5920-    async (req, res) => {
+5921-
+5922-        try {
+5923-
+5924-            if (
+5925-                !req.session.usuario ||
+5926-                req.session.usuario.tipo !== "admin"
+5927-            ) {
+5928-
+5929-                return res.status(403).json({
+5930-
+5931-                    sucesso: false,
+5932-
+5933-                    mensagem:
+5934-                        "Acesso negado."
+5935-
+5936-                });
+5937-
+5938-            }
+5939-
+5940-            const usuarios =
+5941-                await carregarUsuarios();
+5942-
+5943-            const usuariosLista =
+5944-                usuarios
+5945-                    .map(u => ({
+5946-                        id: u.id,
+5947-                        usuario: u.usuario,
+5948-                        status: u.status,
+5949-                        tipo: u.tipo,
+5950-                        criado_em: u.criado_em,
+5951-                        validade: u.validade,
+5952-                        limite_conexoes: Number(u.limite_conexoes) || 0,
+5953-                        conexoes_utilizadas: Number(u.conexoes_utilizadas) || 0,
+5954-                        revendedor_id: u.revendedor_id || null
+5955-                    }))
+5956-                    .sort(
+5957-                        (a, b) =>
+5958-                            Number(b.id) - Number(a.id)
+5959-                    );
+5960-            return res.json({
+5961-
+5962-                sucesso: true,
+5963-
+5964-                usuarios
+--
+6109-         *
+6110-         * Primeiro verifica se existe sessão.
+6111-         * Depois verifica se a validade do usuário expirou.
+6112-         *
+6113-         * Admin não possui expiração.
+6114-         */
+6115-
+6116-
+6117-        /*
+6118-         * APIs de séries devem responder diretamente em JSON.
+6119-         * Não redirecionar detalhes, temporadas e episódios para /login.
+6120-         */
+6121-        if (
+6122-            req.path.startsWith("/api/serie/") ||
+6123-            req.path.startsWith("/api/series") ||
+6124:            req.path === "/api/acesso-assistir" ||
+6125-            req.path === "/api/pagamentos/criar"
+6126-        ) {
+6127-            return next();
+6128-        }
+6129-
+6130-        if (!req.session || !req.session.usuario) {
+6131-
+6132-            return res.redirect("/login");
+6133-
+6134-        }
+6135-
+6136-        const usuarioSessao = req.session.usuario;
+6137-
+6138-        /*
+6139-         * Usuário vencido continua logado e pode navegar pelo catálogo.
+6140-         * A verificação de acesso para assistir será feita no botão
+6141-         * principal "ASSISTIR".
+6142-         *
+6143-         * Admin e isento nunca dependem de validade.
+6144-         */
+6145-
+6146-        next();
+6147-
+6148-    }
+6149-);
+6150-
+6151-// ==========================================
+6152-// ARQUIVOS DO SITE
+6153-// ==========================================
+6154-
+6155-app.get("/revendedor.html", (req, res) => {
+6156-    res.sendFile(
+6157-        require("path").join(__dirname, "public", "revendedor.html")
+6158-    );
+6159-});
+6160-
+6161-
+6162-app.get("/paginas/minha-lista", (req, res) => {
+6163-    res.sendFile(
+6164-        require("path").join(__dirname, "paginas", "minha-lista.html")
+6165-    );
+6166-});
+6167-
+6168-app.use(
+6169-    express.static(__dirname)
+
+===== FRONTEND CONSULTANDO ACESSO =====
+paginas/filme.html-3605-                    console.log(
+paginas/filme.html-3606-                        "[LUKAFILMES] Verificando acesso:",
+paginas/filme.html-3607-                        filme.titulo,
+paginas/filme.html-3608-                        tmdbId
+paginas/filme.html-3609-                    );
+paginas/filme.html-3610-
+paginas/filme.html-3611-                    try {
+paginas/filme.html-3612-
+paginas/filme.html-3613-                        const respostaAcesso =
+paginas/filme.html-3614-                            await fetch(
+paginas/filme.html:3615:                                "/api/acesso-assistir",
+paginas/filme.html-3616-                                {
+paginas/filme.html-3617-                                    method: "GET",
+paginas/filme.html-3618-                                    credentials: "same-origin",
+paginas/filme.html-3619-                                    cache: "no-store"
+paginas/filme.html-3620-                                }
+paginas/filme.html-3621-                            );
+paginas/filme.html-3622-
+paginas/filme.html-3623-                        const acesso =
+paginas/filme.html-3624-                            await respostaAcesso.json();
+paginas/filme.html-3625-
+paginas/filme.html-3626-                        console.log(
+paginas/filme.html-3627-                            "[LUKAFILMES] Resultado do acesso:",
+paginas/filme.html-3628-                            acesso
+paginas/filme.html-3629-                        );
+paginas/filme.html-3630-
+paginas/filme.html-3631-                        /*
+paginas/filme.html-3632-                         * PRIMEIRO PLAY:
+paginas/filme.html-3633-                         * cliente ainda não possui conta.
+paginas/filme.html-3634-                         *
+paginas/filme.html-3635-                         * Em vez de mandar para o login,
+--
+paginas/filme.html-3650-
+paginas/filme.html-3651-                            return;
+paginas/filme.html-3652-                        }
+paginas/filme.html-3653-
+paginas/filme.html-3654-                        /*
+paginas/filme.html-3655-                         * ACESSO NEGADO / EXPIRADO
+paginas/filme.html-3656-                         *
+paginas/filme.html-3657-                         * NÃO ABRE O PLAYER.
+paginas/filme.html-3658-                         * MOSTRA A TELA DE PAGAMENTO.
+paginas/filme.html-3659-                         */
+paginas/filme.html:3660:                        if (!acesso.permitido) {
+paginas/filme.html-3661-
+paginas/filme.html-3662-                            if (
+paginas/filme.html-3663-                                acesso.motivo ===
+paginas/filme.html-3664-                                "expirado"
+paginas/filme.html-3665-                            ) {
+paginas/filme.html-3666-
+paginas/filme.html-3667-                                await mostrarPagamentoLuka(
+paginas/filme.html-3668-                                    acesso
+paginas/filme.html-3669-                                );
+paginas/filme.html-3670-
+paginas/filme.html-3671-                                return;
+paginas/filme.html-3672-                            }
+paginas/filme.html-3673-
+paginas/filme.html-3674-                            alert(
+paginas/filme.html-3675-                                acesso.mensagem ||
+paginas/filme.html-3676-                                "Seu acesso não está liberado para assistir."
+paginas/filme.html-3677-                            );
+paginas/filme.html-3678-
+paginas/filme.html-3679-                            return;
+paginas/filme.html-3680-                        }
+--
+paginas/filme.html-4166-                    async function () {
+paginas/filme.html-4167-
+paginas/filme.html-4168-                        try {
+paginas/filme.html-4169-
+paginas/filme.html-4170-                            /*
+paginas/filme.html-4171-                             * VERIFICA O ACESSO ANTES
+paginas/filme.html-4172-                             * DE CARREGAR O CONTEÚDO.
+paginas/filme.html-4173-                             */
+paginas/filme.html-4174-                            const respostaAcesso =
+paginas/filme.html-4175-                                await fetch(
+paginas/filme.html:4176:                                    "/api/acesso-assistir",
+paginas/filme.html-4177-                                    {
+paginas/filme.html-4178-                                        method: "GET",
+paginas/filme.html-4179-                                        credentials: "same-origin",
+paginas/filme.html-4180-                                        cache: "no-store"
+paginas/filme.html-4181-                                    }
+paginas/filme.html-4182-                                );
+paginas/filme.html-4183-
+paginas/filme.html-4184-                            const acesso =
+paginas/filme.html-4185-                                await respostaAcesso.json();
+paginas/filme.html-4186-
+paginas/filme.html-4187-                            console.log(
+paginas/filme.html-4188-                                "[LUKAFILMES] Acesso para assistir:",
+paginas/filme.html-4189-                                acesso
+paginas/filme.html-4190-                            );
+paginas/filme.html-4191-
+paginas/filme.html-4192-                            /*
+paginas/filme.html-4193-                             * SEM AUTORIZAÇÃO:
+paginas/filme.html-4194-                             * NÃO CARREGA O PLAYER.
+paginas/filme.html-4195-                             */
+paginas/filme.html:4196:                            if (!acesso.permitido) {
+paginas/filme.html-4197-
+paginas/filme.html-4198-                                if (
+paginas/filme.html-4199-                                    acesso.motivo ===
+paginas/filme.html-4200-                                    "nao_logado"
+paginas/filme.html-4201-                                ) {
+paginas/filme.html-4202-                                    alert(
+paginas/filme.html-4203-                                        "Faça login para assistir."
+paginas/filme.html-4204-                                    );
+paginas/filme.html-4205-                                }
+paginas/filme.html-4206-                                else if (
+paginas/filme.html-4207-                                    acesso.motivo ===
+paginas/filme.html-4208-                                    "expirado"
+paginas/filme.html-4209-                                ) {
+paginas/filme.html-4210-                                    alert(
+paginas/filme.html-4211-                                        "Seu acesso expirou. É necessário renovar para assistir."
+paginas/filme.html-4212-                                    );
+paginas/filme.html-4213-                                }
+paginas/filme.html-4214-                                else {
+paginas/filme.html-4215-                                    alert(
+paginas/filme.html-4216-                                        acesso.mensagem ||
+--
+paginas/series.html-645-    }
+paginas/series.html-646-    #heroSinopseSeries{
+paginas/series.html-647-        font-size:15px;
+paginas/series.html-648-    }
+paginas/series.html-649-}
+paginas/series.html-650-</style>
+paginas/series.html-651-
+paginas/series.html-652-<script>
+paginas/series.html-653-async function carregarHeroSeries(){
+paginas/series.html-654-    try{
+paginas/series.html:655:        const resposta=await fetch("/api/catalogo-series?pagina=1");
+paginas/series.html-656-        const dados=await resposta.json();
+paginas/series.html-657-
+paginas/series.html-658-        const lista=Array.isArray(dados.series)?dados.series:[];
+paginas/series.html-659-
+paginas/series.html-660-        if(!lista.length)return;
+paginas/series.html-661-
+paginas/series.html-662-        const serie=lista[Math.floor(Math.random()*lista.length)];
+paginas/series.html-663-
+paginas/series.html-664-        const fundo=serie.fundo||serie.backdrop_path||serie.capa||"";
+paginas/series.html-665-
+paginas/series.html-666-        const hero=document.getElementById("heroSeries");
+paginas/series.html-667-
+paginas/series.html-668-        if(fundo){
+paginas/series.html-669-            hero.style.backgroundImage='url("'+fundo.replace(/"/g,"%22")+'")';
+paginas/series.html-670-        }
+paginas/series.html-671-
+paginas/series.html-672-        hero.innerHTML=`
+paginas/series.html-673-            <div class="hero-conteudo">
+paginas/series.html-674-                <div class="hero-tag">LUKAFILMES</div>
+paginas/series.html-675-
+
+============================================================
+FIM — API DE ACESSO
+============================================================

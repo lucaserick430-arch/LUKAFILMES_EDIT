@@ -1,0 +1,8 @@
+3870:                            id="lukafilmesPix"
+3887:                            id="lukafilmesCopiarPix"
+3902:                            id="lukafilmesPagamentoFeito"
+3916:                            id="lukafilmesPagamentoStatus"
+3965:                            "lukafilmesCopiarPix"
+3994:                                            "lukafilmesPix"
+4020:                            "lukafilmesPagamentoFeito"
+4061:                                        "lukafilmesPagamentoStatus"

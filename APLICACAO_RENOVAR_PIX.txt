@@ -1,0 +1,18 @@
+===== APLICAÇÃO =====
+OK: mostrarPagamentoLuka(acesso, renovacao = false)
+OK: API recebe renovacao=true somente no fluxo de renovação
+OK: tela diferencia renovação do primeiro fluxo
+OK: WhatsApp diferencia renovação do primeiro pagamento
+OK: evento luka:renovar conectado ao Pix existente
+
+===== BACKUP =====
+paginas/filme.html.backup_renovar_pix_20260907_162012
+
+===== VERIFICAÇÃO =====
+OK — assinatura
+FALHOU — api renovacao
+OK — evento
+OK — mensagem renovação
+
+===== ARQUIVO =====
+paginas/filme.html

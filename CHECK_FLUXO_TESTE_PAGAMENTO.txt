@@ -1,0 +1,338 @@
+========== ACESSO ASSISTIR ==========
+1162:app.get("/api/acesso-assistir", async (req, res) => {
+1163-
+1164-    try {
+1165-
+1166-        if (!req.session || !req.session.usuario) {
+1167-            return res.status(401).json({
+1168-                permitido: false,
+1169-                logado: false,
+1170-                motivo: "nao_logado"
+1171-            });
+1172-        }
+1173-
+1174-        const sessao = req.session.usuario;
+1175-        const usuarios = await carregarUsuarios();
+1176-
+1177-        const pessoa = usuarios.find(
+1178-            u => Number(u.id) === Number(sessao.id)
+1179-        );
+1180-
+1181-        if (!pessoa) {
+1182-            return res.status(404).json({
+1183-                permitido: false,
+1184-                logado: true,
+1185-                motivo: "usuario_nao_encontrado"
+1186-            });
+1187-        }
+1188-
+1189-        const tipo = String(pessoa.tipo || "usuario").toLowerCase();
+1190-        const status = String(pessoa.status || "ativo").toLowerCase();
+1191-
+1192-        if (status !== "ativo") {
+1193-            return res.json({
+1194-                permitido: false,
+1195-                logado: true,
+1196-                motivo: "inativo",
+1197-                mensagem: "Seu acesso está desativado."
+1198-            });
+1199-        }
+1200-
+1201-        if (
+1202-            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+1203-            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+1204-        ) {
+1205-            return res.json({
+1206-                permitido: true,
+1207-                logado: true,
+1208-                tipo,
+1209-                validade: pessoa.validade || null
+1210-            });
+1211-        }
+1212-
+1213-        if (
+1214-            pessoa.validade &&
+1215-            new Date(pessoa.validade).getTime() > Date.now()
+1216-        ) {
+1217-            return res.json({
+1218-                permitido: true,
+1219-                logado: true,
+1220-                tipo,
+1221-                validade: pessoa.validade
+1222-            });
+1223-        }
+1224-
+1225-        return res.json({
+1226-            permitido: false,
+1227-            logado: true,
+1228-            tipo,
+1229-            motivo: "expirado",
+1230-            valor: CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+1231-            dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+1232-            validade: pessoa.validade || null
+1233-        });
+1234-
+1235-    } catch (erro) {
+1236-
+1237-        console.error(
+1238-            "[ACESSO ASSISTIR] Erro:",
+1239-            erro
+1240-        );
+1241-
+1242-        return res.status(500).json({
+1243-            permitido: false,
+1244-            logado: true,
+1245-            motivo: "erro_servidor",
+1246-            mensagem: "Erro interno ao verificar o acesso."
+1247-        });
+1248-
+1249-    }
+1250-
+1251-});
+1252-
+1253-
+1254-// ==========================================
+1255-// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+1256-// ==========================================
+1257-
+1258-
+1259-// ============================================================
+1260-// ADMIN — PAGAMENTOS LUKAFILMES
+1261-// ============================================================
+1262-
+
+========== CRIAR PAGAMENTO ==========
+1510:app.post("/api/pagamentos/criar", async (req, res) => {
+1511-
+1512-    try {
+1513-
+1514-        if (!req.session || !req.session.usuario) {
+1515-            return res.status(401).json({
+1516-                sucesso: false,
+1517-                logado: false,
+1518-                motivo: "nao_logado",
+1519-                mensagem: "Faça login para continuar."
+1520-            });
+1521-        }
+1522-
+1523-        const sessao = req.session.usuario;
+1524-        const usuarios = await carregarUsuarios();
+1525-
+1526-        const pessoa = usuarios.find(
+1527-            u => Number(u.id) === Number(sessao.id)
+1528-        );
+1529-
+1530-        if (!pessoa) {
+1531-            return res.status(404).json({
+1532-                sucesso: false,
+1533-                logado: true,
+1534-                motivo: "usuario_nao_encontrado",
+1535-                mensagem: "Usuário não encontrado."
+1536-            });
+1537-        }
+1538-
+1539-        const tipo = String(
+1540-            pessoa.tipo || "usuario"
+1541-        ).toLowerCase();
+1542-
+1543-        const statusUsuario = String(
+1544-            pessoa.status || "ativo"
+1545-        ).toLowerCase();
+1546-
+1547-        if (statusUsuario !== "ativo") {
+1548-            return res.status(403).json({
+1549-                sucesso: false,
+1550-                motivo: "inativo",
+1551-                mensagem: "Seu acesso está desativado."
+1552-            });
+1553-        }
+1554-
+1555-        if (
+1556-            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+1557-            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+1558-        ) {
+1559-            return res.json({
+1560-                sucesso: true,
+1561-                pagamento_necessario: false,
+1562-                motivo: "isento",
+1563-                tipo
+1564-            });
+1565-        }
+1566-
+1567-        const pagamentosPendentes =
+1568-            await listarPagamentosLuka(
+1569-                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+1570-            );
+1571-
+1572-        const pagamentoExistente =
+1573-            pagamentosPendentes.find(
+1574-                pagamento =>
+1575-                    Number(pagamento.usuario_id) === Number(pessoa.id)
+1576-            );
+1577-
+1578-        if (pagamentoExistente) {
+1579-
+1580-            let pix;
+1581-
+1582-            try {
+1583-                pix = gerarPixCopiaColaLuka();
+1584-            } catch (erroPix) {
+1585-                console.error(
+1586-                    "[PAGAMENTO] Erro ao gerar PIX:",
+1587-                    erroPix
+1588-                );
+1589-            }
+1590-
+1591-            return res.json({
+1592-                sucesso: true,
+1593-                pagamento_necessario: true,
+1594-                pagamento: pagamentoExistente,
+1595-                pix: pix || null,
+1596-                valor: Number(
+1597-                    process.env.PIX_VALOR ||
+1598-                    CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+1599-                ).toFixed(2),
+1600-                nome: process.env.PIX_NOME || "LUKAFILMES",
+1601-                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+1602-            });
+1603-        }
+1604-
+1605-        const idPagamento =
+1606-            await proximoIdPagamentoLuka();
+1607-
+1608-        const pagamento = {
+1609-            id: idPagamento,
+1610-            usuario_id: Number(pessoa.id),
+1611-            usuario: String(
+1612-                pessoa.usuario ||
+1613-                sessao.usuario ||
+1614-                ""
+1615-            ),
+1616-            valor:
+1617-                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+1618-            status:
+1619-                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+1620-            criado_em:
+1621-                new Date().toISOString(),
+1622-            aprovado_em: null,
+1623-            inicio_acesso: null,
+1624-            fim_acesso: null,
+1625-            observacao: null
+1626-        };
+1627-
+1628-        await criarPagamentoLuka(pagamento);
+1629-
+1630-        let pix;
+1631-
+1632-        try {
+1633-            pix = gerarPixCopiaColaLuka();
+1634-        } catch (erroPix) {
+1635-            console.error(
+1636-                "[PAGAMENTO] Erro ao gerar PIX:",
+1637-                erroPix
+1638-            );
+1639-        }
+1640-
+
+========== CADASTRO ==========
+697:app.post("/api/cadastro", async (req, res) => {
+698-    try {
+699-        const nome = String(req.body.nome || "").trim();
+700-        const usuario = String(req.body.usuario || "").trim();
+701-        const senha = String(req.body.senha || "");
+702-        const telefone = String(req.body.telefone || "").trim();
+703-
+704-        if (!nome || !usuario || !senha || !telefone) {
+705-            return res.status(400).json({
+706-                sucesso: false,
+707-                mensagem: "Preencha nome, usuário, senha e telefone."
+708-            });
+709-        }
+710-
+711-        if (nome.length < 2) {
+712-            return res.status(400).json({
+713-                sucesso: false,
+714-                mensagem: "Digite seu nome completo."
+715-            });
+716-        }
+717-
+718-        if (usuario.length < 3) {
+719-            return res.status(400).json({
+720-                sucesso: false,
+721-                mensagem: "O usuário precisa ter pelo menos 3 caracteres."
+722-            });
+723-        }
+724-
+725-        if (senha.length < 6) {
+726-            return res.status(400).json({
+727-                sucesso: false,
+728-                mensagem: "A senha precisa ter pelo menos 6 caracteres."
+729-            });
+730-        }
+731-
+732-        const usuarios = await carregarUsuarios();
+733-
+734-        const existente = usuarios.find(
+735-            u =>
+736-                String(u.usuario || "")
+737-                    .trim()
+738-                    .toLowerCase() === usuario.toLowerCase()
+739-        );
+740-
+741-        if (existente) {
+742-            return res.status(409).json({
+743-                sucesso: false,
+744-                mensagem: "Esse usuário já existe. Escolha outro."
+745-            });
+746-        }
+747-
+748-        const senhaHash = await bcrypt.hash(senha, 12);
+749-
+750-        const novoUsuario = {
+751-            id: proximoId(usuarios),
+752-            nome,
+753-            usuario,
+754-            senha: senhaHash,
+755-            telefone,
+756-            status: "ativo",
+757-            tipo: "usuario",
+758-            validade: null,
+759-            criado_em: new Date().toISOString()
+760-        };
+761-
+762-        usuarios.push(novoUsuario);
+763-
+764-        await salvarUsuarios(usuarios);
+765-
+766-        /*
+767-         * Já deixa o cliente logado depois do cadastro.
+768-         * O cadastro NÃO libera os filmes.
+769-         * A validade continua null até o pagamento ser aprovado.
+770-         */
+771-        // NÃO substituir a sessão do ADMIN.
+772-        // Se um administrador estiver usando a mesma sessão,
+773-        // o cadastro cria o cliente mas mantém o ADMIN logado.
+774-        if (
+775-            !req.session.usuario ||
+776-            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+777-        ) {
+778-            req.session.usuario = {
+779-                id: novoUsuario.id,
+780-                usuario: novoUsuario.usuario,
+781-                tipo: novoUsuario.tipo,
+782-                validade: null
+783-            };
+784-        }
+785-
+786-        /*
+787-         * Garante que a sessão foi gravada antes da resposta.
+788-         */
+789-        await new Promise((resolve, reject) => {
+790-            req.session.save(erro => {
+791-                if (erro) {
+792-                    reject(erro);
+793-                    return;
+794-                }
+795-
+796-                resolve();
+797-            });

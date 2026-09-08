@@ -1,0 +1,55 @@
+========== VERIFICANDO CADASTRO ==========
+
+===== ROTAS CADASTRO NO SERVER =====
+676-    );
+677-});
+678-
+679-
+680-// ==========================================
+681-// LUKAFILMES — CADASTRO DE CLIENTE
+682-// ==========================================
+683-
+684:app.get("/cadastro", (req, res) => {
+685-    res.sendFile(
+686-        path.join(__dirname, "public", "cadastro.html"),
+687-        {
+688-            cacheControl: false
+689-        }
+690-    );
+691-});
+692-
+693-// ==========================================
+694-// LUKAFILMES — API CADASTRO DE CLIENTE
+695-// ==========================================
+696-
+697-app.post("/api/cadastro", async (req, res) => {
+698-    try {
+699-        const nome = String(req.body.nome || "").trim();
+700-        const usuario = String(req.body.usuario || "").trim();
+701-        const senha = String(req.body.senha || "");
+702-        const telefone = String(req.body.telefone || "").trim();
+703-
+704-        if (!nome || !usuario || !senha || !telefone) {
+705-            return res.status(400).json({
+706-                sucesso: false,
+707-                mensagem: "Preencha nome, usuário, senha e telefone."
+708-            });
+709-        }
+710-
+711-        if (nome.length < 2) {
+712-            return res.status(400).json({
+713-                sucesso: false,
+714-                mensagem: "Digite seu nome completo."
+715-            });
+716-        }
+717-
+718-        if (usuario.length < 3) {
+719-            return res.status(400).json({
+
+===== ARQUIVO CADASTRO =====
+-rw-------. 1 u0_a324 u0_a324 9.7K Sep  6 18:43 ./public/cadastro.html
+
+===== TESTE HTTP CADASTRO =====
+HTTP /cadastro = 200
+
+========== FIM ==========

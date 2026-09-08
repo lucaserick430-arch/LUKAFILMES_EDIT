@@ -1,0 +1,141 @@
+        const primeiroLote = [];
+
+
+        for (const filme of filmes) {
+
+            const id = String(
+                filme.id ||
+                filme.tmdb_id ||
+                ""
+            ).trim();
+
+            const tituloNormalizado =
+                String(
+                    filme.titulo ||
+                    ""
+                )
+                .normalize("NFD")
+                .replace(/[\\u0300-\\u036f]/g, "")
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, " ")
+                .trim();
+
+            /*
+             * Proteção dupla contra repetição:
+             *
+             * 1. ID do filme.
+             * 2. Título normalizado.
+             *
+             * Assim o mesmo filme não entra novamente
+             * mesmo que a API apresente alguma diferença
+             * na identificação.
+             */
+            if (
+                (!id && !tituloNormalizado) ||
+                (id && filmesCarregados.has(id)) ||
+                (tituloNormalizado &&
+                 titulosFilmesCarregados.has(tituloNormalizado))
+            ) {
+                continue;
+            }
+
+            if(id)
+                filmesCarregados.add(id);
+
+            if(tituloNormalizado)
+                titulosFilmesCarregados.add(
+                    tituloNormalizado
+                );
+
+            primeiroLote.push(filme);
+
+
+            const criarCard =
+                function(filme) {
+
+                    const card =
+                        document.createElement("div");
+
+                    card.className = "filme";
+
+                    card.innerHTML =
+                        '<img src="' +
+                        (filme.capa || "") +
+                        '" alt="' +
+                        (filme.titulo || "Filme") +
+                        '">' +
+                        '<div class="info">' +
+                        '<h3>' +
+                        (filme.titulo || "Sem título") +
+                        '</h3>' +
+                        '<p>' +
+                        (filme.ano || "") +
+                        '</p>' +
+                        '</div>';
+
+                    card.onclick =
+                        function() {
+
+                            const id =
+                                filme.id ||
+                                filme.tmdb_id ||
+                                filme.tmdbId ||
+                                "";
+
+                            if(!id){
+                                console.warn(
+                                    "[LUKAFILMES] Filme sem ID:",
+                                    filme
+                                );
+                                return;
+                            }
+
+                            /*
+                             * Mantém o objeto disponível para compatibilidade.
+                             */
+                            try{
+                                localStorage.setItem(
+                                    "filmeSelecionado",
+                                    JSON.stringify(filme)
+                                );
+
+                                localStorage.setItem(
+                                    "filmeSelecionadoHome_" +
+                                    String(id),
+                                    JSON.stringify(filme)
+                                );
+                            }catch(e){}
+
+                            sessionStorage.setItem(
+                                "lukafilmes_estado_filmes",
+                                JSON.stringify({
+                                    pagina:
+                                        paginaFilmes,
+                                    scroll:
+                                        window.scrollY
+                                })
+                            );
+
+                            /*
+                             * ABERTURA DIRETA:
+                             * o ID acompanha o clique.
+                             */
+                            window.location.href =
+                                "/paginas/filme.html?id=" +
+                                encodeURIComponent(id);
+                        };
+
+                    return card;
+                };
+
+
+            grade.appendChild(
+                criarCard(filme)
+            );
+
+            adicionados++;
+        }
+
+
+        /*
+         * Mantém o primeiro lote disponível

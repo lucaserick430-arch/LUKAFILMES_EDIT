@@ -1,0 +1,7 @@
+2563:#pesquisaFilmesPagina{
+2577:#pesquisaFilmesPagina:focus{
+2581:#pesquisaFilmesPagina::placeholder{
+2591:    #pesquisaFilmesPagina{
+2771:                id="pesquisaFilmesPagina"
+4656:<script id="lukafilmes-pesquisa-filmes-final">
+4659:    const campo = document.getElementById("pesquisaFilmesPagina");

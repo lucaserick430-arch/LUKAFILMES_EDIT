@@ -1,0 +1,71 @@
+========== CONFIRMACAO INDEX DA RAIZ ==========
+
+===== TITULO =====
+13:<title>LUKAFILMES — Filmes e Séries</title>
+
+===== HEADER =====
+4005-
+4006-        <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
+4007-
+4008-        <div class="profile"><img loading="lazy" decoding="async" src="/favicon/file_000000006768820e93d46c5d164e8bd9.png" alt="LUKAFILMES"></div>
+4009-    </div>
+4010:</header>
+4011-
+4012-
+4013-<div class="desktop-user-menu" id="desktopUserMenu">
+4014-    <div class="lukafilmes-notificacao-menu-item">
+4015-        <button
+4016-    id="lukaNotificationButton"
+4017-    type="button"
+4018-    aria-label="Notificações"
+4019-    aria-expanded="false"
+4020-    title="Notificações">
+4021-    <span aria-hidden="true">🔔</span>
+4022-    <span id="lukaNotificationBadge"></span>
+4023-</button>
+4024-    </div>
+4025-
+4026-    <div id="desktopUserOptions">
+4027-        <a href="/admin.html" class="lukafilmes-menu-admin">ADMIN</a>
+4028-    </div>
+4029-    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+4030-</div>
+4031-
+4032-<div class="search-box" id="searchBox">
+4033-    <input
+4034-        id="searchInput"
+4035-        type="search"
+4036-        placeholder="Pesquisar filmes"
+4037-        autocomplete="off"
+4038-        onkeydown="if(event.key==='Enter') pesquisar()"
+4039-    >
+4040-</div>
+4041-
+4042-<div class="mobile-menu" id="mobileMenu">
+4043-
+4044-    <div class="lukafilmes-notificacao-menu-item">
+4045-        <button
+
+===== HERO =====
+4106-        onclick="logout(); return false;"
+4107-    >Sair</a>
+4108-
+4109-</div>
+4110-
+4111:<section class="hero">
+4112-
+4113-    <div
+4114-        class="hero-bg"
+4115-        id="heroBg"
+4116-        style="background-image:url('https://image.tmdb.org/t/p/original');">
+4117-    </div>
+4118-
+4119-    
+
+===== TAMANHO =====
+292514 bytes | 2026-09-05 04:08:36.418759487 -0300 | ./index.html
+
+===== TESTE HTTP =====
+<title>LUKAFILMES — Filmes e Séries</title>
+
+===== FIM =====

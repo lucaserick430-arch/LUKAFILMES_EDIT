@@ -1,0 +1,20 @@
+========== SCRIPTS ENCONTRADOS ==========
+Quantidade: 8
+
+SCRIPT 1: OK
+SCRIPT 4: OK
+SCRIPT 5: OK
+SCRIPT 6: OK
+SCRIPT 7: OK
+SCRIPT 8: OK
+
+========== RESULTADO ==========
+Scripts JavaScript verificados: 6
+Erros de sintaxe: 0
+SINTAXE OK
+
+========== VERIFICAÇÕES ==========
+mostrarPagamentoLuka: OK
+assistirEpisodio async: OK
+/api/acesso-assistir: OK
+playerSerie no pagamento: OK

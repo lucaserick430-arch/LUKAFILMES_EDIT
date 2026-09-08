@@ -598,6 +598,8 @@ app.use((req, res, next) => {
     next();
 });
 
+
+
 // ==========================================
 // SESSÃO
 // ==========================================
@@ -645,21 +647,17 @@ app.get("/login", (req, res) => {
     );
 });
 
+// ==========================================
+// LUKAFILMES — ENTRADA COMO VISITANTE
+// ==========================================
 
-// ==========================================
-// ENTRADA COMO VISITANTE
-// ==========================================
-app.get("/entrar-visitante", (req, res, next) => {
+app.get("/entrar-visitante", (req, res) => {
+
+    // Visitante passa a ter uma sessão própria.
+    // Isso permite acessar a Home sem precisar de usuário/senha.
     req.session.visitante = true;
 
-    req.session.save((err) => {
-        if (err) {
-            console.error("[VISITANTE] Erro ao salvar sessão:", err);
-            return next(err);
-        }
-
-        return res.redirect("/");
-    });
+    return res.redirect("/");
 });
 
 // ==========================================
@@ -5668,6 +5666,8 @@ app.get("/api/revendedor/eu", async (req, res) => {
     }
 });
 
+
+
 // ==========================================
 // REVENDEDOR — EDITAR CLIENTE
 // ==========================================
@@ -6218,6 +6218,7 @@ app.use(
         if (
 
             req.path === "/login" ||
+            req.path === "/entrar-visitante" ||
             req.path === "/favicon/lukafilmes.svg" ||
             req.path === "/favicon/lukafilmes.png" ||
             req.path === "/favicon/file_000000006768820e93d46c5d164e8bd9.png" ||
@@ -6277,7 +6278,10 @@ app.use(
             return next();
         }
 
-        if (!req.session || !req.session.usuario) {
+        if (
+            (!req.session || !req.session.usuario) &&
+            (!req.session || !req.session.visitante)
+        ) {
 
             return res.redirect("/login");
 
@@ -6312,24 +6316,6 @@ app.get("/revendedor.html", (req, res) => {
 app.get("/paginas/minha-lista", (req, res) => {
     res.sendFile(
         require("path").join(__dirname, "paginas", "minha-lista.html")
-    );
-});
-
-// ==========================================
-// LUKAFILMES — TELA INICIAL DE ACESSO
-// ==========================================
-app.get("/", (req, res) => {
-
-    // Cliente logado ou visitante autorizado: entra na Home
-    if (req.session && (req.session.usuario || req.session.visitante)) {
-        return res.sendFile(
-            path.join(__dirname, "index.html")
-        );
-    }
-
-    // Primeiro acesso: mostra a tela original de login/entrada
-    return res.sendFile(
-        path.join(__dirname, "public", "login.html")
     );
 });
 
@@ -6472,7 +6458,6 @@ module.exports = app
 
 
 const PORT_RENDER = process.env.PORT || 3000;
-
 app.listen(PORT_RENDER, "0.0.0.0", () => {
     console.log(`LUKAFILMES iniciado na porta ${PORT_RENDER}`);
 });

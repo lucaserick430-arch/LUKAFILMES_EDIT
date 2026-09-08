@@ -1,0 +1,44 @@
+2798-        });
+2799-    }
+2800-});
+2801-
+2802-// ==========================================
+2803-// PESQUISAR SÉRIES — TMDB
+2804-// ==========================================
+2805-
+2806:app.get('/api/pesquisar-series', async (req, res) => {
+2807-    try {
+2808-
+2809-        const busca = String(req.query.q || '').trim();
+2810-
+2811-        if (!busca) {
+2812-            return res.json({
+2813-                sucesso: true,
+2814-                resultados: []
+2815-            });
+2816-        }
+2817-
+2818-        const dados = await tmdb(
+2819-            '/search/tv' +
+2820-            '?query=' + encodeURIComponent(busca) +
+2821-            '&language=pt-BR' +
+2822-            '&page=1' +
+2823-            '&include_adult=false'
+2824-        );
+2825-
+2826-        const series = Array.isArray(dados.results) ? dados.results.map(serie => ({
+2827-                id: serie.id,
+2828-                titulo: serie.name || serie.original_name || 'Sem título',
+2829-                capa: serie.poster_path
+2830-                    ? TMDB_IMAGE + serie.poster_path
+2831-                    : '',
+2832-                fundo: serie.backdrop_path
+2833-                    ? 'https://image.tmdb.org/t/p/w1280' + serie.backdrop_path
+2834-                    : '',
+2835-                nota: serie.vote_average || 0,
+2836-                votos: serie.vote_count || 0,
+2837-                ano: serie.first_air_date
+2838-                    ? serie.first_air_date.substring(0, 4)
+2839-                    : '',
+2840-                sinopse: serie.overview || ''
+2841-            }))

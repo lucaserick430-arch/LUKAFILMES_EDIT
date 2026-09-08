@@ -1,0 +1,10 @@
+====================================
+PAGAMENTO ADICIONADO À SÉRIE
+====================================
+OK: função copiada da página de filmes.
+OK: playerFilme -> playerSerie.
+OK: texto adaptado para série.
+OK: nenhuma alteração no catálogo.
+OK: nenhuma alteração nos episódios.
+OK: nenhuma alteração no servidor.
+====================================

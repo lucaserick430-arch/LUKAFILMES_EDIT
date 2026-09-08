@@ -1,0 +1,1044 @@
+==================================================
+ LUKAFILMES - CONTINUAÇÃO PAGAMENTO / TESTES
+==================================================
+
+========== 1. PAGAMENTO CRIAR ==========
+});
+
+
+// ==========================================
+// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+// ==========================================
+
+app.post("/api/pagamentos/criar", async (req, res) => {
+
+    try {
+
+        if (!req.session || !req.session.usuario) {
+            return res.status(401).json({
+                sucesso: false,
+                logado: false,
+                motivo: "nao_logado",
+                mensagem: "Faça login para continuar."
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                sucesso: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado",
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const tipo = String(
+            pessoa.tipo || "usuario"
+        ).toLowerCase();
+
+        const statusUsuario = String(
+            pessoa.status || "ativo"
+        ).toLowerCase();
+
+        if (statusUsuario !== "ativo") {
+            return res.status(403).json({
+                sucesso: false,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: false,
+                motivo: "isento",
+                tipo
+            });
+        }
+
+        const pagamentosPendentes =
+            await listarPagamentosLuka(
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+            );
+
+        const pagamentoExistente =
+            pagamentosPendentes.find(
+                pagamento =>
+                    Number(pagamento.usuario_id) === Number(pessoa.id)
+            );
+
+        if (pagamentoExistente) {
+
+            let pix;
+
+            try {
+                pix = gerarPixCopiaColaLuka();
+            } catch (erroPix) {
+                console.error(
+                    "[PAGAMENTO] Erro ao gerar PIX:",
+                    erroPix
+                );
+            }
+
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: true,
+                pagamento: pagamentoExistente,
+                pix: pix || null,
+                valor: Number(
+                    process.env.PIX_VALOR ||
+                    CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+                ).toFixed(2),
+                nome: process.env.PIX_NOME || "LUKAFILMES",
+                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+            });
+        }
+
+        const idPagamento =
+            await proximoIdPagamentoLuka();
+
+        const pagamento = {
+            id: idPagamento,
+            usuario_id: Number(pessoa.id),
+            usuario: String(
+                pessoa.usuario ||
+                sessao.usuario ||
+                ""
+            ),
+            valor:
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+            criado_em:
+                new Date().toISOString(),
+            aprovado_em: null,
+            inicio_acesso: null,
+            fim_acesso: null,
+            observacao: null
+        };
+
+        await criarPagamentoLuka(pagamento);
+
+        let pix;
+
+        try {
+            pix = gerarPixCopiaColaLuka();
+        } catch (erroPix) {
+            console.error(
+                "[PAGAMENTO] Erro ao gerar PIX:",
+                erroPix
+            );
+        }
+
+        return res.json({
+            sucesso: true,
+            pagamento_necessario: true,
+            pagamento,
+            pix: pix || null,
+            valor: Number(
+                process.env.PIX_VALOR ||
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+            ).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[PAGAMENTO] Erro ao criar pagamento:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível criar o pagamento."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// PIX LUKAFILMES — COPIA E COLA
+// ==========================================
+
+app.get("/api/pix", (req, res) => {
+
+    try {
+
+        const pix = gerarPixCopiaColaLuka();
+
+        return res.json({
+            sucesso: true,
+            valor: Number(process.env.PIX_VALOR || 18).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA",
+            pix
+        });
+
+    } catch (erro) {
+
+        console.error("[PIX] Erro ao gerar Pix:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível gerar o Pix."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// LUKAFILMES — PRESENÇA EM TEMPO REAL
+// ==========================================
+
+app.post("/api/presenca", (req, res) => {
+    if (!req.session || !req.session.usuario) {
+        return res.status(401).json({
+            sucesso: false
+        });
+    }
+
+    lukaRegistrarPresenca(req);
+
+    res.json({
+        sucesso: true,
+        online: true
+    });
+});
+
+app.get("/api/admin/presenca", async (req, res) => {
+    try {
+
+========== 2. TODAS ROTAS PAGAMENTO ==========
+1052-        }
+1053-
+1054-        return res.json({
+1055-            permitido: false,
+1056-            logado: true,
+1057-            tipo,
+1058-            motivo: "expirado",
+1059-            valor: CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+1060-            dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+1061-            validade: pessoa.validade || null
+1062-        });
+1063-
+1064-    } catch (erro) {
+1065-
+1066-        console.error(
+1067-            "[ACESSO ASSISTIR] Erro:",
+1068-            erro
+1069-        );
+1070-
+1071-        return res.status(500).json({
+1072-            permitido: false,
+1073-            logado: true,
+1074-            motivo: "erro_servidor",
+1075-            mensagem: "Erro interno ao verificar o acesso."
+1076-        });
+1077-
+1078-    }
+1079-
+1080-});
+1081-
+1082-
+1083-// ==========================================
+1084-// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+1085-// ==========================================
+1086-
+1087:app.post("/api/pagamentos/criar", async (req, res) => {
+1088-
+1089-    try {
+1090-
+1091-        if (!req.session || !req.session.usuario) {
+1092-            return res.status(401).json({
+1093-                sucesso: false,
+1094-                logado: false,
+1095-                motivo: "nao_logado",
+1096-                mensagem: "Faça login para continuar."
+1097-            });
+1098-        }
+1099-
+1100-        const sessao = req.session.usuario;
+1101-        const usuarios = await carregarUsuarios();
+1102-
+1103-        const pessoa = usuarios.find(
+1104-            u => Number(u.id) === Number(sessao.id)
+1105-        );
+1106-
+1107-        if (!pessoa) {
+1108-            return res.status(404).json({
+1109-                sucesso: false,
+1110-                logado: true,
+1111-                motivo: "usuario_nao_encontrado",
+1112-                mensagem: "Usuário não encontrado."
+1113-            });
+1114-        }
+1115-
+1116-        const tipo = String(
+1117-            pessoa.tipo || "usuario"
+1118-        ).toLowerCase();
+1119-
+1120-        const statusUsuario = String(
+1121-            pessoa.status || "ativo"
+1122-        ).toLowerCase();
+
+========== 3. APROVAR / RECUSAR ==========
+83-            callback(null);
+84-
+85-        } catch (erro) {
+86-
+87-            callback(erro);
+88-
+89-        }
+90-
+91-    }
+92-
+93-    async touch(sid, sess, callback) {
+94-
+95-        try {
+96-
+97-            await this.store.setJSON(
+98-                `sess_${sid}`,
+99-                sess
+100-            );
+101-
+102-            callback(null);
+103-
+104-        } catch (erro) {
+105-
+106-            callback(erro);
+107-
+108-        }
+109-
+110-    }
+111-
+112-}
+113-
+114-let Database = null;
+115-const { createClient } = require("@libsql/client/http");
+116-
+117-// ==========================================
+118-// CONFIGURACAO DO NOVO SISTEMA DE ACESSO
+119-// ==========================================
+120-
+121-const CONFIGURACAO_ACESSO_LUKAFILMES = {
+122-    valorMensal: 18.00,
+123-    diasAcesso: 30,
+124-
+125-    tipos: {
+126-        ADMIN: "admin",
+127-        CLIENTE: "usuario",
+128-        ISENTO: "isento",
+129-        TESTE: "teste"
+130-    },
+131-
+132-    pagamentos: {
+133:        PENDENTE: "pendente",
+134:        APROVADO: "aprovado",
+135:        RECUSADO: "recusado"
+136-    }
+137-};
+138-
+139-
+140-// ==========================================
+141-// PIX FIXO LUKAFILMES - COPIA E COLA
+142-// ==========================================
+143-
+144-function crc16PixLuka(str) {
+145-    let crc = 0xFFFF;
+146-
+147-    for (let i = 0; i < str.length; i++) {
+148-        crc ^= str.charCodeAt(i) << 8;
+149-
+150-        for (let j = 0; j < 8; j++) {
+151-            if (crc & 0x8000) {
+152-                crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+153-            } else {
+154-                crc = (crc << 1) & 0xFFFF;
+155-            }
+156-        }
+157-    }
+158-
+159-    return crc.toString(16).toUpperCase().padStart(4, "0");
+160-}
+161-
+162-function campoPixLuka(id, valor) {
+163-    const texto = String(valor ?? "");
+164-    return id + String(texto.length).padStart(2, "0") + texto;
+165-}
+166-
+167-function gerarPixCopiaColaLuka() {
+168-    const chave = String(process.env.PIX_CHAVE || "").trim();
+169-    const nome = String(process.env.PIX_NOME || "LUKAFILMES")
+170-        .trim()
+171-        .substring(0, 25);
+172-    const cidade = String(process.env.PIX_CIDADE || "CARAPICUIBA")
+173-        .trim()
+174-        .substring(0, 15);
+175-    const valor = Number(process.env.PIX_VALOR || 18).toFixed(2);
+176-
+177-    if (!chave) {
+178-        throw new Error("PIX_CHAVE não configurada no .env");
+179-    }
+180-
+181-    const merchantAccount =
+182-        campoPixLuka("00", "br.gov.bcb.pix") +
+183-        campoPixLuka("01", chave);
+184-
+185-    const payloadSemCRC =
+--
+196-
+197-    return payloadSemCRC + crc16PixLuka(payloadSemCRC);
+198-}
+199-
+200-const USUARIOS_STORE = "lukafilmes-usuarios";
+201-const USUARIOS_KEY = "usuarios";
+202-
+203-const ambienteLocal =
+204-    process.env.NETLIFY_DEV === "true" ||
+205-    process.env.RENDER === "true" ||
+206-    process.env.NETLIFY_LOCAL === "true" ||
+207-    (
+208-        !process.env.NETLIFY &&
+209-        !process.env.AWS_LAMBDA_FUNCTION_NAME &&
+210-        process.env.NODE_ENV !== "production"
+211-    );
+212-console.log("[DIAGNOSTICO] ambienteLocal =", ambienteLocal);
+213-let bancoLocal = null;
+214-
+215-const turso = process.env.TURSO_DATABASE_URL
+216-  ? createClient({
+217-      url: process.env.TURSO_DATABASE_URL,
+218-      authToken: process.env.TURSO_AUTH_TOKEN
+219-    })
+220-  : null;
+221-
+222-let tursoUsuariosPreparado = false;
+223-
+224-async function prepararTursoUsuarios() {
+225-  if (!turso || tursoUsuariosPreparado) return;
+226-
+227-  await turso.execute(`
+228-    CREATE TABLE IF NOT EXISTS lukafilmes_usuarios (
+229-      id INTEGER PRIMARY KEY,
+230-      dados TEXT NOT NULL
+231-    )
+232-  `);
+233-
+234-  tursoUsuariosPreparado = true;
+235-}
+236-
+237-async function prepararTursoPagamentos() {
+238-  if (!turso) return;
+239-
+240-  await turso.execute(`
+241-    CREATE TABLE IF NOT EXISTS lukafilmes_pagamentos (
+242-      id INTEGER PRIMARY KEY,
+243-      usuario_id INTEGER,
+244-      usuario TEXT NOT NULL,
+245-      valor REAL NOT NULL,
+246:      status TEXT NOT NULL DEFAULT 'pendente',
+247-      criado_em TEXT NOT NULL,
+248:      aprovado_em TEXT,
+249-      inicio_acesso TEXT,
+250-      fim_acesso TEXT,
+251-      observacao TEXT
+252-    )
+253-  `);
+254-}
+255-
+256-async function criarPagamentoLuka(dados) {
+257-    await prepararTursoPagamentos();
+258-
+259-    if (!turso) {
+260-        throw new Error("Turso não configurado.");
+261-    }
+262-
+263-    const resultado = await turso.execute({
+264-        sql: `
+265-            INSERT INTO lukafilmes_pagamentos
+266-            (
+267-                id,
+268-                usuario_id,
+269-                usuario,
+270-                valor,
+271-                status,
+272-                criado_em,
+273:                aprovado_em,
+274-                inicio_acesso,
+275-                fim_acesso,
+276-                observacao
+277-            )
+278-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+279-        `,
+280-        args: [
+281-            Number(dados.id),
+282-            dados.usuario_id == null ? null : Number(dados.usuario_id),
+283-            String(dados.usuario || ""),
+284-            Number(dados.valor || CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal),
+285:            String(dados.status || CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE),
+286-            String(dados.criado_em || new Date().toISOString()),
+287:            dados.aprovado_em || null,
+288-            dados.inicio_acesso || null,
+289-            dados.fim_acesso || null,
+290-            dados.observacao || null
+291-        ]
+292-    });
+293-
+294-    return resultado;
+295-}
+296-
+297-async function proximoIdPagamentoLuka() {
+298-    await prepararTursoPagamentos();
+299-
+300-    if (!turso) {
+301-        throw new Error("Turso não configurado.");
+302-    }
+303-
+304-    const resultado = await turso.execute(`
+305-        SELECT COALESCE(MAX(id), 0) + 1 AS proximo_id
+306-        FROM lukafilmes_pagamentos
+307-    `);
+308-
+309-    return Number(resultado.rows?.[0]?.proximo_id || 1);
+310-}
+311-
+312-async function listarPagamentosLuka(status = null) {
+313-    await prepararTursoPagamentos();
+314-
+315-    if (!turso) {
+316-        throw new Error("Turso não configurado.");
+317-    }
+318-
+319-    if (status) {
+320-        const resultado = await turso.execute({
+321-            sql: `
+322-                SELECT *
+323-                FROM lukafilmes_pagamentos
+324-                WHERE status = ?
+325-                ORDER BY id DESC
+326-            `,
+327-            args: [String(status)]
+328-        });
+329-
+330-        return resultado.rows || [];
+331-    }
+332-
+333-    const resultado = await turso.execute(`
+334-        SELECT *
+335-        FROM lukafilmes_pagamentos
+336-        ORDER BY id DESC
+337-    `);
+338-
+339-    return resultado.rows || [];
+340-}
+341-
+342-async function buscarPagamentoLuka(id) {
+343-    await prepararTursoPagamentos();
+344-
+345-    if (!turso) {
+346-        throw new Error("Turso não configurado.");
+347-    }
+348-
+349-    const resultado = await turso.execute({
+350-        sql: `
+351-            SELECT *
+352-            FROM lukafilmes_pagamentos
+353-            WHERE id = ?
+354-            LIMIT 1
+355-        `,
+356-        args: [Number(id)]
+357-    });
+358-
+359-    return resultado.rows?.[0] || null;
+360-}
+361-
+362-async function atualizarPagamentoLuka(id, dados) {
+363-    await prepararTursoPagamentos();
+364-
+365-    if (!turso) {
+366-        throw new Error("Turso não configurado.");
+367-    }
+368-
+369-    const campos = [];
+370-    const args = [];
+371-
+372-    const permitidos = [
+373-        "status",
+374:        "aprovado_em",
+375-        "inicio_acesso",
+376-        "fim_acesso",
+377-        "observacao"
+378-    ];
+379-
+380-    for (const campo of permitidos) {
+381-        if (Object.prototype.hasOwnProperty.call(dados, campo)) {
+382-            campos.push(`${campo} = ?`);
+383-            args.push(dados[campo] == null ? null : String(dados[campo]));
+384-        }
+385-    }
+386-
+387-    if (campos.length === 0) {
+388-        return false;
+389-    }
+390-
+391-    args.push(Number(id));
+392-
+393-    await turso.execute({
+394-        sql: `
+395-            UPDATE lukafilmes_pagamentos
+396-            SET ${campos.join(", ")}
+397-            WHERE id = ?
+398-        `,
+399-        args
+400-    });
+401-
+402-    return true;
+403-}
+404-
+405-function obterBancoLocal() {
+406-
+407-    if (!Database) {
+408-        Database = require("better-sqlite3");
+409-    }
+410-
+411-    if (!bancoLocal) {
+412-
+413-        bancoLocal = new Database(
+414-            path.join(__dirname, "banco.db")
+415-        );
+416-    }
+417-
+418-    return bancoLocal;
+419-}
+420-
+421-async function carregarUsuarios() {
+422-  if (turso) {
+423-    await prepararTursoUsuarios();
+424-
+--
+719-            return res.status(400).json({
+720-                sucesso: false,
+721-                mensagem: "O usuário precisa ter pelo menos 3 caracteres."
+722-            });
+723-        }
+724-
+725-        if (senha.length < 6) {
+726-            return res.status(400).json({
+727-                sucesso: false,
+728-                mensagem: "A senha precisa ter pelo menos 6 caracteres."
+729-            });
+730-        }
+731-
+732-        const usuarios = await carregarUsuarios();
+733-
+734-        const existente = usuarios.find(
+735-            u =>
+736-                String(u.usuario || "")
+737-                    .trim()
+738-                    .toLowerCase() === usuario.toLowerCase()
+739-        );
+740-
+741-        if (existente) {
+742-            return res.status(409).json({
+743-                sucesso: false,
+744-                mensagem: "Esse usuário já existe. Escolha outro."
+745-            });
+746-        }
+747-
+748-        const senhaHash = await bcrypt.hash(senha, 12);
+749-
+750-        const novoUsuario = {
+751-            id: proximoId(usuarios),
+752-            nome,
+753-            usuario,
+754-            senha: senhaHash,
+755-            telefone,
+756-            status: "ativo",
+757-            tipo: "usuario",
+758-            validade: null,
+759-            criado_em: new Date().toISOString()
+760-        };
+761-
+762-        usuarios.push(novoUsuario);
+763-
+764-        await salvarUsuarios(usuarios);
+765-
+766-        /*
+767-         * Já deixa o cliente logado depois do cadastro.
+768-         * O cadastro NÃO libera os filmes.
+769:         * A validade continua null até o pagamento ser aprovado.
+770-         */
+771-        // NÃO substituir a sessão do ADMIN.
+772-        // Se um administrador estiver usando a mesma sessão,
+773-        // o cadastro cria o cliente mas mantém o ADMIN logado.
+774-        if (
+775-            !req.session.usuario ||
+776-            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+777-        ) {
+778-            req.session.usuario = {
+779-                id: novoUsuario.id,
+780-                usuario: novoUsuario.usuario,
+781-                tipo: novoUsuario.tipo,
+782-                validade: null
+783-            };
+784-        }
+785-
+786-        /*
+787-         * Garante que a sessão foi gravada antes da resposta.
+788-         */
+789-        await new Promise((resolve, reject) => {
+790-            req.session.save(erro => {
+791-                if (erro) {
+792-                    reject(erro);
+793-                    return;
+794-                }
+795-
+796-                resolve();
+797-            });
+798-        });
+799-
+800-        console.log(
+801-            "[CADASTRO] Novo cliente:",
+802-            novoUsuario.usuario
+803-        );
+804-
+805-        return res.json({
+806-            sucesso: true,
+807-            mensagem: "Conta criada com sucesso!",
+808-            usuario: novoUsuario.usuario,
+809-            nome: novoUsuario.nome,
+810-            telefone: novoUsuario.telefone
+811-        });
+812-
+813-    } catch (erro) {
+814-        console.error("[CADASTRO] Erro:", erro);
+815-
+816-        return res.status(500).json({
+817-            sucesso: false,
+818-            mensagem: "Não foi possível criar sua conta."
+819-        });
+--
+1094-                logado: false,
+1095-                motivo: "nao_logado",
+1096-                mensagem: "Faça login para continuar."
+1097-            });
+1098-        }
+1099-
+1100-        const sessao = req.session.usuario;
+1101-        const usuarios = await carregarUsuarios();
+1102-
+1103-        const pessoa = usuarios.find(
+1104-            u => Number(u.id) === Number(sessao.id)
+1105-        );
+1106-
+1107-        if (!pessoa) {
+1108-            return res.status(404).json({
+1109-                sucesso: false,
+1110-                logado: true,
+1111-                motivo: "usuario_nao_encontrado",
+1112-                mensagem: "Usuário não encontrado."
+1113-            });
+1114-        }
+1115-
+1116-        const tipo = String(
+1117-            pessoa.tipo || "usuario"
+1118-        ).toLowerCase();
+1119-
+1120-        const statusUsuario = String(
+1121-            pessoa.status || "ativo"
+1122-        ).toLowerCase();
+1123-
+1124-        if (statusUsuario !== "ativo") {
+1125-            return res.status(403).json({
+1126-                sucesso: false,
+1127-                motivo: "inativo",
+1128-                mensagem: "Seu acesso está desativado."
+1129-            });
+1130-        }
+1131-
+1132-        if (
+1133-            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+1134-            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+1135-        ) {
+1136-            return res.json({
+1137-                sucesso: true,
+1138-                pagamento_necessario: false,
+1139-                motivo: "isento",
+1140-                tipo
+1141-            });
+1142-        }
+1143-
+1144:        const pagamentosPendentes =
+1145-            await listarPagamentosLuka(
+1146:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+1147-            );
+1148-
+1149-        const pagamentoExistente =
+1150:            pagamentosPendentes.find(
+1151-                pagamento =>
+1152-                    Number(pagamento.usuario_id) === Number(pessoa.id)
+1153-            );
+1154-
+1155-        if (pagamentoExistente) {
+1156-
+1157-            let pix;
+1158-
+1159-            try {
+1160-                pix = gerarPixCopiaColaLuka();
+1161-            } catch (erroPix) {
+1162-                console.error(
+1163-                    "[PAGAMENTO] Erro ao gerar PIX:",
+1164-                    erroPix
+1165-                );
+1166-            }
+1167-
+1168-            return res.json({
+1169-                sucesso: true,
+1170-                pagamento_necessario: true,
+1171-                pagamento: pagamentoExistente,
+1172-                pix: pix || null,
+1173-                valor: Number(
+1174-                    process.env.PIX_VALOR ||
+1175-                    CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+1176-                ).toFixed(2),
+1177-                nome: process.env.PIX_NOME || "LUKAFILMES",
+1178-                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+1179-            });
+1180-        }
+1181-
+1182-        const idPagamento =
+1183-            await proximoIdPagamentoLuka();
+1184-
+1185-        const pagamento = {
+1186-            id: idPagamento,
+1187-            usuario_id: Number(pessoa.id),
+1188-            usuario: String(
+1189-                pessoa.usuario ||
+1190-                sessao.usuario ||
+1191-                ""
+1192-            ),
+1193-            valor:
+1194-                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+1195-            status:
+1196:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+1197-            criado_em:
+1198-                new Date().toISOString(),
+1199:            aprovado_em: null,
+1200-            inicio_acesso: null,
+1201-            fim_acesso: null,
+1202-            observacao: null
+1203-        };
+1204-
+1205-        await criarPagamentoLuka(pagamento);
+1206-
+1207-        let pix;
+1208-
+1209-        try {
+1210-            pix = gerarPixCopiaColaLuka();
+1211-        } catch (erroPix) {
+1212-            console.error(
+1213-                "[PAGAMENTO] Erro ao gerar PIX:",
+1214-                erroPix
+1215-            );
+1216-        }
+1217-
+1218-        return res.json({
+1219-            sucesso: true,
+1220-            pagamento_necessario: true,
+1221-            pagamento,
+1222-            pix: pix || null,
+1223-            valor: Number(
+1224-                process.env.PIX_VALOR ||
+1225-                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+1226-            ).toFixed(2),
+1227-            nome: process.env.PIX_NOME || "LUKAFILMES",
+1228-            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+1229-        });
+1230-
+1231-    } catch (erro) {
+1232-
+1233-        console.error(
+1234-            "[PAGAMENTO] Erro ao criar pagamento:",
+1235-            erro
+1236-        );
+1237-
+1238-        return res.status(500).json({
+1239-            sucesso: false,
+1240-            mensagem: "Não foi possível criar o pagamento."
+1241-        });
+1242-
+1243-    }
+1244-
+1245-});
+1246-
+1247-
+1248-// ==========================================
+1249-// PIX LUKAFILMES — COPIA E COLA
+
+========== 4. TESTE AUTO ==========
+
+========== 5. ACESSO ASSISTIR ==========
+app.get("/api/debug-acesso", async (req, res) => {
+    try {
+        if (!req.session || !req.session.usuario) {
+            return res.json({
+                logado: false,
+                sessao: null
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        return res.json({
+            logado: true,
+            sessao: {
+                id: sessao.id,
+                usuario: sessao.usuario,
+                tipo: sessao.tipo,
+                validade: sessao.validade || null
+            },
+            pessoa: pessoa ? {
+                id: pessoa.id,
+                usuario: pessoa.usuario,
+                tipo: pessoa.tipo,
+                status: pessoa.status,
+                validade: pessoa.validade || null
+            } : null,
+            agora: new Date().toISOString()
+        });
+    } catch (erro) {
+        console.error("[DEBUG ACESSO] Erro:", erro);
+        return res.status(500).json({
+            erro: "erro_servidor"
+        });
+    }
+});
+
+app.get("/api/acesso-assistir", async (req, res) => {
+
+    try {
+
+        if (!req.session || !req.session.usuario) {
+            return res.status(401).json({
+                permitido: false,
+                logado: false,
+                motivo: "nao_logado"
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                permitido: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado"
+            });
+        }
+
+        const tipo = String(pessoa.tipo || "usuario").toLowerCase();
+        const status = String(pessoa.status || "ativo").toLowerCase();
+
+        if (status !== "ativo") {
+            return res.json({
+                permitido: false,
+                logado: true,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                permitido: true,
+                logado: true,
+                tipo,
+                validade: pessoa.validade || null
+            });
+        }
+
+        if (
+            pessoa.validade &&
+            new Date(pessoa.validade).getTime() > Date.now()
+        ) {
+            return res.json({
+                permitido: true,
+                logado: true,
+                tipo,
+                validade: pessoa.validade
+            });
+        }
+
+        return res.json({
+            permitido: false,
+            logado: true,
+            tipo,
+            motivo: "expirado",
+            valor: CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+            dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+            validade: pessoa.validade || null
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ACESSO ASSISTIR] Erro:",
+            erro
+        );
+
+        return res.status(500).json({
+            permitido: false,
+            logado: true,
+            motivo: "erro_servidor",
+            mensagem: "Erro interno ao verificar o acesso."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+// ==========================================
+
+app.post("/api/pagamentos/criar", async (req, res) => {
+
+    try {
+
+
+========== 6. SESSAO TESTE ==========
+
+========== 7. CHECK ==========
+
+========== FIM ==========

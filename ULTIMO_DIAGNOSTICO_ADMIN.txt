@@ -1,0 +1,290 @@
+========== BOTÃO DO MENU ==========
+</head>
+
+<body>
+
+<header class="header" id="header">
+
+    <div class="logo">
+        LUKA<span>FILMES</span>
+    </div>
+
+    <nav class="nav">
+        <a href="#" class="active">Início</a>
+        <a href="paginas/filmes.html">Filmes</a>
+        <a href="paginas/series.html">Séries</a>
+        <a
+            class="continuar-header-btn"
+            href="/paginas/continuar-assistindo.html"
+            aria-label="Continuar assistindo"
+        >▶ Continuar Assistindo</a>
+    </nav>
+
+    <div class="header-right">
+        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+
+        <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
+
+        <div class="profile">L</div>
+    </div>
+</header>
+
+
+<div class="desktop-user-menu" id="desktopUserMenu">
+    <div id="desktopUserOptions"></div>
+    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+</div>
+
+<div class="search-box" id="searchBox">
+    <input
+        id="searchInput"
+        type="search"
+        placeholder="Pesquisar filmes"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter') pesquisar()"
+    >
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#">Início</a>
+    <a href="paginas/filmes.html">Filmes</a>
+    <a href="paginas/series.html">Séries</a>
+    
+    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+</div>
+
+<section class="hero">
+
+    <div
+        class="hero-bg"
+        id="heroBg"
+        style="background-image:url('https://image.tmdb.org/t/p/original');">
+    </div>
+
+========== FUNÇÕES DO MENU ==========
+<script>
+
+let destaqueAtual = null;
+
+/* ================= HEADER ================= */
+
+window.addEventListener("scroll",()=>{
+    const header=document.getElementById("header");
+
+    if(window.scrollY>30){
+        header.classList.add("scrolled");
+    }else{
+        header.classList.remove("scrolled");
+    }
+});
+
+function toggleSearch(){
+    const box=document.getElementById("searchBox");
+    box.classList.toggle("show");
+
+    if(box.classList.contains("show")){
+        setTimeout(()=>{
+            document.getElementById("searchInput").focus();
+        },100);
+    }
+}
+
+function toggleMenu(){
+
+    /*
+     * CELULAR:
+     * mantém exatamente o menu mobile atual.
+     */
+    if(window.innerWidth <= 768){
+
+        document
+            .getElementById("mobileMenu")
+            .classList
+            .toggle("show");
+
+        return;
+    }
+
+    /*
+     * COMPUTADOR:
+     * abre somente o menu de usuário.
+     */
+    const menu =
+        document.getElementById("desktopUserMenu");
+
+    if(!menu){
+        return;
+    }
+
+    menu.classList.toggle("show");
+
+    if(
+        menu.classList.contains("show") &&
+        !menu.dataset.carregado
+    ){
+        carregarMenuUsuarioDesktop();
+    }
+}
+
+
+/* =========================================================
+   MENU DO USUÁRIO — DESKTOP
+   ========================================================= */
+
+async function carregarMenuUsuarioDesktop(){
+
+    const menu =
+        document.getElementById("desktopUserMenu");
+
+    const opcoes =
+        document.getElementById("desktopUserOptions");
+
+    if(!menu || !opcoes){
+        return;
+    }
+
+    try{
+
+        const resposta =
+            await fetch(
+                "/api/eu",
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+        if(!resposta.ok){
+            return;
+        }
+
+        const dados =
+            await resposta.json();
+
+        if(
+            !dados ||
+            !dados.logado ||
+            !dados.usuario
+        ){
+            return;
+        }
+
+
+========== SCRIPTS NAVEGAÇÃO ==========
+
+========== TESTE AUTO ADMIN ==========
+  if(campoSenha) campoSenha.required=true;
+  if(campoDias) campoDias.required=true;
+
+  if(btnSalvar){
+   btnSalvar.style.display="";
+  }
+
+  if(btnManual){
+   btnManual.style.transform="scale(1.02)";
+   btnManual.style.boxShadow="0 8px 25px rgba(0,0,0,.25)";
+  }
+
+  if(btnAuto){
+   btnAuto.style.transform="";
+   btnAuto.style.boxShadow="";
+  }
+
+  if(btnSalvar){
+   btnSalvar.textContent="Criar";
+  }
+ }
+}
+
+async function LUKA_CRIAR_TESTES_AUTOMATICOS(){
+
+ const horas=Number(document.getElementById("lukaAutoHoras").value);
+ const quantidade=Number(document.getElementById("lukaAutoQuantidade").value);
+ const limite_conexoes=Number(document.getElementById("lukaAutoConexoes").value);
+
+ if(!Number.isInteger(horas) || horas<1 || horas>72){
+  toast("Escolha uma duração entre 1 e 72 horas.");
+  return;
+ }
+
+ if(!Number.isInteger(quantidade) || quantidade<1 || quantidade>100){
+  toast("A quantidade deve estar entre 1 e 100 testes.");
+  return;
+ }
+
+ if(!Number.isInteger(limite_conexoes) || limite_conexoes<1){
+  toast("O limite de conexões deve ser no mínimo 1.");
+  return;
+ }
+
+ const btn=document.getElementById("btnSalvar");
+
+ if(btn){
+  btn.disabled=true;
+  btn.textContent="⚡ Gerando...";
+ }
+
+ try{
+
+  const r=await fetch("/api/admin/usuarios/teste-auto",{
+   method:"POST",
+   credentials:"include",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    horas,
+    quantidade,
+    limite_conexoes
+   })
+  });
+
+  const d=await r.json().catch(()=>({}));
+
+  if(!r.ok || d.sucesso===false){
+   throw new Error(d.mensagem || "Não foi possível gerar os testes.");
+  }
+
+  fecharModal();
+
+  if(typeof window.LUKA_MOSTRAR_RESULTADO_TESTE==="function"){
+   window.LUKA_MOSTRAR_RESULTADO_TESTE(d.testes || []);
+  }else{
+   mostrarMensagemCriacao(d,{
+    usuario:"",
+    senha:"",
+    valor:0,
+    telefone:""
+   });
+  }
+
+  if(typeof carregar==="function"){
+   await carregar();
+  }
+
+ }catch(err){
+
+  toast("❌ "+err.message);
+
+ }finally{
+
+  if(btn){
+   btn.disabled=false;
+   btn.textContent="⚡ Gerar testes";
+  }
+ }
+}
+
+
+
+========== ROTAS TESTE SERVIDOR ==========
+129:        TESTE: "teste"
+1343:                u => u.online && u.tipo !== "teste" && u.tipo !== "revendedor"
+1345:            testesOnline: resultado.filter(
+1346:                u => u.online && u.tipo === "teste"
+3809:app.post("/api/admin/usuarios/teste", async (req, res) => {
+3890:        const novoTeste = {
+3900:            tipo: "teste",
+3916:        usuarios.push(novoTeste);
+3921:            "[ADMIN] Teste criado:",
+3930:                "Teste criado com sucesso.",
+3934:            tipo: "teste",
+3957:                "Erro interno ao criar teste."
+4106:        if (!["usuario", "teste", "revendedor", "admin"].includes(tipo)) {

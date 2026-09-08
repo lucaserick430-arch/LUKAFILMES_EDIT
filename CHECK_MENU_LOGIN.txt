@@ -1,0 +1,689 @@
+========== MENU ATUAL ==========
+1-<!DOCTYPE html>
+2-<html lang="pt-BR">
+3-<head>
+4-<meta charset="UTF-8">
+5-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+6-<meta name="theme-color" content="#050505">
+7:<title>LUKAFILMES — Filmes e Séries</title>
+8-
+9-<style>
+10-*{box-sizing:border-box;margin:0;padding:0}
+11-
+12-html,body{
+13-    background:#050505;
+14-    color:#fff;
+15-    font-family:Arial,Helvetica,sans-serif;
+16-    overflow-x:hidden;
+17-}
+18-
+19-body{
+20-    min-height:100vh;
+21-}
+22-
+23-/* ================= HEADER ================= */
+24-
+25-.header{
+26-    position:fixed;
+27-    top:0;
+28-    left:0;
+29-    width:100%;
+30-    height:72px;
+31-    z-index:1000;
+32-    display:flex;
+33-    align-items:center;
+34-    padding:0 4%;
+35-    transition:.35s;
+36-    background:linear-gradient(
+37-        to bottom,
+38-        rgba(0,0,0,.95),
+39-        rgba(0,0,0,.55),
+40-        transparent
+41-    );
+42-}
+--
+89-    white-space:nowrap;
+90-    cursor:pointer;
+91-    transition:.2s ease;
+92-}
+93-
+94-.continuar-header-btn:hover{
+95-    color:#fff;
+96-}
+97-
+98-@media(max-width:700px){
+99-    .continuar-header-btn{
+100-        font-size:13px;
+101-    }
+102-}
+103-
+104:.header-right{
+105-    margin-left:auto;
+106-    display:flex;
+107-    align-items:center;
+108-    gap:18px;
+109-}
+110-.search-btn,
+111-.profile-btn,
+112-.menu-btn{
+113-    border:0;
+114-    background:none;
+115-    color:#fff;
+116-    cursor:pointer;
+117-    font-size:20px;
+118-}
+119-
+120-.profile{
+121-    width:32px;
+122-    height:32px;
+123-    border-radius:5px;
+124-    background:linear-gradient(135deg,#e50914,#7b0000);
+125-    display:flex;
+126-    align-items:center;
+127-    justify-content:center;
+128-    font-size:14px;
+129-    font-weight:bold;
+130-}
+131-
+132-
+133-
+134-/* ================= HERO ================= */
+135-
+136-.hero{
+137-    height:92vh;
+138-    min-height:570px;
+139-    position:relative;
+--
+419-    }
+420-
+421-    .logo{
+422-        font-size:20px;
+423-        margin-right:0;
+424-    }
+425-
+426-    .nav{
+427-        display:none;
+428-    }
+429-
+430-    .menu-btn{
+431-        display:block;
+432-    }
+433-
+434:    .header-right{
+435-        gap:12px;
+436-    }
+437-
+438-    .hero{
+439-        height:75vh;
+440-        min-height:500px;
+441-        align-items:flex-end;
+442-    }
+443-
+444-    .hero-content{
+445-        margin-left:18px;
+446-        margin-bottom:70px;
+447-        padding-top:0;
+448-        width:calc(100% - 36px);
+449-    }
+450-
+451-    .hero-title{
+452-        font-size:43px;
+453-        letter-spacing:-2px;
+454-    }
+455-
+456-    .hero-description{
+457-        font-size:14px;
+458-        line-height:1.45;
+459-        max-height:84px;
+460-        overflow:hidden;
+461-    }
+462-
+463-    .hero-info{
+464-        font-size:12px;
+465-    }
+466-
+467-    .btn{
+468-        padding:11px 17px;
+469-        font-size:13px;
+--
+1164-
+1165-
+1166-<style id="lukafilmes-continuar-header-final">
+1167-</style>
+1168-
+1169-
+1170-<style id="lukafilmes-mobile-menu-final">
+1171-/* =========================================================
+1172-   LUKAFILMES — MENU MOBILE FINAL
+1173-   Desktop permanece inalterado.
+1174-   ========================================================= */
+1175-
+1176-@media(max-width:700px){
+1177-
+1178-    /* O NAV continua transparente para permitir
+1179:       que Continuar Assistindo participe do header. */
+1180-    .nav{
+1181-        display:contents !important;
+1182-    }
+1183-
+1184:    /* No celular somente Continuar Assistindo permanece
+1185:       do NAV. Início, Filmes e Séries ficam ocultos. */
+1186-    .nav a:not(.continuar-header-btn){
+1187-        display:none !important;
+1188-    }
+1189-
+1190-    /* Header-right deixa de formar uma caixa própria. */
+1191:    .header-right{
+1192-        display:contents !important;
+1193-    }
+1194-
+1195-    /* Perfil fica no canto superior direito. */
+1196-    .profile{
+1197-        position:absolute !important;
+1198-        right:18px !important;
+1199-        top:10px !important;
+1200-        width:28px !important;
+1201-        height:28px !important;
+1202-        z-index:20 !important;
+1203-    }
+1204-
+1205-    /* MENU FICA ABAIXO DO PERFIL */
+1206-    .menu-btn{
+1207-        display:block !important;
+1208-        position:absolute !important;
+1209-        right:17px !important;
+1210-        top:39px !important;
+1211-        width:30px !important;
+1212-        height:22px !important;
+1213-        padding:0 !important;
+1214-        margin:0 !important;
+1215-        z-index:20 !important;
+1216-        line-height:22px !important;
+1217-    }
+1218-
+1219-    /* Pesquisa continua antes da área do menu. */
+1220-    .search-btn{
+1221-        position:relative !important;
+1222-        z-index:10 !important;
+1223-        margin-right:52px !important;
+1224-    }
+1225-
+1226:    /* Continuar Assistindo fica antes da pesquisa,
+1227-       sem ficar colado. */
+1228-    .continuar-header-btn{
+1229-        display:inline-flex !important;
+1230-        align-items:center !important;
+1231-        margin-left:auto !important;
+1232-        margin-right:12px !important;
+1233-        color:#ddd !important;
+1234-        font-size:13px !important;
+1235-        white-space:nowrap !important;
+1236-        position:relative !important;
+1237-        z-index:10 !important;
+1238-    }
+1239-}
+1240-</style>
+1241-
+1242-
+1243-
+1244-<style id="lukafilmes-menu-mobile-final">
+1245-
+1246-@media(max-width:700px){
+1247-
+1248:    /* Esconde Início, Filmes e Séries no celular */
+1249-    .nav{
+1250-        display:contents !important;
+1251-    }
+1252-
+1253-    .nav a:not(.continuar-header-btn){
+1254-        display:none !important;
+1255-    }
+1256-
+1257-    /* Header-right não cria uma coluna horizontal */
+1258:    .header-right{
+1259-        display:contents !important;
+1260-    }
+1261-
+1262-    /* L — topo da coluna direita */
+1263-    .profile{
+1264-        position:absolute !important;
+1265-        right:18px !important;
+1266-        top:8px !important;
+1267-        width:28px !important;
+1268-        height:28px !important;
+1269-        z-index:30 !important;
+1270-    }
+1271-
+1272-    /* ☰ — diretamente abaixo do L */
+1273-    .menu-btn{
+1274-        display:block !important;
+1275-        position:absolute !important;
+1276-        right:17px !important;
+1277-        top:38px !important;
+1278-        width:30px !important;
+1279-        height:26px !important;
+1280-        padding:0 !important;
+1281-        margin:0 !important;
+1282-        z-index:30 !important;
+1283-        line-height:26px !important;
+1284-    }
+1285-
+1286-    /* 🔍 — diretamente abaixo do menu */
+1287-    .search-btn{
+1288-        display:block !important;
+1289-        position:absolute !important;
+1290-        right:17px !important;
+1291-        top:64px !important;
+1292-        width:30px !important;
+1293-        height:26px !important;
+1294-        padding:0 !important;
+1295-        margin:0 !important;
+1296-        z-index:30 !important;
+1297-        line-height:26px !important;
+1298-    }
+1299-
+1300:    /* Continuar Assistindo fica à esquerda da coluna */
+1301-    .continuar-header-btn{
+1302-        display:inline-flex !important;
+1303-        align-items:center !important;
+1304-        margin-left:auto !important;
+1305-        margin-right:58px !important;
+1306-        color:#ddd !important;
+1307-        font-size:13px !important;
+1308-        white-space:nowrap !important;
+1309-        position:relative !important;
+1310-        z-index:20 !important;
+1311-    }
+1312-}
+1313-</style>
+1314-</head>
+1315-
+1316-<body>
+1317-
+1318-<header class="header" id="header">
+1319-
+1320-    <div class="logo">
+1321-        LUKA<span>FILMES</span>
+1322-    </div>
+1323-
+1324-    <nav class="nav">
+1325-        <a href="#" class="active">Início</a>
+1326:        <a href="paginas/filmes.html">Filmes</a>
+1327:        <a href="paginas/series.html">Séries</a>
+1328-        <a
+1329-            class="continuar-header-btn"
+1330-            href="/paginas/continuar-assistindo.html"
+1331-            aria-label="Continuar assistindo"
+1332:        >▶ Continuar Assistindo</a>
+1333-    </nav>
+1334-
+1335:    <div class="header-right">
+1336-        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+1337-
+1338-        <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
+1339-
+1340-        <div class="profile">L</div>
+1341-    </div>
+1342-</header>
+1343-
+1344-
+1345-<div class="desktop-user-menu" id="desktopUserMenu">
+1346-    <div id="desktopUserOptions"></div>
+1347-
+1348-    <a
+1349-        href="/admin.html"
+1350-        id="lukafilmesDesktopAdmin"
+1351-        style="display:none;"
+1352-        data-lukafilmes-admin-link="true"
+1353-    >⚙️ ADMIN</a>
+1354-
+1355-    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+1356-</div>
+1357-
+1358-<div class="search-box" id="searchBox">
+1359-    <input
+1360-        id="searchInput"
+1361-        type="search"
+1362-        placeholder="Pesquisar filmes"
+1363-        autocomplete="off"
+1364-        onkeydown="if(event.key==='Enter') pesquisar()"
+1365-    >
+1366-</div>
+1367-
+1368-<div class="mobile-menu" id="mobileMenu">
+1369-    <a href="#">Início</a>
+1370:    <a href="paginas/filmes.html">Filmes</a>
+1371:    <a href="paginas/series.html">Séries</a>
+1372-
+1373-    <a
+1374-        href="/admin.html"
+1375-        id="lukafilmesMenuPainel"
+1376-        style="display:none;"
+1377-        data-lukafilmes-painel="true"
+1378-    >ADMIN</a>
+1379-
+1380-    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+1381-</div>
+1382-
+1383-
+1384-<!-- ================= BARRA ENTRADA CLIENTE ================= -->
+1385-<section class="hero">
+1386-
+1387-    <div
+1388-        class="hero-bg"
+1389-        id="heroBg"
+1390-        style="background-image:url('https://image.tmdb.org/t/p/original');">
+1391-    </div>
+1392-
+1393-    
+1394-<iframe
+1395-    id="heroTrailer"
+1396-    title="Trailer do filme"
+1397-    allow="autoplay; encrypted-media; picture-in-picture"
+1398-    allowfullscreen>
+1399-</iframe>
+1400-
+1401-    <div class="hero-overlay"></div>
+1402-
+1403-    <div class="hero-content">
+1404-
+1405-        <div class="hero-badge">
+1406-            <strong>●</strong> LUKAFILMES ORIGINAL
+--
+1428-        </div>
+1429-
+1430-    </div>
+1431-</section>
+1432-
+1433-<main class="content">
+1434-
+1435-    <section class="section">
+1436-        <h2 class="section-title">🔥 Em destaque</h2>
+1437-        <div class="row" id="destaques">
+1438-            <div class="loading">Carregando filmes...</div>
+1439-        </div>
+1440-    </section>
+1441-
+1442-    <section class="section">
+1443:        <h2 class="section-title">🎬 Filmes populares</h2>
+1444-        <div class="row" id="filmes">
+1445-            <div class="loading">Carregando...</div>
+1446-        </div>
+1447-    </section>
+1448-
+1449-    <section class="section">
+1450:        <h2 class="section-title">📺 Séries populares</h2>
+1451-        <div class="row" id="series">
+1452-            <div class="loading">Carregando...</div>
+1453-        </div>
+1454-    </section>
+1455-
+1456-    <section class="section">
+1457-        <h2 class="section-title">🆕 Lançamentos</h2>
+1458-        <div class="row" id="lancamentos">
+1459-            <div class="loading">Carregando...</div>
+1460-        </div>
+1461-    </section>
+1462-
+1463-    <section class="section">
+1464-        <h2 class="section-title">🏆 Mais assistidos</h2>
+1465-        <div class="row" id="top10">
+1466-            <div class="loading">Carregando...</div>
+1467-        </div>
+1468-    </section>
+1469-
+1470-</main>
+1471-
+1472-<footer>
+1473:    <strong>LUKAFILMES</strong> — Filmes e séries para você assistir.
+1474-</footer>
+1475-
+1476-<script>
+1477-
+1478-let destaqueAtual = null;
+1479-
+1480-/* ================= HEADER ================= */
+1481-
+1482-window.addEventListener("scroll",()=>{
+1483-    const header=document.getElementById("header");
+1484-
+1485-    if(window.scrollY>30){
+1486-        header.classList.add("scrolled");
+1487-    }else{
+1488-        header.classList.remove("scrolled");
+1489-    }
+1490-});
+1491-
+1492-function toggleSearch(){
+1493-    const box=document.getElementById("searchBox");
+1494-    box.classList.toggle("show");
+1495-
+1496-    if(box.classList.contains("show")){
+1497-        setTimeout(()=>{
+1498-            document.getElementById("searchInput").focus();
+1499-        },100);
+1500-    }
+1501-}
+1502-
+1503-function toggleMenu(){
+1504-
+1505-    /*
+1506-     * CELULAR:
+1507-     * mantém exatamente o menu mobile atual.
+1508-     */
+--
+2226-}
+2227-
+2228-/* ================= CARREGAMENTO ================= */
+2229-
+2230-async function carregarHome(){
+2231-
+2232-    /*
+2233-     * HOME DINÂMICA LUKAFILMES
+2234-     *
+2235-     * A cada atualização escolhemos páginas diferentes
+2236-     * dos catálogos existentes.
+2237-     *
+2238-     * O servidor continua responsável por consultar o TMDB.
+2239-     */
+2240-
+2241:    const baseFilmes = [
+2242-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+2243-        11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+2244-    ];
+2245-
+2246-    const baseSeries = [
+2247-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+2248-        11, 12, 13, 14, 15
+2249-    ];
+2250-
+2251-    /*
+2252-     * Semente baseada no horário.
+2253-     * Assim uma atualização pode trazer
+2254-     * páginas diferentes sem alterar o servidor.
+2255-     */
+2256-    const agora = Date.now();
+2257-
+2258-    function escolherPaginas(lista, quantidade){
+2259-
+2260-        const copia = [...lista];
+2261-
+2262-        let semente = agora;
+2263-
+2264-        for(let i = copia.length - 1; i > 0; i--){
+2265-
+2266-            semente =
+2267-                (semente * 9301 + 49297) % 233280;
+2268-
+2269-            const indice =
+2270-                Math.floor(
+2271-                    (semente / 233280) * (i + 1)
+2272-                );
+2273-
+2274-            [copia[i], copia[indice]] =
+2275-                [copia[indice], copia[i]];
+2276-        }
+2277-
+2278-        return copia.slice(0, quantidade);
+2279-    }
+2280-
+2281:    const paginasFilmes =
+2282:        escolherPaginas(baseFilmes, 5);
+2283-
+2284-    const paginasSeries =
+2285-        escolherPaginas(baseSeries, 3);
+2286-
+2287-    /*
+2288-     * Busca várias páginas em paralelo.
+2289-     */
+2290:    const respostasFilmes =
+2291-        await Promise.all(
+2292:            paginasFilmes.map(pagina =>
+2293-                buscarJSON(
+2294-                    "/api/catalogo-filmes?pagina=" +
+2295-                    pagina
+2296-                )
+2297-            )
+2298-        );
+2299-
+2300-    const respostasSeries =
+2301-        await Promise.all(
+2302-            paginasSeries.map(pagina =>
+2303-                buscarJSON(
+2304-                    "/api/catalogo-series?pagina=" +
+2305-                    pagina
+2306-                )
+2307-            )
+2308-        );
+2309-
+2310-    /*
+2311-     * Junta todos os filmes.
+2312-     */
+2313-    let filmes = [];
+2314-
+2315:    for(const resposta of respostasFilmes){
+2316-
+2317-        const lista =
+2318-            normalizarLista(resposta);
+2319-
+2320-        filmes.push(...lista);
+2321-    }
+2322-
+2323-    /*
+2324-     * Junta todas as séries.
+2325-     */
+2326-    let series = [];
+2327-
+2328-    for(const resposta of respostasSeries){
+2329-
+2330-        const lista =
+2331-            normalizarLista(resposta);
+2332-
+2333-        series.push(...lista);
+2334-    }
+2335-
+2336-    /*
+2337-     * Remove duplicados.
+2338-     */
+2339-    function removerDuplicados(lista){
+2340-
+2341-        const mapa = new Map();
+2342-
+2343-        for(const item of lista){
+2344-
+2345-            const id =
+2346-                idItem(item) ||
+2347-                titulo(item);
+2348-
+2349-            if(!mapa.has(String(id))){
+2350-                mapa.set(String(id), item);
+--
+2890-
+2891-            return (
+2892-                (notaB * 1000 + votosB) -
+2893-                (notaA * 1000 + votosA)
+2894-            );
+2895-        });
+2896-
+2897-    renderizar(
+2898-        "top10",
+2899-        top.slice(0, 10),
+2900-        true
+2901-    );
+2902-
+2903-    console.log(
+2904-        "[HOME DINÂMICA]",
+2905:        "Filmes:",
+2906-        filmes.length,
+2907:        "| Séries:",
+2908-        series.length,
+2909-        "| Páginas filmes:",
+2910:        paginasFilmes.join(","),
+2911-        "| Páginas séries:",
+2912-        paginasSeries.join(",")
+2913-    );
+2914-}
+2915-carregarHome();
+2916-
+2917-</script>
+2918-
+2919-
+2920-<script>
+2921-function logout(){
+2922-    fetch("/logout", {
+2923-        method: "POST"
+2924-    })
+2925-    .finally(function(){
+2926-        window.location.href = "/login";
+2927-    });
+2928-}
+2929-</script>
+2930-
+2931-
+2932-<style id="lukafilmes-pesquisa-home-final">
+2933-#resultadosBuscaHome {
+2934-    position: absolute;
+2935-    top: 100%;
+2936-    left: 0;
+2937-    right: 0;
+2938-    z-index: 9999;
+2939-    max-height: 70vh;
+2940-    overflow-y: auto;
+2941-    background: #111;
+2942-    border-radius: 0 0 12px 12px;
+2943-    box-shadow: 0 12px 30px rgba(0,0,0,.65);
+2944-}
+2945-
+
+========== LOGIN ==========
+2916-
+2917-</script>
+2918-
+2919-
+2920-<script>
+2921-function logout(){
+2922-    fetch("/logout", {
+2923-        method: "POST"
+2924-    })
+2925-    .finally(function(){
+2926:        window.location.href = "/login";
+2927-    });
+2928-}
+2929-</script>
+2930-
+2931-
+2932-<style id="lukafilmes-pesquisa-home-final">
+2933-#resultadosBuscaHome {
+2934-    position: absolute;
+2935-    top: 100%;
+2936-    left: 0;
+2937-    right: 0;
+2938-    z-index: 9999;
+2939-    max-height: 70vh;
+2940-    overflow-y: auto;
+2941-    background: #111;
+2942-    border-radius: 0 0 12px 12px;
+2943-    box-shadow: 0 12px 30px rgba(0,0,0,.65);
+2944-}
+2945-
+2946-.busca-home-item {

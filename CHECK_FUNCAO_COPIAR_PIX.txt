@@ -1,0 +1,66 @@
+                                        "✅ PIX COPIADO";
+
+                                    setTimeout(
+                                        function () {
+                                            botaoCopiar.innerHTML =
+                                                "📋 COPIAR PIX";
+                                        },
+                                        2000
+                                    );
+
+                                } catch (erro) {
+
+                                    const campo =
+                                        document.getElementById(
+                                            "lukafilmesPix"
+                                        );
+
+                                    if (campo) {
+
+                                        campo.focus();
+                                        campo.select();
+
+                                        try {
+                                            document.execCommand(
+                                                "copy"
+                                            );
+                                        } catch (_) {}
+
+                                    }
+
+                                    botaoCopiar.innerHTML =
+                                        "✅ PIX COPIADO";
+                                }
+
+                            };
+
+                    }
+
+                    const botaoFeito =
+                        document.getElementById(
+                            "lukafilmesPagamentoFeito"
+                        );
+
+                    if (botaoFeito) {
+
+                        botaoFeito.onclick =
+                            function () {
+
+                                const nomeUsuario =
+                                    String(
+                                        pagamento &&
+                                        pagamento.usuario
+                                            ? pagamento.usuario
+                                            : "cliente"
+                                    );
+
+                                const idPagamento =
+                                    pagamento &&
+                                    pagamento.id
+                                        ? Number(pagamento.id)
+                                        : "";
+
+                                const mensagem =
+                                    [
+                                        "🎬 LUKAFILMES — COMPROVANTE DE PAGAMENTO",
+                                        "",

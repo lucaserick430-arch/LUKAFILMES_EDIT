@@ -1,0 +1,231 @@
+========== SALVAR USUARIOS ==========
+475-    }
+476-  );
+477-
+478-  if (!Array.isArray(dados)) {
+479-    return [];
+480-  }
+481-
+482-  return dados;
+483-}
+484-
+485:async function salvarUsuarios(usuarios) {
+486-  if (turso) {
+487-    await prepararTursoUsuarios();
+488-
+489-    await turso.execute({
+490-      sql: `
+491-        INSERT INTO lukafilmes_usuarios (id, dados)
+492-        VALUES (1, ?)
+493-        ON CONFLICT(id) DO UPDATE SET dados = excluded.dados
+494-      `,
+495-      args: [JSON.stringify(Array.isArray(usuarios) ? usuarios : [])]
+496-    });
+497-
+498-    return true;
+499-  }
+500-
+501-  if (ambienteLocal) {
+502-    const db = obterBancoLocal();
+503-
+504-    db.prepare("DELETE FROM usuarios").run();
+505-
+506-    const inserir = db.prepare(`
+507-      INSERT INTO usuarios
+508-      (id, usuario, senha, status, tipo, validade, criado_em, limite_conexoes, conexoes_utilizadas, revendedor_id)
+509-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+510-    `);
+511-
+512-    const inserirTodos = db.transaction((lista) => {
+513-      for (const u of lista) {
+514-        inserir.run(
+515-          u.id,
+516-          u.usuario,
+517-          u.senha,
+518-          u.status || "ativo",
+519-          u.tipo || "usuario",
+520-          u.validade || null,
+
+========== RECUSAR PAGAMENTO ==========
+
+========== TESTES ==========
+998-            return res.status(403).json({
+999-                sucesso: false,
+1000-                mensagem: "Acesso restrito ao administrador."
+1001-            });
+1002-        }
+1003-
+1004-        const usuarios = await carregarUsuarios();
+1005-
+1006-        let teste = usuarios.find(
+1007-            u =>
+1008:                String(u.tipo || "").toLowerCase() === "teste" &&
+1009-                String(u.status || "").toLowerCase() === "ativo"
+1010-        );
+1011-
+1012-        if (!teste) {
+1013-            const ids = usuarios
+1014-                .map(u => Number(u.id))
+1015-                .filter(Number.isFinite);
+1016-
+1017-            const novoId = ids.length ? Math.max(...ids) + 1 : 1;
+1018-
+1019-            teste = {
+1020-                id: novoId,
+1021:                nome: "TESTE LUKAFILMES",
+1022-                usuario: "teste_lukafilmes",
+1023-                senha: "",
+1024-                telefone: "",
+1025-                status: "ativo",
+1026:                tipo: "teste",
+1027-                validade: null,
+1028-                criado_em: new Date().toISOString(),
+1029-                limite_conexoes: 1,
+1030-                conexoes_utilizadas: 0
+1031-            };
+1032-
+1033-            usuarios.push(teste);
+1034-            await salvarUsuarios(usuarios);
+1035-        }
+1036-
+1037-        req.session.lukaTesteUsuario = {
+1038-            id: teste.id,
+1039-            usuario: teste.usuario,
+1040:            tipo: "teste",
+1041-            validade: teste.validade || null
+1042-        };
+1043-
+1044-        res.cookie("luka_modo_teste", "1", {
+1045-            httpOnly: true,
+1046-            secure: !ambienteLocal,
+1047-            sameSite: "lax",
+1048-            maxAge: 1000 * 60 * 60 * 6
+1049-        });
+1050-
+1051-        return res.json({
+1052-            sucesso: true,
+1053-            usuario: {
+1054-                id: teste.id,
+1055-                usuario: teste.usuario,
+1056:                tipo: "teste",
+1057-                validade: teste.validade || null
+1058-            },
+1059-            destino: "/?luka_teste=1"
+1060-        });
+1061-
+1062-    } catch (erro) {
+1063-        console.error("[LUKA TESTE] Erro ao iniciar:", erro);
+1064-        return res.status(500).json({
+1065-            sucesso: false,
+1066-            mensagem: "Não foi possível iniciar o modo de teste."
+1067-        });
+1068-    }
+1069-});
+1070-
+1071-app.post("/api/admin/teste/encerrar", (req, res) => {
+1072-
+1073-    if (
+1074-        !req.session ||
+1075-        !req.session.usuario ||
+1076-        String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+1077-    ) {
+1078-        return res.status(403).json({
+1079-            sucesso: false,
+1080-            mensagem: "Acesso restrito ao administrador."
+1081-        });
+1082-    }
+1083-
+1084-    delete req.session.lukaTesteUsuario;
+1085-
+1086-    res.clearCookie("luka_modo_teste", {
+1087-        httpOnly: true,
+1088-        secure: !ambienteLocal,
+1089-        sameSite: "lax"
+1090-    });
+1091-
+1092-    return res.json({
+1093-        sucesso: true,
+1094-        destino: "/admin.html"
+1095-    });
+1096-});
+1097-
+1098-app.get("/api/admin/teste/status", (req, res) => {
+1099-
+1100-    const admin =
+1101-        req.session &&
+--
+1777-                last_seen: lastSeen
+1778-            };
+1779-        });
+1780-
+1781-        res.json({
+1782-            sucesso: true,
+1783-            agora,
+1784-            usuarios: resultado,
+1785-            online: resultado.filter(u => u.online).length,
+1786-            usuariosOnline: resultado.filter(
+1787:                u => u.online && u.tipo !== "teste" && u.tipo !== "revendedor"
+1788-            ).length,
+1789-            testesOnline: resultado.filter(
+1790:                u => u.online && u.tipo === "teste"
+1791-            ).length,
+1792-            revendedoresOnline: resultado.filter(
+1793-                u => u.online && u.tipo === "revendedor"
+1794-            ).length
+1795-        });
+1796-
+1797-    } catch (erro) {
+1798-        console.error("[LUKA STATUS ONLINE]", erro);
+1799-
+1800-        res.status(500).json({
+1801-            sucesso: false,
+1802-            usuarios: []
+1803-        });
+1804-    }
+1805-});
+1806-
+1807-// ==========================================
+1808-// LOGOUT
+1809-// ==========================================
+1810-
+1811-app.post("/logout", (req, res) => {
+1812-
+1813-    req.session.destroy(() => {
+1814-
+1815-        res.json({
+1816-            sucesso: true
+1817-        });
+1818-
+1819-    });
+1820-
+1821-});
+1822-
+1823-// ==========================================
+1824-// TMDB
+1825-// ==========================================
+1826-
+1827-const TMDB_BASE =
+1828-    "https://api.themoviedb.org/3";
+1829-
+1830-const TMDB_IMAGE =
+1831-    "https://image.tmdb.org/t/p/w500";
+1832-
+1833-// ==========================================
+1834-// BUSCAR FILMES DO TMDB
+1835-// ==========================================
+--
+4334-        const novoTeste = {
+4335-
+4336-            id: proximoId(usuarios),
+4337-
+4338-            usuario,
+4339-
+4340-            senha: senhaHash,
+4341-
+4342-            status: "ativo",
+4343-
+4344:            tipo: "teste",
+4345-
+4346-            validade:
+4347-                validade.toISOString(),
+4348-

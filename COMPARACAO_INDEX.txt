@@ -1,0 +1,179 @@
+========== COMPARACAO DOS INDEX ========== 
+
+===== INDEX DA RAIZ =====
+BARRA NAO EXISTE NO INDEX DA RAIZ
+
+===== INDEX PUBLIC =====
+1313-</style>
+1314-
+1315-
+1316:<style id="luka-login-entrance-style">
+1317-/* ================= ENTRADA DE CLIENTES LUKAFILMES ================= */
+1318-
+1319:.luka-login-entrance{
+1320-    position:relative;
+1321-    z-index:10;
+1322-    width:100%;
+1323-    padding:18px 5%;
+1324-    background:
+--
+1330-    overflow:hidden;
+1331-}
+1332-
+1333:.luka-login-entrance-glow{
+1334-    position:absolute;
+1335-    width:420px;
+1336-    height:140px;
+1337-    right:8%;
+1338-    top:-70px;
+--
+1341-    pointer-events:none;
+1342-}
+1343-
+1344:.luka-login-entrance-content{
+1345-    position:relative;
+1346-    z-index:2;
+1347-    max-width:1250px;
+1348-    margin:auto;
+1349-    min-height:72px;
+--
+1352-    gap:18px;
+1353-}
+1354-
+1355:.luka-login-entrance-icon{
+1356-    width:48px;
+1357-    height:48px;
+1358-    flex:0 0 48px;
+1359-    display:flex;
+1360-    align-items:center;
+--
+1366-    font-size:22px;
+1367-}
+1368-
+1369:.luka-login-entrance-text{
+1370-    flex:1;
+1371-    min-width:0;
+1372-}
+1373-
+1374:.luka-login-entrance-title{
+1375-    color:#fff;
+1376-    font-size:16px;
+1377-    font-weight:900;
+1378-    letter-spacing:.4px;
+1379-    margin-bottom:4px;
+1380-}
+1381-
+1382:.luka-login-entrance-title::after{
+1383-    content:"";
+1384-    display:inline-block;
+1385-    width:6px;
+1386-    height:6px;
+1387-    margin-left:8px;
+--
+1391-    box-shadow:0 0 10px rgba(229,9,20,.8);
+1392-}
+1393-
+1394:.luka-login-entrance-subtitle{
+1395-    color:#aaa;
+1396-    font-size:13px;
+1397-    line-height:1.4;
+1398-}
+1399-
+1400:.luka-login-entrance-btn{
+1401-    flex:0 0 auto;
+1402-    display:inline-flex;
+1403-    align-items:center;
+1404-    justify-content:center;
+1405-    min-height:46px;
+--
+1418-    transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+1419-}
+1420-
+1421:.luka-login-entrance-btn:hover{
+1422-    transform:translateY(-2px);
+1423-    filter:brightness(1.08);
+1424-    box-shadow:
+1425-        0 12px 32px rgba(229,9,20,.35),
+1426-        0 0 20px rgba(229,9,20,.12);
+1427-}
+1428-
+1429-@media(max-width:700px){
+1430:    .luka-login-entrance{
+1431-        padding:12px 14px;
+1432-    }
+1433-
+1434:    .luka-login-entrance-content{
+1435-        min-height:0;
+1436-        gap:11px;
+1437-    }
+1438-
+1439:    .luka-login-entrance-icon{
+1440-        width:40px;
+1441-        height:40px;
+1442-        flex-basis:40px;
+1443-        border-radius:11px;
+1444-        font-size:18px;
+1445-    }
+1446-
+1447:    .luka-login-entrance-title{
+1448-        font-size:13px;
+1449-    }
+1450-
+1451:    .luka-login-entrance-subtitle{
+1452-        font-size:11px;
+1453-    }
+1454-
+1455:    .luka-login-entrance-btn{
+1456-        min-height:40px;
+1457-        padding:0 13px;
+1458-        font-size:10px;
+1459-        white-space:nowrap;
+1460-    }
+1461-}
+1462-
+1463-@media(max-width:430px){
+1464:    .luka-login-entrance-subtitle{
+1465-        display:none;
+1466-    }
+1467-
+1468:    .luka-login-entrance-btn{
+1469-        padding:0 11px;
+1470-        font-size:9px;
+1471-    }
+1472-}
+1473-</style>
+--
+1543-
+1544-
+1545-<!-- ================= BARRA ENTRADA CLIENTE ================= -->
+1546:<section class="luka-login-entrance" aria-label="Entrada de clientes">
+1547:    <div class="luka-login-entrance-glow"></div>
+1548-
+1549:    <div class="luka-login-entrance-content">
+1550:        <div class="luka-login-entrance-icon">🔐</div>
+1551-
+1552:        <div class="luka-login-entrance-text">
+1553:            <div class="luka-login-entrance-title">
+1554-                JÁ TEM UMA CONTA?
+1555-            </div>
+1556-
+1557:            <div class="luka-login-entrance-subtitle">
+1558-                Entre para acessar sua conta LUKAFILMES e continuar assistindo
+1559-                seus filmes e séries.
+1560-            </div>
+1561-        </div>
+1562-
+1563-        <a
+1564-            href="/login"
+1565:            class="luka-login-entrance-btn"
+1566-            aria-label="Entrar como cliente"
+1567-        >
+1568-            🔐 ENTRAR COMO CLIENTE
+1569-        </a>
+1570-    </div>
+
+===== CONTEUDO ENTREGUE EM / =====
+
+===== CONTEUDO ENTREGUE EM /index.html =====
+
+===== FIM =====

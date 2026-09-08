@@ -1,0 +1,242 @@
+============================================================
+LUKAFILMES — LOCALIZANDO NOTIFICAÇÃO DE RENOVAÇÃO
+============================================================
+
+===== FILME — VALIDADE / NOTIFICAÇÃO =====
+3644-                                window.location.pathname +
+3645-                                window.location.search;
+3646-
+3647-                            window.location.href =
+3648-                                "/cadastro?retorno=" +
+3649-                                encodeURIComponent(retorno);
+3650-
+3651-                            return;
+3652-                        }
+3653-
+3654-                        /*
+3655-                         * ACESSO NEGADO / EXPIRADO
+3656-                         *
+3657-                         * NÃO ABRE O PLAYER.
+3658-                         * MOSTRA A TELA DE PAGAMENTO.
+3659-                         */
+3660-                        if (!acesso.permitido) {
+3661-
+3662-                            if (
+3663-                                acesso.motivo ===
+3664:                                "expirado"
+3665-                            ) {
+3666-
+3667-                                await mostrarPagamentoLuka(
+3668-                                    acesso
+3669-                                );
+3670-
+3671-                                return;
+3672-                            }
+3673-
+3674-                            alert(
+3675-                                acesso.mensagem ||
+3676-                                "Seu acesso não está liberado para assistir."
+3677-                            );
+3678-
+3679-                            return;
+3680-                        }
+3681-
+3682-                        /*
+3683-                         * ACESSO LIBERADO
+3684-                         *
+3685-                         * AGORA SIM MOSTRA O PLAYER.
+3686-                         */
+3687-                        console.log(
+3688-                            "[PLAYER TMDB]",
+3689-                            filme.titulo,
+3690-                            tmdbId
+3691-                        );
+3692-
+3693-                        playerFilme.style.display =
+3694-                            "block";
+3695-
+3696-                        filmeFrame.src = "";
+3697-
+3698-                        const playCentral =
+3699-                            document.getElementById(
+--
+3810-                    tela.id =
+3811-                        "lukafilmesPagamento";
+3812-
+3813-                    tela.style.cssText = `
+3814-                        width: min(92%, 520px);
+3815-                        margin: 24px auto;
+3816-                        padding: 24px;
+3817-                        box-sizing: border-box;
+3818-                        background: linear-gradient(180deg, #242424 0%, #111 100%);
+3819-                        border: 2px solid rgba(255,255,255,.16);
+3820-                        border-radius: 20px;
+3821-                        text-align: center;
+3822-                        color: #fff;
+3823-                        box-shadow: 0 15px 50px rgba(0,0,0,.75);
+3824-                        position: relative;
+3825-                        z-index: 20;
+3826-                    `;
+3827-
+3828-                    tela.innerHTML = `
+3829-                        <h2 style="margin:0 0 10px;">
+3830:                            🔒 Acesso expirado
+3831-                        </h2>
+3832-
+3833-                        <p style="margin:8px 0 18px;">
+3834-                            Para assistir este filme, renove seu acesso.
+3835-                        </p>
+3836-
+3837-                        <div style="
+3838-                            font-size:30px;
+3839-                            font-weight:700;
+3840-                            margin:15px 0;
+3841-                        ">
+3842-                            R$ ${valor}
+3843-                        </div>
+3844-
+3845-                        <p style="margin:8px 0;">
+3846-                            Acesso por 30 dias
+3847-                        </p>
+3848-
+3849-                        <div
+3850-                            id="lukafilmesQrCode"
+3851-                            style="
+3852-                                width:220px;
+3853-                                min-height:220px;
+3854-                                margin:20px auto;
+3855-                                padding:10px;
+3856-                                box-sizing:border-box;
+3857-                                background:#fff;
+3858-                                border-radius:12px;
+3859-                                display:flex;
+3860-                                align-items:center;
+3861-                                justify-content:center;
+3862-                            ">
+3863-                        </div>
+3864-
+3865-                        <p style="
+--
+4188-                                "[LUKAFILMES] Acesso para assistir:",
+4189-                                acesso
+4190-                            );
+4191-
+4192-                            /*
+4193-                             * SEM AUTORIZAÇÃO:
+4194-                             * NÃO CARREGA O PLAYER.
+4195-                             */
+4196-                            if (!acesso.permitido) {
+4197-
+4198-                                if (
+4199-                                    acesso.motivo ===
+4200-                                    "nao_logado"
+4201-                                ) {
+4202-                                    alert(
+4203-                                        "Faça login para assistir."
+4204-                                    );
+4205-                                }
+4206-                                else if (
+4207-                                    acesso.motivo ===
+4208:                                    "expirado"
+4209-                                ) {
+4210-                                    alert(
+4211:                                        "Seu acesso expirou. É necessário renovar para assistir."
+4212-                                    );
+4213-                                }
+4214-                                else {
+4215-                                    alert(
+4216-                                        acesso.mensagem ||
+4217-                                        "Seu acesso não está liberado para assistir."
+4218-                                    );
+4219-                                }
+4220-
+4221-                                return;
+4222-                            }
+4223-
+4224-                            const tmdbId =
+4225-                                String(filme.id).trim();
+4226-
+4227-                            if (!tmdbId) return;
+4228-
+4229-                            const embedUrl =
+4230-                                "https://mgeb.top/embed/" +
+4231-                                tmdbId;
+4232-
+4233-                            /*
+4234-                             * PLAY CENTRAL
+4235-                             * Só carrega depois da autorização.
+4236-                             */
+4237-                            filmeFrame.src = embedUrl;
+4238-
+4239-                        /* ==========================================
+4240-                           CONTINUAR ASSISTINDO
+4241-                           REGISTRA O FILME + PLAYER 1
+4242-                           ========================================== */
+4243-                        if (window.LukaContinuar) {
+4244-                            LukaContinuar.registrarInicio({
+4245-                                id: filme.id,
+4246-                                titulo: filme.titulo || "Filme",
+
+===== SERIES — VALIDADE / NOTIFICAÇÃO =====
+
+===== INDEX — VALIDADE / NOTIFICAÇÃO =====
+2746-             * - título
+2747-             * - sinopse
+2748-             * - ano
+2749-             * - fundo
+2750-             * - botão Assistir
+2751-             * - trailer
+2752-             */
+2753-
+2754-            montarHero(item);
+2755-
+2756-            /*
+2757-             * Enquanto o trailer atual toca,
+2758-             * tentamos preparar mais candidatos.
+2759-             */
+2760-
+2761-            if(window.__heroFila.length < 5){
+2762-
+2763-                prepararFilaHero().catch(erro => {
+2764-
+2765-                    console.warn(
+2766:                        "[HERO TRAILER] Erro ao renovar fila:",
+2767-                        erro
+2768-                    );
+2769-
+2770-                });
+2771-            }
+2772-
+2773-        }finally{
+2774-
+2775-            setTimeout(() => {
+2776-
+2777-                window.__heroTrocaEmAndamento = false;
+2778-
+2779-            }, 300);
+2780-        }
+2781-    }
+2782-
+2783-    /*
+2784-     * Primeiro trailer da Home.
+2785-     *
+2786-     * Não usamos await aqui.
+2787-     *
+2788-     * Assim o Hero começa a procurar trailers em paralelo
+2789-     * enquanto a Home continua disponível.
+2790-     */
+2791-
+2792-    prepararFilaHero()
+2793-        .then(() => proximoHeroTrailer())
+2794-        .catch(erro => {
+2795-
+2796-            console.warn(
+2797-                "[HERO TRAILER] Falha inicial:",
+2798-                erro
+2799-            );
+2800-
+2801-        });
+
+============================================================
+FIM DA LOCALIZAÇÃO
+============================================================

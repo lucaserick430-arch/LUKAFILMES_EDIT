@@ -1,0 +1,100 @@
+========== ROTA LIMPAR TESTES ==========
+1287-
+1288-// ============================================================
+1289-// ADMIN — LIMPAR TESTES ANTIGOS
+1290-// ============================================================
+1291-
+1292:app.post("/api/admin/testes/limpar", async (req, res) => {
+1293-
+1294-    try {
+1295-
+1296-        if (!adminAutorizadoLuka(req)) {
+1297-            return res.status(403).json({
+1298-                sucesso: false,
+1299-                mensagem: "Acesso negado."
+1300-            });
+1301-        }
+1302-
+1303-        const usuarios = await carregarUsuarios();
+1304-
+1305-        const testes = usuarios.filter(u =>
+1306-            String(u.tipo || "").toLowerCase() === "teste" ||
+1307-            u.teste_lukafilmes === true
+1308-        );
+1309-
+1310-        if (!testes.length) {
+1311-            return res.json({
+1312-                sucesso: true,
+1313-                removidos: 0,
+1314-                mensagem: "Nenhum teste encontrado."
+1315-            });
+1316-        }
+1317-
+1318-        const idsRemovidos = new Set(
+1319-            testes.map(u => Number(u.id))
+1320-        );
+1321-
+1322-        const restantes = usuarios.filter(u =>
+1323-            !idsRemovidos.has(Number(u.id))
+1324-        );
+1325-
+1326-        await salvarUsuarios(restantes);
+1327-
+1328-        // Limpa somente a associação de teste da sessão atual.
+1329-        if (req.session) {
+1330-            delete req.session.lukaTesteUsuario;
+1331-        }
+1332-
+1333-        console.log(
+1334-            "[LUKA TESTE] Testes antigos removidos:",
+1335-            testes.map(u => ({
+1336-                id: u.id,
+1337-                usuario: u.usuario
+1338-            }))
+1339-        );
+1340-
+1341-        return res.json({
+1342-            sucesso: true,
+1343-            removidos: testes.length,
+1344-            usuarios: testes.map(u => u.usuario),
+1345-            mensagem:
+1346-                `${testes.length} teste(s) removido(s) com sucesso.`
+1347-        });
+1348-
+1349-    } catch (erro) {
+1350-
+1351-        console.error(
+1352-            "[LUKA TESTE] Erro ao limpar testes:",
+1353-            erro
+1354-        );
+1355-
+1356-        return res.status(500).json({
+1357-            sucesso: false,
+1358-            mensagem: "Erro interno ao limpar testes."
+1359-        });
+1360-    }
+1361-
+1362-});
+1363-
+1364-// ============================================================
+1365-// ADMIN — PAGAMENTOS LUKAFILMES
+1366-// ============================================================
+1367-
+1368-function adminAutorizadoLuka(req) {
+1369-    return Boolean(
+1370-        req.session &&
+1371-        req.session.usuario &&
+1372-        String(req.session.usuario.tipo || "").toLowerCase() === "admin"
+1373-    );
+1374-}
+1375-
+1376-app.get("/api/admin/pagamentos", async (req, res) => {
+1377-
+1378-    try {
+1379-
+1380-        if (!adminAutorizadoLuka(req)) {
+1381-            return res.status(403).json({
+1382-                sucesso: false,
+
+========== NODE CHECK ==========
+NODE_EXIT=0

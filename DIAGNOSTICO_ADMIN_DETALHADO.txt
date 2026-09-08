@@ -1,0 +1,1544 @@
+========== NAVEGACAO.JS — BOTÃO ADMIN ==========
+﻿(function () {
+
+"use strict";
+
+const HOME = "/index.html";
+const LOGIN = "/login";
+
+
+// ======================================================
+// MOSTRAR ADMIN/PAINEL SOMENTE NA PÁGINA INICIAL
+// ======================================================
+
+function estaNaPaginaInicial() {
+
+    const caminho =
+        window.location.pathname;
+
+    return (
+        caminho === "/" ||
+        caminho === "/index.html"
+    );
+
+}
+
+
+// ======================================================
+// IR PARA O INÍCIO
+// ======================================================
+
+function irInicio() {
+
+    window.location.href = HOME;
+
+}
+
+window.LUKAFILMES_IR_INICIO = irInicio;
+
+
+// ======================================================
+// CRIAR BOTÃO ADMIN / PAINEL
+// ======================================================
+
+function criarBotaoAdmin() {
+
+    if (!estaNaPaginaInicial()) {
+        return;
+    }
+
+    if (document.querySelector(".lukafilmes-admin")) {
+        return;
+    }
+
+    fetch("/api/eu", {
+        credentials: "same-origin"
+    })
+    .then(function(resposta) {
+
+        if (!resposta.ok) {
+            return null;
+        }
+
+        return resposta.json();
+
+    })
+    .then(function(dados) {
+
+        if (
+            !dados ||
+            !dados.logado ||
+            !dados.usuario
+        ) {
+            return;
+        }
+
+        let texto = "";
+        let destino = "";
+
+        if (dados.usuario.tipo === "admin") {
+
+            texto = "ADMIN";
+            destino = "/admin.html";
+
+        } else if (dados.usuario.tipo === "revendedor") {
+
+            texto = "REVENDEDOR";
+            destino = "/revendedor.html";
+
+        } else {
+
+            return;
+
+        }
+
+        /*
+         * O botão já existe no menu mobile da Home.
+         * Reutiliza o botão existente para não criar duplicado.
+         */
+        const painel = document.getElementById("lukafilmesMenuPainel");
+
+        if (painel) {
+
+            painel.href = destino;
+            painel.textContent = texto;
+
+            return;
+
+        }
+
+        /*
+         * Fallback: caso alguma página não possua
+         * o botão fixo, cria o botão dinamicamente.
+         */
+        if (document.querySelector(".lukafilmes-admin")) {
+            return;
+        }
+
+        const botao = document.createElement("a");
+
+        botao.href = destino;
+        botao.className = "lukafilmes-admin";
+        botao.innerHTML = texto;
+
+        botao.setAttribute(
+            "data-lukafilmes-admin",
+            "true"
+        );
+
+        document.body.appendChild(botao);
+
+    })
+
+    .catch(function(erro) {
+
+        console.warn(
+            "[NAVEGAÇÃO] Erro ao verificar usuário:",
+            erro
+        );
+
+    });
+
+}
+// ======================================================
+// BOTÃO LUKAFILMES
+// ======================================================
+
+function criarBotaoHome() {
+
+    if (!estaNaPaginaInicial()) {
+        return;
+    }
+
+========== NAVEGACAO.JS — INTERCEPTADOR ==========
+
+
+// LUKAFILMES — ROTA EXCLUSIVA DO REVENDEDOR
+(function(){
+
+    function ehRevendedor(){
+        try{
+            const dados =
+                window.usuarioLogado ||
+                window.usuario ||
+                window.usuarioAtual ||
+                null;
+
+            if(dados && String(dados.tipo || "").toLowerCase()==="revendedor"){
+                return true;
+            }
+
+            return document.body.dataset.tipoUsuario === "revendedor";
+        }catch(e){
+            return false;
+        }
+    }
+
+    function interceptarAdminRevenda(){
+
+        document.addEventListener("click", function(ev){
+
+            const alvo = ev.target.closest(
+                'a,button,[onclick]'
+            );
+
+            if(!alvo) return;
+
+            const texto = String(
+                alvo.textContent || ""
+            ).trim().toLowerCase();
+
+            const onclick = String(
+                alvo.getAttribute("onclick") || ""
+            ).toLowerCase();
+
+            const href = String(
+                alvo.getAttribute("href") || ""
+            ).toLowerCase();
+
+            const ehAdmin =
+                texto === "admin" ||
+                texto.includes("admin") ||
+                onclick.includes("admin") ||
+                href.includes("admin.html");
+
+            if(!ehAdmin) return;
+
+            if(!ehRevendedor()) return;
+
+            ev.preventDefault();
+            ev.stopPropagation();
+            ev.stopImmediatePropagation();
+
+            window.location.href="/revendedor.html";
+
+        }, true);
+    }
+
+    if(document.readyState==="loading"){
+        document.addEventListener(
+            "DOMContentLoaded",
+            interceptarAdminRevenda,
+            {once:true}
+        );
+    }else{
+        interceptarAdminRevenda();
+    }
+
+})();
+
+========== INDEX — TRECHO ADMIN ==========
+
+    const menu =
+        document.getElementById("desktopUserMenu");
+
+    const opcoes =
+        document.getElementById("desktopUserOptions");
+
+    if(!menu || !opcoes){
+        return;
+    }
+
+    try{
+
+        const resposta =
+            await fetch(
+                "/api/eu",
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+        if(!resposta.ok){
+            return;
+        }
+
+        const dados =
+            await resposta.json();
+
+        if(
+            !dados ||
+            !dados.logado ||
+            !dados.usuario
+        ){
+            return;
+        }
+
+        const tipo =
+            String(
+                dados.usuario.tipo || ""
+            ).toLowerCase();
+
+        if(tipo === "admin"){
+
+            opcoes.innerHTML =
+                '';
+
+        }else if(tipo === "revendedor"){
+
+            opcoes.innerHTML =
+                '<a href="/revendedor.html">🏪 Revendedor</a>';
+
+        }else{
+
+            opcoes.innerHTML = "";
+
+        }
+
+        menu.dataset.carregado = "true";
+
+    }catch(erro){
+
+        console.warn(
+            "[MENU DESKTOP] Erro ao verificar usuário:",
+            erro
+        );
+
+    }
+}
+
+
+
+/* ================= API ================= */
+
+async function buscarJSON(url){
+
+    try{
+
+========== FILME — ASSISTIR ==========
+            "Filme";
+
+        /* DADOS */
+
+        document.getElementById("dados")
+            .textContent =
+            "⭐ " +
+            Number(filme.nota || 0).toFixed(1) +
+            " • " +
+            (filme.ano || "Ano desconhecido") +
+            " • " +
+            (filme.votos || 0) +
+            " votos";
+
+        /* GÊNEROS */
+
+        const generos =
+            Array.isArray(filme.generos)
+                ? filme.generos.join(" • ")
+                : (filme.genero || "");
+
+        document.getElementById("generos")
+            .textContent =
+            generos;
+
+        /* SINOPSE */
+
+        document.getElementById("sinopse")
+            .textContent =
+            filme.sinopse ||
+            "Sinopse não disponível.";
+
+        /* ==========================================
+           ASSISTIR FILME — EMBEDMOVIES / TMDB
+           ========================================== */
+
+        const botao =
+            document.getElementById("botaoAssistir");
+
+        const playerFilme =
+            document.getElementById("playerFilme");
+
+        const filmeFrame =
+            document.getElementById("filmeFrame");
+
+        if (botao && playerFilme && filmeFrame && filme.id) {
+
+            botao.addEventListener(
+                "click",
+                async function (evento) {
+
+                    evento.preventDefault();
+
+                    const tmdbId =
+                        String(filme.id).trim();
+
+                    if (!tmdbId) {
+
+                        alert(
+                            "ID TMDB do filme não encontrado."
+                        );
+
+                        return;
+                    }
+
+                    console.log(
+                        "[LUKAFILMES] Verificando acesso:",
+                        filme.titulo,
+                        tmdbId
+                    );
+
+                    try {
+
+                        const respostaAcesso =
+                            await fetch(
+                                "/api/acesso-assistir",
+                                {
+                                    method: "GET",
+                                    credentials: "same-origin",
+                                    cache: "no-store"
+                                }
+                            );
+
+                        const acesso =
+                            await respostaAcesso.json();
+
+                        console.log(
+                            "[LUKAFILMES] Resultado do acesso:",
+                            acesso
+                        );
+
+                        /*
+                         * PRIMEIRO PLAY:
+                         * cliente ainda não possui conta.
+                         *
+                         * Em vez de mandar para o login,
+                         * abrimos o cadastro específico do LUKAFILMES.
+                         */
+                        if (
+                            acesso.motivo ===
+                            "nao_logado"
+                        ) {
+
+                            const retorno =
+                                window.location.pathname +
+                                window.location.search;
+
+                            window.location.href =
+                                "/cadastro?retorno=" +
+                                encodeURIComponent(retorno);
+
+                            return;
+                        }
+
+                        /*
+                         * ACESSO NEGADO / EXPIRADO
+                         *
+                         * NÃO ABRE O PLAYER.
+                         * MOSTRA A TELA DE PAGAMENTO.
+                         */
+                        if (!acesso.permitido) {
+
+                            if (
+                                acesso.motivo ===
+                                "expirado"
+                            ) {
+
+                                await mostrarPagamentoLuka(
+                                    acesso
+                                );
+
+                                return;
+                            }
+
+                            alert(
+                                acesso.mensagem ||
+                                "Seu acesso não está liberado para assistir."
+                            );
+
+                            return;
+                        }
+
+                        /*
+                         * ACESSO LIBERADO
+                         *
+                         * AGORA SIM MOSTRA O PLAYER.
+                         */
+                        console.log(
+                            "[PLAYER TMDB]",
+                            filme.titulo,
+                            tmdbId
+                        );
+
+                        playerFilme.style.display =
+                            "block";
+
+                        filmeFrame.src = "";
+
+                        const playCentral =
+                            document.getElementById(
+                                "playCentralFilme"
+
+========== PAGAMENTOS — SERVIDOR ==========
+            dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+            validade: pessoa.validade || null
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ACESSO ASSISTIR] Erro:",
+            erro
+        );
+
+        return res.status(500).json({
+            permitido: false,
+            logado: true,
+            motivo: "erro_servidor",
+            mensagem: "Erro interno ao verificar o acesso."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+// ==========================================
+
+app.post("/api/pagamentos/criar", async (req, res) => {
+
+    try {
+
+        if (!req.session || !req.session.usuario) {
+            return res.status(401).json({
+                sucesso: false,
+                logado: false,
+                motivo: "nao_logado",
+                mensagem: "Faça login para continuar."
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                sucesso: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado",
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const tipo = String(
+            pessoa.tipo || "usuario"
+        ).toLowerCase();
+
+        const statusUsuario = String(
+            pessoa.status || "ativo"
+        ).toLowerCase();
+
+        if (statusUsuario !== "ativo") {
+            return res.status(403).json({
+                sucesso: false,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: false,
+                motivo: "isento",
+                tipo
+            });
+        }
+
+        const pagamentosPendentes =
+            await listarPagamentosLuka(
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+            );
+
+        const pagamentoExistente =
+            pagamentosPendentes.find(
+                pagamento =>
+                    Number(pagamento.usuario_id) === Number(pessoa.id)
+            );
+
+        if (pagamentoExistente) {
+
+            let pix;
+
+            try {
+                pix = gerarPixCopiaColaLuka();
+            } catch (erroPix) {
+                console.error(
+                    "[PAGAMENTO] Erro ao gerar PIX:",
+                    erroPix
+                );
+            }
+
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: true,
+                pagamento: pagamentoExistente,
+                pix: pix || null,
+                valor: Number(
+                    process.env.PIX_VALOR ||
+                    CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+                ).toFixed(2),
+                nome: process.env.PIX_NOME || "LUKAFILMES",
+                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+            });
+        }
+
+        const idPagamento =
+            await proximoIdPagamentoLuka();
+
+        const pagamento = {
+            id: idPagamento,
+            usuario_id: Number(pessoa.id),
+            usuario: String(
+                pessoa.usuario ||
+                sessao.usuario ||
+                ""
+            ),
+            valor:
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+            criado_em:
+                new Date().toISOString(),
+            aprovado_em: null,
+            inicio_acesso: null,
+            fim_acesso: null,
+            observacao: null
+        };
+
+        await criarPagamentoLuka(pagamento);
+
+        let pix;
+
+        try {
+            pix = gerarPixCopiaColaLuka();
+        } catch (erroPix) {
+            console.error(
+                "[PAGAMENTO] Erro ao gerar PIX:",
+                erroPix
+            );
+        }
+
+        return res.json({
+            sucesso: true,
+            pagamento_necessario: true,
+            pagamento,
+            pix: pix || null,
+            valor: Number(
+                process.env.PIX_VALOR ||
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+            ).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[PAGAMENTO] Erro ao criar pagamento:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível criar o pagamento."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// PIX LUKAFILMES — COPIA E COLA
+// ==========================================
+
+app.get("/api/pix", (req, res) => {
+
+    try {
+
+        const pix = gerarPixCopiaColaLuka();
+
+        return res.json({
+            sucesso: true,
+            valor: Number(process.env.PIX_VALOR || 18).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA",
+            pix
+        });
+
+
+========== CONFIG PAGAMENTOS ==========
+
+const CONFIGURACAO_ACESSO_LUKAFILMES = {
+    valorMensal: 18.00,
+    diasAcesso: 30,
+
+    tipos: {
+        ADMIN: "admin",
+        CLIENTE: "usuario",
+        ISENTO: "isento",
+        TESTE: "teste"
+    },
+
+    pagamentos: {
+        PENDENTE: "pendente",
+        APROVADO: "aprovado",
+        RECUSADO: "recusado"
+    }
+};
+
+
+// ==========================================
+// PIX FIXO LUKAFILMES - COPIA E COLA
+// ==========================================
+
+function crc16PixLuka(str) {
+    let crc = 0xFFFF;
+
+    for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+
+        for (let j = 0; j < 8; j++) {
+            if (crc & 0x8000) {
+                crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+            } else {
+                crc = (crc << 1) & 0xFFFF;
+            }
+        }
+    }
+
+    return crc.toString(16).toUpperCase().padStart(4, "0");
+}
+
+function campoPixLuka(id, valor) {
+    const texto = String(valor ?? "");
+    return id + String(texto.length).padStart(2, "0") + texto;
+}
+
+function gerarPixCopiaColaLuka() {
+    const chave = String(process.env.PIX_CHAVE || "").trim();
+    const nome = String(process.env.PIX_NOME || "LUKAFILMES")
+        .trim()
+        .substring(0, 25);
+    const cidade = String(process.env.PIX_CIDADE || "CARAPICUIBA")
+        .trim()
+        .substring(0, 15);
+    const valor = Number(process.env.PIX_VALOR || 18).toFixed(2);
+
+    if (!chave) {
+        throw new Error("PIX_CHAVE não configurada no .env");
+    }
+
+    const merchantAccount =
+        campoPixLuka("00", "br.gov.bcb.pix") +
+        campoPixLuka("01", chave);
+
+    const payloadSemCRC =
+        campoPixLuka("00", "01") +
+        campoPixLuka("26", merchantAccount) +
+        campoPixLuka("52", "0000") +
+        campoPixLuka("53", "986") +
+        campoPixLuka("54", valor) +
+        campoPixLuka("58", "BR") +
+        campoPixLuka("59", nome) +
+        campoPixLuka("60", cidade) +
+        campoPixLuka("62", campoPixLuka("05", "***")) +
+        "6304";
+
+    return payloadSemCRC + crc16PixLuka(payloadSemCRC);
+}
+
+const USUARIOS_STORE = "lukafilmes-usuarios";
+const USUARIOS_KEY = "usuarios";
+
+const ambienteLocal =
+    process.env.NETLIFY_DEV === "true" ||
+    process.env.RENDER === "true" ||
+    process.env.NETLIFY_LOCAL === "true" ||
+    (
+        !process.env.NETLIFY &&
+        !process.env.AWS_LAMBDA_FUNCTION_NAME &&
+        process.env.NODE_ENV !== "production"
+    );
+console.log("[DIAGNOSTICO] ambienteLocal =", ambienteLocal);
+let bancoLocal = null;
+
+const turso = process.env.TURSO_DATABASE_URL
+  ? createClient({
+      url: process.env.TURSO_DATABASE_URL,
+      authToken: process.env.TURSO_AUTH_TOKEN
+    })
+  : null;
+
+let tursoUsuariosPreparado = false;
+
+async function prepararTursoUsuarios() {
+  if (!turso || tursoUsuariosPreparado) return;
+
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS lukafilmes_usuarios (
+      id INTEGER PRIMARY KEY,
+      dados TEXT NOT NULL
+    )
+  `);
+
+  tursoUsuariosPreparado = true;
+}
+
+async function prepararTursoPagamentos() {
+  if (!turso) return;
+
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS lukafilmes_pagamentos (
+      id INTEGER PRIMARY KEY,
+      usuario_id INTEGER,
+      usuario TEXT NOT NULL,
+      valor REAL NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pendente',
+      criado_em TEXT NOT NULL,
+      aprovado_em TEXT,
+      inicio_acesso TEXT,
+      fim_acesso TEXT,
+      observacao TEXT
+    )
+  `);
+}
+
+async function criarPagamentoLuka(dados) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const resultado = await turso.execute({
+        sql: `
+            INSERT INTO lukafilmes_pagamentos
+            (
+                id,
+                usuario_id,
+                usuario,
+                valor,
+                status,
+                criado_em,
+                aprovado_em,
+                inicio_acesso,
+                fim_acesso,
+                observacao
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        args: [
+            Number(dados.id),
+            dados.usuario_id == null ? null : Number(dados.usuario_id),
+            String(dados.usuario || ""),
+            Number(dados.valor || CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal),
+            String(dados.status || CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE),
+            String(dados.criado_em || new Date().toISOString()),
+            dados.aprovado_em || null,
+            dados.inicio_acesso || null,
+            dados.fim_acesso || null,
+            dados.observacao || null
+        ]
+    });
+
+    return resultado;
+}
+
+async function proximoIdPagamentoLuka() {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const resultado = await turso.execute(`
+        SELECT COALESCE(MAX(id), 0) + 1 AS proximo_id
+        FROM lukafilmes_pagamentos
+    `);
+
+    return Number(resultado.rows?.[0]?.proximo_id || 1);
+}
+
+async function listarPagamentosLuka(status = null) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    if (status) {
+        const resultado = await turso.execute({
+            sql: `
+                SELECT *
+                FROM lukafilmes_pagamentos
+                WHERE status = ?
+                ORDER BY id DESC
+            `,
+            args: [String(status)]
+        });
+
+        return resultado.rows || [];
+    }
+
+    const resultado = await turso.execute(`
+        SELECT *
+        FROM lukafilmes_pagamentos
+        ORDER BY id DESC
+    `);
+
+    return resultado.rows || [];
+}
+
+async function buscarPagamentoLuka(id) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const resultado = await turso.execute({
+        sql: `
+            SELECT *
+            FROM lukafilmes_pagamentos
+            WHERE id = ?
+            LIMIT 1
+        `,
+        args: [Number(id)]
+    });
+
+    return resultado.rows?.[0] || null;
+}
+
+async function atualizarPagamentoLuka(id, dados) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const campos = [];
+    const args = [];
+
+    const permitidos = [
+        "status",
+        "aprovado_em",
+        "inicio_acesso",
+        "fim_acesso",
+        "observacao"
+    ];
+
+    for (const campo of permitidos) {
+        if (Object.prototype.hasOwnProperty.call(dados, campo)) {
+            campos.push(`${campo} = ?`);
+            args.push(dados[campo] == null ? null : String(dados[campo]));
+        }
+    }
+
+    if (campos.length === 0) {
+        return false;
+    }
+
+    args.push(Number(id));
+
+    await turso.execute({
+        sql: `
+            UPDATE lukafilmes_pagamentos
+            SET ${campos.join(", ")}
+            WHERE id = ?
+        `,
+        args
+    });
+
+    return true;
+}
+
+function obterBancoLocal() {
+
+    if (!Database) {
+        Database = require("better-sqlite3");
+    }
+
+    if (!bancoLocal) {
+
+        bancoLocal = new Database(
+            path.join(__dirname, "banco.db")
+        );
+    }
+
+    return bancoLocal;
+}
+
+async function carregarUsuarios() {
+  if (turso) {
+    await prepararTursoUsuarios();
+
+    const resultado = await turso.execute(
+      "SELECT dados FROM lukafilmes_usuarios WHERE id = 1"
+    );
+
+    if (resultado.rows.length > 0) {
+      try {
+
+========== TESTE ADMIN — SERVIDOR ==========
+                    "Usuário criado com sucesso."
+
+            });
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO CRIAR USUARIO]",
+                erro
+            );
+
+            return res.status(500).json({
+
+                sucesso: false,
+
+                mensagem:
+                    "Erro interno ao criar usuário."
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// ADMIN — CRIAR TESTE
+// ==========================================
+
+app.post("/api/admin/usuarios/teste", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+
+        }
+
+        const usuario =
+            String(req.body.usuario || "").trim();
+
+        const senha =
+            String(req.body.senha || "");
+
+        const horas =
+            Number(req.body.horas ?? req.body.dias);
+
+        const valor =
+            Number(req.body.valor || 0);
+
+        const telefone =
+            String(req.body.telefone || "").trim();
+
+        if (
+            !usuario ||
+            !senha ||
+            !Number.isInteger(horas) ||
+            horas < 1 ||
+            !Number.isFinite(valor) ||
+            valor < 0
+        ) {
+
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Preencha os dados corretamente."
+            });
+
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const existente =
+            usuarios.find(
+
+========== ADMIN — TESTE ==========
+ }
+}
+
+async function LUKA_CRIAR_TESTES_AUTOMATICOS(){
+
+ const horas=Number(document.getElementById("lukaAutoHoras").value);
+ const quantidade=Number(document.getElementById("lukaAutoQuantidade").value);
+ const limite_conexoes=Number(document.getElementById("lukaAutoConexoes").value);
+
+ if(!Number.isInteger(horas) || horas<1 || horas>72){
+  toast("Escolha uma duração entre 1 e 72 horas.");
+  return;
+ }
+
+ if(!Number.isInteger(quantidade) || quantidade<1 || quantidade>100){
+  toast("A quantidade deve estar entre 1 e 100 testes.");
+  return;
+ }
+
+ if(!Number.isInteger(limite_conexoes) || limite_conexoes<1){
+  toast("O limite de conexões deve ser no mínimo 1.");
+  return;
+ }
+
+ const btn=document.getElementById("btnSalvar");
+
+ if(btn){
+  btn.disabled=true;
+  btn.textContent="⚡ Gerando...";
+ }
+
+ try{
+
+  const r=await fetch("/api/admin/usuarios/teste-auto",{
+   method:"POST",
+   credentials:"include",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    horas,
+    quantidade,
+    limite_conexoes
+   })
+  });
+
+  const d=await r.json().catch(()=>({}));
+
+  if(!r.ok || d.sucesso===false){
+   throw new Error(d.mensagem || "Não foi possível gerar os testes.");
+  }
+
+  fecharModal();
+
+  if(typeof window.LUKA_MOSTRAR_RESULTADO_TESTE==="function"){
+   window.LUKA_MOSTRAR_RESULTADO_TESTE(d.testes || []);
+  }else{
+   mostrarMensagemCriacao(d,{
+    usuario:"",
+    senha:"",
+    valor:0,
+    telefone:""
+   });
+  }
+
+  if(typeof carregar==="function"){
+   await carregar();
+  }
+
+ }catch(err){
+
+  toast("❌ "+err.message);
+
+ }finally{
+
+  if(btn){
+   btn.disabled=false;
+   btn.textContent="⚡ Gerar testes";
+  }
+ }
+}
+
+
+function escaparTextoMensagem(v){
+ return String(v ?? "");
+}
+
+function formatarDataMensagem(v){
+
+ const d=new Date(v);
+
+ if(Number.isNaN(d.getTime())){
+  return String(v || "");
+ }
+
+ return d.toLocaleString("pt-BR",{
+  dateStyle:"short",
+  timeStyle:"short"
+ });
+}
+
+function mostrarMensagemCriacao(d, dados){
+
+ const existente=document.getElementById("mensagemCriacao");
+
+ if(existente){
+  existente.remove();
+ }
+
+ const usuario=
+  d.usuario ||
+  dados.usuario ||
+  "";
+
+ const senha=
+  d.senha ||
+  dados.senha ||
+  "";
+
+ const valorNumerico=
+  Number(
+   d.valor ??
+   dados.valor ??
+   0
+  );
+
+ const valor=
+  valorNumerico.toLocaleString(
+   "pt-BR",
+   {
+    style:"currency",
+    currency:"BRL"
+   }
+  );
+
+ const telefone=
+  d.telefone ||
+  dados.telefone ||
+  "Não informado";
+
+ const criado=
+  d.criado_em ||
+  new Date().toISOString();
+
+ const validade=
+  d.validade ||
+  "";
+
+ const mensagem=
+`🎬 SEJA BEM-VINDO AO LUKAFILMES!
+
+Seu acesso foi criado com sucesso.
+
+🍿 Aproveite o catálogo de filmes e séries do LUKAFILMES.
+
+👤 Usuário: ${usuario}
+🔑 Senha: ${senha}
+💰 Valor: ${valor}
+📱 Telefone: ${telefone}
+
+📅 Criado em: ${formatarDataMensagem(criado)}
+⏰ Expira em: ${formatarDataMensagem(validade)}
+
+Obrigado por fazer parte do LUKAFILMES!`;
+
+ const box=document.createElement("div");
+
+ box.id="mensagemCriacao";
+
+ box.style.cssText=`
+ position:fixed;
+ inset:0;
+ z-index:999999;
+ background:rgba(0,0,0,.78);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ box-sizing:border-box;
+ `;
+
+ box.innerHTML=`
+ <div style="
+  width:min(520px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#151515;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:16px;
+  padding:22px;
+  box-sizing:border-box;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+ ">
+  <h2 style="
+   margin:0 0 15px;
+   font-size:20px;
+  ">✅ Usuário criado</h2>
+
+  <textarea
+   id="mensagemCriadaTexto"
+   readonly
+   style="
+    width:100%;
+    min-height:300px;
+    resize:vertical;
+    box-sizing:border-box;
+    background:#0b0b0b;
+    color:#fff;
+    border:1px solid #333;
+    border-radius:10px;
+    padding:14px;
+    font-size:14px;
+    line-height:1.5;
+   ">${mensagem}</textarea>
+
+  <div style="
+   display:flex;
+   gap:10px;
+   margin-top:14px;
+   flex-wrap:wrap;
+  ">
+   <button
+    type="button"
+    id="btnCopiarMensagem"
+    style="
+     flex:1;
+     min-width:150px;
+     padding:13px;
+     border:0;
+     border-radius:9px;
+     cursor:pointer;
+     font-weight:700;
+    "
+   >📋 Copiar mensagem</button>
+
+   <button
+    type="button"
+    id="btnFecharMensagem"
+    style="
+     flex:1;
+     min-width:150px;
+     padding:13px;
+     border:1px solid #444;
+     border-radius:9px;
+     background:#222;
+     color:#fff;
+     cursor:pointer;
+     font-weight:700;
+    "
+   >Fechar</button>
+  </div>
+ </div>
+ `;
+
+ document.body.appendChild(box);
+
+ document
+  .getElementById("btnFecharMensagem")
+  .onclick=function(){
+   box.remove();
+  };
+
+ document
+  .getElementById("btnCopiarMensagem")
+  .onclick=async function(){
+
+   const texto=
+    document
+     .getElementById("mensagemCriadaTexto")
+     .value;
+
+   try{
+
+    await navigator.clipboard.writeText(texto);
+
+    this.textContent="✅ Copiado!";
+
+    setTimeout(()=>{
+     this.textContent="📋 Copiar mensagem";
+    },1800);
+
+   }catch(e){
+
+    const area=
+     document.getElementById("mensagemCriadaTexto");
+
+    area.focus();
+    area.select();
+
+    document.execCommand("copy");
+
+    this.textContent="✅ Copiado!";
+   }
+
+ };
+}
+
+async function salvar(e){
+
+ e.preventDefault();
+
+ const tipo=document.getElementById("tipoCriacao").value;
+
+ const autoBox=document.getElementById("lukaAutomaticoBox");
+
+ if(tipo==="teste" && autoBox && autoBox.style.display==="block"){
+  await LUKA_CRIAR_TESTES_AUTOMATICOS();
+  return;
+ }
+
+ const usuario=document.getElementById("fUsuario").value.trim();
+ const senha=document.getElementById("fSenha").value;
+ const dias=Number(document.getElementById("fDias").value);
+
+ const valorInput=document.getElementById("fValor");
+ const telefoneInput=document.getElementById("fTelefone");
+
+ const valor=valorInput
+  ? Number(valorInput.value || 0)
+  : 0;
+
+ const telefone=telefoneInput
+  ? telefoneInput.value.trim()
+  : "";
+
+ if(
+  !usuario ||
+  !senha ||
+  !Number.isInteger(dias) ||
+  dias<1 ||
+  !Number.isFinite(valor) ||
+  valor<0
+ ){
+  toast("Preencha os dados corretamente.");
+  return;
+ }
+
+ const btn=document.getElementById("btnSalvar");
+ btn.disabled=true;
+ btn.textContent="Criando...";
+
+ try{
+
+  let url="/api/admin/usuarios";
+  let body={usuario,senha,dias,valor,telefone};
+
+  if(tipo==="revendedor"){
+   url="/api/admin/revendedores";
+   body.limite_conexoes=Number(document.getElementById("fLimite").value);
+  }
+
+  /*
+   O endpoint de usuário existente cria uma conta normal.
+   O teste será tratado pelo servidor quando a rota específica
+   estiver disponível.
+  */
+  if(tipo==="teste"){
+   url="/api/admin/usuarios/teste";
+  }
+
+  const r=await fetch(url,{
+   method:"POST",
+   credentials:"include",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify(body)
+  });
+
+  const d=await r.json().catch(()=>({}));
+
+  if(!r.ok||d.sucesso===false){
+   throw new Error(d.mensagem||"Não foi possível criar.");
+  }
+
+  fecharModal();
+
+  mostrarMensagemCriacao(
+   d,
+   {
+    usuario,
+    senha,
+    valor,
+    telefone
+
+========== ADMIN — SCRIPTS FINAIS ==========
+    .luka-central-main h2{
+        font-size:23px;
+    }
+
+    .luka-central-stats{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .luka-central-stat{
+        padding:13px 10px;
+    }
+
+    .luka-central-stat strong{
+        font-size:19px;
+    }
+}
+
+</style>
+
+<script id="luka-admin-central-v5-js">
+(function(){
+
+    let centralAberta=false;
+
+    function esc(v){
+        return String(v ?? "")
+            .replaceAll("&","&amp;")
+            .replaceAll("<","&lt;")
+            .replaceAll(">","&gt;")
+            .replaceAll('"',"&quot;")
+            .replaceAll("'","&#039;");
+    }
+
+    function getUsuarios(){
+        return Array.isArray(window.usuarios)
+            ? window.usuarios
+            : (typeof usuarios !== "undefined" ? usuarios : []);
+    }
+
+    function criarCentral(){
+
+        if(document.getElementById("lukaCentralOverlay")) return;
+
+        const overlay=document.createElement("div");
+        overlay.id="lukaCentralOverlay";
+        overlay.className="luka-central-overlay";
+
+        overlay.innerHTML=`
+            <div class="luka-central" onclick="event.stopPropagation()">
+
+                <div class="luka-central-top">
+
+                    <button
+                        class="luka-central-back"
+                        onclick="lukaFecharCentral()"
+                        title="Voltar"
+                    >←</button>
+
+                    <div class="luka-central-title">
+                        <strong id="lukaCentralTitulo">Central</strong>
+                        <span id="lukaCentralSubtitulo">
+                            Administração LUKAFILMES
+                        </span>
+                    </div>
+
+                    <div class="luka-central-live">
+                        <i></i>
+                        SISTEMA ONLINE
+                    </div>
+
+                </div>
+
+                <div
+                    class="luka-central-body"
+                    id="lukaCentralBody"
+                ></div>
+
+            </div>
+        `;
+
+        overlay.onclick=function(e){
+            if(e.target===overlay){
+                lukaFecharCentral();
+            }
+        };
+

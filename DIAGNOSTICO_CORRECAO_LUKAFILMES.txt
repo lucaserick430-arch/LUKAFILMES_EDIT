@@ -1,0 +1,972 @@
+========== NAVEGACAO ADMIN COMPLETA ==========
+
+window.LUKAFILMES_IR_INICIO = irInicio;
+
+
+// ======================================================
+// CRIAR BOTÃO ADMIN / PAINEL
+// ======================================================
+
+function criarBotaoAdmin() {
+
+    if (!estaNaPaginaInicial()) {
+        return;
+    }
+
+    if (document.querySelector(".lukafilmes-admin")) {
+        return;
+    }
+
+    fetch("/api/eu", {
+        credentials: "same-origin"
+    })
+    .then(function(resposta) {
+
+        if (!resposta.ok) {
+            return null;
+        }
+
+        return resposta.json();
+
+    })
+    .then(function(dados) {
+
+        if (
+            !dados ||
+            !dados.logado ||
+            !dados.usuario
+        ) {
+            return;
+        }
+
+        let texto = "";
+        let destino = "";
+
+        if (dados.usuario.tipo === "admin") {
+
+            texto = "ADMIN";
+            destino = "/admin.html";
+
+        } else if (dados.usuario.tipo === "revendedor") {
+
+            texto = "REVENDEDOR";
+            destino = "/revendedor.html";
+
+        } else {
+
+            return;
+
+        }
+
+        /*
+         * O botão já existe no menu mobile da Home.
+         * Reutiliza o botão existente para não criar duplicado.
+         */
+        const painel = document.getElementById("lukafilmesMenuPainel");
+
+        if (painel) {
+
+            painel.href = destino;
+            painel.textContent = texto;
+
+            return;
+
+        }
+
+        /*
+         * Fallback: caso alguma página não possua
+         * o botão fixo, cria o botão dinamicamente.
+         */
+        if (document.querySelector(".lukafilmes-admin")) {
+            return;
+        }
+
+        const botao = document.createElement("a");
+
+        botao.href = destino;
+        botao.className = "lukafilmes-admin";
+        botao.innerHTML = texto;
+
+        botao.setAttribute(
+            "data-lukafilmes-admin",
+            "true"
+        );
+
+        document.body.appendChild(botao);
+
+    })
+
+    .catch(function(erro) {
+
+        console.warn(
+            "[NAVEGAÇÃO] Erro ao verificar usuário:",
+            erro
+        );
+
+    });
+
+}
+// ======================================================
+// BOTÃO LUKAFILMES
+// ======================================================
+
+
+
+// LUKAFILMES — ROTA EXCLUSIVA DO REVENDEDOR
+(function(){
+
+    function ehRevendedor(){
+        try{
+            const dados =
+                window.usuarioLogado ||
+                window.usuario ||
+                window.usuarioAtual ||
+                null;
+
+            if(dados && String(dados.tipo || "").toLowerCase()==="revendedor"){
+                return true;
+            }
+
+            return document.body.dataset.tipoUsuario === "revendedor";
+        }catch(e){
+            return false;
+        }
+    }
+
+    function interceptarAdminRevenda(){
+
+        document.addEventListener("click", function(ev){
+
+            const alvo = ev.target.closest(
+                'a,button,[onclick]'
+            );
+
+            if(!alvo) return;
+
+            const texto = String(
+                alvo.textContent || ""
+            ).trim().toLowerCase();
+
+            const onclick = String(
+                alvo.getAttribute("onclick") || ""
+            ).toLowerCase();
+
+            const href = String(
+                alvo.getAttribute("href") || ""
+            ).toLowerCase();
+
+            const ehAdmin =
+                texto === "admin" ||
+                texto.includes("admin") ||
+                onclick.includes("admin") ||
+                href.includes("admin.html");
+
+            if(!ehAdmin) return;
+
+            if(!ehRevendedor()) return;
+
+            ev.preventDefault();
+            ev.stopPropagation();
+            ev.stopImmediatePropagation();
+
+            window.location.href="/revendedor.html";
+
+        }, true);
+    }
+
+    if(document.readyState==="loading"){
+        document.addEventListener(
+            "DOMContentLoaded",
+            interceptarAdminRevenda,
+            {once:true}
+        );
+    }else{
+        interceptarAdminRevenda();
+    }
+
+})();
+
+========== INDEX MENU COMPLETO ==========
+1346:<div class="desktop-user-menu" id="desktopUserMenu">
+1347:    <div id="desktopUserOptions"></div>
+1508:        document.getElementById("desktopUserMenu");
+1532:        document.getElementById("desktopUserMenu");
+1535:        document.getElementById("desktopUserOptions");
+
+========== ADMIN BUTTON / NOTIFICAÇÃO ==========
+js/navegacao.js:81:            destino = "/admin.html";
+js/navegacao.js:98:        const painel = document.getElementById("lukafilmesMenuPainel");
+js/navegacao.js:218:            alert("Não foi possível sair. Tente novamente.");
+js/navegacao.js:779:                href.includes("admin.html");
+js/navegacao_backup_antes_painel.js:81:            destino = "/admin.html";
+js/navegacao_backup_antes_painel.js:98:        const painel = document.getElementById("lukafilmesMenuPainel");
+js/navegacao_backup_antes_painel.js:218:            alert("Não foi possível sair. Tente novamente.");
+js/navegacao_backup_antes_painel.js:779:                href.includes("admin.html");
+paginas/filme.html:3124:<style id="luka-notificacao-card-style">
+paginas/filme.html:3125:.lukafilmes-notificacao-item{
+paginas/filme.html:3132:.lukafilmes-notificacao-item:hover{
+paginas/filme.html:3137:.lukafilmes-notificacao-item:active{
+paginas/filme.html:3141:.luka-notificacoes-lista img{
+paginas/filme.html:3146:    .luka-notificacoes-lista{
+paginas/filme.html:3150:    .lukafilmes-notificacao-item{
+paginas/filme.html:3598:                        alert(
+paginas/filme.html:3674:                            alert(
+paginas/filme.html:3726:                        alert(
+paginas/filme.html:3765:                        alert(
+paginas/filme.html:4065:                    alert(
+paginas/filme.html:4122:                                    alert(
+paginas/filme.html:4130:                                    alert(
+paginas/filme.html:4135:                                    alert(
+paginas/filme.html:4209:                            alert(
+paginas/filme.html:5299:<script id="lukafilmes-notificacao-automatica">
+paginas/filme.html:5303:    const CHAVE = "lukafilmes_notificacoes_filmes_v1";
+paginas/filme.html:5322:        const painel = document.getElementById("lukaNotificationPanel");
+paginas/filme.html:5325:        let lista = painel.querySelector(".luka-notificacoes-lista");
+paginas/filme.html:5329:            lista.className = "luka-notificacoes-lista";
+paginas/filme.html:5349:            item.className = "lukafilmes-notificacao-item";
+paginas/filme.html:5484:                "/api/notificacoes/novos-filmes",
+paginas/filme.html:5504:                "lukaNotificationBadge"
+
+========== FILME ASSISTIR ROTINA 1 ==========
+
+        document.getElementById("generos")
+            .textContent =
+            generos;
+
+        /* SINOPSE */
+
+        document.getElementById("sinopse")
+            .textContent =
+            filme.sinopse ||
+            "Sinopse não disponível.";
+
+        /* ==========================================
+           ASSISTIR FILME — EMBEDMOVIES / TMDB
+           ========================================== */
+
+        const botao =
+            document.getElementById("botaoAssistir");
+
+        const playerFilme =
+            document.getElementById("playerFilme");
+
+        const filmeFrame =
+            document.getElementById("filmeFrame");
+
+        if (botao && playerFilme && filmeFrame && filme.id) {
+
+            botao.addEventListener(
+                "click",
+                async function (evento) {
+
+                    evento.preventDefault();
+
+                    const tmdbId =
+                        String(filme.id).trim();
+
+                    if (!tmdbId) {
+
+                        alert(
+                            "ID TMDB do filme não encontrado."
+                        );
+
+                        return;
+                    }
+
+                    console.log(
+                        "[LUKAFILMES] Verificando acesso:",
+                        filme.titulo,
+                        tmdbId
+                    );
+
+                    try {
+
+                        const respostaAcesso =
+                            await fetch(
+                                "/api/acesso-assistir",
+                                {
+                                    method: "GET",
+                                    credentials: "same-origin",
+                                    cache: "no-store"
+                                }
+                            );
+
+                        const acesso =
+                            await respostaAcesso.json();
+
+                        console.log(
+                            "[LUKAFILMES] Resultado do acesso:",
+                            acesso
+                        );
+
+                        /*
+                         * PRIMEIRO PLAY:
+                         * cliente ainda não possui conta.
+                         *
+                         * Em vez de mandar para o login,
+                         * abrimos o cadastro específico do LUKAFILMES.
+                         */
+                        if (
+                            acesso.motivo ===
+                            "nao_logado"
+                        ) {
+
+                            const retorno =
+                                window.location.pathname +
+                                window.location.search;
+
+                            window.location.href =
+                                "/cadastro?retorno=" +
+                                encodeURIComponent(retorno);
+
+                            return;
+                        }
+
+                        /*
+                         * ACESSO NEGADO / EXPIRADO
+                         *
+                         * NÃO ABRE O PLAYER.
+                         * MOSTRA A TELA DE PAGAMENTO.
+                         */
+                        if (!acesso.permitido) {
+
+                            if (
+                                acesso.motivo ===
+                                "expirado"
+                            ) {
+
+                                await mostrarPagamentoLuka(
+                                    acesso
+                                );
+
+                                return;
+                            }
+
+                            alert(
+                                acesso.mensagem ||
+                                "Seu acesso não está liberado para assistir."
+                            );
+
+                            return;
+                        }
+
+                        /*
+                         * ACESSO LIBERADO
+                         *
+                         * AGORA SIM MOSTRA O PLAYER.
+                         */
+                        console.log(
+                            "[PLAYER TMDB]",
+                            filme.titulo,
+                            tmdbId
+                        );
+
+                        playerFilme.style.display =
+                            "block";
+
+                        filmeFrame.src = "";
+
+                        const playCentral =
+                            document.getElementById(
+                                "playCentralFilme"
+                            );
+
+                        if (playCentral) {
+
+                            playCentral.classList.remove(
+                                "oculto"
+                            );
+
+                        }
+
+
+========== FILME ASSISTIR ROTINA 2 ==========
+                    console.error(
+                        "[LUKAFILMES] Erro na tela de pagamento:",
+                        erro
+                    );
+
+                    alert(
+                        "Não foi possível abrir a tela de pagamento."
+                    );
+
+                }
+
+            }
+
+            /* ==========================================
+               PLAY CENTRAL — CARREGA PLAYER 1
+               ========================================== */
+
+            const playCentral =
+                document.getElementById(
+                    "playCentralFilme"
+                );
+
+            if (playCentral) {
+
+                playCentral.addEventListener(
+                    "click",
+                    async function () {
+
+                        try {
+
+                            /*
+                             * VERIFICA O ACESSO ANTES
+                             * DE CARREGAR O CONTEÚDO.
+                             */
+                            const respostaAcesso =
+                                await fetch(
+                                    "/api/acesso-assistir",
+                                    {
+                                        method: "GET",
+                                        credentials: "same-origin",
+                                        cache: "no-store"
+                                    }
+                                );
+
+                            const acesso =
+                                await respostaAcesso.json();
+
+                            console.log(
+                                "[LUKAFILMES] Acesso para assistir:",
+                                acesso
+                            );
+
+                            /*
+                             * SEM AUTORIZAÇÃO:
+                             * NÃO CARREGA O PLAYER.
+                             */
+                            if (!acesso.permitido) {
+
+                                if (
+                                    acesso.motivo ===
+                                    "nao_logado"
+                                ) {
+                                    alert(
+                                        "Faça login para assistir."
+                                    );
+                                }
+                                else if (
+                                    acesso.motivo ===
+                                    "expirado"
+                                ) {
+                                    alert(
+                                        "Seu acesso expirou. É necessário renovar para assistir."
+                                    );
+                                }
+                                else {
+                                    alert(
+
+========== API ACESSO ==========
+
+    if (!req.session.usuario) {
+
+        return res.status(401).json({
+            logado: false
+        });
+    }
+
+    res.json({
+        logado: true,
+        usuario: req.session.usuario
+    });
+
+});
+
+
+// ==========================================
+// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+// ==========================================
+
+app.get("/api/debug-acesso", async (req, res) => {
+    try {
+        if (!req.session || !req.session.usuario) {
+            return res.json({
+                logado: false,
+                sessao: null
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        return res.json({
+            logado: true,
+            sessao: {
+                id: sessao.id,
+                usuario: sessao.usuario,
+                tipo: sessao.tipo,
+                validade: sessao.validade || null
+            },
+            pessoa: pessoa ? {
+                id: pessoa.id,
+                usuario: pessoa.usuario,
+                tipo: pessoa.tipo,
+                status: pessoa.status,
+                validade: pessoa.validade || null
+            } : null,
+            agora: new Date().toISOString()
+        });
+    } catch (erro) {
+        console.error("[DEBUG ACESSO] Erro:", erro);
+        return res.status(500).json({
+            erro: "erro_servidor"
+        });
+    }
+});
+
+app.get("/api/acesso-assistir", async (req, res) => {
+
+    try {
+
+        if (!req.session || !req.session.usuario) {
+            return res.status(401).json({
+                permitido: false,
+                logado: false,
+                motivo: "nao_logado"
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                permitido: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado"
+            });
+        }
+
+        const tipo = String(pessoa.tipo || "usuario").toLowerCase();
+        const status = String(pessoa.status || "ativo").toLowerCase();
+
+        if (status !== "ativo") {
+            return res.json({
+                permitido: false,
+                logado: true,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                permitido: true,
+                logado: true,
+                tipo,
+                validade: pessoa.validade || null
+            });
+        }
+
+        if (
+            pessoa.validade &&
+            new Date(pessoa.validade).getTime() > Date.now()
+        ) {
+            return res.json({
+                permitido: true,
+                logado: true,
+                tipo,
+                validade: pessoa.validade
+            });
+        }
+
+        return res.json({
+            permitido: false,
+            logado: true,
+            tipo,
+            motivo: "expirado",
+            valor: CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+            dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+
+========== API PAGAMENTO COMPLETA ==========
+});
+
+
+// ==========================================
+// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+// ==========================================
+
+app.post("/api/pagamentos/criar", async (req, res) => {
+
+    try {
+
+        if (!req.session || !req.session.usuario) {
+            return res.status(401).json({
+                sucesso: false,
+                logado: false,
+                motivo: "nao_logado",
+                mensagem: "Faça login para continuar."
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                sucesso: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado",
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const tipo = String(
+            pessoa.tipo || "usuario"
+        ).toLowerCase();
+
+        const statusUsuario = String(
+            pessoa.status || "ativo"
+        ).toLowerCase();
+
+        if (statusUsuario !== "ativo") {
+            return res.status(403).json({
+                sucesso: false,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: false,
+                motivo: "isento",
+                tipo
+            });
+        }
+
+        const pagamentosPendentes =
+            await listarPagamentosLuka(
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+            );
+
+        const pagamentoExistente =
+            pagamentosPendentes.find(
+                pagamento =>
+                    Number(pagamento.usuario_id) === Number(pessoa.id)
+            );
+
+        if (pagamentoExistente) {
+
+            let pix;
+
+            try {
+                pix = gerarPixCopiaColaLuka();
+            } catch (erroPix) {
+                console.error(
+                    "[PAGAMENTO] Erro ao gerar PIX:",
+                    erroPix
+                );
+            }
+
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: true,
+                pagamento: pagamentoExistente,
+                pix: pix || null,
+                valor: Number(
+                    process.env.PIX_VALOR ||
+                    CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+                ).toFixed(2),
+                nome: process.env.PIX_NOME || "LUKAFILMES",
+                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+            });
+        }
+
+        const idPagamento =
+            await proximoIdPagamentoLuka();
+
+        const pagamento = {
+            id: idPagamento,
+            usuario_id: Number(pessoa.id),
+            usuario: String(
+                pessoa.usuario ||
+                sessao.usuario ||
+                ""
+            ),
+            valor:
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+            criado_em:
+                new Date().toISOString(),
+            aprovado_em: null,
+            inicio_acesso: null,
+            fim_acesso: null,
+            observacao: null
+        };
+
+        await criarPagamentoLuka(pagamento);
+
+        let pix;
+
+        try {
+            pix = gerarPixCopiaColaLuka();
+        } catch (erroPix) {
+            console.error(
+                "[PAGAMENTO] Erro ao gerar PIX:",
+                erroPix
+            );
+        }
+
+        return res.json({
+            sucesso: true,
+            pagamento_necessario: true,
+            pagamento,
+            pix: pix || null,
+            valor: Number(
+                process.env.PIX_VALOR ||
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+            ).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[PAGAMENTO] Erro ao criar pagamento:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível criar o pagamento."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// PIX LUKAFILMES — COPIA E COLA
+// ==========================================
+
+========== ROTAS ADMIN DE PAGAMENTO ==========
+132:    pagamentos: {
+133:        PENDENTE: "pendente",
+134:        APROVADO: "aprovado",
+135:        RECUSADO: "recusado"
+237:async function prepararTursoPagamentos() {
+241:    CREATE TABLE IF NOT EXISTS lukafilmes_pagamentos (
+246:      status TEXT NOT NULL DEFAULT 'pendente',
+248:      aprovado_em TEXT,
+256:async function criarPagamentoLuka(dados) {
+257:    await prepararTursoPagamentos();
+265:            INSERT INTO lukafilmes_pagamentos
+271:                status,
+273:                aprovado_em,
+285:            String(dados.status || CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE),
+287:            dados.aprovado_em || null,
+297:async function proximoIdPagamentoLuka() {
+298:    await prepararTursoPagamentos();
+306:        FROM lukafilmes_pagamentos
+312:async function listarPagamentosLuka(status = null) {
+313:    await prepararTursoPagamentos();
+319:    if (status) {
+323:                FROM lukafilmes_pagamentos
+324:                WHERE status = ?
+327:            args: [String(status)]
+335:        FROM lukafilmes_pagamentos
+342:async function buscarPagamentoLuka(id) {
+343:    await prepararTursoPagamentos();
+352:            FROM lukafilmes_pagamentos
+362:async function atualizarPagamentoLuka(id, dados) {
+363:    await prepararTursoPagamentos();
+373:        "status",
+374:        "aprovado_em",
+395:            UPDATE lukafilmes_pagamentos
+508:      (id, usuario, senha, status, tipo, validade, criado_em, limite_conexoes, conexoes_utilizadas, revendedor_id)
+518:          u.status || "ativo",
+628:prepararTursoPagamentos()
+629:    .then(() => console.log("[TURSO] Tabela de pagamentos preparada."))
+661:        return res.status(403).send("Acesso negado.");
+705:            return res.status(400).json({
+712:            return res.status(400).json({
+719:            return res.status(400).json({
+726:            return res.status(400).json({
+742:            return res.status(409).json({
+756:            status: "ativo",
+769:         * A validade continua null até o pagamento ser aprovado.
+816:        return res.status(500).json({
+860:        if (pessoa.status !== "ativo") {
+917:        return res.status(500).json({
+933:        return res.status(401).json({
+978:                status: pessoa.status,
+985:        return res.status(500).json({
+996:            return res.status(401).json({
+1011:            return res.status(404).json({
+1019:        const status = String(pessoa.status || "ativo").toLowerCase();
+1021:        if (status !== "ativo") {
+1071:        return res.status(500).json({
+1087:app.post("/api/pagamentos/criar", async (req, res) => {
+1092:            return res.status(401).json({
+1108:            return res.status(404).json({
+1120:        const statusUsuario = String(
+1121:            pessoa.status || "ativo"
+1124:        if (statusUsuario !== "ativo") {
+1125:            return res.status(403).json({
+1138:                pagamento_necessario: false,
+1144:        const pagamentosPendentes =
+1145:            await listarPagamentosLuka(
+1146:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+1149:        const pagamentoExistente =
+1150:            pagamentosPendentes.find(
+1151:                pagamento =>
+1152:                    Number(pagamento.usuario_id) === Number(pessoa.id)
+1155:        if (pagamentoExistente) {
+1170:                pagamento_necessario: true,
+1171:                pagamento: pagamentoExistente,
+1182:        const idPagamento =
+1183:            await proximoIdPagamentoLuka();
+1185:        const pagamento = {
+1186:            id: idPagamento,
+1195:            status:
+1196:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+1199:            aprovado_em: null,
+1205:        await criarPagamentoLuka(pagamento);
+1220:            pagamento_necessario: true,
+1221:            pagamento,
+1234:            "[PAGAMENTO] Erro ao criar pagamento:",
+1238:        return res.status(500).json({
+1240:            mensagem: "Não foi possível criar o pagamento."
+1270:        return res.status(500).json({
+1286:        return res.status(401).json({
+1305:            return res.status(403).json({
+1324:                u.status === "ativo";
+1330:                status: u.status,
+1356:        res.status(500).json({
+1432:            dados.status_message ||
+1687:            return res.status(500).json({
+1708:            return res.status(400).json({
+1732:        return res.status(500).json({
+1775:        res.status(500).json({
+1974:        return res.status(500).json({
+2039:        return res.status(500).json({
+2098:        return res.status(500).json({
+2343:        return res.status(500).json({
+2505:        return res.status(500).json({
+2872:        return res.status(500).json({
+2912:            return res.status(500).json({
+2928:        return res.status(500).json({
+2945:            return res.status(400).json({
+3155:        return res.status(500).json({
+3185:            return res.status(400).json({
+3194:            return res.status(503).json({
+3213:            return res.status(404).json({
+3281:                    dados?.error?.message || resposta.status
+3284:                return res.status(502).json({
+3444:        return res.status(500).json({
+3458:            return res.status(400).json({
+3514:        return res.status(500).json({
+3614:        return res.status(500).json({
+3630:            return res.status(403).json({
+3642:            status: u.status || "ativo",
+3657:        return res.status(500).json({
+3679:                return res.status(403).json({
+3754:                status: "ativo",
+3791:            return res.status(500).json({
+3818:            return res.status(403).json({
+3849:            return res.status(400).json({
+3868:            return res.status(409).json({
+3898:            status: "ativo",
+3952:        return res.status(500).json({
+3981:            return res.status(403).json({
+3992:            return res.status(400).json({
+4007:            return res.status(404).json({
+4016:            return res.status(403).json({
+4046:        return res.status(500).json({
+4070:            return res.status(403).json({
+4093:            return res.status(400).json({
+4100:            return res.status(400).json({
+4107:            return res.status(400).json({
+4121:            return res.status(409).json({
+4132:            return res.status(404).json({
+4141:                return res.status(400).json({
+4190:        return res.status(500).json({
+4205:app.post("/api/admin/usuarios/status", async (req, res) => {
+4211:            return res.status(403).json({
+4218:        const status = String(req.body.status || "").trim();
+4223:            !["ativo", "suspenso"].includes(status)
+4244:        usuarios[indice].status = status;
+4250:                status === "ativo"
+4258:        return res.status(500).json({
+4260:            mensagem: "Erro interno ao alterar status."
+4277:            return res.status(403).json({
+4339:        usuarios[indice].status = "ativo";
+4356:        return res.status(500).json({
+4377:            return res.status(403).json({
+4448:            status: "ativo",
+4497:        return res.status(500).json({
+4517:            return res.status(403).json({
+4559:            return res.status(403).json({
+4617:            status: "ativo",
+4653:        return res.status(500).json({
+4725:        return res.status(401).json({
+4750:        return res.status(500).json({
+4765:            return res.status(403).json({
+4785:            return res.status(403).json({
+4809:                        status: u.status,
+4832:        return res.status(500).json({
+4852:            return res.status(403).json({
+4869:            return res.status(404).json({
+4880:                status: revendedor.status,
+4894:        return res.status(500).json({
+4915:            return res.status(403).json({
+4934:            return res.status(400).json({
+4941:            return res.status(400).json({
+4958:            return res.status(404).json({
+4973:            return res.status(409).json({
+4984:                return res.status(400).json({
+5014:        return res.status(500).json({
+5026:app.post("/api/revendedor/clientes/status", async (req, res) => {
+5034:            return res.status(403).json({
+5046:        const status =
+5047:            String(req.body.status || "").trim();
+5052:            !["ativo", "suspenso"].includes(status)
+5054:            return res.status(400).json({
+5071:            return res.status(404).json({
+5077:        usuarios[indice].status = status;
+5084:            status
+5090:                status === "ativo"
+5102:        return res.status(500).json({
+5104:            mensagem: "Erro interno ao alterar status."
+5122:            return res.status(403).json({
+5135:            return res.status(400).json({
+5152:            return res.status(404).json({
+5182:        return res.status(500).json({
+5202:            return res.status(403).json({
+5223:            return res.status(400).json({
+5240:            return res.status(404).json({
+5264:        usuarios[indice].status = "ativo";
+5288:        return res.status(500).json({
+5311:                return res.status(403).json({
+5330:                        status: u.status,
+5357:            return res.status(500).json({
+5376:    "/status",
+5459:            req.path === "/status" ||
+5507:            req.path === "/api/pagamentos/criar"
+5586:            return res.status(400).json({
+5626:        return res.status(500).json({

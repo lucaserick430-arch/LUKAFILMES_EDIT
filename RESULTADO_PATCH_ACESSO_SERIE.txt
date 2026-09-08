@@ -1,0 +1,8 @@
+====================================
+PATCH DE ACESSO DA SÉRIE APLICADO
+====================================
+OK: assistirEpisodio agora é async.
+OK: verificação /api/acesso-assistir adicionada.
+OK: episódio não abre o iframe antes da autorização.
+OK: arquivo oficial paginas/serie.html alterado.
+====================================

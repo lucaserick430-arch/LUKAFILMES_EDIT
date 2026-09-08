@@ -1,0 +1,209 @@
+343:   BOTÃO ASSISTIR
+346:.assistir {
+379:.assistir:hover {
+580:    .assistir {
+730:    .botoes-assistir {
+741:    .botoes-assistir .assistir {
+981:.botoes-assistir{
+986:.assistir{
+1004:.assistir:hover{
+1010:#botaoAssistirOrigem{
+1015:#botaoAssistirOrigem:hover{
+1173:    .botoes-assistir{
+1184:    .assistir,
+1185:    #botaoAssistirOrigem{
+1729:.botoes-assistir {
+1741:.botoes-assistir .assistir {
+1766:.botoes-assistir .assistir:hover {
+2007:    .botoes-assistir {
+2011:    .botoes-assistir .assistir {
+2054:    .botoes-assistir {
+2059:    .botoes-assistir .assistir {
+2254:.botoes-assistir{
+2263:.botoes-assistir .assistir{
+2279:#botaoAssistir{
+2284:#botaoAssistir:hover{
+2289:#botaoAssistirOrigem,
+2297:#botaoAssistirOrigem:hover,
+2493:    .botoes-assistir{
+2498:    .botoes-assistir .assistir{
+2535:.botoes-assistir > #trailerContainer{
+2551:.botoes-assistir > #trailerContainer .trailer-video{
+2566:.botoes-assistir > #trailerContainer .trailer-video iframe{
+2578:    .botoes-assistir > #trailerContainer{
+2598:    .botoes-assistir{
+2604:    .botoes-assistir > #trailerContainer{
+2623:    .botoes-assistir > #trailerContainer .trailer-video{
+2640:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2657:    .botoes-assistir > #trailerContainer{
+2673:    .botoes-assistir > #trailerContainer{
+2693:    .botoes-assistir > #trailerContainer .trailer-video{
+2710:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2723:    .botoes-assistir > #trailerContainer{
+2747:    .botoes-assistir > #trailerContainer{
+2767:    .botoes-assistir > #trailerContainer .trailer-video{
+2783:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2802:    .botoes-assistir > #trailerContainer{
+2825:    .botoes-assistir > #trailerContainer{
+2847:    .botoes-assistir > #trailerContainer .trailer-video{
+2866:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2884:    .botoes-assistir > #trailerContainer{
+3056:    .botoes-assistir > #trailerContainer{
+3076:    .botoes-assistir > #trailerContainer .trailer-video{
+3098:    .botoes-assistir > #trailerContainer .trailer-video iframe,
+3156:    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+3203:                class="botoes-assistir"
+3214:                    class="assistir"
+3215:                    id="botaoAssistir"
+3221:                    class="assistir"
+3222:                    id="botaoAssistirOrigem"
+3231:                    class="assistir"
+3573:           ASSISTIR FILME — EMBEDMOVIES / TMDB
+3577:            document.getElementById("botaoAssistir");
+3615:                                "/api/acesso-assistir",
+3633:                         * cliente ainda não possui conta.
+3636:                         * abrimos o cadastro específico do LUKAFILMES.
+3648:                                "/cadastro?retorno=" +
+3658:                         * MOSTRA A TELA DE PAGAMENTO.
+3667:                                await mostrarPagamentoLuka(
+3676:                                "Seu acesso não está liberado para assistir."
+3736:               PAGAMENTO LUKAFILMES
+3739:            async function mostrarPagamentoLuka(acesso, renovacao = false) {
+3743:                    let pagamento = null;
+3745:                    const respostaPagamento =
+3747:                            "/api/pagamentos/criar",
+3756:                                    renovacao
+3757:                                        ? { renovacao: true }
+3763:                    const dadosPagamento =
+3764:                        await respostaPagamento.json();
+3766:                    if (!respostaPagamento.ok ||
+3767:                        !dadosPagamento.sucesso) {
+3770:                            dadosPagamento.mensagem ||
+3771:                            "Não foi possível preparar o pagamento."
+3778:                        dadosPagamento.pagamento_necessario ===
+3788:                    pagamento =
+3789:                        dadosPagamento.pagamento ||
+3793:                        dadosPagamento.valor ||
+3798:                    const pix =
+3799:                        dadosPagamento.pix ||
+3804:                            "lukafilmesPagamento"
+3815:                        "lukafilmesPagamento";
+3834:                            ${renovacao ? "🔄 Renovar acesso" : "🔒 Acesso expirado"}
+3838:                            ${renovacao
+3840:                                : "Para assistir este filme, renove seu acesso."}
+3856:                            id="lukafilmesQrCode"
+3875:                            PIX copia e cola
+3879:                            id="lukafilmesPix"
+3895:                            ">${pix}</textarea>
+3899:                            id="lukafilmesCopiarPix"
+3916:                            📋 COPIAR CÓDIGO PIX
+3921:                            id="lukafilmesPagamentoFeito"
+3935:                            id="lukafilmesPagamentoStatus"
+3956:                            "lukafilmesQrCode"
+3960:                        pix &&
+3962:                        typeof QRCode !== "undefined"
+3965:                        new QRCode(
+3968:                                text: pix,
+3978:                            "<span style='color:#222;'>QR Code indisponível</span>";
+3984:                            "lukafilmesCopiarPix"
+4001:                                            String(pix)
+4012:                                            "lukafilmesPix"
+4036:                                        "✅ PIX COPIADO";
+4041:                                                "📋 COPIAR CÓDIGO PIX";
+4054:                                                "📋 COPIAR CÓDIGO PIX";
+4067:                            "lukafilmesPagamentoFeito"
+4075:                                const nomeUsuario =
+4077:                                        pagamento &&
+4078:                                        pagamento.usuario
+4079:                                            ? pagamento.usuario
+4080:                                            : "cliente"
+4083:                                const idPagamento =
+4084:                                    pagamento &&
+4085:                                    pagamento.id
+4086:                                        ? Number(pagamento.id)
+4090:                                    renovacao
+4092:                                            "🔄 LUKAFILMES — SOLICITAÇÃO DE RENOVAÇÃO",
+4094:                                            "👤 Usuário: " + nomeUsuario,
+4095:                                            "🧾 Pagamento: #" + idPagamento,
+4098:                                            "✅ Já realizei o pagamento via PIX.",
+4100:                                            "📅 Solicito a renovação do meu acesso por mais 30 dias.",
+4102:                                            "Estou enviando o comprovante para conferência e aprovação da renovação."
+4105:                                            "🎬 LUKAFILMES — COMPROVANTE DE PAGAMENTO",
+4107:                                            "👤 Usuário: " + nomeUsuario,
+4108:                                            "🧾 Pagamento: #" + idPagamento,
+4111:                                            "✅ Já realizei o pagamento via PIX.",
+4122:                                        "lukafilmesPagamentoStatus"
+4131:                                        "⏳ Pagamento pendente.<br><br>📲 Envie o comprovante pelo WhatsApp e depois volte para esta página.<br><br>Seu acesso será liberado após a aprovação.";
+4154:                        "[LUKAFILMES] Pagamento preparado:",
+4155:                        pagamento
+4161:                        "[LUKAFILMES] Erro na tela de pagamento:",
+4166:                        "Não foi possível abrir a tela de pagamento."
+4174:               RENOVAÇÃO — USA O MESMO PIX EXISTENTE
+4178:                "luka:renovar",
+4189:                        await mostrarPagamentoLuka(
+4197:                            "[LUKAFILMES] Erro ao abrir renovação:",
+4229:                                    "/api/acesso-assistir",
+4241:                                "[LUKAFILMES] Acesso para assistir:",
+4256:                                        "Faça login para assistir."
+4264:                                        "Seu acesso expirou. É necessário renovar para assistir."
+4270:                                        "Seu acesso não está liberado para assistir."
+4501:        /* ASSISTIR NO SITE DE ORIGEM */
+4504:            document.getElementById("botaoAssistirOrigem");
+5600:                "Novo filme disponível • Toque para assistir";
+5682:     LUKAFILMES — NOTIFICAÇÃO DE RENOVAÇÃO
+5685:<style id="lukafilmes-renovacao-notificacao-style">
+5687:#lukaRenovacaoNotificacao {
+5706:#lukaRenovacaoNotificacao .luka-renovacao-titulo {
+5712:#lukaRenovacaoNotificacao .luka-renovacao-texto {
+5718:#lukaRenovacaoNotificacao .luka-renovacao-dias {
+5724:#lukaRenovacaoNotificacao .luka-renovacao-acoes {
+5731:#lukaRenovacaoNotificacao button {
+5740:#lukaRenovacaoNotificacao .luka-renovar {
+5745:#lukaRenovacaoNotificacao .luka-fechar {
+5751:    #lukaRenovacaoNotificacao {
+5758:    #lukaRenovacaoNotificacao {
+5766:    #lukaRenovacaoNotificacao .luka-renovacao-titulo {
+5770:    #lukaRenovacaoNotificacao .luka-renovacao-texto {
+5777:<script id="lukafilmes-renovacao-notificacao-script">
+5796:                "lukaRenovacaoNotificacao"
+5812:            "lukaRenovacaoNotificacao";
+5814:        const usuario =
+5815:            escapar(dados.usuario || "");
+5836:            <div class="luka-renovacao-titulo">
+5837:                🔔 RENOVAÇÃO DO LUKAFILMES
+5840:            <div class="luka-renovacao-texto">
+5841:                Olá, <strong>${usuario}</strong>!
+5846:                ${Number(dados.dias_renovacao || 30)} dias.
+5849:            <div class="luka-renovacao-dias">
+5853:            <div class="luka-renovacao-acoes">
+5856:                    class="luka-renovar"
+5857:                    id="lukaRenovarAgora">
+5858:                    🔄 RENOVAR
+5864:                    id="lukaFecharRenovacao">
+5874:        const botaoRenovar =
+5876:                "lukaRenovarAgora"
+5879:        if(botaoRenovar){
+5881:            botaoRenovar.addEventListener(
+5887:                     * abrir o PIX existente com
+5888:                     * renovacao=true.
+5892:                            "luka:renovar",
+5906:                "lukaFecharRenovacao"
+5925:    async function verificarRenovacao(){
+5931:                    "/api/renovacao-status",
+5959:                "[LUKAFILMES] Falha ao verificar renovação:",
+5972:            verificarRenovacao,
+6240:.botoes-assistir{
+6251:.assistir{
+6281:.assistir:hover{
+6286:#botaoAssistirOrigem{
+6291:#botaoAssistirOrigem:hover{
+6461:    .botoes-assistir{
+6471:    .assistir,
+6472:    #botaoAssistirOrigem{
+6727:.botoes-assistir{
+6737:.assistir{
+6761:.assistir:hover{
+6766:#botaoAssistirOrigem{
+6884:    .botoes-assistir{
+6894:    .assistir,
+6895:    #botaoAssistirOrigem{

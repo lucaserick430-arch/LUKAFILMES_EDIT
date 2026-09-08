@@ -1,0 +1,24 @@
+========== PERSISTENCIA USUARIOS ==========
+421:async function carregarUsuarios() {
+485:async function salvarUsuarios(usuarios) {
+
+========== RENOVAR USUARIO ==========
+4062:app.post("/api/admin/usuarios/editar", async (req, res) => {
+4269:app.post("/api/admin/usuarios/renovar", async (req, res) => {
+
+========== PAGAMENTOS HELPERS ==========
+237:async function prepararTursoPagamentos() {
+256:async function criarPagamentoLuka(dados) {
+257:    await prepararTursoPagamentos();
+297:async function proximoIdPagamentoLuka() {
+298:    await prepararTursoPagamentos();
+312:async function listarPagamentosLuka(status = null) {
+313:    await prepararTursoPagamentos();
+342:async function buscarPagamentoLuka(id) {
+343:    await prepararTursoPagamentos();
+362:async function atualizarPagamentoLuka(id, dados) {
+363:    await prepararTursoPagamentos();
+628:prepararTursoPagamentos()
+1145:            await listarPagamentosLuka(
+1183:            await proximoIdPagamentoLuka();
+1205:        await criarPagamentoLuka(pagamento);

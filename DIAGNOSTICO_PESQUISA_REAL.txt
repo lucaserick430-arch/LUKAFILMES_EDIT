@@ -1,0 +1,180 @@
+4665-
+4666-<style id="lukafilmes-hero-filmes-mobile-igual-home">
+4667-
+4668-/* =========================================================
+--
+4760-#heroFilmesTouchLayer{
+4761-    pointer-events:none !important;
+4762-}
+4763-</style>
+4764-
+4765:<script id="lukafilmes-assistir-hero-final">
+4766-(function(){
+4767-    function instalarAssistirHero(){
+4768-        const botao = document.getElementById("heroAssistir");
+4769-        if(!botao || botao.dataset.lukaAssistirFinal === "1")
+4770-            return;
+4771-
+4772-        botao.dataset.lukaAssistirFinal = "1";
+4773-        botao.type = "button";
+4774-
+4775-        botao.addEventListener("click", function(e){
+4776-            e.preventDefault();
+4777-            e.stopPropagation();
+4778-
+4779-            const filme =
+4780-                (typeof filmeHeroAtual !== "undefined")
+--
+4817-    }
+4818-
+4819-    setTimeout(instalarAssistirHero, 500);
+4820-    setTimeout(instalarAssistirHero, 1500);
+4821-});
+4822:</script>
+4823-
+4824-<style id="lukafilmes-correcao-hero-assistir-final">
+4825-.hero-filme .hero-conteudo{
+4826-    position:relative !important;
+4827-    z-index:50 !important;
+4828-    pointer-events:auto !important;
+4829-}
+4830-.hero-filme .hero-botoes{
+4831-    position:relative !important;
+4832-    z-index:51 !important;
+4833-    pointer-events:auto !important;
+4834-}
+4835-.hero-filme #heroAssistir{
+4836-    position:relative !important;
+4837-    z-index:52 !important;
+--
+4845-#heroFilmesTouchLayer{
+4846-    pointer-events:none !important;
+4847-}
+4848-</style>
+4849-
+4850:<script id="lukafilmes-assistir-hero-final">
+4851-(function(){
+4852-    function instalarAssistirHero(){
+4853-        const botao = document.getElementById("heroAssistir");
+4854-        if(!botao || botao.dataset.lukaAssistirFinal === "1")
+4855-            return;
+4856-
+4857-        botao.dataset.lukaAssistirFinal = "1";
+4858-        botao.type = "button";
+4859-
+4860-        botao.addEventListener("click", function(e){
+4861-            e.preventDefault();
+4862-            e.stopPropagation();
+4863-
+4864-            const filme =
+4865-                (typeof filmeHeroAtual !== "undefined")
+--
+4902-    }
+4903-
+4904-    setTimeout(instalarAssistirHero, 500);
+4905-    setTimeout(instalarAssistirHero, 1500);
+4906-});
+4907:</script>
+4908-
+4909-<style id="lukafilmes-correcao-hero-assistir-final">
+4910-.hero-filme .hero-conteudo{
+4911-    position:relative !important;
+4912-    z-index:50 !important;
+4913-    pointer-events:auto !important;
+4914-}
+4915-.hero-filme .hero-botoes{
+4916-    position:relative !important;
+4917-    z-index:51 !important;
+4918-    pointer-events:auto !important;
+4919-}
+4920-.hero-filme #heroAssistir{
+4921-    position:relative !important;
+4922-    z-index:52 !important;
+--
+4928-#heroFilmesTouchLayer{
+4929-    pointer-events:none !important;
+4930-}
+4931-</style>
+4932-
+4933:<script id="lukafilmes-assistir-hero-final">
+4934-(function(){
+4935-    function instalarAssistirHero(){
+4936-        const botao = document.getElementById("heroAssistir");
+4937-
+4938-        if(!botao || botao.dataset.lukaAssistirFinal === "1")
+4939-            return;
+4940-
+4941-        botao.dataset.lukaAssistirFinal = "1";
+4942-        botao.type = "button";
+4943-
+4944-        botao.addEventListener("click", function(e){
+4945-            e.preventDefault();
+4946-            e.stopPropagation();
+4947-
+4948-            const filme =
+--
+4984-    }
+4985-
+4986-    setTimeout(instalarAssistirHero, 500);
+4987-    setTimeout(instalarAssistirHero, 1500);
+4988-})();
+4989:</script>
+4990-
+4991-<style id="LUKA-ASSISTIR-CLIQUE-DEFINITIVO">
+4992-#heroFilme{
+4993-    position:relative !important;
+4994-}
+4995-
+4996-#heroFilme .hero-conteudo{
+4997-    position:relative !important;
+4998-    z-index:99990 !important;
+4999-    pointer-events:none !important;
+5000-}
+5001-
+5002-#heroFilme .hero-botoes{
+5003-    position:relative !important;
+5004-    z-index:99999 !important;
+--
+5019-#heroFilmesTouchLayer{
+5020-    pointer-events:none !important;
+5021-}
+5022-</style>
+5023-
+5024:<script id="LUKA-ASSISTIR-CLIQUE-DEFINITIVO">
+5025-(function(){
+5026-
+5027-    function instalarAssistirHero(){
+5028-
+5029-        const botao =
+5030-            document.getElementById("heroAssistir");
+5031-
+5032-        if(!botao)
+5033-            return;
+5034-
+5035-        botao.style.pointerEvents="auto";
+5036-        botao.style.position="relative";
+5037-        botao.style.zIndex="100000";
+5038-        botao.style.touchAction="manipulation";
+5039-
+--
+5143-        instalarAssistirHero,
+5144-        1000
+5145-    );
+5146-
+5147-})();
+5148:</script>
+5149-
+5150-<style id="lukafilmes-cards-clique-sem-deslocamento">
+5151-/* Remove deslocamento/animação visual do card ao tocar/clicar */
+5152-.movie-card,
+5153-.filme-card,
+5154-.card-filme,
+5155-.filme-item,
+5156-.grid-filmes .card,
+5157-.grid-filmes > div {
+5158-    -webkit-transform: none !important;
+5159-    transform: none !important;
+5160-}
+5161-
+5162-.movie-card:active,
+5163-.filme-card:active,

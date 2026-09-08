@@ -1,0 +1,382 @@
+2739-
+2740-
+2741-            if (!temporada) {
+2742-
+2743-                return;
+2744-            }
+2745-
+2746-
+2747-            mostrarEpisodios(
+2748-                temporada
+2749-            );
+2750-
+2751-        }
+2752-    );
+2753-
+2754-
+2755-    /* ==========================================
+2756-       PLAYER
+2757-       ========================================== */
+2758-
+2759:    async function mostrarPagamentoLuka(acesso, renovacao = false) {
+2760-
+2761-                try {
+2762-
+2763-                    let pagamento = null;
+2764-
+2765-                    const respostaPagamento =
+2766-                        await fetch(
+2767:                            "/api/pagamentos/criar",
+2768-                            {
+2769-                                method: "POST",
+2770-                                credentials: "same-origin",
+2771-                                headers: {
+2772-                                    "Content-Type":
+2773-                                        "application/json"
+2774-                                },
+2775-                                body: JSON.stringify(
+2776:                                    renovacao
+2777:                                        ? { renovacao: true }
+2778-                                        : {}
+2779-                                )
+2780-                            }
+2781-                        );
+2782-
+2783-                    const dadosPagamento =
+2784-                        await respostaPagamento.json();
+2785-
+2786-                    if (!respostaPagamento.ok ||
+2787-                        !dadosPagamento.sucesso) {
+2788-
+2789-                        alert(
+2790-                            dadosPagamento.mensagem ||
+2791-                            "Não foi possível preparar o pagamento."
+2792-                        );
+2793-
+2794-                        return;
+2795-                    }
+2796-
+2797-                    if (
+2798-                        dadosPagamento.pagamento_necessario ===
+2799-                        false
+2800-                    ) {
+2801-
+2802-                        playerSerie.style.display =
+2803-                            "block";
+2804-
+2805-                        return;
+2806-                    }
+2807-
+2808-                    pagamento =
+2809-                        dadosPagamento.pagamento ||
+2810-                        null;
+2811-
+2812-                    const valor =
+--
+2834-                    tela.id =
+2835-                        "lukafilmesPagamento";
+2836-
+2837-                    tela.style.cssText = `
+2838-                        width: min(92%, 520px);
+2839-                        margin: 24px auto;
+2840-                        padding: 24px;
+2841-                        box-sizing: border-box;
+2842-                        background: linear-gradient(180deg, #242424 0%, #111 100%);
+2843-                        border: 2px solid rgba(255,255,255,.16);
+2844-                        border-radius: 20px;
+2845-                        text-align: center;
+2846-                        color: #fff;
+2847-                        box-shadow: 0 15px 50px rgba(0,0,0,.75);
+2848-                        position: relative;
+2849-                        z-index: 20;
+2850-                    `;
+2851-
+2852-                    tela.innerHTML = `
+2853-                        <h2 style="margin:0 0 10px;">
+2854:                            ${renovacao ? "🔄 Renovar acesso" : "🔒 Acesso expirado"}
+2855-                        </h2>
+2856-
+2857-                        <p style="margin:8px 0 18px;">
+2858:                            ${renovacao
+2859-                                ? "Renove seu acesso ao LUKAFILMES por mais 30 dias."
+2860-                                : "Para assistir esta série, renove seu acesso."}
+2861-                        </p>
+2862-
+2863-                        <div style="
+2864-                            font-size:30px;
+2865-                            font-weight:700;
+2866-                            margin:15px 0;
+2867-                        ">
+2868-                            R$ ${valor}
+2869-                        </div>
+2870-
+2871-                        <p style="margin:8px 0;">
+2872-                            Acesso por 30 dias
+2873-                        </p>
+2874-
+2875-                        <div
+2876:                            id="lukafilmesQrCode"
+2877-                            style="
+2878-                                width:220px;
+2879-                                min-height:220px;
+2880-                                margin:20px auto;
+2881-                                padding:10px;
+2882-                                box-sizing:border-box;
+2883-                                background:#fff;
+2884-                                border-radius:12px;
+2885-                                display:flex;
+2886-                                align-items:center;
+2887-                                justify-content:center;
+2888-                            ">
+2889-                        </div>
+2890-
+2891-                        <p style="
+2892-                            font-size:14px;
+2893-                            margin:14px 0 6px;
+2894-                        ">
+2895-                            PIX copia e cola
+2896-                        </p>
+2897-
+2898-                        <textarea
+2899-                            id="lukafilmesPix"
+2900-                            readonly
+2901-                            style="
+2902-                                width:100%;
+2903-                                min-height:90px;
+2904-                                box-sizing:border-box;
+2905-                                resize:none;
+2906-                                padding:10px;
+2907-                                border-radius:10px;
+2908-                                border:1px solid #444;
+2909-                                background:#fff;
+2910-                                color:#111;
+2911-                                font-size:13px;
+--
+2921-                                width:100%;
+2922-                                margin-top:12px;
+2923-                                padding:15px;
+2924-                                border:2px solid #fff;
+2925-                                border-radius:12px;
+2926-                                cursor:pointer;
+2927-                                font-weight:800;
+2928-                                font-size:15px;
+2929-                                background:#fff;
+2930-                                color:#111;
+2931-                                box-shadow:0 5px 18px rgba(0,0,0,.35);
+2932-                                display:block;
+2933-                                visibility:visible;
+2934-                                opacity:1;
+2935-                            ">
+2936-                            📋 COPIAR CÓDIGO PIX
+2937-                        </button>
+2938-
+2939-                        <button
+2940-                            type="button"
+2941:                            id="lukafilmesPagamentoFeito"
+2942-                            style="
+2943-                                width:100%;
+2944-                                margin-top:10px;
+2945-                                padding:13px;
+2946-                                border:0;
+2947-                                border-radius:10px;
+2948-                                cursor:pointer;
+2949-                                font-weight:700;
+2950-                            ">
+2951-                            📲 ENVIAR COMPROVANTE PELO WHATSAPP
+2952-                        </button>
+2953-
+2954-                        <p
+2955-                            id="lukafilmesPagamentoStatus"
+2956-                            style="
+2957-                                display:none;
+2958-                                margin-top:14px;
+2959-                                font-size:14px;
+2960-                            ">
+2961-                        </p>
+2962-                    `;
+2963-
+2964-                    playerSerie.parentNode.insertBefore(
+2965-                        tela,
+2966-                        playerSerie
+2967-                    );
+2968-
+2969-                    tela.scrollIntoView({
+2970-                        behavior: "auto",
+2971-                        block: "center"
+2972-                    });
+2973-
+2974-                    const areaQr =
+2975-                        document.getElementById(
+2976:                            "lukafilmesQrCode"
+2977-                        );
+2978-
+2979-                    if (
+2980-                        pix &&
+2981-                        areaQr &&
+2982-                        typeof QRCode !== "undefined"
+2983-                    ) {
+2984-
+2985-                        new QRCode(
+2986-                            areaQr,
+2987-                            {
+2988-                                text: pix,
+2989-                                width: 200,
+2990-                                height: 200
+2991-                            }
+2992-                        );
+2993-
+2994-                    }
+2995-                    else if (areaQr) {
+2996-
+2997-                        areaQr.innerHTML =
+2998-                            "<span style='color:#222;'>QR Code indisponível</span>";
+2999-
+3000-                    }
+3001-
+3002-                    const botaoCopiar =
+3003-                        document.getElementById(
+3004-                            "lukafilmesCopiarPix"
+3005-                        );
+3006-
+3007-                    if (botaoCopiar) {
+3008-
+3009-                        botaoCopiar.onclick =
+3010-                            async function () {
+3011-
+--
+3067-
+3068-                                    botaoCopiar.innerHTML =
+3069-                                        "⚠️ Não foi possível copiar";
+3070-
+3071-                                    setTimeout(
+3072-                                        function () {
+3073-                                            botaoCopiar.innerHTML =
+3074-                                                "📋 COPIAR CÓDIGO PIX";
+3075-                                        },
+3076-                                        2500
+3077-                                    );
+3078-
+3079-                                }
+3080-
+3081-                            };
+3082-
+3083-                    }
+3084-
+3085-                    const botaoFeito =
+3086-                        document.getElementById(
+3087:                            "lukafilmesPagamentoFeito"
+3088-                        );
+3089-
+3090-                    if (botaoFeito) {
+3091-
+3092-                        botaoFeito.onclick =
+3093-                            function () {
+3094-
+3095-                                const nomeUsuario =
+3096-                                    String(
+3097-                                        pagamento &&
+3098-                                        pagamento.usuario
+3099-                                            ? pagamento.usuario
+3100-                                            : "cliente"
+3101-                                    );
+3102-
+3103-                                const idPagamento =
+3104-                                    pagamento &&
+3105-                                    pagamento.id
+3106-                                        ? Number(pagamento.id)
+3107-                                        : "";
+3108-
+3109-                                const mensagem =
+3110:                                    renovacao
+3111-                                        ? [
+3112-                                            "🔄 LUKAFILMES — SOLICITAÇÃO DE RENOVAÇÃO",
+3113-                                            "",
+3114-                                            "👤 Usuário: " + nomeUsuario,
+3115-                                            "🧾 Pagamento: #" + idPagamento,
+3116-                                            "💰 Valor: R$ " + valor,
+3117-                                            "",
+3118-                                            "✅ Já realizei o pagamento via PIX.",
+3119-                                            "",
+3120-                                            "📅 Solicito a renovação do meu acesso por mais 30 dias.",
+3121-                                            "",
+3122-                                            "Estou enviando o comprovante para conferência e aprovação da renovação."
+3123-                                        ].join("\n")
+3124-                                        : [
+3125-                                            "🎬 LUKAFILMES — COMPROVANTE DE PAGAMENTO",
+3126-                                            "",
+3127-                                            "👤 Usuário: " + nomeUsuario,
+3128-                                            "🧾 Pagamento: #" + idPagamento,
+3129-                                            "💰 Valor: R$ " + valor,
+3130-                                            "",
+3131-                                            "✅ Já realizei o pagamento via PIX.",
+3132-                                            "",
+3133-                                            "Estou enviando o comprovante para conferência e aprovação."
+3134-                                        ].join("\n");
+3135-
+3136-                                const whatsapp =
+3137-                                    "https://wa.me/5511957621653?text=" +
+3138-                                    encodeURIComponent(mensagem);
+3139-
+3140-                                const status =
+3141-                                    document.getElementById(
+3142-                                        "lukafilmesPagamentoStatus"
+3143-                                    );
+3144-
+3145-                                if (status) {
+--
+3256-            if (
+3257-                acesso.motivo ===
+3258-                "nao_logado"
+3259-            ) {
+3260-                const retorno =
+3261-                    window.location.pathname +
+3262-                    window.location.search;
+3263-
+3264-                window.location.href =
+3265-                    "/cadastro?retorno=" +
+3266-                    encodeURIComponent(retorno);
+3267-
+3268-                return;
+3269-            }
+3270-
+3271-            if (!acesso.permitido) {
+3272-                if (
+3273-                    acesso.motivo ===
+3274-                    "expirado"
+3275-                ) {
+3276:                    await mostrarPagamentoLuka(
+3277-                        acesso
+3278-                    );
+3279-
+3280-                    return;
+3281-                }
+3282-
+3283-                alert(
+3284-                    acesso.mensagem ||
+3285-                    "Seu acesso não está liberado para assistir."
+3286-                );
+3287-
+3288-                return;
+3289-            }
+3290-
+3291-        } catch (erro) {
+3292-            console.error(
+3293-                "[LUKAFILMES] Erro ao verificar acesso da série:",
+3294-                erro
+3295-            );
+3296-
+3297-            alert(
+3298-                "Não foi possível verificar seu acesso. Tente novamente."
+3299-            );
+3300-
+3301-            return;
+3302-        }
+3303-
+3304-        console.log(
+3305-            "[SERIES PLAYER] Abrindo episódio:",
+3306-            {
+3307-                serie: idSerie,
+3308-                temporada: temporadaId,
+3309-                episodio: episodioId,
+3310-                nome: nome || ""
+3311-            }

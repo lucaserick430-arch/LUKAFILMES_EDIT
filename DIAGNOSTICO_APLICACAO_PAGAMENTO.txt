@@ -1,0 +1,34 @@
+========== ARQUIVOS ==========
+/data/data/com.termux/files/home/LUKAFILMES_RENDER
+-rw-------. 1 u0_a324 u0_a324 154K Sep  6 18:47 paginas/filme.html
+-rw-------. 1 u0_a324 u0_a324 175K Sep  5 04:08 public/admin.html
+-rw-------. 1 u0_a324 u0_a324 131K Sep  6 18:58 server_render.js
+
+========== PAGAMENTO ORIGINAL ==========
+1084:// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+1087:app.post("/api/pagamentos/criar", async (req, res) => {
+5507:            req.path === "/api/pagamentos/criar"
+
+========== ADMIN HTML ==========
+848:#lukaContaOverlay{
+861:#lukaContaOverlay.show{
+1006:    #lukaContaOverlay{
+2047:<div id="lukaContaOverlay" onclick="fecharContaDetalhes(event)">
+2112:<script>
+3198:        .getElementById("lukaContaOverlay")
+3245:    const el = document.getElementById("lukaContaOverlay");
+3706:<script>
+4256:#lukaContaOverlay.show{
+4585:                document.getElementById("lukaContaOverlay");
+4798:<script>
+5028:#lukaContaOverlay{
+5510:#lukaContaOverlay.show #lukaContaBox{
+5851:#lukaContaOverlay:not(.show) #lukaContaBox{
+5882:#lukaContaOverlay.show #lukaContaBox{
+6223:#lukaContaOverlay:not(.show) #lukaContaBox{
+6704:#lukaContaOverlay{
+
+========== BACKUPS DA IMPLEMENTACAO ==========
+
+========== NODE ==========
+CODIGO_NODE=0

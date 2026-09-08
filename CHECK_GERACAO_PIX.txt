@@ -1,0 +1,15 @@
+paginas/filme.html:3156:    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+paginas/filme.html:3795:                        dadosPagamento.pix ||
+paginas/filme.html:3847:                            id="lukafilmesQrCode"
+paginas/filme.html:3937:                            "lukafilmesQrCode"
+paginas/filme.html:3943:                        typeof QRCode !== "undefined"
+paginas/filme.html:3946:                        new QRCode(
+paginas/filme.html:4050:                                        "✅ Já realizei o pagamento via PIX.",
+server_render.js:167:function gerarPixCopiaColaLuka() {
+server_render.js:1742:                pix = gerarPixCopiaColaLuka();
+server_render.js:1745:                    "[PAGAMENTO] Erro ao gerar PIX:",
+server_render.js:1792:            pix = gerarPixCopiaColaLuka();
+server_render.js:1795:                "[PAGAMENTO] Erro ao gerar PIX:",
+server_render.js:1838:        const pix = gerarPixCopiaColaLuka();
+server_render.js:1850:        console.error("[PIX] Erro ao gerar Pix:", erro);
+server_render.js:1854:            mensagem: "Não foi possível gerar o Pix."

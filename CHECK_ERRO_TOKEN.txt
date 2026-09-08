@@ -1,0 +1,175 @@
+========== BOTAO TESTE ==========
+
+<script id="luka-modo-teste-usuario-v1">
+async function LUKA_TESTAR_COMO_USUARIO() {
+
+    const botao = document.querySelector(
+        '#lukaTesteUsuarioAdmin button'
+    );
+
+    if (botao) {
+        botao.disabled = true;
+        botao.textContent = "🧪 INICIANDO TESTE...";
+    }
+
+    try {
+
+        const resposta = await fetch(
+            "/api/admin/teste/iniciar",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const dados = await resposta.json();
+
+        if (!dados.sucesso) {
+            throw new Error(
+                dados.mensagem || "Não foi possível iniciar o teste."
+            );
+        }
+
+        /*
+         * Nova aba:
+         * a sessão ADMIN continua existindo no servidor.
+         * O cookie luka_modo_teste seleciona o usuário de teste
+         * somente nas rotas que reconhecem esse modo.
+         */
+        window.open(
+            dados.destino || "/?luka_teste=1",
+            "_blank"
+        );
+
+    } catch (erro) {
+
+        console.error("[LUKA TESTE]", erro);
+
+        if (typeof toast === "function") {
+            toast(erro.message);
+        } else {
+            alert(erro.message);
+        }
+
+    } finally {
+
+        if (botao) {
+            botao.disabled = false;
+            botao.textContent = "🧪 TESTAR COMO USUÁRIO";
+        }
+    }
+}
+</script>
+
+<!-- FIM LUKA_MODO_TESTE_USUARIO_V1 -->
+
+</body>
+</html>
+
+<style id="luka-conta-tech-upgrade">
+
+#lukaContaOverlay{
+    background:
+        radial-gradient(circle at 50% 20%,rgba(229,9,20,.10),transparent 42%),
+        rgba(0,0,0,.88);
+}
+
+#lukaContaBox{
+    position:relative;
+    overflow:hidden;
+    background:
+        linear-gradient(145deg,rgba(20,20,20,.98),rgba(5,5,5,.99));
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.9),
+        0 0 45px rgba(229,9,20,.08);
+}
+
+#lukaContaBox::before{
+    content:"";
+    position:absolute;
+
+========== CHECK HTML ==========
+5641-        margin-top:9px;
+5642-        font-size:12px;
+5643-        line-height:1.45;
+5644-        opacity:.65;
+5645-    ">
+5646-        Abre o LUKAFILMES como um cliente comum,
+5647-        preservando sua sessão de administrador.
+5648-    </div>
+5649-</div>
+5650-
+5651:<script id="luka-modo-teste-usuario-v1">
+5652-async function LUKA_TESTAR_COMO_USUARIO() {
+5653-
+5654-    const botao = document.querySelector(
+5655-        '#lukaTesteUsuarioAdmin button'
+5656-    );
+5657-
+5658-    if (botao) {
+5659-        botao.disabled = true;
+5660-        botao.textContent = "🧪 INICIANDO TESTE...";
+5661-    }
+5662-
+5663-    try {
+5664-
+5665-        const resposta = await fetch(
+5666-            "/api/admin/teste/iniciar",
+5667-            {
+5668-                method: "POST",
+5669-                headers: {
+5670-                    "Content-Type": "application/json"
+5671-                }
+5672-            }
+5673-        );
+5674-
+5675-        const dados = await resposta.json();
+5676-
+5677-        if (!dados.sucesso) {
+5678-            throw new Error(
+5679-                dados.mensagem || "Não foi possível iniciar o teste."
+5680-            );
+5681-        }
+5682-
+5683-        /*
+5684-         * Nova aba:
+5685-         * a sessão ADMIN continua existindo no servidor.
+5686-         * O cookie luka_modo_teste seleciona o usuário de teste
+5687-         * somente nas rotas que reconhecem esse modo.
+5688-         */
+5689-        window.open(
+5690-            dados.destino || "/?luka_teste=1",
+5691-            "_blank"
+5692-        );
+5693-
+5694-    } catch (erro) {
+5695-
+5696-        console.error("[LUKA TESTE]", erro);
+5697-
+5698-        if (typeof toast === "function") {
+5699-            toast(erro.message);
+5700-        } else {
+5701-            alert(erro.message);
+5702-        }
+5703-
+5704-    } finally {
+5705-
+5706-        if (botao) {
+5707-            botao.disabled = false;
+5708-            botao.textContent = "🧪 TESTAR COMO USUÁRIO";
+5709-        }
+5710-    }
+5711-}
+5712-</script>
+5713-
+5714-<!-- FIM LUKA_MODO_TESTE_USUARIO_V1 -->
+5715-
+5716-</body>
+5717-</html>
+5718-
+5719-<style id="luka-conta-tech-upgrade">
+5720-
+5721-#lukaContaOverlay{

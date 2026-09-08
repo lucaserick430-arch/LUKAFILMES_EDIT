@@ -1,0 +1,63 @@
+2559-    max-width:520px;
+2560-    margin:0 auto 35px;
+2561-}
+2562-
+2563:#pesquisaFilmesPagina{
+2564-    width:100%;
+2565-    height:46px;
+2566-    padding:0 16px;
+2567-    border:1px solid #666;
+2568-    border-radius:4px;
+2569-    outline:none;
+2570-    background:#222;
+2571-    color:#fff;
+2572-    font-size:16px;
+2573-    text-align:center;
+2574-    box-sizing:border-box;
+2575-}
+2576-
+2577:#pesquisaFilmesPagina:focus{
+2578-    border-color:#fff;
+2579-}
+2580-
+2581:#pesquisaFilmesPagina::placeholder{
+2582-    text-align:center;
+2583-}
+2584-
+2585-@media (max-width:700px){
+2586-    .pesquisa-filmes-pagina{
+2587-        width:100%;
+2588-        margin:0 auto 28px;
+2589-    }
+2590-
+2591:    #pesquisaFilmesPagina{
+2592-        height:44px;
+2593-        font-size:15px;
+2594-    }
+2595-}
+2596-
+2597-</style>
+2598-
+2599-</head>
+2600-
+2601-<body>
+2602-
+2603-<div id="lukaLoaderOverlay" aria-hidden="false">
+--
+2767-    <main class="catalogo-netflix">
+2768-
+2769-        <div class="pesquisa-filmes-pagina">
+2770-            <input
+2771:                id="pesquisaFilmesPagina"
+2772-                type="search"
+2773-                placeholder="Pesquisar filmes..."
+2774-                autocomplete="off">
+2775-        </div>
+2776-
+2777-        <div id="grade" class="lista-series filmes-grade-series"></div>
+2778-
+2779-    </main>
+2780-
+2781-</div>
+2782-
+2783-<script>

@@ -1,0 +1,65 @@
+========== LOGIN ATUAL ==========
+580-        </div>
+581-
+582-        <div class="premium-login-campos">
+583-
+584-            <input
+585:            id="usuario"
+586-            type="text"
+587-            placeholder="Usuário"
+588-            autocomplete="username"
+589-            required
+590-        >
+591-
+592-            <input
+593:            id="senha"
+594-            type="password"
+595-            placeholder="Senha"
+596-            autocomplete="current-password"
+597-            required
+598-        >
+599-
+600-        </div>
+601-
+602-        <button id="botaoEntrar" type="button">
+603-            <span class="icone-play">▶</span>
+604-            <span>COMEÇAR A ASSISTIR</span>
+605-        </button>
+
+========== POST LOGIN ==========
+655-            botao.textContent = "ENTRANDO...";
+656-
+657-            try {
+658-
+659-                const resposta = await fetch(
+660:                    "/login",
+661-                    {
+662-                        method: "POST",
+663-
+664-                        headers: {
+665-                            "Content-Type": "application/json"
+666-                        },
+667-
+668-                        body: JSON.stringify({
+
+========== BOTÃO ==========
+598-        >
+599-
+600-        </div>
+601-
+602:        <button id="botaoEntrar" type="button">
+603-            <span class="icone-play">▶</span>
+604-            <span>COMEÇAR A ASSISTIR</span>
+605-        </button>
+606-
+607-        <div id="mensagem"></div>
+608-
+609-        <div class="premium-mensagem">
+610-            Explore o catálogo e descubra seu próximo filme.
+
+========== SCRIPT FUNCIONAL ==========
+634:<script id="lukafilmes-login-funcional">
+
+========== BACKUPS ==========
+public/login.html.ANTES_LOGIN_FUNCIONAL_20260906_202510
+public/login.html.ANTES_LOGIN_FUNCIONAL_20260906_202503

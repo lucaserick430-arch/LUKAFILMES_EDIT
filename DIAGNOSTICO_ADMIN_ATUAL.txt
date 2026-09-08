@@ -1,0 +1,407 @@
+===== ARQUIVOS ATUAIS =====
+-rw-------. 1 u0_a324 u0_a324 154K Sep  6 18:47 paginas/filme.html
+-rw-------. 1 u0_a324 u0_a324 175K Sep  5 04:08 public/admin.html
+-rw-------. 1 u0_a324 u0_a324  62K Sep  5 04:08 public/index.html
+-rw-------. 1 u0_a324 u0_a324 131K Sep  6 18:58 server_render.js
+
+===== PAINEL ADMIN / NAVEGAÇÃO =====
+public/index.html:1571:        if(tipo === "admin"){
+public/admin.html:5:<meta id="lukafilmes-admin-no-cache" http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+public/admin.html:9:<title>LUKAFILMES • ADMIN</title>
+public/admin.html:261:<style id="admin-clickable-cards">
+public/admin.html:284:<style id="admin-back-button">
+public/admin.html:285:.admin-back{
+public/admin.html:299:.admin-back:hover{
+public/admin.html:439:.admin-back{
+public/admin.html:446:.admin-back:hover{
+public/admin.html:669:<style id="admin-profile-avatar">
+public/admin.html:1432:    .admin-layout,
+public/admin.html:1689:<div class="logo" id="adminLogo" onclick="abrirFotoPerfil()" title="Clique para alterar a foto">
+public/admin.html:1690: <img id="adminAvatar" class="logo-avatar" alt="Perfil">
+public/admin.html:1691: <span id="adminLogoTexto">LUKA<span>FILMES</span></span>
+public/admin.html:1712:<p>Central administrativa LUKAFILMES</p>
+public/admin.html:1756:<button class="admin-back" onclick="voltarDashboardAdmin()">← Voltar ao Dashboard</button>
+public/admin.html:1795:<button class="admin-back" onclick="voltarDashboardAdmin()">← Voltar ao Dashboard</button>
+public/admin.html:1821:<button class="admin-back" onclick="voltarDashboardAdmin()">← Voltar ao Dashboard</button>
+public/admin.html:2007:                <option value="admin">Administrador</option>
+public/admin.html:2333:  const r=await fetch("/api/admin/usuarios/teste-auto",{
+public/admin.html:2642:  let url="/api/admin/usuarios";
+public/admin.html:2646:   url="/api/admin/revendedores";
+public/admin.html:2656:   url="/api/admin/usuarios/teste";
+public/admin.html:2704:  const r=await fetch("/api/admin/presenca",{credentials:"include"});
+public/admin.html:3479:            "/api/admin/usuarios/editar",
+public/admin.html:3532:            "[ADMIN EDITAR]",
+public/admin.html:3569:  const r=await fetch("/api/admin/usuarios/renovar",{
+public/admin.html:3599:  const r=await fetch("/api/admin/usuarios/status",{
+public/admin.html:3623: if(u.tipo==="admin"){
+public/admin.html:3624:  toast("O administrador não pode ser excluído.");
+public/admin.html:3632:  const r=await fetch("/api/admin/usuarios/excluir",{
+public/admin.html:3657:<script id="admin-clickable-navigation">
+public/admin.html:3658:function abrirAbaAdmin(abaNome){
+public/admin.html:3687:<script id="admin-back-navigation">
+public/admin.html:3688:function voltarDashboardAdmin(){
+public/admin.html:3722:            "[ADMIN] Elemento não encontrado:",
+public/admin.html:3733:<script id="admin-profile-avatar-js">
+public/admin.html:3735:    const KEY = "lukafilmes_admin_avatar";
+public/admin.html:3739:        const img = document.getElementById("adminAvatar");
+public/admin.html:3740:        const texto = document.getElementById("adminLogoTexto");
+public/admin.html:3939: LUKAFILMES — ADMIN ULTRA 2026
+public/admin.html:3943:<style id="luka-admin-ultra-2026">
+public/admin.html:4308:#lukaAdminClock{
+public/admin.html:4320:#lukaAdminClock::before{
+public/admin.html:4350:    #lukaAdminClock{
+public/admin.html:4371:<script id="luka-admin-ultra-2026">
+public/admin.html:4460:    if(!alvo || document.getElementById("lukaAdminClock")){
+public/admin.html:4465:    clock.id = "lukaAdminClock";
+public/admin.html:6249:<style id="luka-admin-modern-v3">
+public/admin.html:6252:   LUKAFILMES — ADMIN DASHBOARD MODERN V3
+public/admin.html:6767:<script id="luka-admin-modern-js">
+public/admin.html:6825:<style id="luka-admin-v4-premium">
+public/admin.html:6827:   LUKAFILMES ADMIN — PREMIUM V4
+public/admin.html:7115:<script id="luka-admin-v4-premium-js">
+public/admin.html:7190:<style id="luka-admin-central-v5">
+public/admin.html:7193:   LUKAFILMES ADMIN — CENTRAL V5
+public/admin.html:7599:<script id="luka-admin-central-v5-js">
+public/admin.html:7641:                            Administração LUKAFILMES
+js/conta-storage.js:179:           Se a sessão atual for ADMIN e ainda existir a antiga
+js/conta-storage.js:191:        if(tipo === "admin"){
+js/navegacao.js:10:// MOSTRAR ADMIN/PAINEL SOMENTE NA PÁGINA INICIAL
+js/navegacao.js:40:// CRIAR BOTÃO ADMIN / PAINEL
+js/navegacao.js:43:function criarBotaoAdmin() {
+js/navegacao.js:49:    if (document.querySelector(".lukafilmes-admin")) {
+js/navegacao.js:78:        if (dados.usuario.tipo === "admin") {
+js/navegacao.js:80:            texto = "ADMIN";
+js/navegacao.js:81:            destino = "/admin.html";
+js/navegacao.js:113:        if (document.querySelector(".lukafilmes-admin")) {
+js/navegacao.js:120:        botao.className = "lukafilmes-admin";
+js/navegacao.js:124:            "data-lukafilmes-admin",
+js/navegacao.js:230:// ESTILO ADMIN / PAINEL
+js/navegacao.js:233:function adicionarEstiloAdmin() {
+js/navegacao.js:235:    if (document.getElementById("estilo-admin-lukafilmes")) {
+js/navegacao.js:241:    style.id = "estilo-admin-lukafilmes";
+js/navegacao.js:245:        .lukafilmes-admin {
+js/navegacao.js:285:        .lukafilmes-admin:hover {
+js/navegacao.js:299:            .lukafilmes-admin {
+js/navegacao.js:654:    adicionarEstiloAdmin();
+js/navegacao.js:656:    criarBotaoAdmin();
+js/navegacao.js:753:    function interceptarAdminRevenda(){
+js/navegacao.js:775:            const ehAdmin =
+js/navegacao.js:776:                texto === "admin" ||
+js/navegacao.js:777:                texto.includes("admin") ||
+js/navegacao.js:778:                onclick.includes("admin") ||
+js/navegacao.js:779:                href.includes("admin.html");
+js/navegacao.js:781:            if(!ehAdmin) return;
+js/navegacao.js:797:            interceptarAdminRevenda,
+js/navegacao.js:801:        interceptarAdminRevenda();
+js/navegacao_backup_antes_painel.js:10:// MOSTRAR ADMIN/PAINEL SOMENTE NA PÁGINA INICIAL
+js/navegacao_backup_antes_painel.js:40:// CRIAR BOTÃO ADMIN / PAINEL
+js/navegacao_backup_antes_painel.js:43:function criarBotaoAdmin() {
+js/navegacao_backup_antes_painel.js:49:    if (document.querySelector(".lukafilmes-admin")) {
+js/navegacao_backup_antes_painel.js:78:        if (dados.usuario.tipo === "admin") {
+js/navegacao_backup_antes_painel.js:80:            texto = "ADMIN";
+js/navegacao_backup_antes_painel.js:81:            destino = "/admin.html";
+js/navegacao_backup_antes_painel.js:113:        if (document.querySelector(".lukafilmes-admin")) {
+js/navegacao_backup_antes_painel.js:120:        botao.className = "lukafilmes-admin";
+js/navegacao_backup_antes_painel.js:124:            "data-lukafilmes-admin",
+js/navegacao_backup_antes_painel.js:230:// ESTILO ADMIN / PAINEL
+js/navegacao_backup_antes_painel.js:233:function adicionarEstiloAdmin() {
+js/navegacao_backup_antes_painel.js:235:    if (document.getElementById("estilo-admin-lukafilmes")) {
+js/navegacao_backup_antes_painel.js:241:    style.id = "estilo-admin-lukafilmes";
+js/navegacao_backup_antes_painel.js:245:        .lukafilmes-admin {
+js/navegacao_backup_antes_painel.js:285:        .lukafilmes-admin:hover {
+js/navegacao_backup_antes_painel.js:299:            .lukafilmes-admin {
+js/navegacao_backup_antes_painel.js:654:    adicionarEstiloAdmin();
+js/navegacao_backup_antes_painel.js:656:    criarBotaoAdmin();
+js/navegacao_backup_antes_painel.js:753:    function interceptarAdminRevenda(){
+js/navegacao_backup_antes_painel.js:775:            const ehAdmin =
+js/navegacao_backup_antes_painel.js:776:                texto === "admin" ||
+js/navegacao_backup_antes_painel.js:777:                texto.includes("admin") ||
+js/navegacao_backup_antes_painel.js:778:                onclick.includes("admin") ||
+js/navegacao_backup_antes_painel.js:779:                href.includes("admin.html");
+js/navegacao_backup_antes_painel.js:781:            if(!ehAdmin) return;
+js/navegacao_backup_antes_painel.js:797:            interceptarAdminRevenda,
+js/navegacao_backup_antes_painel.js:801:        interceptarAdminRevenda();
+paginas/admin.html:7:<title>LUKA FILMES — Administrador</title>
+paginas/admin.html:226:.admin-user-actions{
+paginas/admin.html:232:.admin-user-actions button{
+paginas/admin.html:240:.admin-edit-btn{
+paginas/admin.html:243:.admin-delete-btn{
+paginas/admin.html:246:.admin-user-actions button:hover{
+paginas/admin.html:250:  .admin-user-actions{
+paginas/admin.html:254:  .admin-user-actions button{
+paginas/admin.html:412:        Painel administrativo carregado.<br>
+paginas/admin.html:445:  LUKA FILMES • Painel Administrativo
+paginas/admin.html:453:    const resposta = await fetch("/api/admin/usuarios", {
+paginas/admin.html:475:    console.error("[ADMIN] Erro ao carregar usuários:", e);
+paginas/admin.html:527:          <div class="admin-user-actions">
+paginas/admin.html:530:              class="admin-edit-btn"
+paginas/admin.html:536:              class="admin-delete-btn"
+paginas/admin.html:582:    const resposta = await fetch("/api/admin/usuarios", {
+paginas/admin.html:611:    console.error("[ADMIN] Erro ao criar usuário:", e);
+paginas/admin.html:663:  if(!["usuario","teste","revendedor","admin"].includes(tipo)){
+paginas/admin.html:669:    const resposta = await fetch("/api/admin/usuarios/editar", {
+paginas/admin.html:699:      "[ADMIN] Erro ao editar usuário:",
+paginas/admin.html:720:    String(usuarioAtual.tipo || "").toLowerCase() === "admin"
+paginas/admin.html:722:    alert("O administrador não pode ser excluído.");
+paginas/admin.html:738:      "/api/admin/usuarios/excluir",
+paginas/admin.html:767:      "[ADMIN] Erro ao excluir usuário:",
+paginas/filme.html:4039:                                        "Pagamento registrado como pendente. Aguarde a confirmação do administrador.";
+
+===== SESSÃO / LOGIN =====
+569:        if (!req.session || !req.session.usuario) return;
+571:        const u = req.session.usuario;
+609:const configuracaoSessao = {
+625:    configuracaoSessao.store = new NetlifyBlobSessionStore();
+634:app.use(session(configuracaoSessao));
+639:app.get("/login", (req, res) => {
+641:    if (req.session.usuario) {
+656:    if (!req.session.usuario) {
+660:    if (req.session.usuario.tipo !== "admin") {
+775:            !req.session.usuario ||
+776:            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+778:            req.session.usuario = {
+827:app.post("/login", async (req, res) => {
+888:        req.session.usuario = {
+931:    if (!req.session.usuario) {
+940:        usuario: req.session.usuario
+952:        if (!req.session || !req.session.usuario) {
+959:        const sessao = req.session.usuario;
+995:        if (!req.session || !req.session.usuario) {
+1003:        const sessao = req.session.usuario;
+1091:        if (!req.session || !req.session.usuario) {
+1100:        const sessao = req.session.usuario;
+1285:    if (!req.session || !req.session.usuario) {
+1302:            !req.session.usuario ||
+1303:            req.session.usuario.tipo !== "admin"
+3627:            !req.session.usuario ||
+3628:            req.session.usuario.tipo !== "admin"
+3675:                !req.session.usuario ||
+3676:                req.session.usuario.tipo !== "admin"
+3814:            !req.session.usuario ||
+3815:            req.session.usuario.tipo !== "admin"
+3977:            !req.session.usuario ||
+3978:            req.session.usuario.tipo !== "admin"
+4067:            !req.session.usuario ||
+4068:            req.session.usuario.tipo !== "admin"
+4164:            Number(req.session.usuario.id) === id
+4167:            req.session.usuario.usuario = usuario;
+4168:            req.session.usuario.tipo = tipo;
+4208:            !req.session.usuario ||
+4209:            req.session.usuario.tipo !== "admin"
+4274:            !req.session.usuario ||
+4275:            req.session.usuario.tipo !== "admin"
+4374:            !req.session.usuario ||
+4375:            req.session.usuario.tipo !== "admin"
+4514:            !req.session.usuario ||
+4515:            req.session.usuario.tipo !== "revendedor"
+4524:            Number(req.session.usuario.id);
+4724:    if (!req.session.usuario) {
+4734:        dados[String(req.session.usuario.id)] = {
+4762:            !req.session.usuario ||
+4763:            req.session.usuario.tipo !== "revendedor"
+4772:            Number(req.session.usuario.id);
+4849:            !req.session.usuario ||
+4850:            req.session.usuario.tipo !== "revendedor"
+4865:                    Number(req.session.usuario.id)
+4912:            !req.session.usuario ||
+4913:            req.session.usuario.tipo !== "revendedor"
+4922:            Number(req.session.usuario.id);
+5031:            !req.session.usuario ||
+5032:            req.session.usuario.tipo !== "revendedor"
+5041:            Number(req.session.usuario.id);
+5119:            !req.session.usuario ||
+5120:            req.session.usuario.tipo !== "revendedor"
+5129:            Number(req.session.usuario.id);
+5199:            !req.session.usuario ||
+5200:            req.session.usuario.tipo !== "revendedor"
+5209:            Number(req.session.usuario.id);
+5307:                !req.session.usuario ||
+5308:                req.session.usuario.tipo !== "admin"
+5512:        if (!req.session || !req.session.usuario) {
+5518:        const usuarioSessao = req.session.usuario;
+
+===== ACESSO ASSISTIR =====
+server_render.js:991:app.get("/api/acesso-assistir", async (req, res) => {
+server_render.js:5506:            req.path === "/api/acesso-assistir" ||
+paginas/filme.html:1010:#botaoAssistirOrigem{
+paginas/filme.html:1015:#botaoAssistirOrigem:hover{
+paginas/filme.html:1185:    #botaoAssistirOrigem{
+paginas/filme.html:2279:#botaoAssistir{
+paginas/filme.html:2284:#botaoAssistir:hover{
+paginas/filme.html:2289:#botaoAssistirOrigem,
+paginas/filme.html:2297:#botaoAssistirOrigem:hover,
+paginas/filme.html:3215:                    id="botaoAssistir"
+paginas/filme.html:3222:                    id="botaoAssistirOrigem"
+paginas/filme.html:3577:            document.getElementById("botaoAssistir");
+paginas/filme.html:3615:                                "/api/acesso-assistir",
+paginas/filme.html:3667:                                await mostrarPagamentoLuka(
+paginas/filme.html:3739:            async function mostrarPagamentoLuka(acesso) {
+paginas/filme.html:4096:                                    "/api/acesso-assistir",
+paginas/filme.html:4371:            document.getElementById("botaoAssistirOrigem");
+paginas/filme.html:5835:#botaoAssistirOrigem{
+paginas/filme.html:5840:#botaoAssistirOrigem:hover{
+paginas/filme.html:6021:    #botaoAssistirOrigem{
+paginas/filme.html:6315:#botaoAssistirOrigem{
+paginas/filme.html:6444:    #botaoAssistirOrigem{
+
+===== PAGAMENTOS =====
+server_render.js:132:    pagamentos: {
+server_render.js:133:        PENDENTE: "pendente",
+server_render.js:141:// PIX FIXO LUKAFILMES - COPIA E COLA
+server_render.js:144:function crc16PixLuka(str) {
+server_render.js:162:function campoPixLuka(id, valor) {
+server_render.js:167:function gerarPixCopiaColaLuka() {
+server_render.js:168:    const chave = String(process.env.PIX_CHAVE || "").trim();
+server_render.js:169:    const nome = String(process.env.PIX_NOME || "LUKAFILMES")
+server_render.js:172:    const cidade = String(process.env.PIX_CIDADE || "CARAPICUIBA")
+server_render.js:175:    const valor = Number(process.env.PIX_VALOR || 18).toFixed(2);
+server_render.js:178:        throw new Error("PIX_CHAVE não configurada no .env");
+server_render.js:182:        campoPixLuka("00", "br.gov.bcb.pix") +
+server_render.js:183:        campoPixLuka("01", chave);
+server_render.js:186:        campoPixLuka("00", "01") +
+server_render.js:187:        campoPixLuka("26", merchantAccount) +
+server_render.js:188:        campoPixLuka("52", "0000") +
+server_render.js:189:        campoPixLuka("53", "986") +
+server_render.js:190:        campoPixLuka("54", valor) +
+server_render.js:191:        campoPixLuka("58", "BR") +
+server_render.js:192:        campoPixLuka("59", nome) +
+server_render.js:193:        campoPixLuka("60", cidade) +
+server_render.js:194:        campoPixLuka("62", campoPixLuka("05", "***")) +
+server_render.js:197:    return payloadSemCRC + crc16PixLuka(payloadSemCRC);
+server_render.js:241:    CREATE TABLE IF NOT EXISTS lukafilmes_pagamentos (
+server_render.js:246:      status TEXT NOT NULL DEFAULT 'pendente',
+server_render.js:265:            INSERT INTO lukafilmes_pagamentos
+server_render.js:285:            String(dados.status || CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE),
+server_render.js:306:        FROM lukafilmes_pagamentos
+server_render.js:323:                FROM lukafilmes_pagamentos
+server_render.js:335:        FROM lukafilmes_pagamentos
+server_render.js:352:            FROM lukafilmes_pagamentos
+server_render.js:395:            UPDATE lukafilmes_pagamentos
+server_render.js:629:    .then(() => console.log("[TURSO] Tabela de pagamentos preparada."))
+server_render.js:1087:app.post("/api/pagamentos/criar", async (req, res) => {
+server_render.js:1144:        const pagamentosPendentes =
+server_render.js:1146:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+server_render.js:1150:            pagamentosPendentes.find(
+server_render.js:1157:            let pix;
+server_render.js:1160:                pix = gerarPixCopiaColaLuka();
+server_render.js:1161:            } catch (erroPix) {
+server_render.js:1163:                    "[PAGAMENTO] Erro ao gerar PIX:",
+server_render.js:1164:                    erroPix
+server_render.js:1172:                pix: pix || null,
+server_render.js:1174:                    process.env.PIX_VALOR ||
+server_render.js:1177:                nome: process.env.PIX_NOME || "LUKAFILMES",
+server_render.js:1178:                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+server_render.js:1196:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+server_render.js:1207:        let pix;
+server_render.js:1210:            pix = gerarPixCopiaColaLuka();
+server_render.js:1211:        } catch (erroPix) {
+server_render.js:1213:                "[PAGAMENTO] Erro ao gerar PIX:",
+server_render.js:1214:                erroPix
+server_render.js:1222:            pix: pix || null,
+server_render.js:1224:                process.env.PIX_VALOR ||
+server_render.js:1227:            nome: process.env.PIX_NOME || "LUKAFILMES",
+server_render.js:1228:            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+server_render.js:1249:// PIX LUKAFILMES — COPIA E COLA
+server_render.js:1252:app.get("/api/pix", (req, res) => {
+server_render.js:1256:        const pix = gerarPixCopiaColaLuka();
+server_render.js:1260:            valor: Number(process.env.PIX_VALOR || 18).toFixed(2),
+server_render.js:1261:            nome: process.env.PIX_NOME || "LUKAFILMES",
+server_render.js:1262:            cidade: process.env.PIX_CIDADE || "CARAPICUIBA",
+server_render.js:1263:            pix
+server_render.js:1268:        console.error("[PIX] Erro ao gerar Pix:", erro);
+server_render.js:1272:            mensagem: "Não foi possível gerar o Pix."
+server_render.js:5507:            req.path === "/api/pagamentos/criar"
+paginas/filme.html:3747:                            "/api/pagamentos/criar",
+paginas/filme.html:3794:                    const pix =
+paginas/filme.html:3795:                        dadosPagamento.pix ||
+paginas/filme.html:3866:                            PIX copia e cola
+paginas/filme.html:3870:                            id="lukafilmesPix"
+paginas/filme.html:3883:                            ">${pix}</textarea>
+paginas/filme.html:3887:                            id="lukafilmesCopiarPix"
+paginas/filme.html:3897:                            📋 COPIAR PIX
+paginas/filme.html:3941:                        pix &&
+paginas/filme.html:3949:                                text: pix,
+paginas/filme.html:3965:                            "lukafilmesCopiarPix"
+paginas/filme.html:3976:                                        pix
+paginas/filme.html:3980:                                        "✅ PIX COPIADO";
+paginas/filme.html:3985:                                                "📋 COPIAR PIX";
+paginas/filme.html:3994:                                            "lukafilmesPix"
+paginas/filme.html:4011:                                        "✅ PIX COPIADO";
+paginas/filme.html:4039:                                        "Pagamento registrado como pendente. Aguarde a confirmação do administrador.";
+
+===== TESTE =====
+server_render.js:129:        TESTE: "teste"
+server_render.js:1343:                u => u.online && u.tipo !== "teste" && u.tipo !== "revendedor"
+server_render.js:1345:            testesOnline: resultado.filter(
+server_render.js:1346:                u => u.online && u.tipo === "teste"
+server_render.js:3809:app.post("/api/admin/usuarios/teste", async (req, res) => {
+server_render.js:3900:            tipo: "teste",
+server_render.js:3934:            tipo: "teste",
+server_render.js:3957:                "Erro interno ao criar teste."
+server_render.js:4106:        if (!["usuario", "teste", "revendedor", "admin"].includes(tipo)) {
+public/admin.html:1698:<button onclick="aba('testes',this)">🧪 Testes</button>
+public/admin.html:1747:<button class="btn yellow" onclick="abrirModal('teste')">＋ Criar teste</button>
+public/admin.html:1794:<section id="testes" class="section">
+public/admin.html:1801:<p>Contas de teste e acessos temporários</p>
+public/admin.html:1807:<div class="panelHead"><h2>Contas de teste</h2></div>
+public/admin.html:1891:  <div style="font-weight:800;margin-bottom:10px;">🧪 Como deseja criar o teste?</div>
+public/admin.html:1919:    ⚡ Gerar testes automaticamente
+public/admin.html:1938:    🔢 Quantidade de testes
+public/admin.html:1947:    O sistema irá gerar automaticamente usuário e senha exclusivos para cada teste.
+public/admin.html:2005:                <option value="teste">Teste</option>
+public/admin.html:2151:  escolhaTeste.style.display=tipo==="teste"?"block":"none";
+public/admin.html:2159:  camposManuais.style.display=tipo==="teste"?"none":"block";
+public/admin.html:2165:  if(tipo==="teste"){
+public/admin.html:2175:  tipo==="teste" ? "Horas de teste" : "Dias";
+public/admin.html:2178:  tipo==="teste" ? 1 : 30;
+public/admin.html:2194: tipo==="teste"?"Criar teste":
+public/admin.html:2267:   btnSalvar.textContent="⚡ Gerar testes";
+public/admin.html:2315:  toast("A quantidade deve estar entre 1 e 100 testes.");
+public/admin.html:2333:  const r=await fetch("/api/admin/usuarios/teste-auto",{
+public/admin.html:2347:   throw new Error(d.mensagem || "Não foi possível gerar os testes.");
+public/admin.html:2353:   window.LUKA_MOSTRAR_RESULTADO_TESTE(d.testes || []);
+public/admin.html:2375:   btn.textContent="⚡ Gerar testes";
+public/admin.html:2604: if(tipo==="teste" && autoBox && autoBox.style.display==="block"){
+public/admin.html:2652:   O teste será tratado pelo servidor quando a rota específica
+public/admin.html:2655:  if(tipo==="teste"){
+public/admin.html:2656:   url="/api/admin/usuarios/teste";
+public/admin.html:2717:   usuarios.filter(x=>x.tipo==="teste").length;
+public/admin.html:2752:        lista.filter(u => u.tipo === "teste").length;
+public/admin.html:2884: const lista=usuarios.filter(u=>u.tipo==="teste");
+public/admin.html:2887:  el.innerHTML='<tr><td colspan="5" class="empty">Nenhum teste encontrado.</td></tr>';
+public/admin.html:2931:  usuarios.filter(x=>x.tipo==="teste").length,
+public/admin.html:3663:        testes: /testes/i,
+public/admin.html:4693:window.renderPainelPremium=function(){let a=(Array.isArray(window.usuarios)&&window.usuarios.length?window.usuarios:Array.isArray(window.listaUsuarios)&&window.listaUsuarios.length?window.listaUsuarios:Array.isArray(window.usuariosCache)&&window.usuariosCache.length?window.usuariosCache:[]),m={usuarios:["👤","Usuários","Contas de clientes"],testes:["🧪","Testes","Acessos temporários"],revendedores:["🤝","Revendedores","Parceiros"],online:["🟢","Online agora","Contas conectadas"]},c=m[tipo]||m.usuarios,l=tipo==="online"?a.filter(u=>u.online):a.filter(u=>u.tipo===(tipo==="usuarios"?"usuario":tipo)),q=(document.getElementById("lpSearch").value||"").toLowerCase();l=l.filter(u=>String(u.usuario||"").toLowerCase().includes(q));document.getElementById("lpIcon").textContent=c[0];document.getElementById("lpTitle").textContent=c[1];document.getElementById("lpSub").textContent=c[2];document.getElementById("lpStats").innerHTML=`<div class="lpStat"><small>TOTAL</small><strong>${l.length}</strong></div><div class="lpStat"><small>ATIVOS</small><strong>${l.filter(u=>(u.status||"ativo")==="ativo").length}</strong></div><div class="lpStat"><small>ONLINE</small><strong>${l.filter(u=>u.online).length}</strong></div><div class="lpStat"><small>EXPIRADOS</small><strong>${l.filter(u=>u.validade&&new Date(u.validade)<=Date.now()).length}</strong></div>`;let b=document.getElementById("lpList");if(!l.length){b.innerHTML=`<div class="lpEmpty">Nenhuma conta encontrada.</div>`;return}b.innerHTML=l.map(u=>`<div class="lpUser"><div class="lpTop"><span class="lpName">${esc(u.usuario)}</span><span class="lpPill ${u.online?"on":""}">${u.online?"● ONLINE":"○ OFFLINE"}</span></div><div class="lpMeta"><div><small>STATUS</small><span>${esc((u.status||"ativo").toUpperCase())}</span></div><div><small>VALIDADE</small><span>${esc(rest(u.validade))}</span></div><div><small>TELEFONE</small><span>${esc(u.telefone||u.whatsapp||"Não informado")}</span></div><div><small>TIPO</small><span>${esc((u.tipo||"usuario").toUpperCase())}</span></div></div><div class="lpActions"><button onclick="event.stopPropagation();fecharPainelPremium();setTimeout(()=>abrirContaDetalhes(${Number(u.id)}),120)">👁️ Detalhes</button><button onclick="event.stopPropagation();renovarContaPremium(${Number(u.id)})">🔄 Renovar</button><button onclick="event.stopPropagation();alternarContaPremium(${Number(u.id)})">⚡ Status</button></div></div>`).join("")};document.addEventListener("keydown",e=>{if(e.key==="Escape")fecharPainelPremium()})})();</script>
+public/admin.html:4695:<div id="luka-teste-resultado"
+public/admin.html:4733:        Aproveite bastante o teste gratuito, teste filmes e séries
+public/admin.html:4739:    <div id="luka-teste-resultado-conteudo"></div>
+public/admin.html:4803:window.LUKA_MOSTRAR_RESULTADO_TESTE = function(testes){
+public/admin.html:4805:    if(!Array.isArray(testes) || !testes.length){
+public/admin.html:4808:            toast("❌ O servidor não retornou os dados do teste.");
+public/admin.html:4810:            alert("O servidor não retornou os dados do teste.");
+public/admin.html:4818:    testes.forEach(function(t, i){
+public/admin.html:4847:            (testes.length > 1 ? (i + 1) : '') +
+public/admin.html:4879:🍿 Aproveite bastante o teste gratuito.
+public/admin.html:4884:    testes.forEach(function(t, i){
+public/admin.html:4895:        if(testes.length > 1){
+public/admin.html:4915:        "luka-teste-resultado-conteudo"
+public/admin.html:4923:        "luka-teste-resultado"
+public/admin.html:4975:        '#luka-teste-resultado button'
+public/admin.html:5011:        "luka-teste-resultado"
+public/admin.html:7677:        if(tipo==="testes"){
+public/admin.html:7678:            return lista.filter(u=>u.tipo==="teste");
+public/admin.html:7703:            testes:{
+public/admin.html:7960:            testes:"🧪",
+public/admin.html:7982:            else if(texto.includes("teste")){
+public/admin.html:7983:                tipo="testes";
+
+===== ROTAS ADMIN =====
+654:app.get("/admin.html", (req, res) => {
+1299:app.get("/api/admin/presenca", async (req, res) => {
+3624:app.get("/api/admin/usuarios", async (req, res) => {
+3809:app.post("/api/admin/usuarios/teste", async (req, res) => {
+3972:app.post("/api/admin/usuarios/excluir", async (req, res) => {
+4062:app.post("/api/admin/usuarios/editar", async (req, res) => {
+4205:app.post("/api/admin/usuarios/status", async (req, res) => {
+4269:app.post("/api/admin/usuarios/renovar", async (req, res) => {
+4369:app.post("/api/admin/revendedores", async (req, res) => {

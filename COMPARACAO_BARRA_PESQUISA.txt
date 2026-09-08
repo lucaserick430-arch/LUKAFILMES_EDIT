@@ -1,0 +1,236 @@
+225-    color:#b3b3b3;
+226-}
+227-
+228-
+229-/* ==========================================================
+230:   PESQUISA MOBILE — ESTILO NETFLIX
+231-   ========================================================== */
+232-
+233-@media (max-width: 700px) {
+234-
+235:    /* Campo de pesquisa */
+236:    #pesquisaFilmes,
+237:    #pesquisaSeries,
+238:    input[type="search"],
+239:    input[placeholder*="pesquisa" i],
+240:    input[placeholder*="buscar" i] {
+241-
+242-        width: min(100%, 260px) !important;
+243-        max-width: 260px !important;
+244-        height: 42px !important;
+245-
+246-        padding: 0 46px 0 16px !important;
+247-
+248-        margin-left: auto !important;
+249-        margin-right: auto !important;
+250-
+251-        border-radius: 24px !important;
+252-
+253-        font-size: 14px !important;
+254-        box-sizing: border-box !important;
+255-
+256-    }
+257-
+258:    /* Área/botão da pesquisa */
+259:    .pesquisa,
+260:    .barra-pesquisa,
+261:    .search-box,
+262:    .search-container {
+263-
+264-        width: auto !important;
+265-        max-width: 280px !important;
+266-
+267-        margin-left: auto !important;
+268-        margin-right: auto !important;
+269-
+270-        display: flex !important;
+271-        justify-content: center !important;
+272-        align-items: center !important;
+273-
+274-    }
+275-
+276-}
+277-
+278-
+279-/* ==========================================================
+280:   PESQUISA MOBILE — COMPACTA
+281-   ========================================================== */
+282-@media (max-width: 700px) {
+283-
+284:    .pesquisa-filmes,
+285:    .pesquisa,
+286:    .barra-pesquisa,
+287:    .search-box,
+288:    .search-container {
+289-        width: 100% !important;
+290-        max-width: 320px !important;
+291-        margin-left: auto !important;
+292-        margin-right: auto !important;
+293-    }
+294-
+295:    .pesquisa-filmes input,
+296:    .pesquisa input,
+297:    .barra-pesquisa input,
+298:    .search-box input,
+299:    .search-container input,
+300:    input[type="search"],
+301:    input[placeholder*="pesquisa" i],
+302:    input[placeholder*="buscar" i] {
+303-        width: 100% !important;
+304-        max-width: 320px !important;
+305-        height: 46px !important;
+306-        box-sizing: border-box !important;
+307-
+308-        padding: 0 55px 0 17px !important;
+309-
+310-        border-radius: 25px !important;
+311-        font-size: 14px !important;
+312-    }
+313-
+314:    .pesquisa-filmes button,
+315:    .pesquisa button,
+316:    .barra-pesquisa button,
+317:    .search-box button,
+318:    .search-container button {
+319-        width: 38px !important;
+320-        height: 38px !important;
+321-
+322-        border-radius: 50% !important;
+323-        font-size: 17px !important;
+324-    }
+325-}
+326-
+327-
+328-/* =========================================================
+329-   AJUSTE FINAL — FILMES OCUPANDO TODA A LARGURA
+330-   ========================================================= */
+--
+2754- *
+2755- * 2024 → 2023 → 2022 → 2021...
+2756- *
+2757- * criamos uma fila de páginas embaralhada.
+2758- *
+2759: * Assim o infinite scroll pode buscar:
+2760- *
+2761- * página 317 → página 42 → página 189 → página 7
+2762- * → página 401 → página 93...
+2763- *
+2764- * Cada página também é embaralhada individualmente.
+2765- */
+2766-
+2767-const TOTAL_PAGINAS_CATALOGO_FILMES = 500;
+2768-
+2769-/*
+2770- * =========================================================
+2771- * LUKAFILMES — FILMES REALMENTE MISTURADOS
+--
+2893-/*
+2894- * LUKAFILMES — CATEGORIA ATUAL DA PÁGINA
+2895- * Uma única fonte para catálogo infinito e Hero.
+2896- */
+2897-const parametrosCategoriaPagina =
+2898:    new URLSearchParams(window.location.search);
+2899-
+2900-const categoriaAtualPagina =
+2901-    String(
+2902-        parametrosCategoriaPagina.get("categoria") || ""
+2903-    ).trim().toLowerCase();
+2904-
+2905-
+2906-let carregandoFilmes = false;
+2907-let acabouFilmes = false;
+2908-
+2909-const filmesCarregados = new Set();
+2910-const titulosFilmesCarregados = new Set();
+--
+3575-
+3576-    return true;
+3577-}
+3578-
+3579-
+3580:async function buscarTrailer(filme){
+3581-
+3582-    const id=
+3583-        filme?.id||
+3584-        filme?.tmdb_id;
+3585-
+3586-    if(!id)
+3587-        return null;
+3588-
+3589-    try{
+3590-
+3591-        const resposta=
+3592-            await fetch(
+--
+3771-
+3772-/*
+3773- * Busca várias páginas do catálogo,
+3774- * mas NÃO espera todos os trailers.
+3775- */
+3776:async function buscarFilmes(){
+3777-
+3778-    const filmes=[];
+3779-    const ids=new Set();
+3780-
+3781-    const paginas=[];
+3782-
+3783-    for(
+3784-        let pagina=1;
+3785-        pagina<=PAGINAS_HERO;
+3786-        pagina++
+3787-    ){
+3788-        paginas.push(pagina);
+--
+3906- * Procura trailers em paralelo.
+3907- *
+3908- * O PRIMEIRO trailer válido é exibido
+3909- * imediatamente.
+3910- *
+3911: * Os demais continuam sendo pesquisados
+3912- * em segundo plano para formar uma base grande.
+3913- */
+3914-async function procurarTrailersRapido(filmes){
+3915-
+3916-    let indice=0;
+3917-
+3918-    const encontrados=[];
+3919-
+3920-    async function trabalhador(){
+3921-
+3922-        while(indice<filmes.length){
+3923-
+3924-            const posicao=indice++;
+3925-
+3926-            const resultado=
+3927:                await buscarTrailer(
+3928-                    filmes[posicao]
+3929-                );
+3930-
+3931-            if(!resultado)
+3932-                continue;
+3933-
+3934-            encontrados.push(resultado);
+3935-
+3936-            /*
+3937-             * PRIMEIRO TRAILER:
+3938-             * aparece imediatamente.
+3939-             */
+--
+4024-
+4025-        /*
+4026-         * Primeiro pegamos os filmes.
+4027-         */
+4028-        const filmes=
+4029:            await buscarFilmes();
+4030-
+4031-        console.log(
+4032-            "[HERO FILMES] Filmes candidatos:",
+4033-            filmes.length
+4034-        );
+4035-
+4036-        if(!filmes.length)
+4037-            return;
+4038-
+4039-        /*
+4040-         * NÃO espera 1.000 trailers.
+4041-         *

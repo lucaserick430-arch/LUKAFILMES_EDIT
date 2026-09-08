@@ -1,0 +1,34 @@
+5028:#lukaPagamentosAdmin{
+5037:#lukaPagamentosAdmin h2{
+5138:.luka-pag-aprovar-btn{
+5143:.luka-pag-recusar-btn{
+5160:    #lukaPagamentosAdmin{
+5171:<div id="lukaPagamentosAdmin">
+5182:            <h2>💳 Pagamentos LUKAFILMES</h2>
+5184:                Confira os pagamentos e libere o acesso após verificar o comprovante.
+5222:    <div id="lukaPagamentosLista" class="luka-pag-lista">
+5224:            Carregando pagamentos...
+5234:        document.getElementById("lukaPagamentosLista");
+5242:                "/api/admin/pagamentos",
+5255:                "Não foi possível carregar os pagamentos."
+5296:        const pagamentosTodos =
+5297:            Array.isArray(dados.pagamentos)
+5298:                ? dados.pagamentos
+5301:        // A área visual mostra somente pagamentos que ainda precisam
+5304:        const pagamentos =
+5305:            pagamentosTodos.filter(p =>
+5309:        if(!pagamentos.length){
+5319:            pagamentos.map(p => {
+5337:                            : "PENDENTE";
+5362:                            class="luka-pag-aprovar-btn"
+5369:                            class="luka-pag-recusar-btn"
+5384:                                💳 Pagamento #${Number(p.id)}
+5459:            '<div class="luka-pag-vazio">⚠️ Erro ao carregar pagamentos.</div>';
+5478:                "/api/admin/pagamentos/" +
+5480:                "/aprovar",
+5498:                "Não foi possível aprovar."
+5506:            "✅ Pagamento aprovado!\n\n" +
+5546:                "/api/admin/pagamentos/" +
+5548:                "/recusar",
+5568:                "Não foi possível recusar."
+5575:        alert("❌ Pagamento recusado.");

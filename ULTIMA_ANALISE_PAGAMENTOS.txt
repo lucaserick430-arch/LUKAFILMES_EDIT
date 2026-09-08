@@ -1,0 +1,2561 @@
+==================================================
+ LUKAFILMES - ULTIMA ANALISE ANTES DA IMPLEMENTACAO
+==================================================
+
+========== 1. ACESSO ASSISTIR COMPLETO ==========
+                usuario: sessao.usuario,
+                tipo: sessao.tipo,
+                validade: sessao.validade || null
+            },
+            pessoa: pessoa ? {
+                id: pessoa.id,
+                usuario: pessoa.usuario,
+                tipo: pessoa.tipo,
+                status: pessoa.status,
+                validade: pessoa.validade || null
+            } : null,
+            agora: new Date().toISOString()
+        });
+    } catch (erro) {
+        console.error("[DEBUG ACESSO] Erro:", erro);
+        return res.status(500).json({
+            erro: "erro_servidor"
+        });
+    }
+});
+
+app.get("/api/acesso-assistir", async (req, res) => {
+
+    try {
+
+        if (!req.session || !req.session.usuario) {
+            return res.status(401).json({
+                permitido: false,
+                logado: false,
+                motivo: "nao_logado"
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                permitido: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado"
+            });
+        }
+
+        const tipo = String(pessoa.tipo || "usuario").toLowerCase();
+        const status = String(pessoa.status || "ativo").toLowerCase();
+
+        if (status !== "ativo") {
+            return res.json({
+                permitido: false,
+                logado: true,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                permitido: true,
+                logado: true,
+                tipo,
+                validade: pessoa.validade || null
+            });
+        }
+
+        if (
+            pessoa.validade &&
+            new Date(pessoa.validade).getTime() > Date.now()
+        ) {
+            return res.json({
+                permitido: true,
+                logado: true,
+                tipo,
+                validade: pessoa.validade
+            });
+        }
+
+        return res.json({
+            permitido: false,
+            logado: true,
+            tipo,
+            motivo: "expirado",
+            valor: CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+            dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+            validade: pessoa.validade || null
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ACESSO ASSISTIR] Erro:",
+            erro
+        );
+
+        return res.status(500).json({
+            permitido: false,
+            logado: true,
+            motivo: "erro_servidor",
+            mensagem: "Erro interno ao verificar o acesso."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+// ==========================================
+
+========== 2. ADMIN USUARIOS COMPLETO ==========
+        return res.json({
+            sucesso: true,
+            encontrado: true,
+            titulo: dados.title,
+            link
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO LINK ORIGEM]',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            encontrado: false
+        });
+    }
+});
+
+// ==========================================
+// ADMIN — LISTAR USUÁRIOS
+// ==========================================
+app.get("/api/admin/usuarios", async (req, res) => {
+    try {
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const lista = usuarios.map(u => ({
+            id: u.id,
+            usuario: u.usuario,
+            tipo: u.tipo || "usuario",
+            status: u.status || "ativo",
+            validade: u.validade || null,
+            criado_em: u.criado_em || null,
+            online: Boolean(u.online)
+        }));
+
+        return res.json({
+            sucesso: true,
+            usuarios: lista,
+            total: lista.length
+        });
+
+    } catch (erro) {
+        console.error("[ERRO LISTAR USUARIOS]", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao carregar usuários.",
+            usuarios: []
+        });
+    }
+});
+
+// ADMIN — CRIAR USUÁRIO
+// ==========================================
+
+app.post(
+    "/api/admin/usuarios",
+    async (req, res) => {
+
+        try {
+
+            if (
+                !req.session.usuario ||
+                req.session.usuario.tipo !== "admin"
+            ) {
+
+                return res.status(403).json({
+                    sucesso: false,
+                    mensagem: "Acesso negado."
+                });
+
+            }
+
+            const usuario =
+                String(req.body.usuario || "").trim();
+
+            const senha =
+                String(req.body.senha || "");
+
+            const dias =
+                Number(req.body.dias);
+
+            if (
+                !usuario ||
+                !senha ||
+                !Number.isInteger(dias) ||
+                dias < 1
+            ) {
+
+                return res.json({
+                    sucesso: false,
+                    mensagem:
+                        "Preencha usuário, senha e dias corretamente."
+                });
+
+            }
+
+            const usuarios =
+                await carregarUsuarios();
+
+            const existente =
+                usuarios.find(
+                    u =>
+                        String(u.usuario || "").toLowerCase() ===
+                        usuario.toLowerCase()
+                );
+
+            if (existente) {
+
+                return res.json({
+                    sucesso: false,
+                    mensagem:
+                        "Esse usuário já existe."
+                });
+
+            }
+
+            const senhaHash =
+                await bcrypt.hash(
+                    senha,
+                    12
+                );
+
+            const validade =
+                new Date(
+                    Date.now() +
+                    dias *
+                    24 *
+                    60 *
+                    60 *
+                    1000
+                );
+
+            const novoUsuario = {
+
+                id: proximoId(usuarios),
+
+                usuario,
+
+                senha: senhaHash,
+
+                status: "ativo",
+
+                tipo: "usuario",
+
+                validade:
+                    validade.toISOString(),
+
+                criado_em:
+                    new Date().toISOString()
+
+            };
+
+            usuarios.push(novoUsuario);
+
+            await salvarUsuarios(usuarios);
+
+            console.log(
+                "[ADMIN] Usuário criado:",
+                usuario
+            );
+
+            return res.json({
+
+                sucesso: true,
+
+                mensagem:
+                    "Usuário criado com sucesso."
+
+            });
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO CRIAR USUARIO]",
+                erro
+            );
+
+            return res.status(500).json({
+
+                sucesso: false,
+
+                mensagem:
+                    "Erro interno ao criar usuário."
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// ADMIN — CRIAR TESTE
+// ==========================================
+
+app.post("/api/admin/usuarios/teste", async (req, res) => {
+
+
+========== 3. PAGAMENTO NO FILME.HTML ==========
+3587-            botao.addEventListener(
+3588-                "click",
+3589-                async function (evento) {
+3590-
+3591-                    evento.preventDefault();
+3592-
+3593-                    const tmdbId =
+3594-                        String(filme.id).trim();
+3595-
+3596-                    if (!tmdbId) {
+3597-
+3598-                        alert(
+3599-                            "ID TMDB do filme não encontrado."
+3600-                        );
+3601-
+3602-                        return;
+3603-                    }
+3604-
+3605-                    console.log(
+3606-                        "[LUKAFILMES] Verificando acesso:",
+3607-                        filme.titulo,
+3608-                        tmdbId
+3609-                    );
+3610-
+3611-                    try {
+3612-
+3613-                        const respostaAcesso =
+3614-                            await fetch(
+3615-                                "/api/acesso-assistir",
+3616-                                {
+3617-                                    method: "GET",
+3618-                                    credentials: "same-origin",
+3619-                                    cache: "no-store"
+3620-                                }
+3621-                            );
+3622-
+3623-                        const acesso =
+3624-                            await respostaAcesso.json();
+3625-
+3626-                        console.log(
+3627-                            "[LUKAFILMES] Resultado do acesso:",
+3628-                            acesso
+3629-                        );
+3630-
+3631-                        /*
+3632-                         * PRIMEIRO PLAY:
+3633-                         * cliente ainda não possui conta.
+3634-                         *
+3635-                         * Em vez de mandar para o login,
+3636-                         * abrimos o cadastro específico do LUKAFILMES.
+3637-                         */
+3638-                        if (
+3639-                            acesso.motivo ===
+3640-                            "nao_logado"
+3641-                        ) {
+3642-
+3643-                            const retorno =
+3644-                                window.location.pathname +
+3645-                                window.location.search;
+3646-
+3647-                            window.location.href =
+3648-                                "/cadastro?retorno=" +
+3649-                                encodeURIComponent(retorno);
+3650-
+3651-                            return;
+3652-                        }
+3653-
+3654-                        /*
+3655-                         * ACESSO NEGADO / EXPIRADO
+3656-                         *
+3657-                         * NÃO ABRE O PLAYER.
+3658-                         * MOSTRA A TELA DE PAGAMENTO.
+3659-                         */
+3660-                        if (!acesso.permitido) {
+3661-
+3662-                            if (
+3663-                                acesso.motivo ===
+3664-                                "expirado"
+3665-                            ) {
+3666-
+3667:                                await mostrarPagamentoLuka(
+3668-                                    acesso
+3669-                                );
+3670-
+3671-                                return;
+3672-                            }
+3673-
+3674-                            alert(
+3675-                                acesso.mensagem ||
+3676-                                "Seu acesso não está liberado para assistir."
+3677-                            );
+3678-
+3679-                            return;
+3680-                        }
+3681-
+3682-                        /*
+3683-                         * ACESSO LIBERADO
+3684-                         *
+3685-                         * AGORA SIM MOSTRA O PLAYER.
+3686-                         */
+3687-                        console.log(
+3688-                            "[PLAYER TMDB]",
+3689-                            filme.titulo,
+3690-                            tmdbId
+3691-                        );
+3692-
+3693-                        playerFilme.style.display =
+3694-                            "block";
+3695-
+3696-                        filmeFrame.src = "";
+3697-
+3698-                        const playCentral =
+3699-                            document.getElementById(
+3700-                                "playCentralFilme"
+3701-                            );
+3702-
+3703-                        if (playCentral) {
+3704-
+3705-                            playCentral.classList.remove(
+3706-                                "oculto"
+3707-                            );
+3708-
+3709-                        }
+3710-
+3711-                        botao.innerHTML =
+3712-                            "▶ PLAY";
+3713-
+3714-                        playerFilme.scrollIntoView({
+3715-                            behavior: "auto",
+3716-                            block: "center"
+3717-                        });
+3718-
+3719-                    } catch (erro) {
+3720-
+3721-                        console.error(
+3722-                            "[LUKAFILMES] Erro ao verificar acesso:",
+3723-                            erro
+3724-                        );
+3725-
+3726-                        alert(
+3727-                            "Não foi possível verificar seu acesso. Tente novamente."
+3728-                        );
+3729-
+3730-                    }
+3731-
+3732-                }
+3733-            );
+3734-
+3735-            /* ==========================================
+3736-               PAGAMENTO LUKAFILMES
+3737-               ========================================== */
+3738-
+3739:            async function mostrarPagamentoLuka(acesso) {
+3740-
+3741-                try {
+3742-
+3743-                    let pagamento = null;
+3744-
+3745-                    const respostaPagamento =
+3746-                        await fetch(
+3747:                            "/api/pagamentos/criar",
+3748-                            {
+3749-                                method: "POST",
+3750-                                credentials: "same-origin",
+3751-                                headers: {
+3752-                                    "Content-Type":
+3753-                                        "application/json"
+3754-                                },
+3755-                                body: JSON.stringify({})
+3756-                            }
+3757-                        );
+3758-
+3759-                    const dadosPagamento =
+3760-                        await respostaPagamento.json();
+3761-
+3762-                    if (!respostaPagamento.ok ||
+3763-                        !dadosPagamento.sucesso) {
+3764-
+3765-                        alert(
+3766-                            dadosPagamento.mensagem ||
+3767-                            "Não foi possível preparar o pagamento."
+3768-                        );
+3769-
+3770-                        return;
+3771-                    }
+3772-
+3773-                    if (
+3774:                        dadosPagamento.pagamento_necessario ===
+3775-                        false
+3776-                    ) {
+3777-
+3778-                        playerFilme.style.display =
+3779-                            "block";
+3780-
+3781-                        return;
+3782-                    }
+3783-
+3784-                    pagamento =
+3785-                        dadosPagamento.pagamento ||
+3786-                        null;
+3787-
+3788-                    const valor =
+3789-                        dadosPagamento.valor ||
+3790-                        Number(
+3791-                            acesso.valor || 18
+3792-                        ).toFixed(2);
+3793-
+3794-                    const pix =
+3795-                        dadosPagamento.pix ||
+3796-                        "";
+3797-
+3798-                    const antigo =
+3799-                        document.getElementById(
+3800-                            "lukafilmesPagamento"
+3801-                        );
+3802-
+3803-                    if (antigo) {
+3804-                        antigo.remove();
+3805-                    }
+3806-
+3807-                    const tela =
+3808-                        document.createElement("div");
+3809-
+3810-                    tela.id =
+3811-                        "lukafilmesPagamento";
+3812-
+3813-                    tela.style.cssText = `
+3814-                        width: min(92%, 520px);
+3815-                        margin: 24px auto;
+3816-                        padding: 24px;
+3817-                        box-sizing: border-box;
+3818-                        background: #111;
+3819-                        border-radius: 18px;
+3820-                        text-align: center;
+3821-                        color: #fff;
+3822-                        box-shadow: 0 10px 40px rgba(0,0,0,.45);
+3823-                    `;
+3824-
+3825-                    tela.innerHTML = `
+3826-                        <h2 style="margin:0 0 10px;">
+3827-                            🔒 Acesso expirado
+3828-                        </h2>
+3829-
+3830-                        <p style="margin:8px 0 18px;">
+3831-                            Para assistir este filme, renove seu acesso.
+3832-                        </p>
+3833-
+3834-                        <div style="
+3835-                            font-size:30px;
+3836-                            font-weight:700;
+3837-                            margin:15px 0;
+3838-                        ">
+3839-                            R$ ${valor}
+3840-                        </div>
+3841-
+3842-                        <p style="margin:8px 0;">
+3843-                            Acesso por 30 dias
+3844-                        </p>
+3845-
+3846-                        <div
+3847-                            id="lukafilmesQrCode"
+3848-                            style="
+3849-                                width:220px;
+3850-                                min-height:220px;
+3851-                                margin:20px auto;
+3852-                                padding:10px;
+3853-                                box-sizing:border-box;
+3854-                                background:#fff;
+--
+3959-                            "<span style='color:#222;'>QR Code indisponível</span>";
+3960-
+3961-                    }
+3962-
+3963-                    const botaoCopiar =
+3964-                        document.getElementById(
+3965-                            "lukafilmesCopiarPix"
+3966-                        );
+3967-
+3968-                    if (botaoCopiar) {
+3969-
+3970-                        botaoCopiar.onclick =
+3971-                            async function () {
+3972-
+3973-                                try {
+3974-
+3975-                                    await navigator.clipboard.writeText(
+3976-                                        pix
+3977-                                    );
+3978-
+3979-                                    botaoCopiar.innerHTML =
+3980-                                        "✅ PIX COPIADO";
+3981-
+3982-                                    setTimeout(
+3983-                                        function () {
+3984-                                            botaoCopiar.innerHTML =
+3985-                                                "📋 COPIAR PIX";
+3986-                                        },
+3987-                                        2000
+3988-                                    );
+3989-
+3990-                                } catch (erro) {
+3991-
+3992-                                    const campo =
+3993-                                        document.getElementById(
+3994-                                            "lukafilmesPix"
+3995-                                        );
+3996-
+3997-                                    if (campo) {
+3998-
+3999-                                        campo.focus();
+4000-                                        campo.select();
+4001-
+4002-                                        try {
+4003-                                            document.execCommand(
+4004-                                                "copy"
+4005-                                            );
+4006-                                        } catch (_) {}
+4007-
+4008-                                    }
+4009-
+4010-                                    botaoCopiar.innerHTML =
+4011-                                        "✅ PIX COPIADO";
+4012-                                }
+4013-
+4014-                            };
+4015-
+4016-                    }
+4017-
+4018-                    const botaoFeito =
+4019-                        document.getElementById(
+4020-                            "lukafilmesPagamentoFeito"
+4021-                        );
+4022-
+4023-                    if (botaoFeito) {
+4024-
+4025-                        botaoFeito.onclick =
+4026-                            function () {
+4027-
+4028-                                const status =
+4029-                                    document.getElementById(
+4030-                                        "lukafilmesPagamentoStatus"
+4031-                                    );
+4032-
+4033-                                if (status) {
+4034-
+4035-                                    status.style.display =
+4036-                                        "block";
+4037-
+4038-                                    status.innerHTML =
+4039:                                        "Pagamento registrado como pendente. Aguarde a confirmação do administrador.";
+4040-
+4041-                                }
+4042-
+4043-                                botaoFeito.disabled =
+4044-                                    true;
+4045-
+4046-                                botaoFeito.innerHTML =
+4047-                                    "⏳ PAGAMENTO AGUARDANDO CONFIRMAÇÃO";
+4048-
+4049-                            };
+4050-
+4051-                    }
+4052-
+4053-                    console.log(
+4054-                        "[LUKAFILMES] Pagamento preparado:",
+4055-                        pagamento
+4056-                    );
+4057-
+4058-                } catch (erro) {
+4059-
+4060-                    console.error(
+4061-                        "[LUKAFILMES] Erro na tela de pagamento:",
+4062-                        erro
+4063-                    );
+4064-
+4065-                    alert(
+4066-                        "Não foi possível abrir a tela de pagamento."
+4067-                    );
+4068-
+4069-                }
+4070-
+4071-            }
+4072-
+4073-            /* ==========================================
+4074-               PLAY CENTRAL — CARREGA PLAYER 1
+4075-               ========================================== */
+4076-
+4077-            const playCentral =
+4078-                document.getElementById(
+4079-                    "playCentralFilme"
+4080-                );
+4081-
+4082-            if (playCentral) {
+4083-
+4084-                playCentral.addEventListener(
+4085-                    "click",
+4086-                    async function () {
+4087-
+4088-                        try {
+4089-
+4090-                            /*
+4091-                             * VERIFICA O ACESSO ANTES
+4092-                             * DE CARREGAR O CONTEÚDO.
+4093-                             */
+4094-                            const respostaAcesso =
+4095-                                await fetch(
+4096-                                    "/api/acesso-assistir",
+4097-                                    {
+4098-                                        method: "GET",
+4099-                                        credentials: "same-origin",
+4100-                                        cache: "no-store"
+4101-                                    }
+4102-                                );
+4103-
+4104-                            const acesso =
+4105-                                await respostaAcesso.json();
+4106-
+4107-                            console.log(
+4108-                                "[LUKAFILMES] Acesso para assistir:",
+4109-                                acesso
+4110-                            );
+4111-
+4112-                            /*
+4113-                             * SEM AUTORIZAÇÃO:
+4114-                             * NÃO CARREGA O PLAYER.
+4115-                             */
+4116-                            if (!acesso.permitido) {
+4117-
+4118-                                if (
+4119-                                    acesso.motivo ===
+
+========== 4. BOTAO PIX / COMPROVANTE ==========
+83-    position: absolute;
+84-
+85-    inset: 0;
+86-
+87-    background:
+88-        linear-gradient(
+89-            to bottom,
+90-            transparent 0,
+91-            transparent 25%,
+92-            rgba(5,5,5,.25) 45%,
+93-            #050505 78%
+94-        );
+95-
+96-    z-index: 0;
+97-
+98-    pointer-events: none;
+99-}
+100-
+101-/* ==========================================
+102-   BOTÃO VOLTAR
+103-   ========================================== */
+104-
+105-.voltar-area {
+106-    position: relative;
+107-    z-index: 5;
+108-
+109-    width: 100%;
+110-    max-width: 1200px;
+111-
+112-    margin: auto;
+113-
+114-    padding: 25px 25px 0;
+115-}
+116-
+117-.voltar {
+118-    display: inline-flex;
+119-
+120-    align-items: center;
+121-    gap: 8px;
+122-
+123:    padding: 11px 18px;
+124-
+125-    color: #fff;
+126-    text-decoration: none;
+127-
+128-    background: rgba(0,0,0,.55);
+129-
+130-    border: 1px solid rgba(255,255,255,.14);
+131-
+132-    border-radius: 30px;
+133-
+134-    backdrop-filter: blur(12px);
+135-
+136-    font-weight: bold;
+137-
+138-    transition: .25s;
+139-}
+140-
+141-.voltar:hover {
+142-    background: #e50914;
+143-
+144-    border-color: #e50914;
+145-
+146-    transform: translateX(-3px);
+147-}
+148-
+149-/* ==========================================
+150-   ÁREA PRINCIPAL
+151-   ========================================== */
+152-
+153-.detalhes {
+154-    position: relative;
+155-    z-index: 2;
+156-
+157-    width: 100%;
+158-    max-width: 1000px;
+159-
+160-    margin: 55px auto 0;
+161-
+162-    padding: 0 20px;
+163-
+164-    text-align: center;
+165-}
+166-
+167-/* ==========================================
+168-   CAPA CENTRAL
+169-   ========================================== */
+170-
+171-.poster {
+172-    width: 270px;
+173-
+174-    margin: 0 auto 25px;
+175-
+176-    animation: aparecerCapa .7s ease;
+177-}
+178-
+179-.poster img {
+180-    width: 100%;
+181-
+182-    display: block;
+183-
+184-    border-radius: 17px;
+185-
+186:    border: 1px solid rgba(255,255,255,.18);
+187-
+188-    box-shadow:
+189-        0 30px 80px rgba(0,0,0,.9),
+190-        0 0 50px rgba(0,0,0,.45);
+191-
+192-    transition: .35s ease;
+193-}
+194-
+195-.poster img:hover {
+196-    transform: scale(1.025);
+197-
+198-    box-shadow:
+199-        0 35px 90px rgba(0,0,0,.95),
+200-        0 0 45px rgba(229,9,20,.2);
+201-}
+202-
+203-@keyframes aparecerCapa {
+204-    from {
+205-        opacity: 0;
+206-        transform: translateY(35px) scale(.94);
+207-    }
+208-
+209-    to {
+210-        opacity: 1;
+211-        transform: translateY(0) scale(1);
+212-    }
+213-}
+214-
+215-/* ==========================================
+216-   INFORMAÇÕES
+217-   ========================================== */
+218-
+219-.informacoes {
+220-    width: 100%;
+221-
+222-    animation: aparecerInfo .7s ease;
+223-}
+224-
+225-@keyframes aparecerInfo {
+226-    from {
+--
+498-    max-width: 900px;
+499-
+500-    margin: auto;
+501-
+502-    aspect-ratio: 16 / 9;
+503-
+504-    overflow: hidden;
+505-
+506-    background: #000;
+507-
+508-    border-radius: 15px;
+509-
+510-    box-shadow:
+511-        0 20px 60px rgba(0,0,0,.8);
+512-}
+513-
+514-.trailer-video iframe {
+515-    width: 100%;
+516-    height: 100%;
+517-
+518-    display: block;
+519-
+520-    border: 0;
+521-}
+522-
+523-/* ==========================================
+524-   CELULAR
+525-   ========================================== */
+526-
+527-@media (max-width: 700px) {
+528-
+529-    .pagina-filme {
+530-        padding-bottom: 45px;
+531-    }
+532-
+533-    .pagina-filme::before {
+534-        height: 650px;
+535-    }
+536-
+537-    .voltar-area {
+538:        padding: 18px 15px 0;
+539-    }
+540-
+541-    .detalhes {
+542-        margin-top: 40px;
+543-
+544-        padding: 0 15px;
+545-    }
+546-
+547-    .poster {
+548-        width: 205px;
+549-
+550-        margin-bottom: 22px;
+551-    }
+552-
+553-    .informacoes h1 {
+554-        font-size: 35px;
+555-    }
+556-
+557-    .dados {
+558-        font-size: 13px;
+559-    }
+560-
+561-    .generos {
+562-    background: transparent !important;
+563-    backdrop-filter: none !important;
+564-    border: 0 !important;
+565-    box-shadow: none !important;
+566-}
+567-
+568-    .sinopse-box {
+569-        padding: 22px 20px;
+570-
+571-        border-radius: 16px;
+572-    }
+573-
+574-    .sinopse {
+575-        font-size: 15px;
+576-
+577-        line-height: 1.7;
+578-    }
+579-
+580-    .assistir {
+581-        width: 100%;
+582-    }
+583-
+584-    .trailer {
+585-        width: calc(100% - 24px);
+586-
+587-        margin-top: 45px;
+588-
+589:        padding: 18px 14px;
+590-
+591-        border-radius: 17px;
+592-    }
+593-
+594-    .trailer h2 {
+595-        font-size: 21px;
+596-    }
+597-
+598-    .trailer-video {
+599-        border-radius: 11px;
+600-    }
+601-}
+602-    
+603-/* ==========================================
+604-   EXPERIÊNCIA MOBILE - ESTILO APP
+605-   ========================================== */
+606-@media (max-width: 600px) {
+607-
+608-    html,
+609-    body {
+610-        width: 100%;
+611-        max-width: 100%;
+612-        overflow-x: hidden;
+613-    }
+614-
+615-    body {
+616-        padding: 0 !important;
+617-        margin: 0 !important;
+618-    }
+619-
+620-    .container {
+621-        width: 100% !important;
+622-        max-width: 100% !important;
+623-        padding: 0 12px !important;
+624-        margin: 0 auto !important;
+625-    }
+626-
+627-    /* PLAYER */
+628-    .player-filme {
+629-        width: 100% !important;
+630-        max-width: 100% !important;
+631-        margin: 25px 0 0 !important;
+632-        padding: 16px 10px 20px !important;
+633:        border-radius: 18px !important;
+634-        box-sizing: border-box !important;
+635-    }
+636-
+637-    .player-filme h2 {
+638-        font-size: 20px !important;
+639-        margin: 0 0 14px !important;
+640-    }
+641-
+642-    .player-video {
+643-        width: 100% !important;
+644-        max-width: 100% !important;
+645-        height: auto !important;
+646-        aspect-ratio: 16 / 9 !important;
+647-        margin: 0 auto !important;
+648-        border-radius: 12px !important;
+649-        overflow: hidden !important;
+650-    }
+651-
+652-    .player-video iframe {
+653-        width: 100% !important;
+654-        height: 100% !important;
+655-        min-width: 0 !important;
+656-        min-height: 0 !important;
+657-        border: 0 !important;
+658-    }
+659-
+660-    /* EVITA ELEMENTOS SAINDO DA TELA */
+661-    img,
+662-    video,
+663-    iframe {
+664-        max-width: 100%;
+665-    }
+666-
+667-    /* ÁREAS DE BOTÕES */
+668-    button,
+669-    a {
+670-        max-width: 100%;
+671-    }
+672-
+673-    /* TRAILER */
+674-    .trailer {
+675-        width: 100% !important;
+676-        max-width: 100% !important;
+677-        margin: 25px 0 0 !important;
+678-        padding: 16px 10px 20px !important;
+679-        box-sizing: border-box !important;
+680-    }
+681-
+682-    .trailer-video {
+683-        width: 100% !important;
+684-        max-width: 100% !important;
+685-        aspect-ratio: 16 / 9 !important;
+686-        overflow: hidden !important;
+687-        border-radius: 12px !important;
+688-    }
+689-
+690-    .trailer-video iframe {
+691-        width: 100% !important;
+692-        height: 100% !important;
+693-    }
+694-}
+695-
+696-/* ==========================================
+697-   PLAYER MOBILE - AJUSTE FINAL
+698-   ========================================== */
+699-@media (max-width: 600px) {
+700-
+701-    .player-filme {
+702-        width: 100vw !important;
+
+========== 5. ADMIN HTML - DASHBOARD ==========
+        gap:8px !important;
+    }
+
+    .card{
+        padding:12px !important;
+    }
+
+    .title h1{
+        font-size:21px !important;
+    }
+
+    .card .num{
+        font-size:24px !important;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+
+<div id="lukaLoaderOverlay" aria-hidden="false">
+    <div id="lukaLoaderBox">
+        <div id="lukaLoaderLogo">
+            <span class="luka">LUKA</span><span class="filmes">FILMES</span>
+        </div>
+        <div id="lukaLoaderSpinner"></div>
+        <h2 id="lukaLoaderTitle">Preparando sua sessão...</h2>
+        <p id="lukaLoaderText">Isso pode levar alguns segundos</p>
+    </div>
+</div>
+
+
+
+<div class="app">
+
+<aside class="sidebar">
+
+<div class="logo" id="adminLogo" onclick="abrirFotoPerfil()" title="Clique para alterar a foto">
+ <img id="adminAvatar" class="logo-avatar" alt="Perfil">
+ <span id="adminLogoTexto">LUKA<span>FILMES</span></span>
+ <input id="profileUpload" class="profile-upload" type="file" accept="image/*">
+</div>
+
+<nav class="nav">
+<button class="active" onclick="aba('dashboard',this)">🏠 Dashboard</button>
+<button onclick="aba('usuarios',this)">👤 Usuários</button>
+<button onclick="aba('testes',this)">🧪 Testes</button>
+
+<button type="button" onclick="window.location.href='/'" title="Voltar para a página inicial">🎬 Luca Filme</button>
+</nav>
+
+</aside>
+
+<main class="main">
+
+<section id="dashboard" class="section active">
+
+<div class="top">
+<div class="title">
+<h1>Dashboard</h1>
+<p>Central administrativa LUKAFILMES</p>
+</div>
+<div class="online"><span class="online-dot">●</span> ONLINE</div>
+</div>
+
+<div class="cards">
+<div class="card clickable-card" onclick="abrirPainelPremium('usuarios')"><small>USUÁRIOS</small><div class="num blue" id="cUsuarios">0</div><span class="card-hint">Clique para abrir →</span></div>
+
+<div class="card clickable-card luka-live-card" onclick="renderChart();">
+<small>ATIVIDADE EM TEMPO REAL</small>
+<div class="luka-live-mini">
+<span class="luka-live-pulse"></span>
+<span>AO VIVO</span>
+</div>
+<div class="luka-live-bars" id="lukaLiveBars">
+<div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div>
+</div>
+<span class="card-hint">Dados atualizados automaticamente →</span>
+</div>
+<div class="card clickable-card" onclick="abrirPainelPremium('online')"><small>ONLINE AGORA</small><div class="num green" id="cOnline">0</div><span class="card-hint">Clique para ver →</span></div>
+</div>
+
+<div class="panel">
+<div class="panelHead">
+<h2>Atividade</h2>
+<span id="ultimaAtualizacao" style="color:var(--muted);font-size:12px">Atualizando...</span>
+</div>
+<div class="chart" id="chart"></div>
+</div>
+
+<div class="panel">
+<div class="panelHead"><h2>Ações rápidas</h2></div>
+<div class="quick">
+<button class="btn primary" onclick="abrirModal('usuario')">＋ Criar usuário</button>
+<button class="btn yellow" onclick="abrirModal('teste')">＋ Criar teste</button>
+
+
+</div>
+</div>
+
+</section>
+
+<section id="usuarios" class="section">
+<button class="admin-back" onclick="voltarDashboardAdmin()">← Voltar ao Dashboard</button>
+
+
+<div class="top">
+<div class="title">
+<h1>Usuários</h1>
+<p>Gerencie as contas do sistema</p>
+</div>
+<button class="btn primary" onclick="abrirModal('usuario')">＋ Novo usuário</button>
+</div>
+
+<div class="panel">
+<div class="panelHead">
+<h2>Contas</h2>
+<div class="tools">
+<input id="buscaUsuarios" placeholder="🔎 Pesquisar..." oninput="renderUsuarios()">
+<button class="btn" onclick="carregar()">↻ Atualizar</button>
+</div>
+</div>
+<div class="tableWrap">
+<table>
+<thead>
+<tr>
+<th>Usuário</th>
+<th>Tipo</th>
+<th>Status</th>
+<th>Validade</th>
+<th>Presença</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="tabelaUsuarios"></tbody>
+</table>
+</div>
+</div>
+
+</section>
+
+<section id="testes" class="section">
+<button class="admin-back" onclick="voltarDashboardAdmin()">← Voltar ao Dashboard</button>
+
+
+<div class="top">
+<div class="title">
+<h1>Testes</h1>
+<p>Contas de teste e acessos temporários</p>
+</div>
+
+</div>
+
+<div class="panel">
+<div class="panelHead"><h2>Contas de teste</h2></div>
+<div class="tableWrap">
+<table>
+<thead>
+<tr><th>Usuário</th><th>Status</th><th>Validade</th><th>Online</th><th>Ações</th></tr>
+</thead>
+<tbody id="tabelaTestes"></tbody>
+</table>
+</div>
+</div>
+
+</section>
+
+<section id="revendedores" class="section">
+<button class="admin-back" onclick="voltarDashboardAdmin()">← Voltar ao Dashboard</button>
+
+
+<div class="top">
+<div class="title">
+<h1>Revendedores</h1>
+<p>Controle seus parceiros e limites de conexão</p>
+</div>
+
+</div>
+
+<div class="panel">
+<div class="panelHead">
+<h2>Revendedores</h2>
+<button class="btn" onclick="carregar()">↻ Atualizar</button>
+</div>
+<div class="tableWrap">
+<table>
+<thead>
+<tr>
+<th>Usuário</th>
+<th>Status</th>
+<th>Validade</th>
+<th>Conexões</th>
+<th>Online</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="tabelaRevendedores"></tbody>
+</table>
+</div>
+</div>
+
+</section>
+
+<div id="lukaPremiumOverlay" onclick="fecharPainelPremium(event)"><div id="lukaPremiumBox" onclick="event.stopPropagation()"><div class="lpHead"><div class="lpTitle"><div class="lpIcon" id="lpIcon">👤</div><div><h2 id="lpTitle">Usuários</h2><p id="lpSub">Contas de clientes</p></div></div><button class="lpClose" onclick="fecharPainelPremium()">×</button></div><div class="lpBody"><div class="lpStats" id="lpStats"></div><input class="lpSearch" id="lpSearch" placeholder="🔎 Pesquisar conta..." oninput="renderPainelPremium()"><div class="lpList" id="lpList"></div></div></div></div></main>
+</div>
+
+<div class="modal" id="modal">
+<div class="box">
+
+<h2 id="modalTitulo">Criar</h2>
+
+<form class="form" onsubmit="salvar(event)">
+
+
+<div class="form-group">
+    <label for="fValor">💰 Valor</label>
+    <input
+        id="fValor"
+        type="number"
+        min="0"
+        step="0.01"
+        placeholder="Ex.: 20.00"
+    >
+</div>
+
+<div class="form-group">
+    <label for="fTelefone">📱 Telefone</label>
+    <input
+        id="fTelefone"
+        type="tel"
+        placeholder="Ex.: (11) 99999-9999"
+        autocomplete="tel"
+    >
+</div>
+
+<input type="hidden" id="tipoCriacao">
+
+<div id="lukaEscolhaTeste" style="display:none;margin:0 0 18px;">
+  <div style="font-weight:800;margin-bottom:10px;">🧪 Como deseja criar o teste?</div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button type="button"
+            id="lukaModoManual"
+            onclick="LUKA_MODO_TESTE('manual')"
+            style="flex:1;min-width:130px;padding:12px;border-radius:12px;
+                   border:1px solid rgba(255,255,255,.15);cursor:pointer;
+                   font-weight:800;">
+      👤 Manual
+    </button>
+
+    <button type="button"
+            id="lukaModoAutomatico"
+            onclick="LUKA_MODO_TESTE('automatico')"
+            style="flex:1;min-width:160px;padding:12px;border-radius:12px;
+                   border:0;cursor:pointer;font-weight:800;">
+      ⚡ Automático
+    </button>
+  </div>
+</div>
+
+<div id="lukaAutomaticoBox"
+     style="display:none;margin:0 0 18px;padding:16px;border-radius:14px;
+            background:rgba(255,255,255,.05);
+            border:1px solid rgba(255,255,255,.10);">
+
+  <div style="font-weight:800;margin-bottom:12px;">
+    ⚡ Gerar testes automaticamente
+  </div>
+
+  <label>⏱️ Duração (horas)</label>
+  <input id="lukaAutoHoras"
+         type="number"
+         min="1"
+         max="72"
+         value="1">
+
+  <label style="display:block;margin-top:10px;">
+    🔌 Limite de conexões
+  </label>
+  <input id="lukaAutoConexoes"
+         type="number"
+         min="1"
+         value="1">
+
+  <label style="display:block;margin-top:10px;">
+    🔢 Quantidade de testes
+  </label>
+  <input id="lukaAutoQuantidade"
+         type="number"
+         min="1"
+         max="100"
+         value="1">
+
+  <div style="margin-top:12px;opacity:.75;font-size:13px;line-height:1.4;">
+    O sistema irá gerar automaticamente usuário e senha exclusivos para cada teste.
+  </div>
+</div>
+
+<div id="lukaCamposManuais">
+
+<label>Usuário</label>
+<input id="fUsuario" required autocomplete="off">
+
+<label>Senha</label>
+<input id="fSenha" type="password" required>
+
+<label id="fTempoLabel">Dias</label>
+<input id="fDias" type="number" min="1" value="30" required>
+
+</div>
+
+<div id="limiteBox" style="display:none">
+<label>Limite de conexões</label>
+<input id="fLimite" type="number" min="1" value="1">
+</div>
+
+<div class="modalActions">
+<button type="button" class="btn" onclick="fecharModal()">Cancelar</button>
+<button class="btn primary" id="btnSalvar">Criar</button>
+</div>
+
+</form>
+</div>
+</div>
+
+
+<div id="lukaEditarConta" onclick="fecharEditorConta(event)">
+    <div id="lukaEditarBox" onclick="event.stopPropagation()">
+
+        <div class="luka-edit-head">
+            <h2>✏️ Editar conta</h2>
+            <button class="luka-edit-close"
+                    type="button"
+                    onclick="fecharEditorConta()">×</button>
+        </div>
+
+        <div class="luka-edit-group">
+            <label>Usuário</label>
+            <input id="editarContaUsuario" autocomplete="off">
+        </div>
+
+        <div class="luka-edit-group">
+            <label>Nova senha</label>
+            <input id="editarContaSenha"
+                   type="password"
+                   placeholder="Deixe vazio para manter a atual">
+        </div>
+
+        <div class="luka-edit-group">
+            <label>Tipo</label>
+            <select id="editarContaTipo">
+                <option value="usuario">Usuário</option>
+                <option value="teste">Teste</option>
+                <option value="revendedor">Revendedor</option>
+                <option value="admin">Administrador</option>
+            </select>
+        </div>
+
+        <div class="luka-edit-group">
+            <label>Telefone</label>
+            <input id="editarContaTelefone"
+                   type="tel"
+                   placeholder="Telefone">
+        </div>
+
+        <div class="luka-edit-group">
+            <label>Valor mensal</label>
+            <input id="editarContaValor"
+                   type="number"
+                   min="0"
+                   step="0.01"
+                   placeholder="0,00">
+        </div>
+
+        <div class="luka-edit-actions">
+            <button type="button"
+                    onclick="fecharEditorConta()">
+                Cancelar
+            </button>
+
+            <button type="button"
+                    class="salvar"
+                    id="btnSalvarEdicaoConta"
+                    onclick="salvarEdicaoConta()">
+                💾 Salvar alterações
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<div id="lukaContaOverlay" onclick="fecharContaDetalhes(event)">
+    <div id="lukaContaBox" onclick="event.stopPropagation()">
+
+        <div class="luka-conta-head">
+            <h2>👤 Detalhes da conta</h2>
+            <button class="luka-conta-close" onclick="fecharContaDetalhes()">×</button>
+        </div>
+
+        <div class="luka-conta-body">
+
+            <div class="luka-conta-user">
+                <strong id="lukaContaUsuario">—</strong>
+                <span id="lukaContaTipo">—</span>
+            </div>
+
+            <div class="luka-conta-grid">
+
+                <div class="luka-conta-item">
+                    <small>Status</small>
+                    <span id="lukaContaStatus">—</span>
+                </div>
+
+                <div class="luka-conta-item">
+                    <small>Presença</small>
+                    <span id="lukaContaOnline">—</span>
+                </div>
+
+                <div class="luka-conta-item">
+                    <small>Valor</small>
+                    <span id="lukaContaValor">—</span>
+                </div>
+
+                <div class="luka-conta-item">
+                    <small>Telefone</small>
+                    <span id="lukaContaTelefone">—</span>
+                </div>
+
+                <div class="luka-conta-item">
+                    <small>Criado em</small>
+                    <span id="lukaContaCriado">—</span>
+                </div>
+
+                <div class="luka-conta-item">
+                    <small>ID</small>
+                    <span id="lukaContaId">—</span>
+                </div>
+
+            </div>
+
+            <div class="luka-conta-expira">
+                <small>⏰ Expiração</small>
+                <strong id="lukaContaValidade">—</strong>
+            </div>
+
+            <div class="luka-conta-acoes">
+                <button onclick="abrirEditorConta()">✏️ Editar</button>
+                <button onclick="renovarContaAberta()">🔄 Renovar</button>
+                <button onclick="alternarContaAberta()">⚡ Status</button>
+                <button onclick="excluirContaAberta()">🗑️ Excluir</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+let usuarios=[];
+let timer=null;
+
+function aba(id,btn){
+
+ document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+ if(btn)btn.classList.add("active");
+
+ carregar();
+}
+
+function toast(msg){
+
+ const t=document.getElementById("toast");
+ t.textContent=msg;
+ t.classList.add("show");
+
+ clearTimeout(timer);
+ timer=setTimeout(()=>t.classList.remove("show"),2800);
+}
+
+function abrirModal(tipo){
+
+ document.getElementById("modal").classList.add("show");
+ document.getElementById("tipoCriacao").value=tipo;
+
+ document.getElementById("fUsuario").value="";
+ document.getElementById("fSenha").value="";
+
+ const escolhaTeste=document.getElementById("lukaEscolhaTeste");
+ const automaticoBox=document.getElementById("lukaAutomaticoBox");
+ const camposManuais=document.getElementById("lukaCamposManuais");
+
+ if(escolhaTeste){
+  escolhaTeste.style.display=tipo==="teste"?"block":"none";
+ }
+
+ if(automaticoBox){
+  automaticoBox.style.display="none";
+ }
+
+ if(camposManuais){
+  camposManuais.style.display=tipo==="teste"?"none":"block";
+ }
+
+ const btnSalvarInicial=document.getElementById("btnSalvar");
+
+ if(btnSalvarInicial){
+  if(tipo==="teste"){
+   btnSalvarInicial.style.display="none";
+   btnSalvarInicial.disabled=false;
+   btnSalvarInicial.textContent="Criar";
+  }else{
+   btnSalvarInicial.style.display="";
+  }
+ }
+
+ document.getElementById("fTempoLabel").textContent =
+  tipo==="teste" ? "Horas de teste" : "Dias";
+
+ document.getElementById("fDias").value =
+  tipo==="teste" ? 1 : 30;
+
+ if(document.getElementById("fValor")){
+  document.getElementById("fValor").value="";
+ }
+
+ if(document.getElementById("fTelefone")){
+  document.getElementById("fTelefone").value="";
+ }
+
+ const limite=document.getElementById("limiteBox");
+
+ limite.style.display=tipo==="revendedor"?"block":"none";
+
+ (document.getElementById("modalTitulo") || {set textContent(v){}}).textContent=
+ tipo==="usuario"?"Criar usuário":
+ tipo==="teste"?"Criar teste":
+ "Criar revendedor";
+}
+
+function fecharModal(){
+ document.getElementById("modal").classList.remove("show");
+
+
+========== 6. ADMIN HTML - CARREGAR ==========
+   }catch(e){
+
+    const area=
+     document.getElementById("mensagemCriadaTexto");
+
+    area.focus();
+    area.select();
+
+    document.execCommand("copy");
+
+    this.textContent="✅ Copiado!";
+   }
+
+ };
+}
+
+async function salvar(e){
+
+ e.preventDefault();
+
+ const tipo=document.getElementById("tipoCriacao").value;
+
+ const autoBox=document.getElementById("lukaAutomaticoBox");
+
+ if(tipo==="teste" && autoBox && autoBox.style.display==="block"){
+  await LUKA_CRIAR_TESTES_AUTOMATICOS();
+  return;
+ }
+
+ const usuario=document.getElementById("fUsuario").value.trim();
+ const senha=document.getElementById("fSenha").value;
+ const dias=Number(document.getElementById("fDias").value);
+
+ const valorInput=document.getElementById("fValor");
+ const telefoneInput=document.getElementById("fTelefone");
+
+ const valor=valorInput
+  ? Number(valorInput.value || 0)
+  : 0;
+
+ const telefone=telefoneInput
+  ? telefoneInput.value.trim()
+  : "";
+
+ if(
+  !usuario ||
+  !senha ||
+  !Number.isInteger(dias) ||
+  dias<1 ||
+  !Number.isFinite(valor) ||
+  valor<0
+ ){
+  toast("Preencha os dados corretamente.");
+  return;
+ }
+
+ const btn=document.getElementById("btnSalvar");
+ btn.disabled=true;
+ btn.textContent="Criando...";
+
+ try{
+
+  let url="/api/admin/usuarios";
+  let body={usuario,senha,dias,valor,telefone};
+
+  if(tipo==="revendedor"){
+   url="/api/admin/revendedores";
+   body.limite_conexoes=Number(document.getElementById("fLimite").value);
+  }
+
+  /*
+   O endpoint de usuário existente cria uma conta normal.
+   O teste será tratado pelo servidor quando a rota específica
+   estiver disponível.
+  */
+  if(tipo==="teste"){
+   url="/api/admin/usuarios/teste";
+  }
+
+  const r=await fetch(url,{
+   method:"POST",
+   credentials:"include",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify(body)
+  });
+
+  const d=await r.json().catch(()=>({}));
+
+  if(!r.ok||d.sucesso===false){
+   throw new Error(d.mensagem||"Não foi possível criar.");
+  }
+
+  fecharModal();
+
+  mostrarMensagemCriacao(
+   d,
+   {
+    usuario,
+    senha,
+    valor,
+    telefone
+   }
+  );
+
+  await carregar();
+
+ }catch(err){
+
+  toast("❌ "+err.message);
+
+ }finally{
+
+  btn.disabled=false;
+  btn.textContent="Criar";
+ }
+}
+
+async function carregar(){
+
+ iniciarGraficoTempoReal();
+
+
+ try{
+
+  const r=await fetch("/api/admin/presenca",{credentials:"include"});
+  const d=await r.json();
+
+  if(!r.ok||d.sucesso===false){
+   throw new Error(d.mensagem||"Erro ao carregar painel.");
+  }
+
+  usuarios=Array.isArray(d.usuarios)?d.usuarios:[];window.usuarios=usuarios;
+
+  (document.getElementById("cUsuarios") || {set textContent(v){}}).textContent=
+   usuarios.filter(x=>x.tipo==="usuario").length;
+
+  (document.getElementById("cTestes") || {set textContent(v){}}).textContent=
+   usuarios.filter(x=>x.tipo==="teste").length;
+
+  (document.getElementById("cRevendedores") || {set textContent(v){}}).textContent=
+   usuarios.filter(x=>x.tipo==="revendedor").length;
+
+  (document.getElementById("cOnline") || {set textContent(v){}}).textContent=
+   usuarios.filter(x=>x.online).length;
+
+  renderUsuarios();
+  renderTestes();
+  renderRevendedores();
+  renderChart();
+
+  (document.getElementById("ultimaAtualizacao") || {set textContent(v){}}).textContent=
+   "Atualizado "+new Date().toLocaleTimeString("pt-BR");
+
+ }catch(e){
+
+  console.error(e);
+  toast("⚠️ "+e.message);
+ }
+}
+
+
+function atualizarGraficoTempoReal(){
+
+    const lista =
+        Array.isArray(usuarios)
+            ? usuarios
+            : [];
+
+    const totalUsuarios =
+        lista.filter(u => u.tipo === "usuario").length;
+
+    const totalTestes =
+        lista.filter(u => u.tipo === "teste").length;
+
+    const totalOnline =
+        lista.filter(u => Boolean(u.online)).length;
+
+    const totalAtivos =
+        lista.filter(u =>
+            String(u.status || "ativo").toLowerCase() === "ativo"
+        ).length;
+
+    const totalExpirados =
+        lista.filter(u => {
+            if(!u.validade) return false;
+            const d = new Date(u.validade);
+            return !Number.isNaN(d.getTime()) &&
+                   d.getTime() <= Date.now();
+        }).length;
+
+    const valores = [
+        totalUsuarios,
+        totalTestes,
+        totalOnline,
+        totalAtivos,
+        totalExpirados,
+        totalOnline + totalTestes,
+        totalUsuarios + totalOnline,
+        lista.length
+    ];
+
+    const maior =
+        Math.max(...valores, 1);
+
+    const barras =
+        document.querySelectorAll("#lukaLiveBars div");
+
+    barras.forEach((barra, i) => {
+
+        const valor =
+            valores[i] ?? 0;
+
+        const altura =
+            Math.max(
+                12,
+                Math.min(
+                    100,
+                    (valor / maior) * 100
+                )
+            );
+
+        barra.style.height =
+            altura + "%";
+    });
+}
+
+function iniciarGraficoTempoReal(){
+
+    atualizarGraficoTempoReal();
+
+    if(window.__lukaGraficoTimer){
+        clearInterval(window.__lukaGraficoTimer);
+    }
+
+    window.__lukaGraficoTimer =
+        setInterval(() => {
+
+            atualizarGraficoTempoReal();
+
+        }, 3000);
+}
+
+function data(v){
+
+ if(!v)return"—";
+
+ const d=new Date(v);
+ if(Number.isNaN(d.getTime()))return"—";
+
+ return d.toLocaleDateString("pt-BR");
+}
+
+function status(x){
+
+ return String(x.status||"ativo").toLowerCase()==="ativo"
+ ? '<span class="badge active">● Ativo</span>'
+ : '<span class="badge off">● Suspenso</span>';
+}
+
+function acoes(u){
+
+ return `
+ <div class="actions">
+ <button onclick="abrirContaDetalhes(${Number(u.id)})" title="Ver detalhes">👁️</button>
+ <button onclick="abrirEditorConta(${Number(u.id)})" title="Editar usuário">✏️</button>
+ <button onclick="renovar(${Number(u.id)})" title="Renovar">🔄</button>
+ <button onclick="alternar(${Number(u.id)})" title="Ativar/Suspender">⚡</button>
+ <button onclick="excluir(${Number(u.id)})" title="Excluir">🗑️</button>
+ </div>`;
+}
+
+function renderUsuarios(){
+
+ const el=document.getElementById("tabelaUsuarios");
+ if(!el)return;
+
+ const q=(document.getElementById("buscaUsuarios")?.value||"").toLowerCase();
+
+ const lista=usuarios.filter(u=>
+  u.tipo==="usuario" &&
+  String(u.usuario||"").toLowerCase().includes(q)
+
+========== 7. ADMIN HTML - USUARIOS ==========
+
+ return `
+ <div class="actions">
+ <button onclick="abrirContaDetalhes(${Number(u.id)})" title="Ver detalhes">👁️</button>
+ <button onclick="abrirEditorConta(${Number(u.id)})" title="Editar usuário">✏️</button>
+ <button onclick="renovar(${Number(u.id)})" title="Renovar">🔄</button>
+ <button onclick="alternar(${Number(u.id)})" title="Ativar/Suspender">⚡</button>
+ <button onclick="excluir(${Number(u.id)})" title="Excluir">🗑️</button>
+ </div>`;
+}
+
+function renderUsuarios(){
+
+ const el=document.getElementById("tabelaUsuarios");
+ if(!el)return;
+
+ const q=(document.getElementById("buscaUsuarios")?.value||"").toLowerCase();
+
+ const lista=usuarios.filter(u=>
+  u.tipo==="usuario" &&
+  String(u.usuario||"").toLowerCase().includes(q)
+ );
+
+ if(!lista.length){
+  el.innerHTML='<tr><td colspan="6" class="empty">Nenhum usuário encontrado.</td></tr>';
+  return;
+ }
+
+ el.innerHTML=lista.map(u=>`
+ <tr>
+ <td><b>${escapeHtml(u.usuario)}</b></td>
+ <td>Usuário</td>
+ <td>${status(u)}</td>
+ <td>${data(u.validade)}</td>
+ <td>${u.online?'<span class="badge active">● Online</span>':'<span class="badge off">○ Offline</span>'}</td>
+ <td>${acoes(u)}</td>
+ </tr>`).join("");
+}
+
+function renderTestes(){
+
+ const el=document.getElementById("tabelaTestes");
+ if(!el)return;
+
+ const lista=usuarios.filter(u=>u.tipo==="teste");
+
+ if(!lista.length){
+  el.innerHTML='<tr><td colspan="5" class="empty">Nenhum teste encontrado.</td></tr>';
+  return;
+ }
+
+ el.innerHTML=lista.map(u=>`
+ <tr>
+ <td><b>${escapeHtml(u.usuario)}</b></td>
+ <td>${status(u)}</td>
+ <td>${data(u.validade)}</td>
+ <td>${u.online?'🟢 Online':'⚪ Offline'}</td>
+ <td>${acoes(u)}</td>
+ </tr>`).join("");
+}
+
+function renderRevendedores(){
+
+ const el=document.getElementById("tabelaRevendedores");
+ if(!el)return;
+
+ const lista=usuarios.filter(u=>u.tipo==="revendedor");
+
+ if(!lista.length){
+  el.innerHTML='<tr><td colspan="6" class="empty">Nenhum revendedor encontrado.</td></tr>';
+  return;
+ }
+
+ el.innerHTML=lista.map(u=>`
+ <tr>
+ <td><b>${escapeHtml(u.usuario)}</b></td>
+ <td>${status(u)}</td>
+ <td>${data(u.validade)}</td>
+ <td>${u.conexoes_utilizadas??0}/${u.limite_conexoes??0}</td>
+ <td>${u.online?'🟢 Online':'⚪ Offline'}</td>
+ <td>${acoes(u)}</td>
+ </tr>`).join("");
+}
+
+function renderChart(){
+
+ const el=document.getElementById("chart");
+ if(!el)return;
+
+ const valores=[
+  usuarios.filter(x=>x.tipo==="usuario").length,
+  usuarios.filter(x=>x.tipo==="teste").length,
+  usuarios.filter(x=>x.tipo==="revendedor").length,
+  usuarios.filter(x=>x.online).length
+ ];
+
+ const max=Math.max(...valores,1);
+
+ el.innerHTML=valores.map((v,i)=>`
+ <div class="bar"
+      title="${v}"
+      style="height:${Math.max(8,(v/max)*100)}%">
+ </div>`).join("");
+}
+
+function escapeHtml(v){
+
+ return String(v??"")
+ .replaceAll("&","&amp;")
+ .replaceAll("<","&lt;")
+ .replaceAll(">","&gt;")
+ .replaceAll('"',"&quot;")
+ .replaceAll("'","&#039;");
+}
+
+
+let contaDetalhesAberta = null;
+
+function formatarValorConta(v){
+
+    const n = Number(v);
+
+    if(!Number.isFinite(n)){
+        return "Não informado";
+    }
+
+    return n.toLocaleString("pt-BR",{
+        style:"currency",
+        currency:"BRL"
+    });
+}
+
+function formatarDataHoraConta(v){
+
+    if(!v){
+        return "Não informado";
+    }
+
+    const d = new Date(v);
+
+    if(Number.isNaN(d.getTime())){
+        return "Não informado";
+    }
+
+    return d.toLocaleString("pt-BR",{
+        dateStyle:"short",
+        timeStyle:"short"
+    });
+}
+
+function calcularTempoRestante(v){
+
+    if(!v){
+        return "Sem validade";
+    }
+
+    const fim = new Date(v).getTime();
+
+    if(!Number.isFinite(fim)){
+        return "Data inválida";
+    }
+
+    let restante = fim - Date.now();
+
+    if(restante <= 0){
+        return "Expirado";
+    }
+
+    const totalSegundos = Math.floor(restante / 1000);
+
+    const dias = Math.floor(totalSegundos / 86400);
+    const horas = Math.floor((totalSegundos % 86400) / 3600);
+    const minutos = Math.floor((totalSegundos % 3600) / 60);
+
+    if(dias > 0){
+        return `${dias} dia${dias===1?"":"s"}, ${horas}h`;
+    }
+
+    if(horas > 0){
+        return `${horas}h ${minutos}min`;
+    }
+
+    return `${Math.max(1,minutos)} min`;
+}
+
+function abrirContaDetalhes(id){
+
+    const u = usuarios.find(
+        x => Number(x.id) === Number(id)
+    );
+
+    if(!u){
+        toast("Conta não encontrada.");
+        return;
+    }
+
+    contaDetalhesAberta = u;
+
+    const usuario = u.usuario || "—";
+    const tipo = String(u.tipo || "usuario").toUpperCase();
+    const st = String(u.status || "ativo").toLowerCase();
+    const online = Boolean(u.online);
+
+    document.getElementById("lukaContaUsuario").textContent = usuario;
+    document.getElementById("lukaContaTipo").textContent = tipo;
+    document.getElementById("lukaContaStatus").textContent =
+        st === "ativo" ? "ATIVO" : "SUSPENSO";
+
+    document.getElementById("lukaContaOnline").textContent =
+        online ? "🟢 Online" : "⚪ Offline";
+
+    document.getElementById("lukaContaValor").textContent =
+        formatarValorConta(u.valor ?? u.valor_mensal ?? 0);
+
+    document.getElementById("lukaContaTelefone").textContent =
+        u.telefone || u.whatsapp || "Não informado";
+
+    document.getElementById("lukaContaCriado").textContent =
+        formatarDataHoraConta(u.criado_em);
+
+    document.getElementById("lukaContaId").textContent =
+        u.id ?? "—";
+
+    const validade = u.validade || "";
+    const validadeData = validade ? new Date(validade) : null;
+    const agora = Date.now();
+
+    let restante = "Sem validade";
+    let expirado = false;
+    let percentual = 100;
+
+    if(validadeData && !Number.isNaN(validadeData.getTime())){
+
+        const fim = validadeData.getTime();
+        const inicio = u.criado_em
+            ? new Date(u.criado_em).getTime()
+            : agora;
+
+        const total = Math.max(fim - inicio, 1);
+        const decorrido = agora - inicio;
+
+        percentual = Math.max(
+            0,
+            Math.min(100, ((total - decorrido) / total) * 100)
+        );
+
+        if(fim <= agora){
+            expirado = true;
+            restante = "EXPIRADO";
+        }else{
+            restante = calcularTempoRestante(validade);
+        }
+
+        document.getElementById("lukaContaValidade").textContent =
+            formatarDataHoraConta(validade) +
+            " • " +
+            restante;
+
+    }else{
+        document.getElementById("lukaContaValidade").textContent =
+            "Sem validade";
+    }
+
+    const body = document.querySelector("#lukaContaBox .luka-conta-body");
+
+    if(body){
+
+        const antigo = body.querySelector(".luka-pro-extra");
+        if(antigo) antigo.remove();
+
+        const telefone = u.telefone || u.whatsapp || "";
+
+        const extra = document.createElement("div");
+        extra.className = "luka-pro-extra";
+
+        extra.innerHTML = `
+            <div class="luka-pro-status">
+                <span class="luka-pro-dot ${online ? "online" : "offline"}"></span>
+                <span>${online ? "Sessão online detectada" : "Nenhuma sessão ativa"}</span>
+            </div>
+
+            <div class="luka-pro-grid">
+
+                <div class="luka-pro-card highlight">
+                    <small>Plano / Tipo</small>
+                    <strong>${escapeHtml(tipo)}</strong>
+                </div>
+
+                <div class="luka-pro-card">
+                    <small>Status da conta</small>
+                    <strong>${escapeHtml(st === "ativo" ? "ATIVO" : "SUSPENSO")}</strong>
+                </div>
+
+                <div class="luka-pro-card">
+                    <small>Valor</small>
+                    <strong>${escapeHtml(
+                        formatarValorConta(u.valor ?? u.valor_mensal ?? 0)
+                    )}</strong>
+                </div>
+
+                <div class="luka-pro-card">
+                    <small>Conexões</small>
+                    <strong>${
+                        u.tipo === "revendedor"
+                        ? `${u.conexoes_utilizadas ?? 0}/${u.limite_conexoes ?? 0}`
+                        : "1"
+                    }</strong>
+                </div>
+
+            </div>
+
+            <div class="luka-pro-validade ${expirado ? "luka-pro-expirada" : ""}">
+
+                <div class="luka-pro-validade-head">
+                    <small>Monitoramento da validade</small>
+                    <div class="luka-pro-restante">
+                        ${escapeHtml(restante)}
+                    </div>
+                </div>
+
+                <div class="luka-pro-progress">
+                    <div
+                        class="luka-pro-progress-bar"
+                        style="width:${percentual}%"
+                    ></div>
+                </div>
+
+            </div>
+
+            ${
+                telefone
+                ? `
+                <button
+                    type="button"
+                    class="luka-pro-copy"
+                    onclick="copiarTelefoneConta(${JSON.stringify(telefone)})"
+                >
+                    📱 Copiar telefone / WhatsApp
+                </button>
+                `
+                : ""
+            }
+
+            <div class="luka-pro-id">
+                LUKAFILMES • ACCOUNT-ID #${escapeHtml(u.id ?? "—")}
+            </div>
+        `;
+
+        const acoes = body.querySelector(".luka-conta-acoes");
+
+        if(acoes){
+            body.insertBefore(extra, acoes);
+        }else{
+            body.appendChild(extra);
+        }
+    }
+
+    document
+        .getElementById("lukaContaOverlay")
+        .classList.add("show");
+}
+
+function copiarTelefoneConta(valor){
+
+    if(!valor){
+        toast("Telefone não informado.");
+        return;
+    }
+
+    if(navigator.clipboard){
+        navigator.clipboard.writeText(String(valor))
+            .then(() => toast("📋 Telefone copiado!"))
+            .catch(() => copiarTelefoneFallback(valor));
+    }else{
+        copiarTelefoneFallback(valor);
+    }
+}
+
+function copiarTelefoneFallback(valor){
+
+    const area = document.createElement("textarea");
+    area.value = String(valor);
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+
+    document.body.appendChild(area);
+    area.focus();
+    area.select();
+
+    try{
+        document.execCommand("copy");
+        toast("📋 Telefone copiado!");
+    }catch(e){
+        toast("Não foi possível copiar.");
+    }
+
+    area.remove();
+}
+
+function fecharContaDetalhes(event){
+
+    if(event && event.target !== event.currentTarget){
+        return;
+    }
+
+    const el = document.getElementById("lukaContaOverlay");
+
+    if(el){
+        el.classList.remove("show");
+    }
+
+    contaDetalhesAberta = null;
+}
+
+function renovarContaAberta(){
+
+    if(!contaDetalhesAberta){
+        return;
+    }
+
+    fecharContaDetalhes();
+
+    renovar(
+        Number(contaDetalhesAberta.id)
+    );
+}
+
+function alternarContaAberta(){
+
+    if(!contaDetalhesAberta){
+        return;
+    }
+
+    const id = Number(contaDetalhesAberta.id);
+
+    fecharContaDetalhes();
+
+    alternar(id);
+}
+
+function excluirContaAberta(){
+
+    if(!contaDetalhesAberta){
+        return;
+    }
+
+    const id = Number(contaDetalhesAberta.id);
+
+    fecharContaDetalhes();
+
+    excluir(id);
+}
+
+
+function abrirEditorConta(id){
+
+    const conta = usuarios.find(
+        u => Number(u.id) === Number(id)
+    ) || contaDetalhesAberta;
+
+    if(!conta){
+        toast("Nenhuma conta selecionada.");
+        return;
+    }
+
+    contaDetalhesAberta = conta;
+
+    const usuarioEl =
+        document.getElementById("editarContaUsuario");
+
+    const senhaEl =
+        document.getElementById("editarContaSenha");
+
+    const tipoEl =
+        document.getElementById("editarContaTipo");
+
+    const telefoneEl =
+        document.getElementById("editarContaTelefone");
+
+    const valorEl =
+        document.getElementById("editarContaValor");
+
+    const validadeEl =
+        document.getElementById("editarContaValidade");
+
+    const limiteEl =
+        document.getElementById("editarContaLimite");
+
+    if(usuarioEl)
+        usuarioEl.value = conta.usuario || "";
+
+    if(senhaEl)
+        senhaEl.value = "";
+
+    if(tipoEl)
+        tipoEl.value = conta.tipo || "usuario";
+
+    if(telefoneEl)
+        telefoneEl.value =
+            conta.telefone ||
+            conta.whatsapp ||
+            "";
+
+    if(valorEl)
+        valorEl.value =
+            conta.valor_mensal ??
+            conta.valor ??
+            "";
+
+    if(validadeEl){
+
+        if(conta.validade){
+
+            const d = new Date(conta.validade);
+
+            validadeEl.value =
+                Number.isNaN(d.getTime())
+                    ? ""
+                    : new Date(
+                        d.getTime() -
+                        d.getTimezoneOffset() * 60000
+                    )
+                    .toISOString()
+                    .slice(0,16);
+
+        }else{
+
+            validadeEl.value = "";
+
+        }
+    }
+
+    if(limiteEl)
+        limiteEl.value =
+            Number(conta.limite_conexoes) || 0;
+
+    const modal =
+        document.getElementById("lukaEditarConta");
+
+    if(modal){
+        modal.classList.add("show");
+    }
+}
+
+function fecharEditorConta(event){
+
+    if(event && event.target !== event.currentTarget){
+        return;
+    }
+
+    const el =
+        document.getElementById("lukaEditarConta");
+
+    if(el){
+        el.classList.remove("show");
+    }
+}
+
+async function salvarEdicaoConta(){
+
+    if(!contaDetalhesAberta){
+        toast("Nenhuma conta selecionada.");
+        return;
+    }
+
+    const id =
+        Number(contaDetalhesAberta.id);
+
+    const usuario =
+        document.getElementById("editarContaUsuario")
+        .value.trim();
+
+    const senha =
+        document.getElementById("editarContaSenha")
+        .value;
+
+    const tipo =
+        document.getElementById("editarContaTipo")
+        .value;
+
+    const telefone =
+        document.getElementById("editarContaTelefone")
+        .value.trim();
+
+    const valorTexto =
+        document.getElementById("editarContaValor")
+        .value;
+
+    const valor =
+        valorTexto === ""
+            ? 0
+            : Number(valorTexto);
+
+    const validade =
+        document.getElementById("editarContaValidade")
+        ?.value || "";
+
+    const limite_conexoes =
+        Number(
+            document.getElementById("editarContaLimite")
+            ?.value || 0
+
+========== 8. CHECK ==========
+
+========== FIM ==========

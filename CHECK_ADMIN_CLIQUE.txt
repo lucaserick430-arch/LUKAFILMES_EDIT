@@ -1,0 +1,31 @@
+========== ADMIN NO INDEX ==========
+1350:        href="/admin.html"
+1351:        id="lukafilmesDesktopAdmin"
+1375:        href="/admin.html"
+1376:        id="lukafilmesMenuPainel"
+1535:        carregarMenuUsuarioDesktop();
+1544:async function carregarMenuUsuarioDesktop(){
+1591:                document.getElementById("lukafilmesDesktopAdmin");
+1601:                    window.location.assign("/admin.html");
+
+========== ROTA ADMIN ==========
+651-// ADMIN
+652-// ==========================================
+653-
+654:app.get("/admin.html", (req, res) => {
+655-
+656-    if (!req.session.usuario) {
+657-        return res.redirect("/login");
+658-    }
+659-
+660-    if (req.session.usuario.tipo !== "admin") {
+661-        return res.status(403).send("Acesso negado.");
+662-    }
+663-
+664-    res.set({
+665-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+666-        "Pragma": "no-cache",
+
+========== TESTE ADMIN ==========
+HTTP=302
+REDIRECT=http://127.0.0.1:3000/login

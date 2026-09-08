@@ -1,0 +1,327 @@
+========== SERVER PAGAMENTO ==========
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                permitido: true,
+                logado: true,
+                tipo,
+                validade: pessoa.validade || null
+            });
+        }
+
+        if (
+            pessoa.validade &&
+            new Date(pessoa.validade).getTime() > Date.now()
+        ) {
+            return res.json({
+                permitido: true,
+                logado: true,
+                tipo,
+                validade: pessoa.validade
+            });
+        }
+
+        return res.json({
+            permitido: false,
+            logado: true,
+            tipo,
+            motivo: "expirado",
+            valor: CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+            dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+            validade: pessoa.validade || null
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ACESSO ASSISTIR] Erro:",
+            erro
+        );
+
+        return res.status(500).json({
+            permitido: false,
+            logado: true,
+            motivo: "erro_servidor",
+            mensagem: "Erro interno ao verificar o acesso."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+// ==========================================
+
+app.post("/api/pagamentos/criar", async (req, res) => {
+
+    try {
+
+        if (!req.session || !req.session.usuario) {
+            return res.status(401).json({
+                sucesso: false,
+                logado: false,
+                motivo: "nao_logado",
+                mensagem: "Faça login para continuar."
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                sucesso: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado",
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const tipo = String(
+            pessoa.tipo || "usuario"
+        ).toLowerCase();
+
+        const statusUsuario = String(
+            pessoa.status || "ativo"
+        ).toLowerCase();
+
+        if (statusUsuario !== "ativo") {
+            return res.status(403).json({
+                sucesso: false,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: false,
+                motivo: "isento",
+                tipo
+            });
+        }
+
+        const pagamentosPendentes =
+            await listarPagamentosLuka(
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+            );
+
+        const pagamentoExistente =
+            pagamentosPendentes.find(
+                pagamento =>
+                    Number(pagamento.usuario_id) === Number(pessoa.id)
+            );
+
+        if (pagamentoExistente) {
+
+            let pix;
+
+            try {
+                pix = gerarPixCopiaColaLuka();
+            } catch (erroPix) {
+                console.error(
+                    "[PAGAMENTO] Erro ao gerar PIX:",
+                    erroPix
+                );
+
+========== FILME PAGAMENTO ==========
+3667:                                await mostrarPagamentoLuka(
+3739:            async function mostrarPagamentoLuka(acesso) {
+3902:                            id="lukafilmesPagamentoFeito"
+4020:                            "lukafilmesPagamentoFeito"
+4039:                                        "Pagamento registrado como pendente. Aguarde a confirmação do administrador.";
+
+========== ADMIN SCRIPT FINAL ==========
+                    <strong>${ativos}</strong>
+                </div>
+
+                <div class="luka-central-stat">
+                    <small>Suspensos</small>
+                    <strong>${suspensos}</strong>
+                </div>
+
+            </div>
+
+            <input
+                class="luka-central-search"
+                id="lukaCentralBusca"
+                placeholder="🔎 Pesquisar nesta central..."
+                autocomplete="off"
+            >
+
+            <div class="luka-central-list">
+
+                <div class="luka-central-list-head">
+                    <strong>Contas</strong>
+                    <span>${total} registros</span>
+                </div>
+
+                <div id="lukaCentralLista"></div>
+
+            </div>
+        `;
+
+        const busca=document.getElementById("lukaCentralBusca");
+
+        function atualizarLista(){
+
+            const q=(busca.value||"").toLowerCase();
+
+            const filtrada=lista.filter(u=>
+                String(u.usuario||"")
+                    .toLowerCase()
+                    .includes(q)
+            );
+
+            const el=document.getElementById("lukaCentralLista");
+
+            if(!filtrada.length){
+                el.innerHTML=`
+                    <div class="luka-central-empty">
+                        🔎 Nenhuma conta encontrada.
+                    </div>
+                `;
+                return;
+            }
+
+            el.innerHTML=filtrada.slice(0,100).map(u=>{
+
+                const nome=String(u.usuario||"—");
+                const inicial=nome.charAt(0).toUpperCase();
+
+                const isOnline=!!u.online;
+
+                let detalhe=
+                    String(u.tipo||"usuario").toUpperCase();
+
+                if(u.validade){
+                    const d=new Date(u.validade);
+
+                    if(!Number.isNaN(d.getTime())){
+                        detalhe+=" • expira "+
+                            d.toLocaleDateString("pt-BR");
+                    }
+                }
+
+                return `
+
+                    <div
+                        class="luka-central-user"
+                        onclick="lukaAbrirContaCentral(${Number(u.id)})"
+                        style="cursor:pointer"
+                    >
+
+                        <div class="luka-central-avatar">
+                            ${esc(inicial)}
+                        </div>
+
+                        <div class="luka-central-user-info">
+
+                            <strong>${esc(nome)}</strong>
+
+                            <span>${esc(detalhe)}</span>
+
+                        </div>
+
+                        <div class="
+                            luka-central-user-status
+                            ${isOnline ? "online" : "offline"}
+                        ">
+                            ${isOnline ? "● ONLINE" : "○ OFFLINE"}
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join("");
+        }
+
+        busca.addEventListener("input",atualizarLista);
+
+        atualizarLista();
+    }
+
+    window.lukaAbrirCentral=function(tipo){
+
+        criarCentral();
+
+        render(tipo);
+
+        const overlay=document.getElementById(
+            "lukaCentralOverlay"
+        );
+
+        overlay.classList.add("show");
+
+        centralAberta=true;
+
+        document.body.style.overflow="hidden";
+    };
+
+    window.lukaFecharCentral=function(){
+
+        const overlay=document.getElementById(
+            "lukaCentralOverlay"
+        );
+
+        if(overlay){
+            overlay.classList.remove("show");
+        }
+
+        centralAberta=false;
+
+        document.body.style.overflow="";
+    };
+
+    window.lukaAbrirContaCentral=function(id){
+
+        lukaFecharCentral();
+
+        setTimeout(function(){
+
+            if(typeof abrirContaDetalhes==="function"){
+                abrirContaDetalhes(id);
+            }
+
+        },180);
+    };
+
+    function ligarCards(){
+
+        const mapa={
+
+            usuarios:"👤",
+            testes:"🧪",
+            revendedores:"🤝",
+            online:"🟢"
+
+        };
+
+        document.querySelectorAll(
+            ".clickable-card"
+        ).forEach(card=>{
+
+            if(card.dataset.lukaCentral==="1") return;
+
+            const texto=card.innerText.toLowerCase();
+
+            let tipo=null;
+
+            if(texto.includes("usuário") ||
+               texto.includes("usuarios") ||
+               texto.includes("usuários")){
+                tipo="usuarios";
+            }

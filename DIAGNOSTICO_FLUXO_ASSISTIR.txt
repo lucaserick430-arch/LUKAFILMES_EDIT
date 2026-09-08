@@ -1,0 +1,358 @@
+========== DIAGNOSTICO FLUXO ASSISTIR ==========
+
+===== INDEX: LOGIN / ASSISTIR =====
+1459:<style id="lukafilmes-menu-usuario-comum">
+3864:<style id="luka-login-entrance-style">
+3867:.luka-login-entrance{
+3881:.luka-login-entrance-glow{
+3892:.luka-login-entrance-content{
+3903:.luka-login-entrance-icon{
+3917:.luka-login-entrance-text{
+3922:.luka-login-entrance-title{
+3930:.luka-login-entrance-title::after{
+3942:.luka-login-entrance-subtitle{
+3948:.luka-login-entrance-btn{
+3969:.luka-login-entrance-btn:hover{
+3978:    .luka-login-entrance{
+3982:    .luka-login-entrance-content{
+3987:    .luka-login-entrance-icon{
+3995:    .luka-login-entrance-title{
+3999:    .luka-login-entrance-subtitle{
+4003:    .luka-login-entrance-btn{
+4012:    .luka-login-entrance-subtitle{
+4016:    .luka-login-entrance-btn{
+4271:<section class="luka-login-entrance" aria-label="Entrada de clientes">
+4272:    <div class="luka-login-entrance-glow"></div>
+4274:    <div class="luka-login-entrance-content">
+4275:        <div class="luka-login-entrance-icon">🔐</div>
+4277:        <div class="luka-login-entrance-text">
+4278:            <div class="luka-login-entrance-title">
+4282:            <div class="luka-login-entrance-subtitle">
+4289:            href="/login"
+4290:            class="luka-login-entrance-btn"
+4291:            aria-label="Entrar como cliente"
+4293:            🔐 ENTRAR COMO CLIENTE
+4339:                ▶ Assistir
+4448:    <strong>LUKAFILMES</strong> — Filmes e séries para você assistir.
+4517:        carregarMenuUsuarioDesktop();
+4526:async function carregarMenuUsuarioDesktop(){
+4558:            !dados.usuario
+4565:                dados.usuario.tipo || ""
+6348:             * - botão Assistir
+7015:        window.location.href = "/login";
+7469:<script id="lukafilmes-controle-menu-usuario">
+7483:        const u = d.usuario || d.user || d;
+7503:                "lukafilmes-usuario-comum"
+7524:            "lukafilmes-usuario-comum"
+9180:    <span class="luka-bv-texto">Prepare-se para assistir aos seus filmes e séries favoritos.</span>
+9573:                "Novo filme disponível • Toque para assistir";
+9633:                        'Novo filme disponível • Clique para assistir' +
+9714:             * abre automaticamente ao entrar.
+10038:            const usuario = dados && dados.usuario;
+10040:            if (!dados.logado || !usuario) return;
+10041:            if (usuario.tipo === "admin") return;
+10042:            if (!usuario.validade) return;
+10044:            const validade = new Date(usuario.validade);
+10179:            // Deslocamento maior que 6px = intenção do usuario em ROLAR A PÁGINA
+12107:O botão Assistir continua acima do trailer.
+12151:/* O botão Assistir fica acima do trailer */
+
+===== FILME.HTML: LOGIN / ASSISTIR =====
+343:   BOTÃO ASSISTIR
+346:.assistir {
+379:.assistir:hover {
+580:    .assistir {
+730:    .botoes-assistir {
+741:    .botoes-assistir .assistir {
+981:.botoes-assistir{
+986:.assistir{
+1004:.assistir:hover{
+1010:#botaoAssistirOrigem{
+1015:#botaoAssistirOrigem:hover{
+1173:    .botoes-assistir{
+1184:    .assistir,
+1185:    #botaoAssistirOrigem{
+1729:.botoes-assistir {
+1741:.botoes-assistir .assistir {
+1766:.botoes-assistir .assistir:hover {
+2007:    .botoes-assistir {
+2011:    .botoes-assistir .assistir {
+2054:    .botoes-assistir {
+2059:    .botoes-assistir .assistir {
+2254:.botoes-assistir{
+2263:.botoes-assistir .assistir{
+2279:#botaoAssistir{
+2284:#botaoAssistir:hover{
+2289:#botaoAssistirOrigem,
+2297:#botaoAssistirOrigem:hover,
+2493:    .botoes-assistir{
+2498:    .botoes-assistir .assistir{
+2535:.botoes-assistir > #trailerContainer{
+2551:.botoes-assistir > #trailerContainer .trailer-video{
+2566:.botoes-assistir > #trailerContainer .trailer-video iframe{
+2578:    .botoes-assistir > #trailerContainer{
+2598:    .botoes-assistir{
+2604:    .botoes-assistir > #trailerContainer{
+2623:    .botoes-assistir > #trailerContainer .trailer-video{
+2640:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2657:    .botoes-assistir > #trailerContainer{
+2673:    .botoes-assistir > #trailerContainer{
+2693:    .botoes-assistir > #trailerContainer .trailer-video{
+2710:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2723:    .botoes-assistir > #trailerContainer{
+2747:    .botoes-assistir > #trailerContainer{
+2767:    .botoes-assistir > #trailerContainer .trailer-video{
+2783:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2802:    .botoes-assistir > #trailerContainer{
+2825:    .botoes-assistir > #trailerContainer{
+2847:    .botoes-assistir > #trailerContainer .trailer-video{
+2866:    .botoes-assistir > #trailerContainer .trailer-video iframe{
+2884:    .botoes-assistir > #trailerContainer{
+3056:    .botoes-assistir > #trailerContainer{
+3076:    .botoes-assistir > #trailerContainer .trailer-video{
+3098:    .botoes-assistir > #trailerContainer .trailer-video iframe,
+3203:                class="botoes-assistir"
+3214:                    class="assistir"
+3215:                    id="botaoAssistir"
+3221:                    class="assistir"
+3222:                    id="botaoAssistirOrigem"
+3231:                    class="assistir"
+3573:           ASSISTIR FILME — EMBEDMOVIES / TMDB
+3577:            document.getElementById("botaoAssistir");
+3615:                                "/api/acesso-assistir",
+3635:                         * Em vez de mandar para o login,
+3636:                         * abrimos o cadastro específico do LUKAFILMES.
+3648:                                "/cadastro?retorno=" +
+3676:                                "Seu acesso não está liberado para assistir."
+3831:                            Para assistir este filme, renove seu acesso.
+4028:                                const nomeUsuario =
+4031:                                        pagamento.usuario
+4032:                                            ? pagamento.usuario
+4046:                                        "👤 Usuário: " + nomeUsuario,
+4139:                                    "/api/acesso-assistir",
+4151:                                "[LUKAFILMES] Acesso para assistir:",
+4166:                                        "Faça login para assistir."
+4174:                                        "Seu acesso expirou. É necessário renovar para assistir."
+4180:                                        "Seu acesso não está liberado para assistir."
+4411:        /* ASSISTIR NO SITE DE ORIGEM */
+4414:            document.getElementById("botaoAssistirOrigem");
+5510:                "Novo filme disponível • Toque para assistir";
+5832:.botoes-assistir{
+5843:.assistir{
+5873:.assistir:hover{
+5878:#botaoAssistirOrigem{
+5883:#botaoAssistirOrigem:hover{
+6053:    .botoes-assistir{
+6063:    .assistir,
+6064:    #botaoAssistirOrigem{
+6319:.botoes-assistir{
+6329:.assistir{
+6353:.assistir:hover{
+6358:#botaoAssistirOrigem{
+6476:    .botoes-assistir{
+6486:    .assistir,
+6487:    #botaoAssistirOrigem{
+
+===== SERVER: LOGIN / USUARIO / PAGAMENTO =====
+39:                dados.cookie.expires &&
+40:                new Date(dados.cookie.expires) < new Date()
+132:    pagamentos: {
+141:// PIX FIXO LUKAFILMES - COPIA E COLA
+144:function crc16PixLuka(str) {
+162:function campoPixLuka(id, valor) {
+167:function gerarPixCopiaColaLuka() {
+168:    const chave = String(process.env.PIX_CHAVE || "").trim();
+169:    const nome = String(process.env.PIX_NOME || "LUKAFILMES")
+172:    const cidade = String(process.env.PIX_CIDADE || "CARAPICUIBA")
+175:    const valor = Number(process.env.PIX_VALOR || 18).toFixed(2);
+178:        throw new Error("PIX_CHAVE não configurada no .env");
+182:        campoPixLuka("00", "br.gov.bcb.pix") +
+183:        campoPixLuka("01", chave);
+186:        campoPixLuka("00", "01") +
+187:        campoPixLuka("26", merchantAccount) +
+188:        campoPixLuka("52", "0000") +
+189:        campoPixLuka("53", "986") +
+190:        campoPixLuka("54", valor) +
+191:        campoPixLuka("58", "BR") +
+192:        campoPixLuka("59", nome) +
+193:        campoPixLuka("60", cidade) +
+194:        campoPixLuka("62", campoPixLuka("05", "***")) +
+197:    return payloadSemCRC + crc16PixLuka(payloadSemCRC);
+200:const USUARIOS_STORE = "lukafilmes-usuarios";
+201:const USUARIOS_KEY = "usuarios";
+222:let tursoUsuariosPreparado = false;
+224:async function prepararTursoUsuarios() {
+225:  if (!turso || tursoUsuariosPreparado) return;
+228:    CREATE TABLE IF NOT EXISTS lukafilmes_usuarios (
+234:  tursoUsuariosPreparado = true;
+237:async function prepararTursoPagamentos() {
+241:    CREATE TABLE IF NOT EXISTS lukafilmes_pagamentos (
+256:async function criarPagamentoLuka(dados) {
+257:    await prepararTursoPagamentos();
+265:            INSERT INTO lukafilmes_pagamentos
+285:            String(dados.status || CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE),
+297:async function proximoIdPagamentoLuka() {
+298:    await prepararTursoPagamentos();
+306:        FROM lukafilmes_pagamentos
+312:async function listarPagamentosLuka(status = null) {
+313:    await prepararTursoPagamentos();
+323:                FROM lukafilmes_pagamentos
+335:        FROM lukafilmes_pagamentos
+342:async function buscarPagamentoLuka(id) {
+343:    await prepararTursoPagamentos();
+352:            FROM lukafilmes_pagamentos
+362:async function atualizarPagamentoLuka(id, dados) {
+363:    await prepararTursoPagamentos();
+395:            UPDATE lukafilmes_pagamentos
+421:async function carregarUsuarios() {
+423:    await prepararTursoUsuarios();
+426:      "SELECT dados FROM lukafilmes_usuarios WHERE id = 1"
+442:      const usuarios = db.prepare("SELECT * FROM usuarios").all();
+444:      if (Array.isArray(usuarios) && usuarios.length > 0) {
+445:        await salvarUsuarios(usuarios);
+446:        console.log("[TURSO] Usuários locais migrados:", usuarios.length);
+447:        return usuarios;
+458:    const usuarios = db
+459:      .prepare("SELECT * FROM usuarios")
+462:    return Array.isArray(usuarios) ? usuarios : [];
+466:    name: USUARIOS_STORE,
+472:    USUARIOS_KEY,
+485:async function salvarUsuarios(usuarios) {
+487:    await prepararTursoUsuarios();
+491:        INSERT INTO lukafilmes_usuarios (id, dados)
+495:      args: [JSON.stringify(Array.isArray(usuarios) ? usuarios : [])]
+504:    db.prepare("DELETE FROM usuarios").run();
+507:      INSERT INTO usuarios
+508:      (id, usuario, senha, status, tipo, validade, criado_em, limite_conexoes, conexoes_utilizadas, revendedor_id)
+520:          u.validade || null,
+529:    inserirTodos(usuarios);
+534:    name: USUARIOS_STORE,
+540:    USUARIOS_KEY,
+541:    usuarios
+547:function proximoId(usuarios) {
+549:    if (!Array.isArray(usuarios) || usuarios.length === 0) {
+554:        ...usuarios.map(
+628:prepararTursoPagamentos()
+629:    .then(() => console.log("[TURSO] Tabela de pagamentos preparada."))
+630:    .catch(erro => console.error("[TURSO PAGAMENTOS] Erro ao preparar tabela:", erro));
+635:console.log("[DIAGNOSTICO] rota /login registrada");
+636:// LOGIN
+639:app.get("/login", (req, res) => {
+646:        path.join(__dirname, "public", "login.html")
+657:        return res.redirect("/login");
+667:        "Expires": "0",
+732:        const usuarios = await carregarUsuarios();
+734:        const existente = usuarios.find(
+751:            id: proximoId(usuarios),
+758:            validade: null,
+762:        usuarios.push(novoUsuario);
+764:        await salvarUsuarios(usuarios);
+769:         * A validade continua null até o pagamento ser aprovado.
+782:                validade: null,
+788:            // quando o pagamento de teste for recusado.
+791:            await salvarUsuarios(usuarios);
+809:                validade: null
+851:// LOGIN POST
+854:app.post("/login", async (req, res) => {
+872:                const usuarios = await carregarUsuarios();
+874:        const pessoa = usuarios.find(
+896:         * Usuário vencido continua podendo fazer login e navegar
+897:         * pelo catálogo. O bloqueio para assistir será feito
+898:         * somente no botão principal "ASSISTIR".
+923:            validade: pessoa.validade || null
+940:            "[ERRO LOGIN]",
+1012:        const usuarios = await carregarUsuarios();
+1014:        let teste = usuarios.find(
+1021:            const ids = usuarios
+1035:                validade: null,
+1041:            usuarios.push(teste);
+1042:            await salvarUsuarios(usuarios);
+1049:            validade: teste.validade || null
+1065:                validade: teste.validade || null
+1145:// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+1158:        const usuarios = await carregarUsuarios();
+1160:        const pessoa = usuarios.find(
+1170:                validade: sessao.validade || null
+1177:                validade: pessoa.validade || null
+1189:app.get("/api/acesso-assistir", async (req, res) => {
+1203:        const usuarios = await carregarUsuarios();
+1205:        const pessoa = usuarios.find(
+1237:                validade: pessoa.validade || null
+1242:            pessoa.validade &&
+1243:            new Date(pessoa.validade).getTime() > Date.now()
+1249:                validade: pessoa.validade
+1257:            motivo: "expirado",
+1260:            validade: pessoa.validade || null
+1266:            "[ACESSO ASSISTIR] Erro:",
+1283:// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+1303:        const usuarios = await carregarUsuarios();
+1305:        const testes = usuarios.filter(u =>
+1322:        const restantes = usuarios.filter(u =>
+1326:        await salvarUsuarios(restantes);
+1344:            usuarios: testes.map(u => u.usuario),
+1365:// ADMIN — PAGAMENTOS LUKAFILMES
+1376:app.get("/api/admin/pagamentos", async (req, res) => {
+1387:        const pagamentos = await listarPagamentosLuka();
+1391:            pagamentos: Array.isArray(pagamentos) ? pagamentos : []
+1396:        console.error("[ADMIN PAGAMENTOS] Erro ao listar:", erro);
+1400:            mensagem: "Erro ao carregar pagamentos.",
+1401:            pagamentos: []
+1410:// ADMIN — APROVAR PAGAMENTO
+1413:app.post("/api/admin/pagamentos/:id/aprovar", async (req, res) => {
+1429:                mensagem: "Pagamento inválido."
+1433:        const pagamento = await buscarPagamentoLuka(id);
+1435:        if (!pagamento) {
+1438:                mensagem: "Pagamento não encontrado."
+1443:            String(pagamento.status || "").toLowerCase() ===
+1444:            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO
+1448:                mensagem: "Este pagamento já foi aprovado."
+1453:            String(pagamento.status || "").toLowerCase() ===
+1454:            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.RECUSADO
+1458:                mensagem: "Este pagamento já foi recusado."
+1462:        const usuarioId = Number(pagamento.usuario_id);
+1464:        const usuarios = await carregarUsuarios();
+1466:        const indice = usuarios.findIndex(
+1473:                mensagem: "Usuário do pagamento não encontrado."
+1477:        const usuario = usuarios[indice];
+1479:        // Se ainda houver acesso válido, soma 30 dias a partir da validade.
+1480:        // Se estiver expirado, começa agora.
+1483:        if (usuario.validade) {
+1485:            const validadeAtual =
+1486:                new Date(usuario.validade).getTime();
+1489:                Number.isFinite(validadeAtual) &&
+1490:                validadeAtual > Date.now()
+1492:                inicio = validadeAtual;
+1500:        const novaValidade =
+1506:        usuario.validade = novaValidade;
+1509:        await salvarUsuarios(usuarios);
+1513:        await atualizarPagamentoLuka(id, {
+1515:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO,
+1518:            fim_acesso: novaValidade,
+1519:            observacao: "Pagamento aprovado pelo administrador."
+1524:            mensagem: "Pagamento aprovado e acesso liberado.",
+1525:            pagamento_id: id,
+1527:            validade: novaValidade
+1532:        console.error("[ADMIN PAGAMENTOS] Erro ao aprovar:", erro);
+1536:            mensagem: "Erro interno ao aprovar pagamento."
+1545:// ADMIN — RECUSAR PAGAMENTO
+1548:app.post("/api/admin/pagamentos/:id/recusar", async (req, res) => {
+1564:                mensagem: "Pagamento inválido."
+1568:        const pagamento = await buscarPagamentoLuka(id);
+1570:        if (!pagamento) {
+1573:                mensagem: "Pagamento não encontrado."
+1578:            String(pagamento.status || "").toLowerCase() ===
+1579:            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO
+1583:                mensagem: "Não é possível recusar um pagamento já aprovado."
+1587:        await atualizarPagamentoLuka(id, {
+1589:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.RECUSADO,
+1591:                "Pagamento recusado pelo administrador."
+1602:        if (pagamento.usuario_id) {
+1604:            const usuarios = await carregarUsuarios();
+1606:            const indiceTeste = usuarios.findIndex(u =>
+1607:                Number(u.id) === Number(pagamento.usuario_id) &&
+1616:                const usuarioRemovido = usuarios[indiceTeste];
+1618:                usuarios.splice(indiceTeste, 1);
+1620:                await salvarUsuarios(usuarios);
+1647:                ? "Pagamento recusado e teste removido."
+
+========== FIM DIAGNOSTICO ==========

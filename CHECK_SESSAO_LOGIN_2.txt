@@ -1,0 +1,73 @@
+========== CONFIGURACAO SESSAO ==========
+
+
+
+// ==========================================
+// SESSÃO
+// ==========================================
+
+app.set("trust proxy", 1);
+
+const configuracaoSessao = {
+    secret: process.env.SESSION_SECRET || require("crypto").randomBytes(32).toString("hex"),
+
+    resave: false,
+
+    saveUninitialized: false,
+
+    cookie: {
+        httpOnly: true,
+        secure: !ambienteLocal,
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 60 * 24
+    }
+};
+
+if (!ambienteLocal) {
+    configuracaoSessao.store = new NetlifyBlobSessionStore();
+}
+
+prepararTursoPagamentos()
+    .then(() => console.log("[TURSO] Tabela de pagamentos preparada."))
+    .catch(erro => console.error("[TURSO PAGAMENTOS] Erro ao preparar tabela:", erro));
+
+console.log("[DIAGNOSTICO] session middleware carregado");
+
+app.use(session(configuracaoSessao));
+console.log("[DIAGNOSTICO] rota /login registrada");
+
+========== LOGIN.HTML ==========
+563:    var form = document.getElementById("loginForm");
+
+========== LOGIN JS ==========
+
+========== SESSION SAVE ==========
+773-        // o cadastro cria o cliente mas mantém o ADMIN logado.
+774-        if (
+775-            !req.session.usuario ||
+776-            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+777-        ) {
+778:            req.session.usuario = {
+779-                id: novoUsuario.id,
+780-                usuario: novoUsuario.usuario,
+781-                tipo: novoUsuario.tipo,
+782-                validade: null
+783-            };
+784-        }
+785-
+786-        /*
+--
+883-                sucesso: false,
+884-                mensagem: "Usuário ou senha incorretos."
+885-            });
+886-        }
+887-
+888:        req.session.usuario = {
+889-
+890-            id: pessoa.id,
+891-
+892-            usuario: pessoa.usuario,
+893-
+894-            tipo: pessoa.tipo,
+895-
+896-            validade: pessoa.validade || null

@@ -1,0 +1,107 @@
+========== LOGIN.HTML 520-610 ==========
+        </p>
+
+        <div class="premium-tags">
+            <span>FILMES</span>
+            <i></i>
+            <span>SÉRIES</span>
+            <i></i>
+            <span>ENTRETENIMENTO</span>
+        </div>
+
+        <button id="botaoEntrar" type="button">
+            <span class="icone-play">▶</span>
+            <span>COMEÇAR A ASSISTIR</span>
+        </button>
+
+        <div class="premium-mensagem">
+            Explore o catálogo e descubra seu próximo filme.
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<div id="lukafilmesLoginLoader" aria-hidden="true">
+    <div id="lukafilmesLoginLoaderBox">
+        <div id="lukafilmesLoginLoaderLogo">
+            <span class="luka">LUKA</span><span class="filmes">FILMES</span>
+        </div>
+        <div id="lukafilmesLoginLoaderSpinner"></div>
+        <h2 id="lukafilmesLoginLoaderTitle">Entrando no LUKAFILMES...</h2>
+        <p id="lukafilmesLoginLoaderText">Preparando sua sessão...</p>
+    </div>
+</div>
+
+
+<script id="lukafilmes-login-loader-js">
+(function(){
+
+    var loader = document.getElementById("lukafilmesLoginLoader");
+    var form = document.getElementById("loginForm");
+
+    function mostrarLoginLoader(){
+        if(!loader)return;
+        loader.classList.add("ativo");
+        loader.setAttribute("aria-hidden","false");
+    }
+
+    function esconderLoginLoader(){
+        if(!loader)return;
+        loader.classList.remove("ativo");
+        loader.setAttribute("aria-hidden","true");
+    }
+
+    window.lukafilmesMostrarLoginLoader = mostrarLoginLoader;
+    window.lukafilmesEsconderLoginLoader = esconderLoginLoader;
+
+    if(form){
+        form.addEventListener("submit",function(){
+            mostrarLoginLoader();
+        },true);
+    }
+
+    window.addEventListener("pageshow",function(){
+        esconderLoginLoader();
+    });
+
+})();
+</script>
+
+
+<script>
+(function () {
+
+    function iniciarLukafilmes() {
+        var botao = document.getElementById("botaoEntrar");
+
+        if (!botao) return;
+
+        botao.onclick = function (evento) {
+            evento.preventDefault();
+
+            if (botao.dataset.abrindo === "1") return;
+
+            botao.dataset.abrindo = "1";
+            botao.disabled = true;
+
+            botao.innerHTML =
+
+========== FORM LOGIN ==========
+
+========== SUBMIT / FORM ==========
+581:        form.addEventListener("submit",function(){
+586:    window.addEventListener("pageshow",function(){
+627:        document.addEventListener("DOMContentLoaded", iniciarLukafilmes);
+
+========== AMBIENTE ==========
+203:const ambienteLocal =
+212:console.log("[DIAGNOSTICO] ambienteLocal =", ambienteLocal);
+456:  if (ambienteLocal) {
+501:  if (ambienteLocal) {
+618:        secure: !ambienteLocal,
+624:if (!ambienteLocal) {

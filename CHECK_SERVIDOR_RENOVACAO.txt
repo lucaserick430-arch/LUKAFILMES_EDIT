@@ -1,0 +1,9 @@
+
+===== STATUS FINAL =====
+EXIT=0
+
+===== ARQUIVO =====
+/data/data/com.termux/files/home/LUKAFILMES_RENDER/server_render.js
+
+===== BACKUPS DE RENOVAÇÃO =====
+/data/data/com.termux/files/home/LUKAFILMES_RENDER/server_render.js.backup_renovacao_20260907_161604

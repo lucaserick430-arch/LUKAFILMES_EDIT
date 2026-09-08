@@ -1,0 +1,22 @@
+========== BOTAO ==========
+602-        </div>
+603-
+604:        <button id="botaoEntrar" type="submit">
+605-            <span class="icone-play">▶</span>
+606-            <span>COMEÇAR A ASSISTIR</span>
+607-        </button>
+608-
+609-        <div id="mensagem"></div>
+
+========== FORM ==========
+574:        <form id="loginForm">
+615:        </form>
+
+========== JS LOGIN ==========
+640:        .getElementById("loginForm")
+663:                const resposta = await fetch(
+683:                    window.location.href = dados.destino || "/";
+717:    var form = document.getElementById("loginForm");
+
+========== SERVER ==========
+NODE_EXIT=0

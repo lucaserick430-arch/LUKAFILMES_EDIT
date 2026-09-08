@@ -1,0 +1,357 @@
+========== SERVIDOR: ROTAS TESTE ==========
+4061:app.post("/api/admin/usuarios/teste", async (req, res) => {
+
+========== SERVIDOR: CADASTRO ==========
+689-        }
+690-    );
+691-});
+692-
+693-// ==========================================
+694-// LUKAFILMES — API CADASTRO DE CLIENTE
+695-// ==========================================
+696-
+697:app.post("/api/cadastro", async (req, res) => {
+698-    try {
+699-        const nome = String(req.body.nome || "").trim();
+700-        const usuario = String(req.body.usuario || "").trim();
+701-        const senha = String(req.body.senha || "");
+702-        const telefone = String(req.body.telefone || "").trim();
+703-
+704-        if (!nome || !usuario || !senha || !telefone) {
+705-            return res.status(400).json({
+706-                sucesso: false,
+707-                mensagem: "Preencha nome, usuário, senha e telefone."
+708-            });
+709-        }
+710-
+711-        if (nome.length < 2) {
+712-            return res.status(400).json({
+713-                sucesso: false,
+714-                mensagem: "Digite seu nome completo."
+715-            });
+716-        }
+717-
+718-        if (usuario.length < 3) {
+719-            return res.status(400).json({
+720-                sucesso: false,
+721-                mensagem: "O usuário precisa ter pelo menos 3 caracteres."
+722-            });
+723-        }
+724-
+725-        if (senha.length < 6) {
+726-            return res.status(400).json({
+727-                sucesso: false,
+728-                mensagem: "A senha precisa ter pelo menos 6 caracteres."
+729-            });
+730-        }
+731-
+732-        const usuarios = await carregarUsuarios();
+
+========== SERVIDOR: ACESSO ==========
+983-    } catch (erro) {
+984-        console.error("[DEBUG ACESSO] Erro:", erro);
+985-        return res.status(500).json({
+986-            erro: "erro_servidor"
+987-        });
+988-    }
+989-});
+990-
+991:app.get("/api/acesso-assistir", async (req, res) => {
+992-
+993-    try {
+994-
+995-        if (!req.session || !req.session.usuario) {
+996-            return res.status(401).json({
+997-                permitido: false,
+998-                logado: false,
+999-                motivo: "nao_logado"
+1000-            });
+1001-        }
+1002-
+1003-        const sessao = req.session.usuario;
+1004-        const usuarios = await carregarUsuarios();
+1005-
+1006-        const pessoa = usuarios.find(
+1007-            u => Number(u.id) === Number(sessao.id)
+1008-        );
+1009-
+1010-        if (!pessoa) {
+1011-            return res.status(404).json({
+1012-                permitido: false,
+1013-                logado: true,
+1014-                motivo: "usuario_nao_encontrado"
+1015-            });
+1016-        }
+1017-
+1018-        const tipo = String(pessoa.tipo || "usuario").toLowerCase();
+1019-        const status = String(pessoa.status || "ativo").toLowerCase();
+1020-
+1021-        if (status !== "ativo") {
+1022-            return res.json({
+1023-                permitido: false,
+1024-                logado: true,
+1025-                motivo: "inativo",
+1026-                mensagem: "Seu acesso está desativado."
+
+========== ADMIN: TESTE ==========
+1690- <img id="adminAvatar" class="logo-avatar" alt="Perfil">
+1691- <span id="adminLogoTexto">LUKA<span>FILMES</span></span>
+1692- <input id="profileUpload" class="profile-upload" type="file" accept="image/*">
+1693-</div>
+1694-
+1695-<nav class="nav">
+1696-<button class="active" onclick="aba('dashboard',this)">🏠 Dashboard</button>
+1697-<button onclick="aba('usuarios',this)">👤 Usuários</button>
+1698:<button onclick="aba('testes',this)">🧪 Testes</button>
+1699-
+1700-<button type="button" onclick="window.location.href='/'" title="Voltar para a página inicial">🎬 Luca Filme</button>
+1701-</nav>
+1702-
+1703-</aside>
+1704-
+1705-<main class="main">
+1706-
+--
+1739-</div>
+1740-<div class="chart" id="chart"></div>
+1741-</div>
+1742-
+1743-<div class="panel">
+1744-<div class="panelHead"><h2>Ações rápidas</h2></div>
+1745-<div class="quick">
+1746-<button class="btn primary" onclick="abrirModal('usuario')">＋ Criar usuário</button>
+1747:<button class="btn yellow" onclick="abrirModal('teste')">＋ Criar teste</button>
+1748-
+1749-
+1750-</div>
+1751-</div>
+1752-
+1753-</section>
+1754-
+1755-<section id="usuarios" class="section">
+--
+1786-</thead>
+1787-<tbody id="tabelaUsuarios"></tbody>
+1788-</table>
+1789-</div>
+1790-</div>
+1791-
+1792-</section>
+1793-
+1794:<section id="testes" class="section">
+1795-<button class="admin-back" onclick="voltarDashboardAdmin()">← Voltar ao Dashboard</button>
+1796-
+1797-
+1798-<div class="top">
+1799-<div class="title">
+1800-<h1>Testes</h1>
+1801:<p>Contas de teste e acessos temporários</p>
+1802-</div>
+1803-
+1804-</div>
+1805-
+1806-<div class="panel">
+1807:<div class="panelHead"><h2>Contas de teste</h2></div>
+1808-<div class="tableWrap">
+1809-<table>
+1810-<thead>
+1811-<tr><th>Usuário</th><th>Status</th><th>Validade</th><th>Online</th><th>Ações</th></tr>
+1812-</thead>
+1813-<tbody id="tabelaTestes"></tbody>
+1814-</table>
+1815-</div>
+--
+1883-        placeholder="Ex.: (11) 99999-9999"
+1884-        autocomplete="tel"
+1885-    >
+1886-</div>
+1887-
+1888-<input type="hidden" id="tipoCriacao">
+1889-
+1890-<div id="lukaEscolhaTeste" style="display:none;margin:0 0 18px;">
+1891:  <div style="font-weight:800;margin-bottom:10px;">🧪 Como deseja criar o teste?</div>
+1892-
+1893-  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+1894-    <button type="button"
+1895-            id="lukaModoManual"
+1896-            onclick="LUKA_MODO_TESTE('manual')"
+1897-            style="flex:1;min-width:130px;padding:12px;border-radius:12px;
+1898-                   border:1px solid rgba(255,255,255,.15);cursor:pointer;
+1899-                   font-weight:800;">
+--
+1911-</div>
+1912-
+1913-<div id="lukaAutomaticoBox"
+1914-     style="display:none;margin:0 0 18px;padding:16px;border-radius:14px;
+1915-            background:rgba(255,255,255,.05);
+1916-            border:1px solid rgba(255,255,255,.10);">
+1917-
+1918-  <div style="font-weight:800;margin-bottom:12px;">
+1919:    ⚡ Gerar testes automaticamente
+1920-  </div>
+1921-
+1922-  <label>⏱️ Duração (horas)</label>
+1923-  <input id="lukaAutoHoras"
+1924-         type="number"
+1925-         min="1"
+1926-         max="72"
+1927-         value="1">
+--
+1930-    🔌 Limite de conexões
+1931-  </label>
+1932-  <input id="lukaAutoConexoes"
+1933-         type="number"
+1934-         min="1"
+1935-         value="1">
+1936-
+1937-  <label style="display:block;margin-top:10px;">
+1938:    🔢 Quantidade de testes
+1939-  </label>
+1940-  <input id="lukaAutoQuantidade"
+1941-         type="number"
+1942-         min="1"
+1943-         max="100"
+1944-         value="1">
+1945-
+1946-  <div style="margin-top:12px;opacity:.75;font-size:13px;line-height:1.4;">
+1947:    O sistema irá gerar automaticamente usuário e senha exclusivos para cada teste.
+1948-  </div>
+1949-</div>
+1950-
+1951-<div id="lukaCamposManuais">
+1952-
+1953-<label>Usuário</label>
+1954-<input id="fUsuario" required autocomplete="off">
+1955-
+--
+1997-                   type="password"
+1998-                   placeholder="Deixe vazio para manter a atual">
+1999-        </div>
+2000-
+2001-        <div class="luka-edit-group">
+2002-            <label>Tipo</label>
+2003-            <select id="editarContaTipo">
+2004-                <option value="usuario">Usuário</option>
+2005:                <option value="teste">Teste</option>
+2006-                <option value="revendedor">Revendedor</option>
+2007-                <option value="admin">Administrador</option>
+2008-            </select>
+2009-        </div>
+2010-
+2011-        <div class="luka-edit-group">
+2012-            <label>Telefone</label>
+2013-            <input id="editarContaTelefone"
+--
+2143- document.getElementById("fUsuario").value="";
+2144- document.getElementById("fSenha").value="";
+2145-
+2146- const escolhaTeste=document.getElementById("lukaEscolhaTeste");
+2147- const automaticoBox=document.getElementById("lukaAutomaticoBox");
+2148- const camposManuais=document.getElementById("lukaCamposManuais");
+2149-
+2150- if(escolhaTeste){
+2151:  escolhaTeste.style.display=tipo==="teste"?"block":"none";
+2152- }
+2153-
+2154- if(automaticoBox){
+2155-  automaticoBox.style.display="none";
+2156- }
+2157-
+2158- if(camposManuais){
+2159:  camposManuais.style.display=tipo==="teste"?"none":"block";
+2160- }
+2161-
+2162- const btnSalvarInicial=document.getElementById("btnSalvar");
+2163-
+2164- if(btnSalvarInicial){
+2165:  if(tipo==="teste"){
+2166-   btnSalvarInicial.style.display="none";
+2167-   btnSalvarInicial.disabled=false;
+2168-   btnSalvarInicial.textContent="Criar";
+2169-  }else{
+2170-   btnSalvarInicial.style.display="";
+2171-  }
+2172- }
+2173-
+2174- document.getElementById("fTempoLabel").textContent =
+2175:  tipo==="teste" ? "Horas de teste" : "Dias";
+2176-
+2177- document.getElementById("fDias").value =
+2178:  tipo==="teste" ? 1 : 30;
+2179-
+2180- if(document.getElementById("fValor")){
+2181-  document.getElementById("fValor").value="";
+2182- }
+2183-
+2184- if(document.getElementById("fTelefone")){
+2185-  document.getElementById("fTelefone").value="";
+2186- }
+2187-
+2188- const limite=document.getElementById("limiteBox");
+2189-
+2190- limite.style.display=tipo==="revendedor"?"block":"none";
+2191-
+2192- (document.getElementById("modalTitulo") || {set textContent(v){}}).textContent=
+2193- tipo==="usuario"?"Criar usuário":
+2194: tipo==="teste"?"Criar teste":
+2195- "Criar revendedor";
+2196-}
+2197-
+2198-function fecharModal(){
+2199- document.getElementById("modal").classList.remove("show");
+2200-
+2201- const escolha=document.getElementById("lukaEscolhaTeste");
+2202- const auto=document.getElementById("lukaAutomaticoBox");
+--
+2259-  }
+2260-
+2261-  if(btnManual){
+2262-   btnManual.style.transform="";
+2263-   btnManual.style.boxShadow="";
+2264-  }
+2265-
+2266-  if(btnSalvar){
+2267:   btnSalvar.textContent="⚡ Gerar testes";
+2268-  }
+2269-
+2270- }else{
+2271-
+2272-  auto.style.display="none";
+2273-  manual.style.display="block";
+2274-
+2275-  const campoUsuario=document.getElementById("fUsuario");
+--
+2307- const limite_conexoes=Number(document.getElementById("lukaAutoConexoes").value);
+2308-
+2309- if(!Number.isInteger(horas) || horas<1 || horas>72){
+2310-  toast("Escolha uma duração entre 1 e 72 horas.");
+2311-  return;
+2312- }
+2313-
+2314- if(!Number.isInteger(quantidade) || quantidade<1 || quantidade>100){
+2315:  toast("A quantidade deve estar entre 1 e 100 testes.");
+2316-  return;
+2317- }
+2318-
+2319- if(!Number.isInteger(limite_conexoes) || limite_conexoes<1){
+2320-  toast("O limite de conexões deve ser no mínimo 1.");
+2321-  return;
+2322- }
+2323-
+--
+2325-
+2326- if(btn){
+2327-  btn.disabled=true;
+2328-  btn.textContent="⚡ Gerando...";
+2329- }
+
+========== ADMIN: PAGAMENTOS ==========
+5025:<!-- LUKA_PAGAMENTOS_ADMIN_V1 -->
+5355:                            onclick="LUKA_APROVAR_PAGAMENTO(${Number(p.id)})"
+5362:                            onclick="LUKA_RECUSAR_PAGAMENTO(${Number(p.id)})"
+5458:async function LUKA_APROVAR_PAGAMENTO(id){
+5522:async function LUKA_RECUSAR_PAGAMENTO(id){
+5597:<!-- FIM LUKA_PAGAMENTOS_ADMIN_V1 -->
+
+========== CHECK ==========
+NODE_EXIT=0

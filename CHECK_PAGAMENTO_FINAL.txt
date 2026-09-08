@@ -1,0 +1,16 @@
+========== NODE ==========
+NODE_EXIT=0
+
+========== ROTAS ==========
+1092:function adminAutorizadoLuka(req) {
+1100:app.get("/api/admin/pagamentos", async (req, res) => {
+1104:        if (!adminAutorizadoLuka(req)) {
+1137:app.post("/api/admin/pagamentos/:id/aprovar", async (req, res) => {
+1141:        if (!adminAutorizadoLuka(req)) {
+1272:app.post("/api/admin/pagamentos/:id/recusar", async (req, res) => {
+1276:        if (!adminAutorizadoLuka(req)) {
+
+========== WHATSAPP ==========
+4056:                                    "https://wa.me/5511957621653?text=" +
+
+========== ADMIN PAGAMENTOS ==========

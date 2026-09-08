@@ -1,0 +1,19 @@
+========== MARCADORES DO PAGAMENTO ==========
+3667:                                await mostrarPagamentoLuka(
+3739:            async function mostrarPagamentoLuka(acesso, renovacao = false) {
+4092:                                            "🔄 LUKAFILMES — SOLICITAÇÃO DE RENOVAÇÃO",
+4100:                                            "📅 Solicito a renovação do meu acesso por mais 30 dias.",
+4102:                                            "Estou enviando o comprovante para conferência e aprovação da renovação."
+4174:               RENOVAÇÃO — USA O MESMO PIX EXISTENTE
+4178:                "luka:renovar",
+4189:                        await mostrarPagamentoLuka(
+4197:                            "[LUKAFILMES] Erro ao abrir renovação:",
+4207:               PLAY CENTRAL — CARREGA PLAYER 1
+4287:                             * PLAY CENTRAL
+5141:/* PLAY CENTRAL fica acima do iframe antes do carregamento */
+5682:     LUKAFILMES — NOTIFICAÇÃO DE RENOVAÇÃO
+5837:                🔔 RENOVAÇÃO DO LUKAFILMES
+5892:                            "luka:renovar",
+5959:                "[LUKAFILMES] Falha ao verificar renovação:",
+
+========== FIM ==========

@@ -1,0 +1,16 @@
+========== FUNÇÃO MOSTRAR PAGAMENTO ==========
+Tamanho: 16527 caracteres
+
+========== ELEMENTOS HTML REFERENCIADOS ==========
+lukafilmesCopiarPix
+lukafilmesPagamento
+lukafilmesPagamentoFeito
+lukafilmesPagamentoStatus
+lukafilmesPix
+lukafilmesQrCode
+
+========== VARIÁVEIS/REFERÊNCIAS DO FILME ==========
+filme: 1
+playerFilme: 3
+
+========== FIM DA ANÁLISE ==========

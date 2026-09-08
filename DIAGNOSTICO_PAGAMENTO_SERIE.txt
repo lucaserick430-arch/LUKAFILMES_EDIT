@@ -1,0 +1,8 @@
+2676:                    assistirEpisodio(
+2758:    function assistirEpisodio(
+3893:            typeof window.assistirEpisodio !== "function"
+3967:        window.assistirEpisodio(
+3974:         * assistirEpisodio() inicia no PLAY 1.
+3976:         * Se o usuário estava no PLAY 2,
+4035:     * Espera assistirEpisodio existir.
+4331:                "Novo filme disponível • Toque para assistir";

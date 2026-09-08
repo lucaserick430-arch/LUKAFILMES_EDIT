@@ -1,0 +1,164 @@
+1161-<style>
+1162-#conteudo{
+1163-    position:relative;
+1164-    z-index:5;
+1165-    padding:20px 4% 60px;
+1166-    margin-top:-35px;
+1167-}
+1168-.pesquisa-series{
+1169-    width:100%;
+1170-    max-width:520px;
+1171-    margin:0 auto 35px;
+1172-}
+1173:#pesquisaSeries{
+1174-    width:100%;
+1175-    height:46px;
+1176-    padding:0 16px;
+1177-    border:1px solid #666;
+1178-    border-radius:4px;
+1179-    outline:none;
+1180-    background:#222;
+1181-    color:#fff;
+1182-    font-size:16px;
+1183-}
+1184:#pesquisaSeries:focus{
+1185-    border-color:#fff;
+1186-}
+1187-.titulo-catalogo{
+1188-    font-size:24px;
+1189-    margin:0 0 18px;
+1190-}
+1191-#listaSeries{
+1192-    display:grid;
+1193-    grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+1194-    gap:18px;
+1195-}
+1196-.card-serie{
+1197-    min-width:0;
+1198-    background:#181818;
+1199-    border-radius:4px;
+1200-    overflow:hidden;
+1201-    cursor:pointer;
+1202-    transition:transform .2s ease;
+1203-}
+1204-.card-serie:hover{
+1205-    transform:scale(1.04);
+1206-    z-index:3;
+1207-}
+1208-.card-serie img{
+1209-    display:block;
+1210-    width:100%;
+1211-    aspect-ratio:2/3;
+1212-    object-fit:cover;
+1213-    background:#222;
+1214-}
+1215-.card-info{
+1216-    padding:10px;
+1217-}
+1218-.card-info h3{
+1219-    margin:0 0 7px;
+1220-    font-size:15px;
+1221-    white-space:nowrap;
+1222-    overflow:hidden;
+1223-    text-overflow:ellipsis;
+1224-}
+1225-.card-info p{
+1226-    margin:0;
+1227-    font-size:13px;
+1228-    color:#aaa;
+1229-}
+--
+1245-    .titulo-catalogo{
+1246-        font-size:21px;
+1247-    }
+1248-}
+1249-</style>
+1250-
+1251-<script>
+1252-const listaSeries=document.getElementById("conteudo");
+1253-
+1254-listaSeries.innerHTML=`
+1255-    <div class="pesquisa-series">
+1256-        <input
+1257:            id="pesquisaSeries"
+1258-            type="search"
+1259-            placeholder="Pesquisar séries..."
+1260-            autocomplete="off">
+1261-    </div>
+1262-
+1263-    <h2 class="titulo-catalogo">Séries</h2>
+1264-
+1265-    <div id="listaSeries">
+1266-        <div class="estado-series"></div>
+1267-    </div>
+1268-`;
+1269-
+1270-const gradeSeries=document.getElementById("listaSeries");
+1271:const campoPesquisa=document.getElementById("pesquisaSeries");
+1272-
+1273-const TOTAL_PAGINAS_CATALOGO_SERIES = 500;
+1274-
+1275-/*
+1276- * =========================================================
+1277- * LUKAFILMES — SÉRIES COM INFINITE SCROLL REAL
+1278- * =========================================================
+1279- *
+1280- * Paginação sequencial:
+1281- * 1 → 2 → 3 → 4 → 5...
+1282- *
+1283- * A próxima página só é buscada quando o usuário
+1284- * chega perto do final da página.
+1285- *
+1286- * Se uma página vier vazia, ela é ignorada e a
+1287- * próxima é buscada automaticamente.
+1288- *
+1289- * A categoria permanece ativa durante toda a
+1290- * paginação.
+1291- */
+1292-
+1293-let paginaSeries = 1;
+1294-let carregandoSeries = false;
+1295-let fimSeries = false;
+1296-
+1297-const idsSeries = new Set();
+1298-
+1299-/* =========================================================
+1300-   CRIAÇÃO DO CARD
+1301-   ========================================================= */
+1302-
+1303-function criarCardSerie(serie){
+1304-
+1305-    const card = document.createElement("article");
+1306-
+1307-    card.className = "card-serie";
+1308-
+1309-    const imagem =
+1310-        serie.capa ||
+1311-        serie.poster_path ||
+1312-        "";
+1313-
+1314-    const titulo =
+1315-        serie.titulo ||
+1316-        serie.name ||
+--
+1661-);
+1662-
+1663-/* =========================================================
+1664-   PRIMEIRO CARREGAMENTO
+1665-   ========================================================= */
+1666-
+1667-carregarCatalogoSeries();
+1668-</script>
+1669-
+1670-<style id="lukafilmes-pesquisa-series-centralizada">
+1671-
+1672-/* CENTRALIZA O TEXTO DENTRO DO CAMPO PESQUISAR SÉRIES */
+1673:#pesquisaSeries {
+1674-    text-align: center !important;
+1675-}
+1676-
+1677:#pesquisaSeries::placeholder {
+1678-    text-align: center !important;
+1679-}
+1680-
+1681-</style>

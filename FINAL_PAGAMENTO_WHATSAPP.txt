@@ -1,0 +1,91 @@
+                                        ? Number(pagamento.id)
+                                        : "";
+
+                                const mensagem =
+                                    [
+                                        "🎬 LUKAFILMES — COMPROVANTE DE PAGAMENTO",
+                                        "",
+                                        "👤 Usuário: " + nomeUsuario,
+                                        "🧾 Pagamento: #" + idPagamento,
+                                        "💰 Valor: R$ " + valor,
+                                        "",
+                                        "✅ Já realizei o pagamento via PIX.",
+                                        "",
+                                        "Estou enviando o comprovante para conferência e aprovação."
+                                    ].join("\n");
+
+                                const whatsapp =
+                                    "https://wa.me/5511957621653?text=" +
+                                    encodeURIComponent(mensagem);
+
+                                const status =
+                                    document.getElementById(
+                                        "lukafilmesPagamentoStatus"
+                                    );
+
+                                if (status) {
+
+                                    status.style.display =
+                                        "block";
+
+                                    status.innerHTML =
+                                        "⏳ Pagamento pendente.<br><br>📲 Envie o comprovante pelo WhatsApp e depois volte para esta página.<br><br>Seu acesso será liberado após a aprovação.";
+
+                                }
+
+                                botaoFeito.disabled = true;
+
+                                botaoFeito.innerHTML =
+                                    "📲 ABRINDO WHATSAPP...";
+
+                                window.location.href = whatsapp;
+
+                                setTimeout(function () {
+
+                                    botaoFeito.innerHTML =
+                                        "⏳ AGUARDANDO APROVAÇÃO";
+
+                                }, 1200);
+
+                            };
+
+                    }
+
+                    console.log(
+                        "[LUKAFILMES] Pagamento preparado:",
+                        pagamento
+                    );
+
+                } catch (erro) {
+
+                    console.error(
+                        "[LUKAFILMES] Erro na tela de pagamento:",
+                        erro
+                    );
+
+                    alert(
+                        "Não foi possível abrir a tela de pagamento."
+                    );
+
+                }
+
+            }
+
+            /* ==========================================
+               PLAY CENTRAL — CARREGA PLAYER 1
+               ========================================== */
+
+            const playCentral =
+                document.getElementById(
+                    "playCentralFilme"
+                );
+
+            if (playCentral) {
+
+                playCentral.addEventListener(
+                    "click",
+                    async function () {
+
+                        try {
+
+                            /*

@@ -1,0 +1,500 @@
+2812-
+2813-    return resultado;
+2814-}
+2815-
+2816-
+2817:function criarFilaPaginasFilmes(){
+2818-
+2819-    const paginasIniciais =
+2820-        Array.from(
+2821-            {length: Math.min(50, TOTAL_PAGINAS_CATALOGO_FILMES)},
+2822-            (_, i) => i + 1
+2823-        );
+2824-
+2825-    const paginasRestantes =
+2826-        Array.from(
+2827-            {
+2828-                length:
+2829-                    Math.max(
+2830-                        0,
+2831-                        TOTAL_PAGINAS_CATALOGO_FILMES - 50
+2832-                    )
+2833-            },
+2834-            (_, i) => i + 51
+2835-        );
+2836-
+2837-    /*
+2838-     * Mistura fortemente as páginas que contêm
+2839-     * os anos mais recentes e intermediários.
+2840-     */
+2841-    const primeiras =
+2842-        embaralharFila(
+2843-            paginasIniciais
+2844-        );
+2845-
+2846-    /*
+2847-     * Depois mistura todo o restante.
+--
+2951-
+2952-    return resultado;
+2953-}
+2954-
+2955-
+2956:async function carregarFilmes() {
+2957-
+2958-    if (carregandoFilmes || acabouFilmes) {
+2959-        return;
+2960-    }
+2961-
+2962-    carregandoFilmes = true;
+2963-
+2964-    const grade =
+2965-        document.getElementById("grade");
+2966-
+2967-    try {
+2968-
+2969-        /*
+2970-         * Mantém a categoria durante TODO o catálogo infinito.
+2971-         */
+2972-        /*
+2973-         * AÇÃO É UMA PÁGINA EXCLUSIVA.
+2974-         *
+2975-         * Quando categoria=acao:
+2976:         * - usa somente /api/catalogo-acao
+2977-         * - nunca consulta o catálogo geral
+2978-         * - cada página continua sendo somente Ação
+2979-         */
+2980-        /*
+2981-         * CATEGORIA DO MENU
+2982-         *
+2983-         * Todas as categorias usam a mesma rota oficial.
+2984-         * O servidor aplica o filtro real do gênero no TMDB.
+2985-         *
+2986-         * Exemplo:
+2987-         * ?categoria=acao
+2988-         * ?categoria=comedia
+2989-         * ?categoria=terror
+2990-         *
+2991-         * A categoria permanece durante TODO o infinite scroll.
+2992-         */
+2993-        let urlCatalogo =
+2994:            "/api/catalogo-filmes?pagina=" +
+2995-            paginaFilmes;
+2996-
+2997-        if (categoriaAtualPagina) {
+2998-            urlCatalogo +=
+2999-                "&categoria=" +
+3000-                encodeURIComponent(
+3001-                    categoriaAtualPagina
+3002-                );
+3003-        }
+3004-
+3005:        const resposta = await fetch(
+3006-            urlCatalogo
+3007-        );
+3008-
+3009-        if(!resposta.ok){
+3010-
+3011-            throw new Error(
+3012-                "HTTP " + resposta.status
+3013-            );
+3014-        }
+3015-
+3016-        const dados =
+3017-            await resposta.json();
+3018-
+3019-        if (!dados.sucesso) {
+3020-
+3021-            throw new Error(
+3022-                dados.mensagem ||
+3023-                "Erro no catálogo"
+3024-            );
+3025-        }
+3026-
+3027-        let filmes =
+3028-            Array.isArray(dados.filmes)
+3029-                ? dados.filmes
+3030-                : [];
+3031-
+3032-        /*
+3033-         * Cada página também é embaralhada.
+3034-         */
+3035-        filmes =
+--
+3166-
+3167-                    return card;
+3168-                };
+3169-
+3170-
+3171:            grade.appendChild(
+3172-                criarCard(filme)
+3173-            );
+3174-
+3175-            adicionados++;
+3176-        }
+3177-
+3178-
+3179-        /*
+3180-         * Mantém o primeiro lote disponível
+3181-         * para qualquer lógica externa da página.
+3182-         */
+3183-        if (
+3184-            primeiroLote.length
+3185-        ) {
+3186-
+3187-            window.dispatchEvent(
+3188-                new CustomEvent(
+3189-                    "filmes-primeiro-lote",
+3190-                    {
+3191-                        detail:
+3192-                            primeiroLote
+3193-                    }
+3194-                )
+3195-            );
+3196-        }
+3197-
+3198-
+3199-        /*
+3200-         * Se esta página não trouxe nenhum
+3201-         * filme novo, avançamos para outra.
+--
+3286- * Primeiros lotes.
+3287- *
+3288- * Como a página inicial já é aleatória,
+3289- * os primeiros filmes mudam a cada atualização.
+3290- */
+3291:async function carregarPrimeirosFilmes() {
+3292-
+3293-    await carregarFilmes();
+3294-
+3295-    if (!acabouFilmes) {
+3296-        await carregarFilmes();
+3297-    }
+3298-}
+3299-
+3300-
+3301-/*
+3302- * =========================================================
+3303- * SCROLL INFINITO
+3304- * =========================================================
+3305- */
+3306-
+3307-window.addEventListener(
+3308-    "scroll",
+3309-    function() {
+3310-
+3311-        if (
+3312-            carregandoFilmes ||
+3313-            acabouFilmes
+3314-        ) {
+3315-            return;
+3316-        }
+3317-
+3318-        const distancia =
+3319-            document.documentElement.scrollHeight -
+3320-            (
+3321-                window.scrollY +
+--
+3339- * =========================================================
+3340- * RESTAURAÇÃO DA POSIÇÃO
+3341- * =========================================================
+3342- */
+3343-
+3344:async function iniciarFilmesComEstado() {
+3345-
+3346-    const salvo =
+3347-        sessionStorage.getItem(
+3348-            "lukafilmes_estado_filmes"
+3349-        );
+3350-
+3351-    /*
+3352-     * Entrada normal na página:
+3353-     * começa em uma página aleatória.
+3354-     */
+3355-    if (!salvo) {
+3356-
+3357-        await carregarPrimeirosFilmes();
+3358-
+3359-        return;
+3360-    }
+3361-
+3362-
+3363-    let estado;
+3364-
+3365-    try {
+3366-
+3367-        estado =
+3368-            JSON.parse(salvo);
+3369-
+3370-    } catch (e) {
+3371-
+3372-        sessionStorage.removeItem(
+3373-            "lukafilmes_estado_filmes"
+3374-        );
+--
+3575-
+3576-    return true;
+3577-}
+3578-
+3579-
+3580:async function buscarTrailer(filme){
+3581-
+3582-    const id=
+3583-        filme?.id||
+3584-        filme?.tmdb_id;
+3585-
+3586-    if(!id)
+3587-        return null;
+3588-
+3589-    try{
+3590-
+3591-        const resposta=
+3592:            await fetch(
+3593-                "/api/filme/"+
+3594-                encodeURIComponent(id)+
+3595-                "/videos"
+3596-            );
+3597-
+3598-        if(!resposta.ok)
+3599-            return null;
+3600-
+3601-        const dados=
+3602-            await resposta.json();
+3603-
+3604-        const trailer=
+3605-            dados?.trailer;
+3606-
+3607-        if(
+3608-            trailer&&
+3609-            (
+3610-                trailer.chave||
+3611-                trailer.key
+3612-            )
+3613-        ){
+3614-
+3615-            return {
+3616-                filme:filme,
+3617-                trailer:trailer
+3618-            };
+3619-        }
+3620-
+3621-    }catch(e){}
+3622-
+--
+3771-
+3772-/*
+3773- * Busca várias páginas do catálogo,
+3774- * mas NÃO espera todos os trailers.
+3775- */
+3776:async function buscarFilmes(){
+3777-
+3778-    const filmes=[];
+3779-    const ids=new Set();
+3780-
+3781-    const paginas=[];
+3782-
+3783-    for(
+3784-        let pagina=1;
+3785-        pagina<=PAGINAS_HERO;
+3786-        pagina++
+3787-    ){
+3788-        paginas.push(pagina);
+3789-    }
+3790-
+3791-    /*
+3792-     * As páginas do catálogo são buscadas em
+3793-     * lotes para não bloquear o navegador.
+3794-     */
+3795-
+3796-    const TAMANHO_LOTE=10;
+3797-
+3798-    for(
+3799-        let inicio=0;
+3800-        inicio<paginas.length;
+3801-        inicio+=TAMANHO_LOTE
+3802-    ){
+3803-
+3804-        const lote=
+3805-            paginas.slice(
+3806-                inicio,
+--
+3813-                    async pagina=>{
+3814-
+3815-                        try{
+3816-
+3817-                            const resposta=
+3818:                                await fetch(
+3819-                                    (
+3820:                                        "/api/catalogo-filmes?pagina=" +
+3821-                                        pagina +
+3822-                                        (
+3823-                                            categoriaAtualPagina
+3824-                                                ? "&categoria=" +
+3825-                                                  encodeURIComponent(
+3826-                                                      categoriaAtualPagina
+3827-                                                  )
+3828-                                                : ""
+3829-                                        )
+3830-                                    )
+3831-                                );
+3832-
+3833-                            if(!resposta.ok)
+3834-                                return [];
+3835-
+3836-                            const dados=
+3837-                                await resposta.json();
+3838-
+3839-                            return Array.isArray(dados.filmes)
+3840-                                ?dados.filmes
+3841-                                :[];
+3842-
+3843-                        }catch(e){
+3844-
+3845-                            return [];
+3846-                        }
+3847-                    }
+3848-                )
+3849-            );
+3850-
+--
+3909- * imediatamente.
+3910- *
+3911- * Os demais continuam sendo pesquisados
+3912- * em segundo plano para formar uma base grande.
+3913- */
+3914:async function procurarTrailersRapido(filmes){
+3915-
+3916-    let indice=0;
+3917-
+3918-    const encontrados=[];
+3919-
+3920:    async function trabalhador(){
+3921-
+3922-        while(indice<filmes.length){
+3923-
+3924-            const posicao=indice++;
+3925-
+3926-            const resultado=
+3927-                await buscarTrailer(
+3928-                    filmes[posicao]
+3929-                );
+3930-
+3931-            if(!resultado)
+3932-                continue;
+3933-
+3934-            encontrados.push(resultado);
+3935-
+3936-            /*
+3937-             * PRIMEIRO TRAILER:
+3938-             * aparece imediatamente.
+3939-             */
+3940-            if(!trailerHeroJaExibido){
+3941-
+3942-                trailerHeroJaExibido=true;
+3943-
+3944-                const ultimo=
+3945-                    sessionStorage.getItem(
+3946-                        "lukafilmes_ultimo_hero_filme"
+3947-                    );
+3948-
+3949-                const id=
+3950-                    String(
+--
+4010-
+4011-    return encontrados;
+4012-}
+4013-
+4014-
+4015:async function iniciarHeroFilmes(){
+4016-
+4017-    configurarBotoes();
+4018-
+4019-    try{
+4020-
+4021-        console.log(
+4022-            "[HERO FILMES] Iniciando busca rápida..."
+4023-        );
+4024-
+4025-        /*
+4026-         * Primeiro pegamos os filmes.
+4027-         */
+4028-        const filmes=
+4029-            await buscarFilmes();
+4030-
+4031-        console.log(
+4032-            "[HERO FILMES] Filmes candidatos:",
+4033-            filmes.length
+4034-        );
+4035-
+4036-        if(!filmes.length)
+4037-            return;
+4038-
+4039-        /*
+4040-         * NÃO espera 1.000 trailers.
+4041-         *
+4042-         * O primeiro válido aparece assim
+4043-         * que for encontrado.
+4044-         *
+4045-         * A busca continua em paralelo.
+--
+4381-        let lista = painel.querySelector(".luka-notificacoes-lista");
+4382-
+4383-        if(!lista){
+4384-            lista = document.createElement("div");
+4385-            lista.className = "luka-notificacoes-lista";
+4386:            painel.appendChild(lista);
+4387-        }
+4388-
+4389-        lista.innerHTML = "";
+4390-
+4391-        if(!filmes || !filmes.length){
+4392-            const vazio = document.createElement("div");
+4393-            vazio.textContent = "Nenhum filme novo no momento.";
+4394-            vazio.style.cssText =
+4395-                "padding:16px 0;color:#aaa;font-size:14px;";
+4396:            lista.appendChild(vazio);
+4397-            return;
+4398-        }
+4399-
+4400-        filmes.forEach(function(filme){
+4401-
+4402-            const item = document.createElement("a");
+4403-
+4404-            item.href = "#";
+4405-            item.className = "lukafilmes-notificacao-item";
+4406-
+4407-            item.style.cssText =
+4408-                "display:flex;" +
+4409-                "align-items:center;" +
+4410-                "gap:12px;" +
+4411-                "padding:10px 0;" +
+4412-                "border-bottom:1px solid rgba(255,255,255,.10);" +
+4413-                "color:#fff;" +
+4414-                "text-decoration:none;" +
+4415-                "cursor:pointer;";
+4416-
+4417-            item.addEventListener("click", function(event){
+4418-                event.preventDefault();
+4419-
+4420-                const id =
+4421-                    filme.id ||
+4422-                    filme.tmdb_id ||
+4423-                    filme.id_tmdb;
+4424-
+4425-                if(!id) return;
+4426-
+--
+4473-                    "object-fit:cover;" +
+4474-                    "border-radius:7px;" +
+4475-                    "flex:none;" +
+4476-                    "background:#111;";
+4477-
+4478:                item.appendChild(imagem);
+4479-
+4480-            }else{
+4481-
+4482-                const semImagem = document.createElement("div");
+4483-
+4484-                semImagem.textContent = "🎬";
+4485-
+4486-                semImagem.style.cssText =

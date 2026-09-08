@@ -1,0 +1,441 @@
+==================================================
+ LUKAFILMES - ROTAS ADMIN + USUARIOS + PAGAMENTOS
+==================================================
+
+========== 1. ADMIN PRESENCA COMPLETO ==========
+            pix = gerarPixCopiaColaLuka();
+        } catch (erroPix) {
+            console.error(
+                "[PAGAMENTO] Erro ao gerar PIX:",
+                erroPix
+            );
+        }
+
+        return res.json({
+            sucesso: true,
+            pagamento_necessario: true,
+            pagamento,
+            pix: pix || null,
+            valor: Number(
+                process.env.PIX_VALOR ||
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+            ).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[PAGAMENTO] Erro ao criar pagamento:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível criar o pagamento."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// PIX LUKAFILMES — COPIA E COLA
+// ==========================================
+
+app.get("/api/pix", (req, res) => {
+
+    try {
+
+        const pix = gerarPixCopiaColaLuka();
+
+        return res.json({
+            sucesso: true,
+            valor: Number(process.env.PIX_VALOR || 18).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA",
+            pix
+        });
+
+    } catch (erro) {
+
+        console.error("[PIX] Erro ao gerar Pix:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível gerar o Pix."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// LUKAFILMES — PRESENÇA EM TEMPO REAL
+// ==========================================
+
+app.post("/api/presenca", (req, res) => {
+    if (!req.session || !req.session.usuario) {
+        return res.status(401).json({
+            sucesso: false
+        });
+    }
+
+    lukaRegistrarPresenca(req);
+
+    res.json({
+        sucesso: true,
+        online: true
+    });
+});
+
+app.get("/api/admin/presenca", async (req, res) => {
+    try {
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const agora = Date.now();
+        const usuarios = await carregarUsuarios();
+
+        const resultado = usuarios.map(u => {
+            const p = LUKA_PRESENCA_ONLINE_2026.get(Number(u.id));
+
+            const lastSeen = p
+                ? Number(p.last_seen || 0)
+                : 0;
+
+            const online =
+                lastSeen > 0 &&
+                (agora - lastSeen) <= 45000 &&
+                u.status === "ativo";
+
+            return {
+                id: u.id,
+                usuario: u.usuario,
+                tipo: u.tipo || "usuario",
+                status: u.status,
+                validade: u.validade || null,
+                online,
+                last_seen: lastSeen
+            };
+        });
+
+        res.json({
+            sucesso: true,
+            agora,
+            usuarios: resultado,
+            online: resultado.filter(u => u.online).length,
+            usuariosOnline: resultado.filter(
+                u => u.online && u.tipo !== "teste" && u.tipo !== "revendedor"
+            ).length,
+            testesOnline: resultado.filter(
+                u => u.online && u.tipo === "teste"
+            ).length,
+            revendedoresOnline: resultado.filter(
+                u => u.online && u.tipo === "revendedor"
+            ).length
+        });
+
+    } catch (erro) {
+        console.error("[LUKA STATUS ONLINE]", erro);
+
+        res.status(500).json({
+            sucesso: false,
+            usuarios: []
+        });
+    }
+});
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+app.post("/logout", (req, res) => {
+
+    req.session.destroy(() => {
+
+        res.json({
+            sucesso: true
+        });
+
+    });
+
+});
+
+// ==========================================
+// TMDB
+// ==========================================
+
+const TMDB_BASE =
+    "https://api.themoviedb.org/3";
+
+const TMDB_IMAGE =
+    "https://image.tmdb.org/t/p/w500";
+
+// ==========================================
+// BUSCAR FILMES DO TMDB
+// ==========================================
+
+async function tmdb(endpoint) {
+
+    const token =
+        process.env.TMDB_TOKEN;
+
+    if (!token) {
+
+        throw new Error(
+            "TMDB_TOKEN não configurado."
+        );
+    }
+
+    const resposta =
+        await fetch(
+            TMDB_BASE + endpoint,
+            {
+                method: "GET",
+
+                headers: {
+                    Authorization:
+                        "Bearer " + token,
+
+                    accept:
+                        "application/json"
+                }
+            }
+        );
+
+    const dados =
+        await resposta.json();
+
+    if (!resposta.ok) {
+
+        console.error(
+            "[TMDB ERRO]",
+            dados
+        );
+
+        throw new Error(
+            dados.status_message ||
+            "Erro no TMDB."
+        );
+    }
+
+    return dados;
+}
+
+// ==========================================
+// GÊNEROS
+// ==========================================
+
+const generosTMDB = {
+
+    28: "Ação",
+
+    12: "Aventura",
+
+    16: "Animação",
+
+========== 2. TODAS ROTAS ADMIN ==========
+1299:app.get("/api/admin/presenca", async (req, res) => {
+3624:app.get("/api/admin/usuarios", async (req, res) => {
+3809:app.post("/api/admin/usuarios/teste", async (req, res) => {
+3972:app.post("/api/admin/usuarios/excluir", async (req, res) => {
+4062:app.post("/api/admin/usuarios/editar", async (req, res) => {
+4205:app.post("/api/admin/usuarios/status", async (req, res) => {
+4269:app.post("/api/admin/usuarios/renovar", async (req, res) => {
+4369:app.post("/api/admin/revendedores", async (req, res) => {
+
+========== 3. FUNCOES PAGAMENTO ==========
+237:async function prepararTursoPagamentos() {
+256:async function criarPagamentoLuka(dados) {
+297:async function proximoIdPagamentoLuka() {
+312:async function listarPagamentosLuka(status = null) {
+342:async function buscarPagamentoLuka(id) {
+362:async function atualizarPagamentoLuka(id, dados) {
+1145:            await listarPagamentosLuka(
+1205:        await criarPagamentoLuka(pagamento);
+
+========== 4. USUARIOS ADMIN ==========
+3797-
+3798-            });
+3799-
+3800-        }
+3801-
+3802-    }
+3803-);
+3804-
+3805-// ==========================================
+3806-// ADMIN — CRIAR TESTE
+3807-// ==========================================
+3808-
+3809:app.post("/api/admin/usuarios/teste", async (req, res) => {
+3810-
+3811-    try {
+3812-
+3813-        if (
+3814-            !req.session.usuario ||
+3815-            req.session.usuario.tipo !== "admin"
+3816-        ) {
+3817-
+3818-            return res.status(403).json({
+3819-                sucesso: false,
+3820-                mensagem: "Acesso negado."
+3821-            });
+--
+3960-
+3961-    }
+3962-
+3963-});
+3964-
+3965-// ==========================================
+3966-/*
+3967-==========================================
+3968-ADMIN — EXCLUIR USUÁRIO
+3969-==========================================
+3970-*/
+3971-
+3972:app.post("/api/admin/usuarios/excluir", async (req, res) => {
+3973-
+3974-    try {
+3975-
+3976-        if (
+3977-            !req.session.usuario ||
+3978-            req.session.usuario.tipo !== "admin"
+3979-        ) {
+3980-
+3981-            return res.status(403).json({
+3982-                sucesso: false,
+3983-                mensagem: "Acesso negado."
+3984-            });
+--
+4050-
+4051-    }
+4052-
+4053-});
+4054-
+4055-// ==========================================
+4056-// ADMIN — EDITAR USUÁRIO
+4057-// ==========================================
+4058-
+4059-// ==========================================
+4060-// ==========================================
+4061-
+4062:app.post("/api/admin/usuarios/editar", async (req, res) => {
+4063-
+4064-    try {
+4065-
+4066-        if (
+4067-            !req.session.usuario ||
+4068-            req.session.usuario.tipo !== "admin"
+4069-        ) {
+4070-            return res.status(403).json({
+4071-                sucesso: false,
+4072-                mensagem: "Acesso negado."
+4073-            });
+4074-        }
+--
+4193-        });
+4194-
+4195-    }
+4196-
+4197-});
+4198-
+4199-// ==========================================
+4200-// ADMIN — SUSPENDER / ATIVAR USUÁRIO
+4201-// ==========================================
+4202-// ==========================================
+4203-// ==========================================
+4204-
+4205:app.post("/api/admin/usuarios/status", async (req, res) => {
+4206-    try {
+4207-        if (
+4208-            !req.session.usuario ||
+4209-            req.session.usuario.tipo !== "admin"
+4210-        ) {
+4211-            return res.status(403).json({
+4212-                sucesso: false,
+4213-                mensagem: "Acesso negado."
+4214-            });
+4215-        }
+4216-
+4217-        const id = Number(req.body.id);
+--
+4257-
+4258-        return res.status(500).json({
+4259-            sucesso: false,
+4260-            mensagem: "Erro interno ao alterar status."
+4261-        });
+4262-    }
+4263-});
+4264-
+4265-// ==========================================
+4266-// ADMIN — RENOVAR USUÁRIO
+4267-// ==========================================
+4268-
+4269:app.post("/api/admin/usuarios/renovar", async (req, res) => {
+4270-
+4271-    try {
+4272-
+4273-        if (
+4274-            !req.session.usuario ||
+4275-            req.session.usuario.tipo !== "admin"
+4276-        ) {
+4277-            return res.status(403).json({
+4278-                sucesso: false,
+4279-                mensagem: "Acesso negado."
+4280-            });
+4281-        }
+
+========== 5. ADMIN HTML — SCRIPTS ==========
+
+========== 6. ADMIN HTML — FUNCOES PRINCIPAIS ==========
+1700:<button type="button" onclick="window.location.href='/'" title="Voltar para a página inicial">🎬 Luca Filme</button>
+2117:function aba(id,btn){
+2138:function abrirModal(tipo){
+2352:  if(typeof window.LUKA_MOSTRAR_RESULTADO_TESTE==="function"){
+2353:   window.LUKA_MOSTRAR_RESULTADO_TESTE(d.testes || []);
+2596:async function salvar(e){
+2697:async function carregar(){
+2711:  usuarios=Array.isArray(d.usuarios)?d.usuarios:[];window.usuarios=usuarios;
+2810:    if(window.__lukaGraficoTimer){
+2811:        clearInterval(window.__lukaGraficoTimer);
+2814:    window.__lukaGraficoTimer =
+2851:function renderUsuarios(){
+2879:function renderTestes(){
+3398:async function salvarEdicaoConta(){
+3702:    window.scrollTo({top:0,behavior:"smooth"});
+3737:    function carregarFotoPerfil(){
+3751:    window.abrirFotoPerfil = function(){
+3814:    window.mostrarLukaLoader = mostrarLukaLoader;
+3816:    window.LukaLoader = {
+3899:    window.addEventListener("pageshow",function(event){
+3913:    window.addEventListener("load",function(){
+3917:            if(!window.__LUKAFILMES_HOME_LOADER_CONTROLLED__){
+4665:<script id="luka-click-premium-js">(function(){let tipo="usuarios";window.abrirPainelPremium=async function(t){tipo=t;document.getElementById("lukaPremiumOverlay").classList.add("show");document.getElementById("lpSearch").value="";if(typeof carregar==="function"){await carregar()}renderPainelPremium()};window.fecharPainelPremium=function(e){if(e&&e.target!==e.currentTarget)return;document.getElementById("lukaPremiumOverlay").classList.remove("show")};function esc(v){return typeof escapeHtml==="function"?escapeHtml(v):String(v??"")};function rest(v){if(!v)return"Sem validade";let n=new Date(v)-Date.now();if(n<=0)return"Expirado";let d=Math.floor(n/86400000),h=Math.floor(n%86400000/3600000);return d?d+"d "+h+"h":h+"h"}window.renovarContaPremium=function(id){
+4679:window.alternarContaPremium=function(id){
+4693:window.renderPainelPremium=function(){let a=(Array.isArray(window.usuarios)&&window.usuarios.length?window.usuarios:Array.isArray(window.listaUsuarios)&&window.listaUsuarios.length?window.listaUsuarios:Array.isArray(window.usuariosCache)&&window.usuariosCache.length?window.usuariosCache:[]),m={usuarios:["👤","Usuários","Contas de clientes"],testes:["🧪","Testes","Acessos temporários"],revendedores:["🤝","Revendedores","Parceiros"],online:["🟢","Online agora","Contas conectadas"]},c=m[tipo]||m.usuarios,l=tipo==="online"?a.filter(u=>u.online):a.filter(u=>u.tipo===(tipo==="usuarios"?"usuario":tipo)),q=(document.getElementById("lpSearch").value||"").toLowerCase();l=l.filter(u=>String(u.usuario||"").toLowerCase().includes(q));document.getElementById("lpIcon").textContent=c[0];document.getElementById("lpTitle").textContent=c[1];document.getElementById("lpSub").textContent=c[2];document.getElementById("lpStats").innerHTML=`<div class="lpStat"><small>TOTAL</small><strong>${l.length}</strong></div><div class="lpStat"><small>ATIVOS</small><strong>${l.filter(u=>(u.status||"ativo")==="ativo").length}</strong></div><div class="lpStat"><small>ONLINE</small><strong>${l.filter(u=>u.online).length}</strong></div><div class="lpStat"><small>EXPIRADOS</small><strong>${l.filter(u=>u.validade&&new Date(u.validade)<=Date.now()).length}</strong></div>`;let b=document.getElementById("lpList");if(!l.length){b.innerHTML=`<div class="lpEmpty">Nenhuma conta encontrada.</div>`;return}b.innerHTML=l.map(u=>`<div class="lpUser"><div class="lpTop"><span class="lpName">${esc(u.usuario)}</span><span class="lpPill ${u.online?"on":""}">${u.online?"● ONLINE":"○ OFFLINE"}</span></div><div class="lpMeta"><div><small>STATUS</small><span>${esc((u.status||"ativo").toUpperCase())}</span></div><div><small>VALIDADE</small><span>${esc(rest(u.validade))}</span></div><div><small>TELEFONE</small><span>${esc(u.telefone||u.whatsapp||"Não informado")}</span></div><div><small>TIPO</small><span>${esc((u.tipo||"usuario").toUpperCase())}</span></div></div><div class="lpActions"><button onclick="event.stopPropagation();fecharPainelPremium();setTimeout(()=>abrirContaDetalhes(${Number(u.id)}),120)">👁️ Detalhes</button><button onclick="event.stopPropagation();renovarContaPremium(${Number(u.id)})">🔄 Renovar</button><button onclick="event.stopPropagation();alternarContaPremium(${Number(u.id)})">⚡ Status</button></div></div>`).join("")};document.addEventListener("keydown",e=>{if(e.key==="Escape")fecharPainelPremium()})})();</script>
+4801:window.LUKA_TESTE_TEXTO = "";
+4803:window.LUKA_MOSTRAR_RESULTADO_TESTE = function(testes){
+4912:    window.LUKA_TESTE_TEXTO = texto;
+4932:window.LUKA_COPIAR_TESTE = async function(){
+4934:    var texto = window.LUKA_TESTE_TEXTO || "";
+5008:window.LUKA_FECHAR_TESTE = function(){
+7614:        return Array.isArray(window.usuarios)
+7615:            ? window.usuarios
+7910:    window.lukaAbrirCentral=function(tipo){
+7927:    window.lukaFecharCentral=function(){
+7942:    window.lukaAbrirContaCentral=function(id){
+
+========== 7. CHECK ==========
+
+========== FIM ==========

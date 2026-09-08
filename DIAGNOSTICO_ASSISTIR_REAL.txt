@@ -1,0 +1,719 @@
+========== CODIGO REAL DO ASSISTIR ==========
+
+===== FILME.HTML 3560-4190 =====
+
+        document.getElementById("generos")
+            .textContent =
+            generos;
+
+        /* SINOPSE */
+
+        document.getElementById("sinopse")
+            .textContent =
+            filme.sinopse ||
+            "Sinopse não disponível.";
+
+        /* ==========================================
+           ASSISTIR FILME — EMBEDMOVIES / TMDB
+           ========================================== */
+
+        const botao =
+            document.getElementById("botaoAssistir");
+
+        const playerFilme =
+            document.getElementById("playerFilme");
+
+        const filmeFrame =
+            document.getElementById("filmeFrame");
+
+        if (botao && playerFilme && filmeFrame && filme.id) {
+
+            botao.addEventListener(
+                "click",
+                async function (evento) {
+
+                    evento.preventDefault();
+
+                    const tmdbId =
+                        String(filme.id).trim();
+
+                    if (!tmdbId) {
+
+                        alert(
+                            "ID TMDB do filme não encontrado."
+                        );
+
+                        return;
+                    }
+
+                    console.log(
+                        "[LUKAFILMES] Verificando acesso:",
+                        filme.titulo,
+                        tmdbId
+                    );
+
+                    try {
+
+                        const respostaAcesso =
+                            await fetch(
+                                "/api/acesso-assistir",
+                                {
+                                    method: "GET",
+                                    credentials: "same-origin",
+                                    cache: "no-store"
+                                }
+                            );
+
+                        const acesso =
+                            await respostaAcesso.json();
+
+                        console.log(
+                            "[LUKAFILMES] Resultado do acesso:",
+                            acesso
+                        );
+
+                        /*
+                         * PRIMEIRO PLAY:
+                         * cliente ainda não possui conta.
+                         *
+                         * Em vez de mandar para o login,
+                         * abrimos o cadastro específico do LUKAFILMES.
+                         */
+                        if (
+                            acesso.motivo ===
+                            "nao_logado"
+                        ) {
+
+                            const retorno =
+                                window.location.pathname +
+                                window.location.search;
+
+                            window.location.href =
+                                "/cadastro?retorno=" +
+                                encodeURIComponent(retorno);
+
+                            return;
+                        }
+
+                        /*
+                         * ACESSO NEGADO / EXPIRADO
+                         *
+                         * NÃO ABRE O PLAYER.
+                         * MOSTRA A TELA DE PAGAMENTO.
+                         */
+                        if (!acesso.permitido) {
+
+                            if (
+                                acesso.motivo ===
+                                "expirado"
+                            ) {
+
+                                await mostrarPagamentoLuka(
+                                    acesso
+                                );
+
+                                return;
+                            }
+
+                            alert(
+                                acesso.mensagem ||
+                                "Seu acesso não está liberado para assistir."
+                            );
+
+                            return;
+                        }
+
+                        /*
+                         * ACESSO LIBERADO
+                         *
+                         * AGORA SIM MOSTRA O PLAYER.
+                         */
+                        console.log(
+                            "[PLAYER TMDB]",
+                            filme.titulo,
+                            tmdbId
+                        );
+
+                        playerFilme.style.display =
+                            "block";
+
+                        filmeFrame.src = "";
+
+                        const playCentral =
+                            document.getElementById(
+                                "playCentralFilme"
+                            );
+
+                        if (playCentral) {
+
+                            playCentral.classList.remove(
+                                "oculto"
+                            );
+
+                        }
+
+                        botao.innerHTML =
+                            "▶ PLAY";
+
+                        playerFilme.scrollIntoView({
+                            behavior: "auto",
+                            block: "center"
+                        });
+
+                    } catch (erro) {
+
+                        console.error(
+                            "[LUKAFILMES] Erro ao verificar acesso:",
+                            erro
+                        );
+
+                        alert(
+                            "Não foi possível verificar seu acesso. Tente novamente."
+                        );
+
+                    }
+
+                }
+            );
+
+            /* ==========================================
+               PAGAMENTO LUKAFILMES
+               ========================================== */
+
+            async function mostrarPagamentoLuka(acesso) {
+
+                try {
+
+                    let pagamento = null;
+
+                    const respostaPagamento =
+                        await fetch(
+                            "/api/pagamentos/criar",
+                            {
+                                method: "POST",
+                                credentials: "same-origin",
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+                                body: JSON.stringify({})
+                            }
+                        );
+
+                    const dadosPagamento =
+                        await respostaPagamento.json();
+
+                    if (!respostaPagamento.ok ||
+                        !dadosPagamento.sucesso) {
+
+                        alert(
+                            dadosPagamento.mensagem ||
+                            "Não foi possível preparar o pagamento."
+                        );
+
+                        return;
+                    }
+
+                    if (
+                        dadosPagamento.pagamento_necessario ===
+                        false
+                    ) {
+
+                        playerFilme.style.display =
+                            "block";
+
+                        return;
+                    }
+
+                    pagamento =
+                        dadosPagamento.pagamento ||
+                        null;
+
+                    const valor =
+                        dadosPagamento.valor ||
+                        Number(
+                            acesso.valor || 18
+                        ).toFixed(2);
+
+                    const pix =
+                        dadosPagamento.pix ||
+                        "";
+
+                    const antigo =
+                        document.getElementById(
+                            "lukafilmesPagamento"
+                        );
+
+                    if (antigo) {
+                        antigo.remove();
+                    }
+
+                    const tela =
+                        document.createElement("div");
+
+                    tela.id =
+                        "lukafilmesPagamento";
+
+                    tela.style.cssText = `
+                        width: min(92%, 520px);
+                        margin: 24px auto;
+                        padding: 24px;
+                        box-sizing: border-box;
+                        background: #111;
+                        border-radius: 18px;
+                        text-align: center;
+                        color: #fff;
+                        box-shadow: 0 10px 40px rgba(0,0,0,.45);
+                    `;
+
+                    tela.innerHTML = `
+                        <h2 style="margin:0 0 10px;">
+                            🔒 Acesso expirado
+                        </h2>
+
+                        <p style="margin:8px 0 18px;">
+                            Para assistir este filme, renove seu acesso.
+                        </p>
+
+                        <div style="
+                            font-size:30px;
+                            font-weight:700;
+                            margin:15px 0;
+                        ">
+                            R$ ${valor}
+                        </div>
+
+                        <p style="margin:8px 0;">
+                            Acesso por 30 dias
+                        </p>
+
+                        <div
+                            id="lukafilmesQrCode"
+                            style="
+                                width:220px;
+                                min-height:220px;
+                                margin:20px auto;
+                                padding:10px;
+                                box-sizing:border-box;
+                                background:#fff;
+                                border-radius:12px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                            ">
+                        </div>
+
+                        <p style="
+                            font-size:14px;
+                            margin:14px 0 6px;
+                        ">
+                            PIX copia e cola
+                        </p>
+
+                        <textarea
+                            id="lukafilmesPix"
+                            readonly
+                            style="
+                                width:100%;
+                                min-height:90px;
+                                box-sizing:border-box;
+                                resize:none;
+                                padding:10px;
+                                border-radius:10px;
+                                border:1px solid #444;
+                                background:#1d1d1d;
+                                color:#fff;
+                                font-size:12px;
+                            ">${pix}</textarea>
+
+                        <button
+                            type="button"
+                            id="lukafilmesCopiarPix"
+                            style="
+                                width:100%;
+                                margin-top:10px;
+                                padding:13px;
+                                border:0;
+                                border-radius:10px;
+                                cursor:pointer;
+                                font-weight:700;
+                            ">
+                            📋 COPIAR PIX
+                        </button>
+
+                        <button
+                            type="button"
+                            id="lukafilmesPagamentoFeito"
+                            style="
+                                width:100%;
+                                margin-top:10px;
+                                padding:13px;
+                                border:0;
+                                border-radius:10px;
+                                cursor:pointer;
+                                font-weight:700;
+                            ">
+                            ✅ JÁ REALIZEI O PAGAMENTO
+                        </button>
+
+                        <p
+                            id="lukafilmesPagamentoStatus"
+                            style="
+                                display:none;
+                                margin-top:14px;
+                                font-size:14px;
+                            ">
+                        </p>
+                    `;
+
+                    playerFilme.parentNode.insertBefore(
+                        tela,
+                        playerFilme
+                    );
+
+                    tela.scrollIntoView({
+                        behavior: "auto",
+                        block: "center"
+                    });
+
+                    const areaQr =
+                        document.getElementById(
+                            "lukafilmesQrCode"
+                        );
+
+                    if (
+                        pix &&
+                        areaQr &&
+                        typeof QRCode !== "undefined"
+                    ) {
+
+                        new QRCode(
+                            areaQr,
+                            {
+                                text: pix,
+                                width: 200,
+                                height: 200
+                            }
+                        );
+
+                    }
+                    else if (areaQr) {
+
+                        areaQr.innerHTML =
+                            "<span style='color:#222;'>QR Code indisponível</span>";
+
+                    }
+
+                    const botaoCopiar =
+                        document.getElementById(
+                            "lukafilmesCopiarPix"
+                        );
+
+                    if (botaoCopiar) {
+
+                        botaoCopiar.onclick =
+                            async function () {
+
+                                try {
+
+                                    await navigator.clipboard.writeText(
+                                        pix
+                                    );
+
+                                    botaoCopiar.innerHTML =
+                                        "✅ PIX COPIADO";
+
+                                    setTimeout(
+                                        function () {
+                                            botaoCopiar.innerHTML =
+                                                "📋 COPIAR PIX";
+                                        },
+                                        2000
+                                    );
+
+                                } catch (erro) {
+
+                                    const campo =
+                                        document.getElementById(
+                                            "lukafilmesPix"
+                                        );
+
+                                    if (campo) {
+
+                                        campo.focus();
+                                        campo.select();
+
+                                        try {
+                                            document.execCommand(
+                                                "copy"
+                                            );
+                                        } catch (_) {}
+
+                                    }
+
+                                    botaoCopiar.innerHTML =
+                                        "✅ PIX COPIADO";
+                                }
+
+                            };
+
+                    }
+
+                    const botaoFeito =
+                        document.getElementById(
+                            "lukafilmesPagamentoFeito"
+                        );
+
+                    if (botaoFeito) {
+
+                        botaoFeito.onclick =
+                            function () {
+
+                                const nomeUsuario =
+                                    String(
+                                        pagamento &&
+                                        pagamento.usuario
+                                            ? pagamento.usuario
+                                            : "cliente"
+                                    );
+
+                                const idPagamento =
+                                    pagamento &&
+                                    pagamento.id
+                                        ? Number(pagamento.id)
+                                        : "";
+
+                                const mensagem =
+                                    [
+                                        "🎬 LUKAFILMES — COMPROVANTE DE PAGAMENTO",
+                                        "",
+                                        "👤 Usuário: " + nomeUsuario,
+                                        "🧾 Pagamento: #" + idPagamento,
+                                        "💰 Valor: R$ " + valor,
+                                        "",
+                                        "✅ Já realizei o pagamento via PIX.",
+                                        "",
+                                        "Estou enviando o comprovante para conferência e aprovação."
+                                    ].join("\n");
+
+                                const whatsapp =
+                                    "https://wa.me/5511957621653?text=" +
+                                    encodeURIComponent(mensagem);
+
+                                const status =
+                                    document.getElementById(
+                                        "lukafilmesPagamentoStatus"
+                                    );
+
+                                if (status) {
+
+                                    status.style.display =
+                                        "block";
+
+                                    status.innerHTML =
+                                        "⏳ Pagamento pendente. Envie o comprovante pelo WhatsApp e aguarde a aprovação do administrador.";
+
+                                }
+
+                                botaoFeito.disabled = true;
+
+                                botaoFeito.innerHTML =
+                                    "📱 ENVIANDO PARA O WHATSAPP...";
+
+                                window.open(
+                                    whatsapp,
+                                    "_blank",
+                                    "noopener,noreferrer"
+                                );
+
+                                setTimeout(function () {
+
+                                    botaoFeito.innerHTML =
+                                        "⏳ AGUARDANDO APROVAÇÃO";
+
+                                }, 1200);
+
+                            };
+
+                    }
+
+                    console.log(
+                        "[LUKAFILMES] Pagamento preparado:",
+                        pagamento
+                    );
+
+                } catch (erro) {
+
+                    console.error(
+                        "[LUKAFILMES] Erro na tela de pagamento:",
+                        erro
+                    );
+
+                    alert(
+                        "Não foi possível abrir a tela de pagamento."
+                    );
+
+                }
+
+            }
+
+            /* ==========================================
+               PLAY CENTRAL — CARREGA PLAYER 1
+               ========================================== */
+
+            const playCentral =
+                document.getElementById(
+                    "playCentralFilme"
+                );
+
+            if (playCentral) {
+
+                playCentral.addEventListener(
+                    "click",
+                    async function () {
+
+                        try {
+
+                            /*
+                             * VERIFICA O ACESSO ANTES
+                             * DE CARREGAR O CONTEÚDO.
+                             */
+                            const respostaAcesso =
+                                await fetch(
+                                    "/api/acesso-assistir",
+                                    {
+                                        method: "GET",
+                                        credentials: "same-origin",
+                                        cache: "no-store"
+                                    }
+                                );
+
+                            const acesso =
+                                await respostaAcesso.json();
+
+                            console.log(
+                                "[LUKAFILMES] Acesso para assistir:",
+                                acesso
+                            );
+
+                            /*
+                             * SEM AUTORIZAÇÃO:
+                             * NÃO CARREGA O PLAYER.
+                             */
+                            if (!acesso.permitido) {
+
+                                if (
+                                    acesso.motivo ===
+                                    "nao_logado"
+                                ) {
+                                    alert(
+                                        "Faça login para assistir."
+                                    );
+                                }
+                                else if (
+                                    acesso.motivo ===
+                                    "expirado"
+                                ) {
+                                    alert(
+                                        "Seu acesso expirou. É necessário renovar para assistir."
+                                    );
+                                }
+                                else {
+                                    alert(
+                                        acesso.mensagem ||
+                                        "Seu acesso não está liberado para assistir."
+                                    );
+                                }
+
+                                return;
+                            }
+
+                            const tmdbId =
+                                String(filme.id).trim();
+
+                            if (!tmdbId) return;
+
+===== INDEX.HTML 6960-7040 =====
+            erro
+        );
+
+        /*
+         * Mesmo se a busca adicional falhar,
+         * tenta mostrar os filmes já disponíveis.
+         */
+        for(const genero of GENEROS_HOME){
+
+            renderizar(
+                genero.nome,
+                filmesPorGenero(
+                    filmes,
+                    genero.id
+                )
+            );
+        }
+    });
+
+    renderizar(
+        "top10",
+        top.slice(0, 10),
+        true
+    );
+
+    console.log(
+        "[HOME DINÂMICA]",
+        "Filmes:",
+        filmes.length,
+        "| Séries:",
+        series.length,
+        "| Páginas filmes:",
+        paginasFilmes.join(","),
+        "| Páginas séries:",
+        paginasSeries.join(",")
+    );
+}
+carregarHome()
+    .catch(function(erro){
+        console.error("[HOME] Erro durante carregamento:", erro);
+    })
+    .finally(function(){
+        if(window.LukaLoader && typeof window.LukaLoader.hide === "function"){
+            window.LukaLoader.hide();
+        }
+    });
+</script>
+
+
+<script>
+function logout(){
+    fetch("/logout", {
+        method: "POST"
+    })
+    .finally(function(){
+        window.location.href = "/login";
+    });
+}
+</script>
+
+
+<style id="lukafilmes-pesquisa-home-final">
+#resultadosBuscaHome {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: #111;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.65);
+}
+
+.busca-home-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+
+========== FIM ==========

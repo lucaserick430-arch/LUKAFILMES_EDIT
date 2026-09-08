@@ -1,0 +1,91 @@
+========== LUKAFILMES - DIAGNOSTICO ENTRADA ==========
+
+========== 1. PASTA ATUAL ==========
+/data/data/com.termux/files/home/LUKAFILMES_RENDER
+
+========== 2. SERVIDOR ==========
+u0_a324  20937 19381  4  1970 pts/1    00:00:08 node server_render.js
+
+========== 3. COMO O EXPRESS SERVE O SITE ==========
+645:    res.sendFile(
+646:        path.join(__dirname, "public", "login.html")
+671:    res.sendFile(
+672:        path.join(__dirname, "public", "admin.html"),
+685:    res.sendFile(
+686:        path.join(__dirname, "public", "cadastro.html"),
+5981:    res.sendFile(
+5984:            "public",
+5991:                "Cache-Control": "public, max-age=86400"
+6001:     res.sendFile(
+6004:             "public",
+6049:            req.path === "/index.html" ||
+6120:    res.sendFile(
+6121:        require("path").join(__dirname, "public", "revendedor.html")
+6127:    res.sendFile(
+6133:    express.static(__dirname)
+6136:app.get("/paginas/filme",(req,res)=>{res.sendFile(require("path").join(__dirname,"paginas","filme.html"));});
+
+========== 4. BARRA HTML ==========
+1541-    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+1542-</div>
+1543-
+1544-
+1545-<!-- ================= BARRA ENTRADA CLIENTE ================= -->
+1546:<section class="luka-login-entrance" aria-label="Entrada de clientes">
+1547-    <div class="luka-login-entrance-glow"></div>
+1548-
+1549-    <div class="luka-login-entrance-content">
+1550-        <div class="luka-login-entrance-icon">🔐</div>
+1551-
+1552-        <div class="luka-login-entrance-text">
+1553-            <div class="luka-login-entrance-title">
+1554-                JÁ TEM UMA CONTA?
+1555-            </div>
+1556-
+1557-            <div class="luka-login-entrance-subtitle">
+1558-                Entre para acessar sua conta LUKAFILMES e continuar assistindo
+1559-                seus filmes e séries.
+1560-            </div>
+1561-        </div>
+1562-
+1563-        <a
+1564-            href="/login"
+1565-            class="luka-login-entrance-btn"
+1566-            aria-label="Entrar como cliente"
+1567-        >
+1568-            🔐 ENTRAR COMO CLIENTE
+1569-        </a>
+1570-    </div>
+1571-</section>
+
+========== 5. CSS DA BARRA ==========
+1313-</style>
+1314-
+1315-
+1316:<style id="luka-login-entrance-style">
+1317-/* ================= ENTRADA DE CLIENTES LUKAFILMES ================= */
+1318-
+1319-.luka-login-entrance{
+1320-    position:relative;
+1321-    z-index:10;
+1322-    width:100%;
+1323-    padding:18px 5%;
+1324-    background:
+
+========== 6. HERO ==========
+1568-            🔐 ENTRAR COMO CLIENTE
+1569-        </a>
+1570-    </div>
+1571-</section>
+1572-
+1573:<section class="hero">
+1574-
+1575-    <div
+1576-        class="hero-bg"
+1577-        id="heroBg"
+1578-        style="background-image:url('https://image.tmdb.org/t/p/original');">
+1579-    </div>
+1580-
+1581-    
+
+========== FIM ==========

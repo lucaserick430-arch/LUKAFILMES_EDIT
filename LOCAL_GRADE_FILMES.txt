@@ -1,0 +1,51 @@
+2699-        <div class="hero-conteudo">
+2700-            <div class="hero-tag">LUKAFILMES ORIGINAL</div>
+2701-            <h1 id="heroTitulo">Carregando...</h1>
+2702-
+2703-            <div class="hero-meta">
+2704-                <span id="heroAno"></span>
+2705-                <span id="heroNota"></span>
+2706-            </div>
+2707-
+2708-            <p id="heroSinopse">
+2709-                Escolha um filme para começar a assistir.
+2710-            </p>
+2711-
+2712-            <div class="hero-botoes">
+2713-                <button id="heroAssistir" class="btn-assistir">
+2714-                    ▶ Assistir
+2715-                </button>
+2716-
+2717-                <!-- Botões extras removidos: o Hero mantém somente Assistir. -->
+2718-            </div>
+2719-        </div>
+2720-    </section>
+2721-
+2722-    <main class="catalogo-netflix">
+2723-
+2724:        <div id="grade" class="lista-series filmes-grade-series"></div>
+2725-
+2726-    </main>
+2727-
+2728-</div>
+2729-
+2730-<script>
+2731-
+2732-/*
+2733- * =========================================================
+2734- * LUKAFILMES — CARREGAMENTO ALEATORIO + INFINITO
+2735- * =========================================================
+2736- *
+2737- * A cada nova abertura:
+2738- *
+2739- * 1. Começa em uma página aleatória do catálogo.
+2740- * 2. Os filmes dessa página são embaralhados.
+2741- * 3. Filmes já vistos nesta sessão não entram novamente.
+2742- * 4. Ao descer, novas páginas continuam sendo carregadas.
+2743- * 5. O catálogo infinito continua funcionando.
+2744- *
+2745- * O Hero / trailer possui lógica própria e não é alterado.
+2746- */
+2747-
+2748-/*
+2749- * LUKAFILMES — CATÁLOGO TOTALMENTE MISTURADO

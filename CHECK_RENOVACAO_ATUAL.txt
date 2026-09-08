@@ -1,0 +1,265 @@
+============================================================
+LUKAFILMES — LOCALIZANDO FLUXO DE RENOVAÇÃO
+============================================================
+
+===== NOTIFICAÇÃO / VENCIMENTO =====
+public/index.html:2766:                        "[HERO TRAILER] Erro ao renovar fila:",
+paginas/filme.html:3124:<style id="luka-notificacao-card-style">
+paginas/filme.html:3125:.lukafilmes-notificacao-item{
+paginas/filme.html:3132:.lukafilmes-notificacao-item:hover{
+paginas/filme.html:3137:.lukafilmes-notificacao-item:active{
+paginas/filme.html:3150:    .lukafilmes-notificacao-item{
+paginas/filme.html:4211:                                        "Seu acesso expirou. É necessário renovar para assistir."
+paginas/filme.html:5379:<script id="lukafilmes-notificacao-automatica">
+paginas/filme.html:5429:            item.className = "lukafilmes-notificacao-item";
+paginas/series.html:198:<style id="luka-notificacao-card-style">
+paginas/series.html:199:.lukafilmes-notificacao-item{
+paginas/series.html:206:.lukafilmes-notificacao-item:hover{
+paginas/series.html:211:.lukafilmes-notificacao-item:active{
+paginas/series.html:224:    .lukafilmes-notificacao-item{
+paginas/series.html:311:<script id="lukafilmes-notificacao-automatica">
+paginas/series.html:361:            item.className = "lukafilmes-notificacao-item";
+
+===== PIX / PAGAMENTO =====
+paginas/filme.html:3156:    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+paginas/filme.html:3747:                            "/api/pagamentos/criar",
+paginas/filme.html:3794:                    const pix =
+paginas/filme.html:3795:                        dadosPagamento.pix ||
+paginas/filme.html:3850:                            id="lukafilmesQrCode"
+paginas/filme.html:3869:                            PIX copia e cola
+paginas/filme.html:3873:                            id="lukafilmesPix"
+paginas/filme.html:3889:                            ">${pix}</textarea>
+paginas/filme.html:3893:                            id="lukafilmesCopiarPix"
+paginas/filme.html:3910:                            📋 COPIAR CÓDIGO PIX
+paginas/filme.html:3925:                            📲 ENVIAR COMPROVANTE PELO WHATSAPP
+paginas/filme.html:3948:                    const areaQr =
+paginas/filme.html:3950:                            "lukafilmesQrCode"
+paginas/filme.html:3954:                        pix &&
+paginas/filme.html:3955:                        areaQr &&
+paginas/filme.html:3956:                        typeof QRCode !== "undefined"
+paginas/filme.html:3959:                        new QRCode(
+paginas/filme.html:3960:                            areaQr,
+paginas/filme.html:3962:                                text: pix,
+paginas/filme.html:3969:                    else if (areaQr) {
+paginas/filme.html:3971:                        areaQr.innerHTML =
+paginas/filme.html:3972:                            "<span style='color:#222;'>QR Code indisponível</span>";
+paginas/filme.html:3978:                            "lukafilmesCopiarPix"
+paginas/filme.html:3995:                                            String(pix)
+paginas/filme.html:4006:                                            "lukafilmesPix"
+paginas/filme.html:4030:                                        "✅ PIX COPIADO";
+paginas/filme.html:4035:                                                "📋 COPIAR CÓDIGO PIX";
+paginas/filme.html:4048:                                                "📋 COPIAR CÓDIGO PIX";
+paginas/filme.html:4085:                                        "🎬 LUKAFILMES — COMPROVANTE DE PAGAMENTO",
+paginas/filme.html:4091:                                        "✅ Já realizei o pagamento via PIX.",
+paginas/filme.html:4093:                                        "Estou enviando o comprovante para conferência e aprovação."
+paginas/filme.html:4096:                                const whatsapp =
+paginas/filme.html:4111:                                        "⏳ Pagamento pendente.<br><br>📲 Envie o comprovante pelo WhatsApp e depois volte para esta página.<br><br>Seu acesso será liberado após a aprovação.";
+paginas/filme.html:4118:                                    "📲 ABRINDO WHATSAPP...";
+paginas/filme.html:4120:                                window.location.href = whatsapp;
+public/admin.html:3055:        u.telefone || u.whatsapp || "Não informado";
+public/admin.html:3110:        const telefone = u.telefone || u.whatsapp || "";
+public/admin.html:3177:                    📱 Copiar telefone / WhatsApp
+public/admin.html:3340:            conta.whatsapp ||
+public/admin.html:3493:                    whatsapp:telefone,
+public/admin.html:4693:window.renderPainelPremium=function(){let a=(Array.isArray(window.usuarios)&&window.usuarios.length?window.usuarios:Array.isArray(window.listaUsuarios)&&window.listaUsuarios.length?window.listaUsuarios:Array.isArray(window.usuariosCache)&&window.usuariosCache.length?window.usuariosCache:[]),m={usuarios:["👤","Usuários","Contas de clientes"],testes:["🧪","Testes","Acessos temporários"],revendedores:["🤝","Revendedores","Parceiros"],online:["🟢","Online agora","Contas conectadas"]},c=m[tipo]||m.usuarios,l=tipo==="online"?a.filter(u=>u.online):a.filter(u=>u.tipo===(tipo==="usuarios"?"usuario":tipo)),q=(document.getElementById("lpSearch").value||"").toLowerCase();l=l.filter(u=>String(u.usuario||"").toLowerCase().includes(q));document.getElementById("lpIcon").textContent=c[0];document.getElementById("lpTitle").textContent=c[1];document.getElementById("lpSub").textContent=c[2];document.getElementById("lpStats").innerHTML=`<div class="lpStat"><small>TOTAL</small><strong>${l.length}</strong></div><div class="lpStat"><small>ATIVOS</small><strong>${l.filter(u=>(u.status||"ativo")==="ativo").length}</strong></div><div class="lpStat"><small>ONLINE</small><strong>${l.filter(u=>u.online).length}</strong></div><div class="lpStat"><small>EXPIRADOS</small><strong>${l.filter(u=>u.validade&&new Date(u.validade)<=Date.now()).length}</strong></div>`;let b=document.getElementById("lpList");if(!l.length){b.innerHTML=`<div class="lpEmpty">Nenhuma conta encontrada.</div>`;return}b.innerHTML=l.map(u=>`<div class="lpUser"><div class="lpTop"><span class="lpName">${esc(u.usuario)}</span><span class="lpPill ${u.online?"on":""}">${u.online?"● ONLINE":"○ OFFLINE"}</span></div><div class="lpMeta"><div><small>STATUS</small><span>${esc((u.status||"ativo").toUpperCase())}</span></div><div><small>VALIDADE</small><span>${esc(rest(u.validade))}</span></div><div><small>TELEFONE</small><span>${esc(u.telefone||u.whatsapp||"Não informado")}</span></div><div><small>TIPO</small><span>${esc((u.tipo||"usuario").toUpperCase())}</span></div></div><div class="lpActions"><button onclick="event.stopPropagation();fecharPainelPremium();setTimeout(()=>abrirContaDetalhes(${Number(u.id)}),120)">👁️ Detalhes</button><button onclick="event.stopPropagation();renovarContaPremium(${Number(u.id)})">🔄 Renovar</button><button onclick="event.stopPropagation();alternarContaPremium(${Number(u.id)})">⚡ Status</button></div></div>`).join("")};document.addEventListener("keydown",e=>{if(e.key==="Escape")fecharPainelPremium()})})();</script>
+public/admin.html:5184:                Confira os pagamentos e libere o acesso após verificar o comprovante.
+server_render.js:141:// PIX FIXO LUKAFILMES - COPIA E COLA
+server_render.js:144:function crc16PixLuka(str) {
+server_render.js:162:function campoPixLuka(id, valor) {
+server_render.js:167:function gerarPixCopiaColaLuka() {
+server_render.js:168:    const chave = String(process.env.PIX_CHAVE || "").trim();
+server_render.js:169:    const nome = String(process.env.PIX_NOME || "LUKAFILMES")
+server_render.js:172:    const cidade = String(process.env.PIX_CIDADE || "CARAPICUIBA")
+server_render.js:175:    const valor = Number(process.env.PIX_VALOR || 18).toFixed(2);
+server_render.js:178:        throw new Error("PIX_CHAVE não configurada no .env");
+server_render.js:182:        campoPixLuka("00", "br.gov.bcb.pix") +
+server_render.js:183:        campoPixLuka("01", chave);
+server_render.js:186:        campoPixLuka("00", "01") +
+server_render.js:187:        campoPixLuka("26", merchantAccount) +
+server_render.js:188:        campoPixLuka("52", "0000") +
+server_render.js:189:        campoPixLuka("53", "986") +
+server_render.js:190:        campoPixLuka("54", valor) +
+server_render.js:191:        campoPixLuka("58", "BR") +
+server_render.js:192:        campoPixLuka("59", nome) +
+server_render.js:193:        campoPixLuka("60", cidade) +
+server_render.js:194:        campoPixLuka("62", campoPixLuka("05", "***")) +
+server_render.js:197:    return payloadSemCRC + crc16PixLuka(payloadSemCRC);
+server_render.js:1668:app.post("/api/pagamentos/criar", async (req, res) => {
+server_render.js:1739:            let pix;
+server_render.js:1742:                pix = gerarPixCopiaColaLuka();
+server_render.js:1743:            } catch (erroPix) {
+server_render.js:1745:                    "[PAGAMENTO] Erro ao gerar PIX:",
+server_render.js:1746:                    erroPix
+server_render.js:1754:                pix: pix || null,
+server_render.js:1756:                    process.env.PIX_VALOR ||
+server_render.js:1759:                nome: process.env.PIX_NOME || "LUKAFILMES",
+server_render.js:1760:                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+server_render.js:1789:        let pix;
+server_render.js:1792:            pix = gerarPixCopiaColaLuka();
+server_render.js:1793:        } catch (erroPix) {
+server_render.js:1795:                "[PAGAMENTO] Erro ao gerar PIX:",
+server_render.js:1796:                erroPix
+server_render.js:1804:            pix: pix || null,
+server_render.js:1806:                process.env.PIX_VALOR ||
+server_render.js:1809:            nome: process.env.PIX_NOME || "LUKAFILMES",
+server_render.js:1810:            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+server_render.js:1831:// PIX LUKAFILMES — COPIA E COLA
+server_render.js:1834:app.get("/api/pix", (req, res) => {
+server_render.js:1838:        const pix = gerarPixCopiaColaLuka();
+server_render.js:1842:            valor: Number(process.env.PIX_VALOR || 18).toFixed(2),
+server_render.js:1843:            nome: process.env.PIX_NOME || "LUKAFILMES",
+server_render.js:1844:            cidade: process.env.PIX_CIDADE || "CARAPICUIBA",
+server_render.js:1845:            pix
+server_render.js:1850:        console.error("[PIX] Erro ao gerar Pix:", erro);
+server_render.js:1854:            mensagem: "Não foi possível gerar o Pix."
+server_render.js:6089:            req.path === "/api/pagamentos/criar"
+
+===== ADMIN / APROVAÇÃO =====
+server_render.js-1403-
+server_render.js-1404-    }
+server_render.js-1405-
+server_render.js-1406-});
+server_render.js-1407-
+server_render.js-1408-
+server_render.js-1409-// ============================================================
+server_render.js-1410-// ADMIN — APROVAR PAGAMENTO
+server_render.js-1411-// ============================================================
+server_render.js-1412-
+server_render.js:1413:app.post("/api/admin/pagamentos/:id/aprovar", async (req, res) => {
+server_render.js-1414-
+server_render.js-1415-    try {
+server_render.js-1416-
+server_render.js-1417-        if (!adminAutorizadoLuka(req)) {
+server_render.js-1418-            return res.status(403).json({
+server_render.js-1419-                sucesso: false,
+server_render.js-1420-                mensagem: "Acesso negado."
+server_render.js-1421-            });
+server_render.js-1422-        }
+server_render.js-1423-
+server_render.js-1424-        const id = Number(req.params.id);
+server_render.js-1425-
+server_render.js-1426-        if (!Number.isInteger(id) || id < 1) {
+server_render.js-1427-            return res.json({
+server_render.js-1428-                sucesso: false,
+--
+server_render.js-1469-
+server_render.js-1470-        if (indice === -1) {
+server_render.js-1471-            return res.status(404).json({
+server_render.js-1472-                sucesso: false,
+server_render.js-1473-                mensagem: "Usuário do pagamento não encontrado."
+server_render.js-1474-            });
+server_render.js-1475-        }
+server_render.js-1476-
+server_render.js-1477-        const usuario = usuarios[indice];
+server_render.js-1478-
+server_render.js:1479:        // Se ainda houver acesso válido, soma 30 dias a partir da validade.
+server_render.js-1480-        // Se estiver expirado, começa agora.
+server_render.js-1481-        let inicio = Date.now();
+server_render.js-1482-
+server_render.js-1483-        if (usuario.validade) {
+server_render.js-1484-
+server_render.js-1485-            const validadeAtual =
+server_render.js-1486-                new Date(usuario.validade).getTime();
+server_render.js-1487-
+server_render.js-1488-            if (
+server_render.js-1489-                Number.isFinite(validadeAtual) &&
+server_render.js-1490-                validadeAtual > Date.now()
+server_render.js-1491-            ) {
+server_render.js-1492-                inicio = validadeAtual;
+server_render.js-1493-            }
+server_render.js-1494-
+--
+server_render.js-1526-            usuario_id: usuarioId,
+server_render.js-1527-            validade: novaValidade
+server_render.js-1528-        });
+server_render.js-1529-
+server_render.js-1530-    } catch (erro) {
+server_render.js-1531-
+server_render.js-1532-        console.error("[ADMIN PAGAMENTOS] Erro ao aprovar:", erro);
+server_render.js-1533-
+server_render.js-1534-        return res.status(500).json({
+server_render.js-1535-            sucesso: false,
+server_render.js:1536:            mensagem: "Erro interno ao aprovar pagamento."
+server_render.js-1537-        });
+server_render.js-1538-
+server_render.js-1539-    }
+server_render.js-1540-
+server_render.js-1541-});
+server_render.js-1542-
+server_render.js-1543-
+server_render.js-1544-// ============================================================
+server_render.js-1545-// ADMIN — RECUSAR PAGAMENTO
+server_render.js-1546-// ============================================================
+server_render.js-1547-
+server_render.js:1548:app.post("/api/admin/pagamentos/:id/recusar", async (req, res) => {
+server_render.js-1549-
+server_render.js-1550-    try {
+server_render.js-1551-
+server_render.js-1552-        if (!adminAutorizadoLuka(req)) {
+server_render.js-1553-            return res.status(403).json({
+server_render.js-1554-                sucesso: false,
+server_render.js-1555-                mensagem: "Acesso negado."
+server_render.js-1556-            });
+server_render.js-1557-        }
+server_render.js-1558-
+server_render.js-1559-        const id = Number(req.params.id);
+server_render.js-1560-
+server_render.js-1561-        if (!Number.isInteger(id) || id < 1) {
+server_render.js-1562-            return res.json({
+server_render.js-1563-                sucesso: false,
+--
+server_render.js-1573-                mensagem: "Pagamento não encontrado."
+server_render.js-1574-            });
+server_render.js-1575-        }
+server_render.js-1576-
+server_render.js-1577-        if (
+server_render.js-1578-            String(pagamento.status || "").toLowerCase() ===
+server_render.js-1579-            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO
+server_render.js-1580-        ) {
+server_render.js-1581-            return res.json({
+server_render.js-1582-                sucesso: false,
+server_render.js:1583:                mensagem: "Não é possível recusar um pagamento já aprovado."
+server_render.js-1584-            });
+server_render.js-1585-        }
+server_render.js-1586-
+server_render.js-1587-        await atualizarPagamentoLuka(id, {
+server_render.js-1588-            status:
+server_render.js-1589-                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.RECUSADO,
+server_render.js-1590-            observacao:
+server_render.js-1591-                "Pagamento recusado pelo administrador."
+server_render.js-1592-        });
+server_render.js-1593-
+server_render.js-1594-        // =====================================================
+server_render.js-1595-        // LIMPEZA AUTOMÁTICA DO TESTE
+server_render.js-1596-        //
+server_render.js-1597-        // Só remove usuários criados pelo modo de teste.
+server_render.js-1598-        // Usuários reais NUNCA são removidos por esta rotina.
+--
+server_render.js-1648-                : "Pagamento recusado.",
+server_render.js-1649-            teste_removido: testeRemovido
+server_render.js-1650-        });
+server_render.js-1651-
+server_render.js-1652-    } catch (erro) {
+server_render.js-1653-
+server_render.js-1654-        console.error("[ADMIN PAGAMENTOS] Erro ao recusar:", erro);
+server_render.js-1655-
+server_render.js-1656-        return res.status(500).json({
+server_render.js-1657-            sucesso: false,
+server_render.js:1658:            mensagem: "Erro interno ao recusar pagamento."
+server_render.js-1659-        });
+server_render.js-1660-
+server_render.js-1661-    }
+server_render.js-1662-
+server_render.js-1663-});
+server_render.js-1664-
+server_render.js-1665-
+server_render.js-1666-// ============================================================
+server_render.js-1667-
+server_render.js-1668-app.post("/api/pagamentos/criar", async (req, res) => {
+server_render.js-1669-
+server_render.js-1670-    try {
+server_render.js-1671-
+server_render.js-1672-        const sessao = lukaUsuarioOperacional(req);
+server_render.js-1673-
+
+===== FIM DA LOCALIZAÇÃO =====

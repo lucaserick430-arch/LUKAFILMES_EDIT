@@ -1,0 +1,79 @@
+========== CAMPOS LOGIN ==========
+
+========== LOGIN HTML INICIO ==========
+    to{transform:rotate(360deg)}
+}
+
+@media(max-width:600px){
+    #lukafilmesLoginLoaderBox{
+        width:88vw;
+        min-height:300px;
+        padding:35px 22px;
+        border-radius:16px;
+    }
+
+    #lukafilmesLoginLoaderLogo{
+        font-size:30px;
+        margin-bottom:28px;
+    }
+
+    #lukafilmesLoginLoaderSpinner{
+        width:52px;
+        height:52px;
+        border-width:6px;
+        margin-bottom:24px;
+    }
+
+    #lukafilmesLoginLoaderTitle{
+        font-size:18px;
+    }
+
+    #lukafilmesLoginLoaderText{
+        font-size:14px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="fundoTrailer">
+    <iframe
+        src="https://www.youtube.com/embed/c51ND9Hdbw0?autoplay=1&mute=1&controls=0&loop=1&playlist=c51ND9Hdbw0&modestbranding=1&rel=0"
+        allow="autoplay; fullscreen"
+        frameborder="0">
+    </iframe>
+</div>
+
+<div id="escuro"></div>
+
+
+<div class="login">
+
+    <div class="premium-entrada">
+
+        <div class="premium-logo">
+            <span>LUKA</span><b>FILMES</b>
+        </div>
+
+        <div class="premium-linha"></div>
+
+        <div class="premium-kicker">
+            UMA NOVA EXPERIÊNCIA DE ENTRETENIMENTO
+        </div>
+
+        <h1>
+            Sua próxima história<br>
+            <strong>começa agora.</strong>
+        </h1>
+
+        <p class="premium-subtitulo">
+            Filmes, séries e grandes histórias.<br>
+            Tudo em um só lugar.
+        </p>
+
+        <div class="premium-tags">
+            <span>FILMES</span>
+            <i></i>
+            <span>SÉRIES</span>

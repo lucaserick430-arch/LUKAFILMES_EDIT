@@ -1,0 +1,93 @@
+/* =========================================================
+   PESQUISA
+   ========================================================= */
+
+let timerPesquisaSeries = null;
+
+campoPesquisa.addEventListener(
+    "input",
+    function(){
+
+        clearTimeout(
+            timerPesquisaSeries
+        );
+
+        timerPesquisaSeries =
+            setTimeout(
+                function(){
+
+                    pesquisarSeries(
+                        campoPesquisa.value.trim()
+                    );
+
+                },
+                300
+            );
+
+    }
+);
+
+async function pesquisarSeries(texto){
+
+    if(!texto){
+
+        gradeSeries.innerHTML = "";
+
+        idsSeries.clear();
+
+        paginaSeries = 1;
+
+        fimSeries = false;
+
+        carregarCatalogoSeries();
+
+        return;
+
+    }
+
+    try{
+
+        const resposta =
+            await fetch(
+                "/api/pesquisar-series?q=" +
+                encodeURIComponent(texto)
+            );
+
+        const dados =
+            await resposta.json();
+
+        const series =
+            Array.isArray(dados.series)
+                ? dados.series
+                : Array.isArray(dados.resultados)
+                    ? dados.resultados
+                    : [];
+
+        gradeSeries.innerHTML = "";
+
+        if(!series.length){
+
+            gradeSeries.innerHTML =
+                '<div class="estado-series">' +
+                'Nenhuma série encontrada.' +
+                '</div>';
+
+            return;
+
+        }
+
+        series.forEach(
+            function(serie){
+
+                gradeSeries.appendChild(
+                    criarCardSerie(serie)
+                );
+
+            }
+        );
+
+    }catch(erro){
+
+        console.error(
+            "[PESQUISA SERIES] ERRO:",
+            erro

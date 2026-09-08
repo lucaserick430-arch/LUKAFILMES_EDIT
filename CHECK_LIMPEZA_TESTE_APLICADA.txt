@@ -1,0 +1,133 @@
+========== CHECK MARCACAO TESTE ==========
+781-                tipo: novoUsuario.tipo,
+782-                validade: null,
+783-                teste_lukafilmes: true
+784-            };
+785-
+786-            // Marca permanentemente o cliente como criado pelo
+787-            // fluxo de teste. Isso permite removê-lo com segurança
+788-            // quando o pagamento de teste for recusado.
+789:            novoUsuario.teste_lukafilmes = true;
+790-
+791-            await salvarUsuarios(usuarios);
+792-
+793-            console.log(
+794-                "[LUKA TESTE] Cadastro vinculado ao teste:",
+795-                novoUsuario.usuario,
+796-                "ID:",
+797-                novoUsuario.id
+798-            );
+799-
+800-        } else if (
+801-            !req.session.usuario ||
+802-            String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
+803-        ) {
+804-
+805-            req.session.usuario = {
+806-                id: novoUsuario.id,
+807-                usuario: novoUsuario.usuario,
+808-                tipo: novoUsuario.tipo,
+809-                validade: null
+810-            };
+811-        }
+812-
+813-        /*
+814-         * Garante que a sessão foi gravada antes da resposta.
+
+========== CHECK RECUSA ==========
+
+});
+
+
+// ============================================================
+// ADMIN — RECUSAR PAGAMENTO
+// ============================================================
+
+app.post("/api/admin/pagamentos/:id/recusar", async (req, res) => {
+
+    try {
+
+        if (!adminAutorizadoLuka(req)) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id < 1) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Pagamento inválido."
+            });
+        }
+
+        const pagamento = await buscarPagamentoLuka(id);
+
+        if (!pagamento) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Pagamento não encontrado."
+            });
+        }
+
+        if (
+            String(pagamento.status || "").toLowerCase() ===
+            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Não é possível recusar um pagamento já aprovado."
+            });
+        }
+
+        await atualizarPagamentoLuka(id, {
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.RECUSADO,
+            observacao:
+                "Pagamento recusado pelo administrador."
+        });
+
+        // =====================================================
+        // LIMPEZA AUTOMÁTICA DO TESTE
+        //
+        // Só remove usuários criados pelo modo de teste.
+        // Usuários reais NUNCA são removidos por esta rotina.
+        // =====================================================
+        let testeRemovido = false;
+
+        if (pagamento.usuario_id) {
+
+            const usuarios = await carregarUsuarios();
+
+            const indiceTeste = usuarios.findIndex(u =>
+                Number(u.id) === Number(pagamento.usuario_id) &&
+                (
+                    String(u.tipo || "").toLowerCase() === "teste" ||
+                    u.teste_lukafilmes === true
+                )
+            );
+
+            if (indiceTeste !== -1) {
+
+                const usuarioRemovido = usuarios[indiceTeste];
+
+                usuarios.splice(indiceTeste, 1);
+
+                await salvarUsuarios(usuarios);
+
+                testeRemovido = true;
+
+                console.log(
+                    "[LUKA TESTE] Usuário removido após recusa:",
+                    usuarioRemovido.usuario,
+                    "ID:",
+                    usuarioRemovido.id
+                );
+
+                // Se esse teste ainda estiver associado à sessão
+                // administrativa, remove somente o modo teste.
+
+========== NODE CHECK ==========
+NODE_EXIT=0

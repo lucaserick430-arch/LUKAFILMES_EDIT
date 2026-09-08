@@ -1,0 +1,301 @@
+                        return;
+                    }
+
+                    if (
+                        dadosPagamento.pagamento_necessario ===
+                        false
+                    ) {
+
+                        playerFilme.style.display =
+                            "block";
+
+                        return;
+                    }
+
+                    pagamento =
+                        dadosPagamento.pagamento ||
+                        null;
+
+                    const valor =
+                        dadosPagamento.valor ||
+                        Number(
+                            acesso.valor || 18
+                        ).toFixed(2);
+
+                    const pix =
+                        dadosPagamento.pix ||
+                        "";
+
+                    const antigo =
+                        document.getElementById(
+                            "lukafilmesPagamento"
+                        );
+
+                    if (antigo) {
+                        antigo.remove();
+                    }
+
+                    const tela =
+                        document.createElement("div");
+
+                    tela.id =
+                        "lukafilmesPagamento";
+
+                    tela.style.cssText = `
+                        width: min(92%, 520px);
+                        margin: 24px auto;
+                        padding: 24px;
+                        box-sizing: border-box;
+                        background: #111;
+                        border-radius: 18px;
+                        text-align: center;
+                        color: #fff;
+                        box-shadow: 0 10px 40px rgba(0,0,0,.45);
+                    `;
+
+                    tela.innerHTML = `
+                        <h2 style="margin:0 0 10px;">
+                            🔒 Acesso expirado
+                        </h2>
+
+                        <p style="margin:8px 0 18px;">
+                            Para assistir este filme, renove seu acesso.
+                        </p>
+
+                        <div style="
+                            font-size:30px;
+                            font-weight:700;
+                            margin:15px 0;
+                        ">
+                            R$ ${valor}
+                        </div>
+
+                        <p style="margin:8px 0;">
+                            Acesso por 30 dias
+                        </p>
+
+                        <div
+                            id="lukafilmesQrCode"
+                            style="
+                                width:220px;
+                                min-height:220px;
+                                margin:20px auto;
+                                padding:10px;
+                                box-sizing:border-box;
+                                background:#fff;
+                                border-radius:12px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                            ">
+                        </div>
+
+                        <p style="
+                            font-size:14px;
+                            margin:14px 0 6px;
+                        ">
+                            PIX copia e cola
+                        </p>
+
+                        <textarea
+                            id="lukafilmesPix"
+                            readonly
+                            style="
+                                width:100%;
+                                min-height:90px;
+                                box-sizing:border-box;
+                                resize:none;
+                                padding:10px;
+                                border-radius:10px;
+                                border:1px solid #444;
+                                background:#1d1d1d;
+                                color:#fff;
+                                font-size:12px;
+                            ">${pix}</textarea>
+
+                        <button
+                            type="button"
+                            id="lukafilmesCopiarPix"
+                            style="
+                                width:100%;
+                                margin-top:10px;
+                                padding:13px;
+                                border:0;
+                                border-radius:10px;
+                                cursor:pointer;
+                                font-weight:700;
+                            ">
+                            📋 COPIAR PIX
+                        </button>
+
+                        <button
+                            type="button"
+                            id="lukafilmesPagamentoFeito"
+                            style="
+                                width:100%;
+                                margin-top:10px;
+                                padding:13px;
+                                border:0;
+                                border-radius:10px;
+                                cursor:pointer;
+                                font-weight:700;
+                            ">
+                            ✅ JÁ REALIZEI O PAGAMENTO
+                        </button>
+
+                        <p
+                            id="lukafilmesPagamentoStatus"
+                            style="
+                                display:none;
+                                margin-top:14px;
+                                font-size:14px;
+                            ">
+                        </p>
+                    `;
+
+                    playerFilme.parentNode.insertBefore(
+                        tela,
+                        playerFilme
+                    );
+
+                    tela.scrollIntoView({
+                        behavior: "auto",
+                        block: "center"
+                    });
+
+                    const areaQr =
+                        document.getElementById(
+                            "lukafilmesQrCode"
+                        );
+
+                    if (
+                        pix &&
+                        areaQr &&
+                        typeof QRCode !== "undefined"
+                    ) {
+
+                        new QRCode(
+                            areaQr,
+                            {
+                                text: pix,
+                                width: 200,
+                                height: 200
+                            }
+                        );
+
+                    }
+                    else if (areaQr) {
+
+                        areaQr.innerHTML =
+                            "<span style='color:#222;'>QR Code indisponível</span>";
+
+                    }
+
+                    const botaoCopiar =
+                        document.getElementById(
+                            "lukafilmesCopiarPix"
+                        );
+
+                    if (botaoCopiar) {
+
+                        botaoCopiar.onclick =
+                            async function () {
+
+                                try {
+
+                                    await navigator.clipboard.writeText(
+                                        pix
+                                    );
+
+                                    botaoCopiar.innerHTML =
+                                        "✅ PIX COPIADO";
+
+                                    setTimeout(
+                                        function () {
+                                            botaoCopiar.innerHTML =
+                                                "📋 COPIAR PIX";
+                                        },
+                                        2000
+                                    );
+
+                                } catch (erro) {
+
+                                    const campo =
+                                        document.getElementById(
+                                            "lukafilmesPix"
+                                        );
+
+                                    if (campo) {
+
+                                        campo.focus();
+                                        campo.select();
+
+                                        try {
+                                            document.execCommand(
+                                                "copy"
+                                            );
+                                        } catch (_) {}
+
+                                    }
+
+                                    botaoCopiar.innerHTML =
+                                        "✅ PIX COPIADO";
+                                }
+
+                            };
+
+                    }
+
+                    const botaoFeito =
+                        document.getElementById(
+                            "lukafilmesPagamentoFeito"
+                        );
+
+                    if (botaoFeito) {
+
+                        botaoFeito.onclick =
+                            function () {
+
+                                const nomeUsuario =
+                                    String(
+                                        pagamento &&
+                                        pagamento.usuario
+                                            ? pagamento.usuario
+                                            : "cliente"
+                                    );
+
+                                const idPagamento =
+                                    pagamento &&
+                                    pagamento.id
+                                        ? Number(pagamento.id)
+                                        : "";
+
+                                const mensagem =
+                                    [
+                                        "🎬 LUKAFILMES — COMPROVANTE DE PAGAMENTO",
+                                        "",
+                                        "👤 Usuário: " + nomeUsuario,
+                                        "🧾 Pagamento: #" + idPagamento,
+                                        "💰 Valor: R$ " + valor,
+                                        "",
+                                        "✅ Já realizei o pagamento via PIX.",
+                                        "",
+                                        "Estou enviando o comprovante para conferência e aprovação."
+                                    ].join("\n");
+
+                                const whatsapp =
+                                    "https://wa.me/5511957621653?text=" +
+                                    encodeURIComponent(mensagem);
+
+                                const status =
+                                    document.getElementById(
+                                        "lukafilmesPagamentoStatus"
+                                    );
+
+                                if (status) {
+
+                                    status.style.display =
+                                        "block";
+
+                                    status.innerHTML =
+                                        "⏳ Pagamento pendente. Envie o comprovante pelo WhatsApp e aguarde a aprovação do administrador.";

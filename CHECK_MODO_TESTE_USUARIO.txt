@@ -1,0 +1,68 @@
+========== ROTAS MODO TESTE ==========
+934:function lukaUsuarioOperacional(req) {
+948:function lukaModoTesteAtivo(req) {
+958:app.post("/api/admin/teste/iniciar", async (req, res) => {
+1038:app.post("/api/admin/teste/encerrar", (req, res) => {
+1065:app.get("/api/admin/teste/status", (req, res) => {
+1080:        ativo: lukaModoTesteAtivo(req),
+
+========== BOTAO ADMIN ==========
+5632-            color:#fff;
+5633-            background:linear-gradient(135deg,#ff1744,#8e24aa);
+5634-            box-shadow:0 8px 25px rgba(255,23,68,.25);
+5635-        "
+5636-    >
+5637:        🧪 TESTAR COMO USUÁRIO
+5638-    </button>
+5639-
+5640-    <div style="
+5641-        margin-top:9px;
+5642-        font-size:12px;
+5643-        line-height:1.45;
+5644-        opacity:.65;
+5645-    ">
+5646-        Abre o LUKAFILMES como um cliente comum,
+5647-        preservando sua sessão de administrador.
+5648-    </div>
+5649-</div>
+--
+5703-
+5704-    } finally {
+5705-
+5706-        if (botao) {
+5707-            botao.disabled = false;
+5708:            botao.textContent = "🧪 TESTAR COMO USUÁRIO";
+5709-        }
+5710-    }
+5711-}
+5712-</script>
+5713-
+5714-<!-- FIM LUKA_MODO_TESTE_USUARIO_V1 -->
+5715-
+5716-</body>
+5717-</html>
+5718-
+5719-<style id="luka-conta-tech-upgrade">
+5720-
+
+========== API EU ==========
+1084-
+1085-
+1086:app.get("/api/eu", (req, res) => {
+1087-
+1088-    if (!req.session.usuario) {
+1089-
+1090-        return res.status(401).json({
+1091-            logado: false
+1092-        });
+1093-    }
+1094-
+1095-    res.json({
+1096-        logado: true,
+1097-        usuario: req.session.usuario
+1098-    });
+1099-
+1100-});
+
+========== CHECK ==========
+NODE_EXIT=0

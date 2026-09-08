@@ -1,0 +1,36 @@
+========== ROTA RECUSA ==========
+
+========== TODAS ROTAS PAGAMENTOS ADMIN ==========
+132:    pagamentos: {
+241:    CREATE TABLE IF NOT EXISTS lukafilmes_pagamentos (
+265:            INSERT INTO lukafilmes_pagamentos
+285:            String(dados.status || CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE),
+306:        FROM lukafilmes_pagamentos
+323:                FROM lukafilmes_pagamentos
+335:        FROM lukafilmes_pagamentos
+352:            FROM lukafilmes_pagamentos
+395:            UPDATE lukafilmes_pagamentos
+629:    .then(() => console.log("[TURSO] Tabela de pagamentos preparada."))
+630:    .catch(erro => console.error("[TURSO PAGAMENTOS] Erro ao preparar tabela:", erro));
+1280:// ADMIN — PAGAMENTOS LUKAFILMES
+1291:app.get("/api/admin/pagamentos", async (req, res) => {
+1302:        const pagamentos = await listarPagamentosLuka();
+1306:            pagamentos: Array.isArray(pagamentos) ? pagamentos : []
+1311:        console.error("[ADMIN PAGAMENTOS] Erro ao listar:", erro);
+1315:            mensagem: "Erro ao carregar pagamentos.",
+1316:            pagamentos: []
+1328:app.post("/api/admin/pagamentos/:id/aprovar", async (req, res) => {
+1359:            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO
+1369:            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.RECUSADO
+1430:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO,
+1447:        console.error("[ADMIN PAGAMENTOS] Erro ao aprovar:", erro);
+1463:app.post("/api/admin/pagamentos/:id/recusar", async (req, res) => {
+1494:            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO
+1504:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.RECUSADO,
+1516:        console.error("[ADMIN PAGAMENTOS] Erro ao recusar:", erro);
+1530:app.post("/api/pagamentos/criar", async (req, res) => {
+1588:        const pagamentosPendentes =
+1590:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+1594:            pagamentosPendentes.find(
+1640:                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+5951:            req.path === "/api/pagamentos/criar"

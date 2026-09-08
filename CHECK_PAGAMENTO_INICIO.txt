@@ -1,0 +1,222 @@
+            async function mostrarPagamentoLuka(acesso, renovacao = false) {
+
+                try {
+
+                    let pagamento = null;
+
+                    const respostaPagamento =
+                        await fetch(
+                            "/api/pagamentos/criar",
+                            {
+                                method: "POST",
+                                credentials: "same-origin",
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+                                body: JSON.stringify(
+                                    renovacao
+                                        ? { renovacao: true }
+                                        : {}
+                                )
+                            }
+                        );
+
+                    const dadosPagamento =
+                        await respostaPagamento.json();
+
+                    if (!respostaPagamento.ok ||
+                        !dadosPagamento.sucesso) {
+
+                        alert(
+                            dadosPagamento.mensagem ||
+                            "Não foi possível preparar o pagamento."
+                        );
+
+                        return;
+                    }
+
+                    if (
+                        dadosPagamento.pagamento_necessario ===
+                        false
+                    ) {
+
+                        playerFilme.style.display =
+                            "block";
+
+                        return;
+                    }
+
+                    pagamento =
+                        dadosPagamento.pagamento ||
+                        null;
+
+                    const valor =
+                        dadosPagamento.valor ||
+                        Number(
+                            acesso.valor || 18
+                        ).toFixed(2);
+
+                    const pix =
+                        dadosPagamento.pix ||
+                        "";
+
+                    const antigo =
+                        document.getElementById(
+                            "lukafilmesPagamento"
+                        );
+
+                    if (antigo) {
+                        antigo.remove();
+                    }
+
+                    const tela =
+                        document.createElement("div");
+
+                    tela.id =
+                        "lukafilmesPagamento";
+
+                    tela.style.cssText = `
+                        width: min(92%, 520px);
+                        margin: 24px auto;
+                        padding: 24px;
+                        box-sizing: border-box;
+                        background: linear-gradient(180deg, #242424 0%, #111 100%);
+                        border: 2px solid rgba(255,255,255,.16);
+                        border-radius: 20px;
+                        text-align: center;
+                        color: #fff;
+                        box-shadow: 0 15px 50px rgba(0,0,0,.75);
+                        position: relative;
+                        z-index: 20;
+                    `;
+
+                    tela.innerHTML = `
+                        <h2 style="margin:0 0 10px;">
+                            ${renovacao ? "🔄 Renovar acesso" : "🔒 Acesso expirado"}
+                        </h2>
+
+                        <p style="margin:8px 0 18px;">
+                            ${renovacao
+                                ? "Renove seu acesso ao LUKAFILMES por mais 30 dias."
+                                : "Para assistir este filme, renove seu acesso."}
+                        </p>
+
+                        <div style="
+                            font-size:30px;
+                            font-weight:700;
+                            margin:15px 0;
+                        ">
+                            R$ ${valor}
+                        </div>
+
+                        <p style="margin:8px 0;">
+                            Acesso por 30 dias
+                        </p>
+
+                        <div
+                            id="lukafilmesQrCode"
+                            style="
+                                width:220px;
+                                min-height:220px;
+                                margin:20px auto;
+                                padding:10px;
+                                box-sizing:border-box;
+                                background:#fff;
+                                border-radius:12px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                            ">
+                        </div>
+
+                        <p style="
+                            font-size:14px;
+                            margin:14px 0 6px;
+                        ">
+                            PIX copia e cola
+                        </p>
+
+                        <textarea
+                            id="lukafilmesPix"
+                            readonly
+                            style="
+                                width:100%;
+                                min-height:90px;
+                                box-sizing:border-box;
+                                resize:none;
+                                padding:10px;
+                                border-radius:10px;
+                                border:1px solid #444;
+                                background:#fff;
+                                color:#111;
+                                font-size:13px;
+                                font-weight:600;
+                                line-height:1.45;
+                                outline:none;
+                            ">${pix}</textarea>
+
+                        <button
+                            type="button"
+                            id="lukafilmesCopiarPix"
+                            style="
+                                width:100%;
+                                margin-top:12px;
+                                padding:15px;
+                                border:2px solid #fff;
+                                border-radius:12px;
+                                cursor:pointer;
+                                font-weight:800;
+                                font-size:15px;
+                                background:#fff;
+                                color:#111;
+                                box-shadow:0 5px 18px rgba(0,0,0,.35);
+                                display:block;
+                                visibility:visible;
+                                opacity:1;
+                            ">
+                            📋 COPIAR CÓDIGO PIX
+                        </button>
+
+                        <button
+                            type="button"
+                            id="lukafilmesPagamentoFeito"
+                            style="
+                                width:100%;
+                                margin-top:10px;
+                                padding:13px;
+                                border:0;
+                                border-radius:10px;
+                                cursor:pointer;
+                                font-weight:700;
+                            ">
+                            📲 ENVIAR COMPROVANTE PELO WHATSAPP
+                        </button>
+
+                        <p
+                            id="lukafilmesPagamentoStatus"
+                            style="
+                                display:none;
+                                margin-top:14px;
+                                font-size:14px;
+                            ">
+                        </p>
+                    `;
+
+                    playerFilme.parentNode.insertBefore(
+                        tela,
+                        playerFilme
+                    );
+
+                    tela.scrollIntoView({
+                        behavior: "auto",
+                        block: "center"
+                    });
+
+                    const areaQr =
+                        document.getElementById(
+                            "lukafilmesQrCode"
+                        );
+
+                    if (
+                        pix &&

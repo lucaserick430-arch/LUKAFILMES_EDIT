@@ -1,0 +1,33 @@
+
+            async function mostrarPagamentoLuka(acesso, renovacao = false) {
+
+                try {
+
+                    let pagamento = null;
+
+                    const respostaPagamento =
+                        await fetch(
+                            "/api/pagamentos/criar",
+                            {
+                                method: "POST",
+                                credentials: "same-origin",
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+                                body: JSON.stringify(
+                                    renovacao
+                                        ? { renovacao: true }
+                                        : {}
+                                )
+                            }
+                        );
+
+                    const dadosPagamento =
+                        await respostaPagamento.json();
+
+                    if (!respostaPagamento.ok ||
+                        !dadosPagamento.sucesso) {
+
+                        alert(
+                            dadosPagamento.mensagem ||

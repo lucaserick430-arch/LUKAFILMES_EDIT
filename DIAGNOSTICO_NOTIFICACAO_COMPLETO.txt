@@ -1,0 +1,196 @@
+<script id="lukafilmes-renovacao-notificacao-script">
+(function(){
+
+    "use strict";
+
+    const TEMPO = 10000;
+
+    function escapar(valor){
+        return String(valor || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function removerNotificacao(){
+        const antigo =
+            document.getElementById(
+                "lukaRenovacaoNotificacao"
+            );
+
+        if(antigo){
+            antigo.remove();
+        }
+    }
+
+    function mostrarNotificacao(dados){
+
+        removerNotificacao();
+
+        const caixa =
+            document.createElement("div");
+
+        caixa.id =
+            "lukaRenovacaoNotificacao";
+
+        const usuario =
+            escapar(dados.usuario || "");
+
+        const dias =
+            Number(dados.dias_restantes || 0);
+
+        let textoDias;
+
+        if(dados.expirado){
+            textoDias =
+                "Seu acesso já expirou.";
+        }else if(dias === 1){
+            textoDias =
+                "Seu acesso vence em 1 dia.";
+        }else{
+            textoDias =
+                "Seu acesso vence em " +
+                dias +
+                " dias.";
+        }
+
+        caixa.innerHTML = `
+            <div class="luka-renovacao-titulo">
+                🔔 RENOVAÇÃO DO LUKAFILMES
+            </div>
+
+            <div class="luka-renovacao-texto">
+                Olá, <strong>${usuario}</strong>!
+                <br>
+                ${textoDias}
+                <br>
+                Renove seu acesso por mais
+                ${Number(dados.dias_renovacao || 30)} dias.
+            </div>
+
+            <div class="luka-renovacao-dias">
+                R$ ${escapar(dados.valor || "18.00")}
+            </div>
+
+            <div class="luka-renovacao-acoes">
+                <button
+                    type="button"
+                    class="luka-renovar"
+                    id="lukaRenovarAgora">
+                    🔄 RENOVAR
+                </button>
+
+                <button
+                    type="button"
+                    class="luka-fechar"
+                    id="lukaFecharRenovacao">
+                    FECHAR
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(caixa);
+
+        caixa.style.display = "block";
+
+        const botaoRenovar =
+            document.getElementById(
+                "lukaRenovarAgora"
+            );
+
+        if(botaoRenovar){
+
+            botaoRenovar.addEventListener(
+                "click",
+                function(){
+
+                    /*
+                     * Próxima etapa:
+                     * abrir o PIX existente com
+                     * renovacao=true.
+                     */
+                    window.dispatchEvent(
+                        new CustomEvent(
+                            "luka:renovar",
+                            {
+                                detail: dados
+                            }
+                        )
+                    );
+
+                    caixa.remove();
+                }
+            );
+        }
+
+        const botaoFechar =
+            document.getElementById(
+                "lukaFecharRenovacao"
+            );
+
+        if(botaoFechar){
+            botaoFechar.addEventListener(
+                "click",
+                removerNotificacao
+            );
+        }
+
+        setTimeout(function(){
+
+            if(document.body.contains(caixa)){
+                caixa.remove();
+            }
+
+        }, TEMPO);
+    }
+
+    async function verificarRenovacao(){
+
+        try{
+
+            const resposta =
+                await fetch(
+                    "/api/renovacao-status",
+                    {
+                        method: "GET",
+                        credentials: "same-origin",
+                        cache: "no-store"
+                    }
+                );
+
+            if(!resposta.ok){
+                return;
+            }
+
+            const dados =
+                await resposta.json();
+
+            if(
+                dados &&
+                dados.sucesso &&
+                dados.logado &&
+                dados.deve_notificar
+            ){
+
+                mostrarNotificacao(dados);
+            }
+
+        }catch(erro){
+
+            console.warn(
+                "[LUKAFILMES] Falha ao verificar renovação:",
+                erro
+            );
+        }
+    }
+
+    function iniciar(){
+
+        /*
+         * Pequeno atraso para não competir com
+         * o carregamento principal da página.
+         */
+        setTimeout(
+            verificarRenovacao,

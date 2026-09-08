@@ -1,0 +1,101 @@
+========== LOGIN JS COMPLETO ==========
+})();
+</script>
+
+
+<script>
+(function () {
+
+    function iniciarLukafilmes() {
+        var botao = document.getElementById("botaoEntrar");
+
+        if (!botao) return;
+
+        botao.onclick = function (evento) {
+            evento.preventDefault();
+
+            if (botao.dataset.abrindo === "1") return;
+
+            botao.dataset.abrindo = "1";
+            botao.disabled = true;
+
+            botao.innerHTML =
+                '<span class="icone-play">▶</span>' +
+                '<span>ABRINDO LUKAFILMES...</span>';
+
+            try {
+                if (typeof window.lukafilmesMostrarLoginLoader === "function") {
+                    window.lukafilmesMostrarLoginLoader();
+                }
+            } catch (e) {}
+
+            setTimeout(function () {
+                window.location.href = "/";
+            }, 350);
+        };
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", iniciarLukafilmes);
+    } else {
+        iniciarLukafilmes();
+    }
+
+})();
+</script>
+
+</body>
+</html>
+
+
+
+
+
+========== BOTAO ENTRAR ==========
+597-    function iniciarLukafilmes() {
+598-        var botao = document.getElementById("botaoEntrar");
+599-
+600-        if (!botao) return;
+601-
+602:        botao.onclick = function (evento) {
+603-            evento.preventDefault();
+604-
+605-            if (botao.dataset.abrindo === "1") return;
+606-
+607-            botao.dataset.abrindo = "1";
+608-            botao.disabled = true;
+609-
+610-            botao.innerHTML =
+611-                '<span class="icone-play">▶</span>' +
+612-                '<span>ABRINDO LUKAFILMES...</span>';
+613-
+614-            try {
+615-                if (typeof window.lukafilmesMostrarLoginLoader === "function") {
+616-                    window.lukafilmesMostrarLoginLoader();
+617-                }
+618-            } catch (e) {}
+619-
+620-            setTimeout(function () {
+621-                window.location.href = "/";
+622-            }, 350);
+623-        };
+624-    }
+625-
+626-    if (document.readyState === "loading") {
+627-        document.addEventListener("DOMContentLoaded", iniciarLukafilmes);
+628-    } else {
+629-        iniciarLukafilmes();
+630-    }
+631-
+632-})();
+633-</script>
+634-
+635-</body>
+636-</html>
+637-
+638-
+639-
+640-
+
+========== FETCH NO LOGIN.HTML ==========
+621:                window.location.href = "/";

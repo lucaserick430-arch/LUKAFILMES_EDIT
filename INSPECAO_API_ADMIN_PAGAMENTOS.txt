@@ -1,0 +1,44 @@
+1503-function adminAutorizadoLuka(req) {
+1504-    return Boolean(
+1505-        req.session &&
+1506-        req.session.usuario &&
+1507-        String(req.session.usuario.tipo || "").toLowerCase() === "admin"
+1508-    );
+1509-}
+1510-
+1511:app.get("/api/admin/pagamentos", async (req, res) => {
+1512-
+1513-    try {
+1514-
+1515-        if (!adminAutorizadoLuka(req)) {
+1516-            return res.status(403).json({
+1517-                sucesso: false,
+1518-                mensagem: "Acesso negado."
+1519-            });
+1520-        }
+1521-
+1522-        const pagamentos = await listarPagamentosLuka();
+1523-
+1524-        return res.json({
+1525-            sucesso: true,
+1526-            pagamentos: Array.isArray(pagamentos) ? pagamentos : []
+1527-        });
+1528-
+1529-    } catch (erro) {
+1530-
+1531-        console.error("[ADMIN PAGAMENTOS] Erro ao listar:", erro);
+1532-
+1533-        return res.status(500).json({
+1534-            sucesso: false,
+1535-            mensagem: "Erro ao carregar pagamentos.",
+1536-            pagamentos: []
+1537-        });
+1538-
+1539-    }
+1540-
+1541-});
+1542-
+1543-
+1544-// ============================================================
+1545-// ADMIN — APROVAR PAGAMENTO
+1546-// ============================================================

@@ -1,0 +1,51 @@
+========== VERIFICACAO BOTAO ENTRAR ==========
+
+===== MENU DESKTOP =====
+1321-        LUKA<span>FILMES</span>
+1322-    </div>
+1323-
+1324:    <nav class="nav">
+1325-        <a href="#" class="active">Início</a>
+1326-        <a href="paginas/filmes.html">Filmes</a>
+1327-        <a href="paginas/series.html">Séries</a>
+1328-        <a href="/login" class="lukafilmes-entrar-btn">🔐 Entrar</a>
+1329-        <a
+1330-            class="continuar-header-btn"
+1331-            href="/paginas/continuar-assistindo.html"
+1332-            aria-label="Continuar assistindo"
+1333-        >▶ Continuar Assistindo</a>
+1334-    </nav>
+1335-
+1336-    <div class="header-right">
+
+===== MENU MOBILE =====
+1367-</div>
+1368-
+1369:<div class="mobile-menu" id="mobileMenu">
+1370-    <a href="#">Início</a>
+1371-    <a href="paginas/filmes.html">Filmes</a>
+1372-    <a href="paginas/series.html">Séries</a>
+1373-    <a href="/login" class="lukafilmes-entrar-btn-mobile">🔐 Entrar</a>
+1374-
+1375-    <a
+1376-        href="/admin.html"
+1377-        id="lukafilmesMenuPainel"
+1378-        style="display:none;"
+1379-        data-lukafilmes-painel="true"
+1380-    >ADMIN</a>
+1381-
+1382-    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+1383-</div>
+1384-
+1385-
+1386-<!-- ================= BARRA ENTRADA CLIENTE ================= -->
+1387-<section class="hero">
+
+===== OCORRENCIAS DO ENTRAR =====
+1328:        <a href="/login" class="lukafilmes-entrar-btn">🔐 Entrar</a>
+1373:    <a href="/login" class="lukafilmes-entrar-btn-mobile">🔐 Entrar</a>
+
+===== SERVER SYNTAX =====
+NODE_EXIT=0
+
+===== FIM =====

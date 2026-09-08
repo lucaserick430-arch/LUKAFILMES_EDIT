@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUKAFILMES — Criar conta</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    min-height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at top, rgba(229,9,20,.20), transparent 35%),
+        #050505;
+    color: #fff;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 14px;
+}
+
+.card {
+    width: min(100%, 470px);
+    background: rgba(18,18,18,.94);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px;
+    padding: 30px 24px;
+    box-shadow: 0 25px 80px rgba(0,0,0,.65);
+}
+
+.logo {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+}
+
+.logo span {
+    color: #e50914;
+}
+
+.subtitulo {
+    text-align: center;
+    color: #bdbdbd;
+    line-height: 1.5;
+    margin: 0 0 25px;
+}
+
+.titulo {
+    font-size: 22px;
+    margin: 0 0 7px;
+}
+
+.campo {
+    margin-top: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+    color: #ddd;
+}
+
+input {
+    width: 100%;
+    height: 52px;
+    border: 1px solid #333;
+    border-radius: 13px;
+    padding: 0 15px;
+    outline: none;
+    background: #0d0d0d;
+    color: #fff;
+    font-size: 16px;
+}
+
+input:focus {
+    border-color: #e50914;
+    box-shadow: 0 0 0 3px rgba(229,9,20,.12);
+}
+
+button {
+    width: 100%;
+    min-height: 52px;
+    border: 0;
+    border-radius: 13px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.btn-criar {
+    margin-top: 22px;
+    background: #e50914;
+    color: #fff;
+}
+
+.btn-criar:hover {
+    filter: brightness(1.1);
+}
+
+.mensagem {
+    display: none;
+    margin-top: 17px;
+    padding: 14px;
+    border-radius: 13px;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.erro {
+    display: block;
+    background: rgba(229,9,20,.12);
+    border: 1px solid rgba(229,9,20,.4);
+    color: #ffb3b3;
+}
+
+.sucesso {
+    display: block;
+    background: rgba(0,180,90,.10);
+    border: 1px solid rgba(0,180,90,.35);
+    color: #a8ffd0;
+}
+
+.conta-criada {
+    display: none;
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 17px;
+    background: #0b0b0b;
+    border: 1px solid #292929;
+}
+
+.conta-criada h3 {
+    margin: 0 0 8px;
+}
+
+.dado {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 11px;
+    background: #151515;
+}
+
+.dado small {
+    display: block;
+    color: #999;
+    margin-bottom: 4px;
+}
+
+.dado strong {
+    word-break: break-word;
+}
+
+.acoes {
+    margin-top: 14px;
+    display: grid;
+    gap: 9px;
+}
+
+.btn-secundario {
+    background: #222;
+    color: #fff;
+    border: 1px solid #3a3a3a;
+}
+
+.btn-continuar {
+    background: #e50914;
+    color: #fff;
+}
+
+.aviso {
+    margin-top: 18px;
+    padding: 13px;
+    border-radius: 12px;
+    background: rgba(255,190,0,.08);
+    border: 1px solid rgba(255,190,0,.22);
+    color: #f1d889;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.carregando {
+    opacity: .6;
+    pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<main class="card">
+
+    <div class="logo">
+        LUKA<span>FILMES</span>
+    </div>
+
+    <p class="subtitulo">
+        Crie sua conta para continuar.
+        <br>
+        O acesso aos filmes é liberado após a ativação.
+    </p>
+
+    <section id="formulario">
+
+        <h1 class="titulo">Criar minha conta</h1>
+
+        <div class="campo">
+            <label for="nome">Seu nome</label>
+            <input
+                id="nome"
+                type="text"
+                autocomplete="name"
+                placeholder="Digite seu nome">
+        </div>
+
+        <div class="campo">
+            <label for="usuario">Usuário</label>
+            <input
+                id="usuario"
+                type="text"
+                autocomplete="username"
+                placeholder="Escolha seu usuário">
+        </div>
+
+        <div class="campo">
+            <label for="senha">Senha</label>
+            <input
+                id="senha"
+                type="password"
+                autocomplete="new-password"
+                placeholder="Mínimo de 6 caracteres">
+        </div>
+
+        <div class="campo">
+            <label for="telefone">WhatsApp / telefone</label>
+            <input
+                id="telefone"
+                type="tel"
+                autocomplete="tel"
+                placeholder="(11) 99999-9999">
+        </div>
+
+        <button
+            id="btnCriar"
+            class="btn-criar">
+            CRIAR MINHA CONTA
+        </button>
+
+        <div id="mensagem" class="mensagem"></div>
+
+    </section>
+
+    <section id="contaCriada" class="conta-criada">
+
+        <h3>🎉 Conta criada com sucesso!</h3>
+
+        <div class="dado">
+            <small>Usuário</small>
+            <strong id="usuarioCriado"></strong>
+        </div>
+
+        <div class="dado">
+            <small>Senha</small>
+            <strong id="senhaCriada"></strong>
+        </div>
+
+        <div class="dado">
+            <small>WhatsApp / telefone</small>
+            <strong id="telefoneCriado"></strong>
+        </div>
+
+        <div class="acoes">
+
+            <button
+                id="btnCopiarTudo"
+                class="btn-secundario">
+                📋 COPIAR USUÁRIO E SENHA
+            </button>
+
+            <button
+                id="btnContinuar"
+                class="btn-continuar">
+                ▶ CONTINUAR
+            </button>
+
+        </div>
+
+        <div class="aviso">
+            🔒 Sua conta foi criada, mas os filmes ainda não estão liberados.
+            Para assistir, você precisará ativar seu acesso pelo PIX.
+        </div>
+
+    </section>
+
+</main>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+
+const retorno =
+    params.get("retorno") ||
+    "/";
+
+const nomeInput =
+    document.getElementById("nome");
+
+const usuarioInput =
+    document.getElementById("usuario");
+
+const senhaInput =
+    document.getElementById("senha");
+
+const telefoneInput =
+    document.getElementById("telefone");
+
+const btnCriar =
+    document.getElementById("btnCriar");
+
+const mensagem =
+    document.getElementById("mensagem");
+
+const formulario =
+    document.getElementById("formulario");
+
+const contaCriada =
+    document.getElementById("contaCriada");
+
+function mostrarMensagem(texto, erro = false) {
+    mensagem.textContent = texto;
+    mensagem.className =
+        "mensagem " +
+        (erro ? "erro" : "sucesso");
+}
+
+btnCriar.addEventListener("click", async () => {
+
+    const nome =
+        nomeInput.value.trim();
+
+    const usuario =
+        usuarioInput.value.trim();
+
+    const senha =
+        senhaInput.value;
+
+    const telefone =
+        telefoneInput.value.trim();
+
+    if (!nome || !usuario || !senha || !telefone) {
+        mostrarMensagem(
+            "Preencha todos os campos.",
+            true
+        );
+        return;
+    }
+
+    btnCriar.classList.add("carregando");
+    btnCriar.textContent = "CRIANDO CONTA...";
+
+    try {
+
+        const resposta =
+            await fetch(
+                "/api/cadastro",
+                {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        nome,
+                        usuario,
+                        senha,
+                        telefone
+                    })
+                }
+            );
+
+        const dados =
+            await resposta.json();
+
+        if (!resposta.ok || !dados.sucesso) {
+            mostrarMensagem(
+                dados.mensagem ||
+                "Não foi possível criar sua conta.",
+                true
+            );
+
+            btnCriar.classList.remove("carregando");
+            btnCriar.textContent =
+                "CRIAR MINHA CONTA";
+
+            return;
+        }
+
+        document.getElementById(
+            "usuarioCriado"
+        ).textContent = dados.usuario;
+
+        document.getElementById(
+            "senhaCriada"
+        ).textContent = senha;
+
+        document.getElementById(
+            "telefoneCriado"
+        ).textContent = dados.telefone;
+
+        formulario.style.display = "none";
+        contaCriada.style.display = "block";
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[CADASTRO]",
+            erro
+        );
+
+        mostrarMensagem(
+            "Erro de conexão. Tente novamente.",
+            true
+        );
+
+        btnCriar.classList.remove("carregando");
+        btnCriar.textContent =
+            "CRIAR MINHA CONTA";
+    }
+});
+
+document.getElementById(
+    "btnCopiarTudo"
+).addEventListener("click", async () => {
+
+    const usuario =
+        document.getElementById(
+            "usuarioCriado"
+        ).textContent;
+
+    const senha =
+        document.getElementById(
+            "senhaCriada"
+        ).textContent;
+
+    const texto =
+`LUKAFILMES
+
+Usuário: ${usuario}
+Senha: ${senha}`;
+
+    try {
+
+        await navigator.clipboard.writeText(
+            texto
+        );
+
+        document.getElementById(
+            "btnCopiarTudo"
+        ).textContent =
+            "✅ COPIADO!";
+
+        setTimeout(() => {
+            document.getElementById(
+                "btnCopiarTudo"
+            ).textContent =
+                "📋 COPIAR USUÁRIO E SENHA";
+        }, 1800);
+
+    } catch (erro) {
+
+        alert(
+            "Não foi possível copiar automaticamente."
+        );
+    }
+});
+
+document.getElementById(
+    "btnContinuar"
+).addEventListener("click", () => {
+
+    window.location.href = retorno;
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+========== CHECK ==========
+931-// Mantém a sessão ADMIN intacta e permite simular um cliente
+932-// no mesmo navegador através de cookie separado.
+933-
+934:function lukaCookieTesteAtivo(req) {
+935-    const cookies = String(
+936-        req?.headers?.cookie || ""
+937-    ).split(";");
+938-
+939-    return cookies.some(parte => {
+940-        const [chave, ...resto] = parte.trim().split("=");
+941-        return (
+942-            chave === "luka_modo_teste" &&
+943-            decodeURIComponent(resto.join("=")) === "1"
+944-        );
+945-    });
+946-}
+947-
+948-function lukaUsuarioOperacional(req) {
+949-    if (
+950-        req &&
+951-        req.session &&
+952-        req.session.lukaTesteUsuario &&
+953-        lukaCookieTesteAtivo(req)
+954-    ) {
+955-        return req.session.lukaTesteUsuario;
+956-    }
+957-
+958-    return req && req.session
+959-        ? req.session.usuario
+960-        : null;
+961-}
+962-
+
+========== API EU NOVA ==========
+1100:app.get("/api/eu", (req, res) => {
+1101-
+1102-    const usuario = lukaUsuarioOperacional(req);
+1103-
+1104-    if (!usuario) {
+1105-        return res.status(401).json({
+1106-            logado: false
+1107-        });
+1108-    }
+1109-
+1110-    res.json({
+1111-        logado: true,
+1112-        usuario
+1113-    });
+1114-
+1115-});
+1116-
+1117-// ==========================================
+1118-// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+
+========== NODE CHECK ==========
+NODE_EXIT=0

@@ -1,0 +1,17 @@
+===== APLICAÇÃO =====
+OK: identificação de renovação adicionada.
+OK: pagamentos normais permanecem sem o aviso.
+OK: detecta renovacao=true.
+OK: detecta tipo_pagamento=renovacao.
+
+===== BACKUP =====
+public/admin.html.backup_renovacao_20260907_162139
+
+===== VERIFICAÇÃO =====
+OK — const ehRenovacao =
+OK — const avisoRenovacao =
+OK — PEDINDO RENOVAÇÃO
+OK — ${avisoRenovacao}
+
+===== STATUS FINAL =====
+EXIT=0

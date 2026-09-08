@@ -1,0 +1,72 @@
+========== FORM ==========
+571-            Tudo em um só lugar.
+572-        </p>
+573-
+574:        <form id="loginForm">
+575-
+576-        <div class="premium-tags">
+577-            <span>FILMES</span>
+578-            <i></i>
+579-            <span>SÉRIES</span>
+580-            <i></i>
+581-            <span>ENTRETENIMENTO</span>
+582-        </div>
+583-
+584-        <div class="premium-login-campos">
+585-
+586-            <input
+587-            id="usuario"
+588-            type="text"
+589-            placeholder="Usuário"
+590-            autocomplete="username"
+591-            required
+592-        >
+593-
+594-            <input
+595-            id="senha"
+596-            type="password"
+597-            placeholder="Senha"
+598-            autocomplete="current-password"
+599-            required
+600-        >
+601-
+602-        </div>
+603-
+604-        <button id="botaoEntrar" type="button">
+605-            <span class="icone-play">▶</span>
+606-            <span>COMEÇAR A ASSISTIR</span>
+607-        </button>
+608-
+609-        <div id="mensagem"></div>
+610-
+611-        <div class="premium-mensagem">
+612-            Explore o catálogo e descubra seu próximo filme.
+613-        </div>
+614-
+615-        </form>
+616-
+617-    </div>
+618-
+619-</div>
+
+========== FECHAMENTO ==========
+610-
+611-        <div class="premium-mensagem">
+612-            Explore o catálogo e descubra seu próximo filme.
+613-        </div>
+614-
+615:        </form>
+616-
+617-    </div>
+618-
+619-</div>
+620-
+621-
+622-
+623-
+
+========== LOGIN JS ==========
+640:        .getElementById("loginForm")
+663:                const resposta = await fetch(
+664:                    "/login",
+717:    var form = document.getElementById("loginForm");

@@ -1,0 +1,176 @@
+                Number(resumo.receita || 0)
+                    .toFixed(2)
+                    .replace(".", ",");
+
+        }
+
+        const pagamentosTodos =
+            Array.isArray(dados.pagamentos)
+                ? dados.pagamentos
+                : [];
+
+        // A área visual mostra somente pagamentos que ainda precisam
+        // de decisão. Aprovados e recusados permanecem apenas nos
+        // contadores/resumo e não ficam acumulados na lista.
+        const pagamentos =
+            pagamentosTodos.filter(p =>
+                String(p.status || "pendente").toLowerCase() === "pendente"
+            );
+
+        if(!pagamentos.length){
+
+            lista.innerHTML =
+                '<div class="luka-pag-vazio">Nenhum pagamento registrado.</div>';
+
+            return;
+
+        }
+
+        lista.innerHTML =
+            pagamentos.map(p => {
+
+                const status =
+                    String(p.status || "pendente")
+                        .toLowerCase();
+
+                const classe =
+                    status === "aprovado"
+                        ? "luka-pag-aprovado"
+                        : status === "recusado"
+                            ? "luka-pag-recusado"
+                            : "luka-pag-pendente";
+
+                const textoStatus =
+                    status === "aprovado"
+                        ? "APROVADO"
+                        : status === "recusado"
+                            ? "RECUSADO"
+                            : "PENDENTE";
+
+                const criado =
+                    p.criado_em
+                        ? new Date(p.criado_em)
+                            .toLocaleString("pt-BR")
+                        : "—";
+
+                const validade =
+                    p.usuario_validade
+                        ? new Date(p.usuario_validade)
+                            .toLocaleString("pt-BR")
+                        : "—";
+
+                const valor =
+                    Number(p.valor || 0)
+                        .toFixed(2)
+                        .replace(".", ",");
+
+                let acoes = "";
+
+                if(status === "pendente"){
+
+                    acoes = `
+                        <button
+                            class="luka-pag-aprovar-btn"
+                            onclick="LUKA_APROVAR_PAGAMENTO(${Number(p.id)})"
+                        >
+                            ✅ APROVAR
+                        </button>
+
+                        <button
+                            class="luka-pag-recusar-btn"
+                            onclick="LUKA_RECUSAR_PAGAMENTO(${Number(p.id)})"
+                        >
+                            ❌ RECUSAR
+                        </button>
+                    `;
+
+                }
+
+                return `
+                    <div class="luka-pag-item">
+
+                        <div class="luka-pag-topo">
+
+                            <strong>
+                                💳 Pagamento #${Number(p.id)}
+                            </strong>
+
+                            <span class="luka-pag-status ${classe}">
+                                ${textoStatus}
+                            </span>
+
+                        </div>
+
+                        <div class="luka-pag-info">
+
+                            <div>
+                                👤 <b>Usuário:</b>
+                                ${String(p.usuario || "—")}
+                            </div>
+
+                            <div>
+                                🆔 <b>ID:</b>
+                                ${Number(p.usuario_id || 0)}
+                            </div>
+
+                            <div>
+                                💰 <b>Valor:</b>
+                                R$ ${valor}
+                            </div>
+
+                            <div>
+                                🕒 <b>Criado:</b>
+                                ${criado}
+                            </div>
+
+                            <div>
+                                📅 <b>Validade:</b>
+                                ${validade}
+                            </div>
+
+                        </div>
+
+                        ${
+                            p.observacao
+                                ? `
+                                    <div style="
+                                        margin-top:10px;
+                                        opacity:.65;
+                                        font-size:13px;
+                                    ">
+                                        📝 ${String(p.observacao)}
+                                    </div>
+                                  `
+                                : ""
+                        }
+
+                        ${
+                            acoes
+                                ? `
+                                    <div class="luka-pag-acoes">
+                                        ${acoes}
+                                    </div>
+                                  `
+                                : ""
+                        }
+
+                    </div>
+                `;
+
+            }).join("");
+
+    }catch(erro){
+
+        console.error(
+            "[LUKA PAGAMENTOS ADMIN]",
+            erro
+        );
+
+        lista.innerHTML =
+            '<div class="luka-pag-vazio">⚠️ Erro ao carregar pagamentos.</div>';
+
+    }
+
+}
+
+

@@ -598,6 +598,8 @@ app.use((req, res, next) => {
     next();
 });
 
+
+
 // ==========================================
 // SESSÃO
 // ==========================================
@@ -643,23 +645,6 @@ app.get("/login", (req, res) => {
     res.sendFile(
         path.join(__dirname, "public", "login.html")
     );
-});
-
-
-// ==========================================
-// ENTRADA COMO VISITANTE
-// ==========================================
-app.get("/entrar-visitante", (req, res, next) => {
-    req.session.visitante = true;
-
-    req.session.save((err) => {
-        if (err) {
-            console.error("[VISITANTE] Erro ao salvar sessão:", err);
-            return next(err);
-        }
-
-        return res.redirect("/");
-    });
 });
 
 // ==========================================
@@ -5668,6 +5653,8 @@ app.get("/api/revendedor/eu", async (req, res) => {
     }
 });
 
+
+
 // ==========================================
 // REVENDEDOR — EDITAR CLIENTE
 // ==========================================
@@ -6315,24 +6302,6 @@ app.get("/paginas/minha-lista", (req, res) => {
     );
 });
 
-// ==========================================
-// LUKAFILMES — TELA INICIAL DE ACESSO
-// ==========================================
-app.get("/", (req, res) => {
-
-    // Cliente logado ou visitante autorizado: entra na Home
-    if (req.session && (req.session.usuario || req.session.visitante)) {
-        return res.sendFile(
-            path.join(__dirname, "index.html")
-        );
-    }
-
-    // Primeiro acesso: mostra a tela original de login/entrada
-    return res.sendFile(
-        path.join(__dirname, "public", "login.html")
-    );
-});
-
 app.use(
     express.static(__dirname)
 );
@@ -6472,7 +6441,6 @@ module.exports = app
 
 
 const PORT_RENDER = process.env.PORT || 3000;
-
 app.listen(PORT_RENDER, "0.0.0.0", () => {
     console.log(`LUKAFILMES iniciado na porta ${PORT_RENDER}`);
 });

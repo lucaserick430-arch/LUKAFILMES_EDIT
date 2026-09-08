@@ -1,0 +1,525 @@
+================ MENU HTML ================
+        <a href="paginas/series.html">Séries</a>
+        <a
+            class="continuar-header-btn"
+            href="/paginas/continuar-assistindo.html"
+            aria-label="Continuar assistindo"
+        >▶ Continuar Assistindo</a>
+    </nav>
+
+    <div class="header-right">
+        <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
+
+        <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
+
+        <div class="profile">L</div>
+    </div>
+</header>
+
+
+<div class="desktop-user-menu" id="desktopUserMenu">
+    <div id="desktopUserOptions"></div>
+
+    <a
+        href="/admin.html"
+        id="lukafilmesDesktopAdmin"
+        style="display:none;"
+        data-lukafilmes-admin-link="true"
+    >⚙️ ADMIN</a>
+
+    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+</div>
+
+<div class="search-box" id="searchBox">
+    <input
+        id="searchInput"
+        type="search"
+        placeholder="Pesquisar filmes"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter') pesquisar()"
+    >
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#">Início</a>
+    <a href="paginas/filmes.html">Filmes</a>
+    <a href="paginas/series.html">Séries</a>
+
+    <a
+        href="/admin.html"
+        id="lukafilmesMenuPainel"
+        style="display:none;"
+        data-lukafilmes-painel="true"
+    >ADMIN</a>
+
+    <a href="#" onclick="logout(); return false;">🚪 Sair</a>
+</div>
+
+<section class="hero">
+
+    <div
+        class="hero-bg"
+        id="heroBg"
+        style="background-image:url('https://image.tmdb.org/t/p/original');">
+    </div>
+
+================ CSS MENU ================
+</style>
+
+
+<style id="lukafilmes-menu-desktop">
+/* =========================================================
+   LUKAFILMES — MENU DO COMPUTADOR
+   ========================================================= */
+
+.desktop-user-menu{
+    position: fixed;
+    top: 72px;
+    right: 24px;
+    z-index: 99999;
+
+    min-width: 190px;
+    padding: 8px;
+
+    background: rgba(15,15,15,.97);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+
+    box-shadow: 0 12px 35px rgba(0,0,0,.45);
+
+    display: none;
+}
+
+.desktop-user-menu.show{
+    display: block;
+}
+
+.desktop-user-menu a{
+    display: block;
+    padding: 12px 14px;
+
+    color: #fff;
+    text-decoration: none;
+
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.desktop-user-menu a:hover{
+    background: rgba(255,255,255,.10);
+}
+
+@media (max-width: 768px){
+    .desktop-user-menu{
+        display: none !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-menu-desktop-visible">
+/* =========================================================
+   LUKAFILMES — BOTÃO MENU DESKTOP
+   ========================================================= */
+
+@media (min-width: 769px){
+
+    .header .menu-btn{
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        width: 42px !important;
+        height: 42px !important;
+
+        cursor: pointer !important;
+        position: relative !important;
+        z-index: 100001 !important;
+    }
+
+================ TESTES ADMIN ================
+    <input
+        id="fTelefone"
+        type="tel"
+        placeholder="Ex.: (11) 99999-9999"
+        autocomplete="tel"
+    >
+</div>
+
+<input type="hidden" id="tipoCriacao">
+
+<div id="lukaEscolhaTeste" style="display:none;margin:0 0 18px;">
+  <div style="font-weight:800;margin-bottom:10px;">🧪 Como deseja criar o teste?</div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button type="button"
+            id="lukaModoManual"
+            onclick="LUKA_MODO_TESTE('manual')"
+            style="flex:1;min-width:130px;padding:12px;border-radius:12px;
+                   border:1px solid rgba(255,255,255,.15);cursor:pointer;
+                   font-weight:800;">
+      👤 Manual
+    </button>
+
+    <button type="button"
+            id="lukaModoAutomatico"
+            onclick="LUKA_MODO_TESTE('automatico')"
+            style="flex:1;min-width:160px;padding:12px;border-radius:12px;
+                   border:0;cursor:pointer;font-weight:800;">
+      ⚡ Automático
+    </button>
+  </div>
+</div>
+
+<div id="lukaAutomaticoBox"
+     style="display:none;margin:0 0 18px;padding:16px;border-radius:14px;
+            background:rgba(255,255,255,.05);
+            border:1px solid rgba(255,255,255,.10);">
+
+  <div style="font-weight:800;margin-bottom:12px;">
+    ⚡ Gerar testes automaticamente
+  </div>
+
+  <label>⏱️ Duração (horas)</label>
+  <input id="lukaAutoHoras"
+         type="number"
+         min="1"
+         max="72"
+         value="1">
+
+  <label style="display:block;margin-top:10px;">
+    🔌 Limite de conexões
+  </label>
+  <input id="lukaAutoConexoes"
+         type="number"
+         min="1"
+         value="1">
+
+  <label style="display:block;margin-top:10px;">
+    🔢 Quantidade de testes
+  </label>
+  <input id="lukaAutoQuantidade"
+         type="number"
+         min="1"
+         max="100"
+         value="1">
+
+  <div style="margin-top:12px;opacity:.75;font-size:13px;line-height:1.4;">
+    O sistema irá gerar automaticamente usuário e senha exclusivos para cada teste.
+  </div>
+</div>
+
+<div id="lukaCamposManuais">
+
+<label>Usuário</label>
+<input id="fUsuario" required autocomplete="off">
+
+<label>Senha</label>
+<input id="fSenha" type="password" required>
+
+<label id="fTempoLabel">Dias</label>
+<input id="fDias" type="number" min="1" value="30" required>
+
+</div>
+
+<div id="limiteBox" style="display:none">
+<label>Limite de conexões</label>
+<input id="fLimite" type="number" min="1" value="1">
+</div>
+
+<div class="modalActions">
+<button type="button" class="btn" onclick="fecharModal()">Cancelar</button>
+<button class="btn primary" id="btnSalvar">Criar</button>
+</div>
+
+</form>
+</div>
+</div>
+
+
+<div id="lukaEditarConta" onclick="fecharEditorConta(event)">
+    <div id="lukaEditarBox" onclick="event.stopPropagation()">
+
+        <div class="luka-edit-head">
+            <h2>✏️ Editar conta</h2>
+            <button class="luka-edit-close"
+                    type="button"
+                    onclick="fecharEditorConta()">×</button>
+        </div>
+
+        <div class="luka-edit-group">
+            <label>Usuário</label>
+            <input id="editarContaUsuario" autocomplete="off">
+        </div>
+
+        <div class="luka-edit-group">
+            <label>Nova senha</label>
+            <input id="editarContaSenha"
+                   type="password"
+                   placeholder="Deixe vazio para manter a atual">
+        </div>
+
+        <div class="luka-edit-group">
+            <label>Tipo</label>
+            <select id="editarContaTipo">
+                <option value="usuario">Usuário</option>
+                <option value="teste">Teste</option>
+                <option value="revendedor">Revendedor</option>
+                <option value="admin">Administrador</option>
+            </select>
+        </div>
+
+        <div class="luka-edit-group">
+            <label>Telefone</label>
+            <input id="editarContaTelefone"
+                   type="tel"
+                   placeholder="Telefone">
+        </div>
+
+        <div class="luka-edit-group">
+            <label>Valor mensal</label>
+            <input id="editarContaValor"
+
+================ FUNCAO MODO TESTE ================
+
+ const escolha=document.getElementById("lukaEscolhaTeste");
+ const auto=document.getElementById("lukaAutomaticoBox");
+ const manual=document.getElementById("lukaCamposManuais");
+
+ if(escolha) escolha.style.display="none";
+ if(auto) auto.style.display="none";
+ if(manual) manual.style.display="block";
+
+ const campoUsuario=document.getElementById("fUsuario");
+ const campoSenha=document.getElementById("fSenha");
+ const campoDias=document.getElementById("fDias");
+ const btnSalvar=document.getElementById("btnSalvar");
+
+ if(campoUsuario) campoUsuario.required=true;
+ if(campoSenha) campoSenha.required=true;
+ if(campoDias) campoDias.required=true;
+ if(btnSalvar){
+  btnSalvar.style.display="";
+  btnSalvar.disabled=false;
+  btnSalvar.textContent="Criar";
+ }
+}
+
+function LUKA_MODO_TESTE(modo){
+
+ const auto=document.getElementById("lukaAutomaticoBox");
+ const manual=document.getElementById("lukaCamposManuais");
+ const btnManual=document.getElementById("lukaModoManual");
+ const btnAuto=document.getElementById("lukaModoAutomatico");
+ const btnSalvar=document.getElementById("btnSalvar");
+
+ if(!auto || !manual) return;
+
+ if(modo==="automatico"){
+
+  auto.style.display="block";
+  manual.style.display="none";
+
+  /*
+   * Os campos manuais possuem required.
+   * Quando ficam escondidos, o navegador poderia impedir
+   * o envio do formulário antes do JavaScript executar.
+   */
+  const campoUsuario=document.getElementById("fUsuario");
+  const campoSenha=document.getElementById("fSenha");
+  const campoDias=document.getElementById("fDias");
+
+  if(campoUsuario) campoUsuario.required=false;
+  if(campoSenha) campoSenha.required=false;
+  if(campoDias) campoDias.required=false;
+
+  if(btnSalvar){
+   btnSalvar.style.display="";
+  }
+
+  if(btnAuto){
+   btnAuto.style.transform="scale(1.02)";
+   btnAuto.style.boxShadow="0 8px 25px rgba(0,0,0,.25)";
+  }
+
+  if(btnManual){
+   btnManual.style.transform="";
+   btnManual.style.boxShadow="";
+  }
+
+  if(btnSalvar){
+   btnSalvar.textContent="⚡ Gerar testes";
+  }
+
+ }else{
+
+  auto.style.display="none";
+  manual.style.display="block";
+
+  const campoUsuario=document.getElementById("fUsuario");
+  const campoSenha=document.getElementById("fSenha");
+  const campoDias=document.getElementById("fDias");
+
+  if(campoUsuario) campoUsuario.required=true;
+  if(campoSenha) campoSenha.required=true;
+
+================ PAGAMENTO CRIAR ================
+});
+
+
+// ==========================================
+// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+// ==========================================
+
+app.post("/api/pagamentos/criar", async (req, res) => {
+
+    try {
+
+        if (!req.session || !req.session.usuario) {
+            return res.status(401).json({
+                sucesso: false,
+                logado: false,
+                motivo: "nao_logado",
+                mensagem: "Faça login para continuar."
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                sucesso: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado",
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const tipo = String(
+            pessoa.tipo || "usuario"
+        ).toLowerCase();
+
+        const statusUsuario = String(
+            pessoa.status || "ativo"
+        ).toLowerCase();
+
+        if (statusUsuario !== "ativo") {
+            return res.status(403).json({
+                sucesso: false,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: false,
+                motivo: "isento",
+                tipo
+            });
+        }
+
+        const pagamentosPendentes =
+            await listarPagamentosLuka(
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+            );
+
+        const pagamentoExistente =
+            pagamentosPendentes.find(
+                pagamento =>
+                    Number(pagamento.usuario_id) === Number(pessoa.id)
+            );
+
+        if (pagamentoExistente) {
+
+            let pix;
+
+            try {
+                pix = gerarPixCopiaColaLuka();
+            } catch (erroPix) {
+                console.error(
+                    "[PAGAMENTO] Erro ao gerar PIX:",
+                    erroPix
+                );
+            }
+
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: true,
+                pagamento: pagamentoExistente,
+                pix: pix || null,
+                valor: Number(
+                    process.env.PIX_VALOR ||
+                    CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+                ).toFixed(2),
+                nome: process.env.PIX_NOME || "LUKAFILMES",
+                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+            });
+        }
+
+        const idPagamento =
+            await proximoIdPagamentoLuka();
+
+        const pagamento = {
+            id: idPagamento,
+            usuario_id: Number(pessoa.id),
+            usuario: String(
+                pessoa.usuario ||
+                sessao.usuario ||
+                ""
+            ),
+            valor:
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+            criado_em:
+                new Date().toISOString(),
+            aprovado_em: null,
+            inicio_acesso: null,
+            fim_acesso: null,
+            observacao: null
+        };
+
+        await criarPagamentoLuka(pagamento);
+
+        let pix;
+
+        try {
+            pix = gerarPixCopiaColaLuka();
+        } catch (erroPix) {
+            console.error(
+                "[PAGAMENTO] Erro ao gerar PIX:",
+                erroPix
+            );
+
+================ ROTAS ADMIN ================
+1299:app.get("/api/admin/presenca", async (req, res) => {
+3624:app.get("/api/admin/usuarios", async (req, res) => {
+3809:app.post("/api/admin/usuarios/teste", async (req, res) => {
+3972:app.post("/api/admin/usuarios/excluir", async (req, res) => {
+4062:app.post("/api/admin/usuarios/editar", async (req, res) => {
+4205:app.post("/api/admin/usuarios/status", async (req, res) => {
+4269:app.post("/api/admin/usuarios/renovar", async (req, res) => {
+4369:app.post("/api/admin/revendedores", async (req, res) => {
+
+================ FUNCOES PAGAMENTO ================
+237:async function prepararTursoPagamentos() {
+256:async function criarPagamentoLuka(dados) {
+297:async function proximoIdPagamentoLuka() {
+312:async function listarPagamentosLuka(status = null) {
+342:async function buscarPagamentoLuka(id) {
+362:async function atualizarPagamentoLuka(id, dados) {
+1145:            await listarPagamentosLuka(

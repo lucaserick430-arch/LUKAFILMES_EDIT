@@ -1,0 +1,171 @@
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.busca-home-item:hover {
+    background: #222;
+}
+
+.busca-home-item img {
+    width: 48px;
+    height: 68px;
+    object-fit: cover;
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+
+.busca-home-info {
+    min-width: 0;
+}
+
+.busca-home-titulo {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.busca-home-ano {
+    color: #aaa;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.busca-home-status {
+    padding: 18px;
+    color: #aaa;
+    text-align: center;
+}
+
+#searchBox {
+    position: fixed !important;
+}
+</style>
+
+<script id="lukafilmes-pesquisa-home-final">
+(function () {
+
+    const input = document.getElementById("searchInput");
+    const box = document.getElementById("searchBox");
+
+    if (!input || !box) {
+        console.warn("[PESQUISA HOME] Campo não encontrado.");
+        return;
+    }
+
+    let area = document.getElementById("resultadosBuscaHome");
+
+    if (!area) {
+        area = document.createElement("div");
+        area.id = "resultadosBuscaHome";
+        box.appendChild(area);
+    }
+
+    let contador = 0;
+
+    function escapar(valor) {
+        return String(valor || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function esconder() {
+        area.innerHTML = "";
+        area.style.display = "none";
+    }
+
+    async function pesquisarHome(termo) {
+
+        const pesquisaAtual = ++contador;
+
+        if (!termo) {
+            esconder();
+            return;
+        }
+
+        area.style.display = "block";
+        area.innerHTML =
+            '<div class="busca-home-status">🔎 Pesquisando...</div>';
+
+        try {
+
+            const resposta = await fetch(
+                "/api/pesquisar?q=" +
+                encodeURIComponent(termo)
+            );
+
+            if (!resposta.ok) {
+                throw new Error("HTTP " + resposta.status);
+            }
+
+            const dados = await resposta.json();
+
+            if (pesquisaAtual !== contador) return;
+
+            const lista = Array.isArray(dados.resultados)
+                ? dados.resultados
+                : [];
+
+            area.innerHTML = "";
+
+            if (!lista.length) {
+                area.innerHTML =
+                    '<div class="busca-home-status">Nenhum resultado encontrado.</div>';
+                return;
+            }
+
+            lista.slice(0, 20).forEach(function (filme) {
+
+                const item = document.createElement("div");
+                item.className = "busca-home-item";
+
+                const capa = filme.capa || "";
+                const titulo = filme.titulo || "Sem título";
+                const ano = filme.ano || "";
+
+                item.innerHTML = `
+                    ${capa
+                        ? `<img loading="lazy" decoding="async" src="${escapar(capa)}" alt="">`
+                        : ""
+                    }
+                    <div class="busca-home-info">
+                        <div class="busca-home-titulo">
+                            ${escapar(titulo)}
+                        </div>
+                        <div class="busca-home-ano">
+                            ${escapar(ano)}
+                        </div>
+                    </div>
+                `;
+
+                item.addEventListener("click", function () {
+
+                    localStorage.setItem(
+                        "filmeSelecionado",
+                        JSON.stringify(filme)
+                    );
+
+                    window.location.href =
+                        "/paginas/filme.html";
+                });
+
+                area.appendChild(item);
+            });
+
+        } catch (erro) {
+
+            if (pesquisaAtual !== contador) return;
+
+            console.error(
+                "[PESQUISA HOME]",
+                erro
+            );
+
+            area.innerHTML =
+                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+        }
