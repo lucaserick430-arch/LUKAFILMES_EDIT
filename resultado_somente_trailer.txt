@@ -1,0 +1,10 @@
+==============================================
+TELA DE ENTRADA — SOMENTE TRAILER
+==============================================
+OK - Conteúdo da entrada ocultado
+OK - Logo/textos ocultados
+OK - Botões visitante/cliente ocultados
+OK - Trailer NÃO foi alterado
+OK - Login NÃO foi apagado
+OK - Backup criado: public/login.html.backup_somente_trailer_20260908_182114
+==============================================

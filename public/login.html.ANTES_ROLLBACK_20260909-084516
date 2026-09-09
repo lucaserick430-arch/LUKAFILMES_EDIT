@@ -2410,15 +2410,14 @@ body {
             <span>LUKA</span><b>FILMES</b>
         </div>
         <!-- LUKAFILMES — CAPAS AUTOMÁTICAS ABAIXO DO LOGO -->
-        <div id="luka-capas-topo" aria-hidden="true">
-            <div id="luka-capas-topo-linha"></div>
-        </div>
+</div>
 <!-- FIM LUKAFILMES — CAPAS AUTOMÁTICAS ABAIXO DO LOGO -->
 
 
         <div class="premium-linha"></div>
 
         <div class="premium-kicker">
+            LUKAFILMES • ENTRETENIMENTO SEM COMPLICAÇÃO
         </div>
 
         <h1>
@@ -2850,6 +2849,249 @@ body::before {
 
 
 <!-- LUKAFILMES — BOTÕES DE ENTRADA SOBRE O TRAILER -->
+
+<!-- LUKAFILMES — CAPAS AUTOMÁTICAS ABAIXO DO LOGO -->
+<div id="luka-capas-logo-novas">
+    <div id="luka-capas-logo-novas-titulo">CAPAS AUTOMÁTICAS</div>
+    <div id="luka-capas-logo-novas-linha"></div>
+</div>
+
+<style id="luka-capas-logo-novas-css">
+#luka-capas-logo-novas{
+    width:100%!important;
+    margin:8px auto 18px!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
+}
+
+#luka-capas-logo-novas-titulo{
+    text-align:center!important;
+    color:#fff!important;
+    font-family:Arial,Helvetica,sans-serif!important;
+    font-size:11px!important;
+    font-weight:900!important;
+    letter-spacing:2px!important;
+    margin:0 0 10px!important;
+    opacity:.85!important;
+}
+
+#luka-capas-logo-novas-linha{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:10px!important;
+    width:max-content!important;
+    margin:0 auto!important;
+}
+
+#luka-capas-logo-novas-linha img{
+    display:block!important;
+    width:92px!important;
+    min-width:92px!important;
+    height:132px!important;
+    min-height:132px!important;
+    object-fit:cover!important;
+    border-radius:8px!important;
+    border:1px solid rgba(255,255,255,.18)!important;
+    box-shadow:0 6px 20px rgba(0,0,0,.55)!important;
+}
+
+@media(max-width:600px){
+    #luka-capas-logo-novas{
+        margin:6px auto 14px!important;
+    }
+
+    #luka-capas-logo-novas-titulo{
+        font-size:10px!important;
+        letter-spacing:1.7px!important;
+        margin-bottom:8px!important;
+    }
+
+    #luka-capas-logo-novas-linha{
+        gap:7px!important;
+        justify-content:flex-start!important;
+        padding:0 10px!important;
+        box-sizing:border-box!important;
+        overflow:hidden!important;
+        width:100%!important;
+    }
+
+    #luka-capas-logo-novas-linha img{
+        width:76px!important;
+        min-width:76px!important;
+        height:110px!important;
+        min-height:110px!important;
+        border-radius:7px!important;
+    }
+}
+</style>
+
+<script id="luka-capas-logo-novas-js">
+(function(){
+    function carregarCapasLogo(){
+        var area=document.getElementById("luka-capas-logo-novas-linha");
+        if(!area) return;
+
+        fetch("/api/catalogo-filmes")
+        .then(function(r){
+            if(!r.ok) throw new Error("catalogo");
+            return r.json();
+        })
+        .then(function(d){
+            var filmes=[];
+
+            if(Array.isArray(d)) filmes=d;
+            else if(Array.isArray(d.filmes)) filmes=d.filmes;
+            else if(Array.isArray(d.resultados)) filmes=d.resultados;
+            else if(Array.isArray(d.results)) filmes=d.results;
+
+            var urls=[];
+
+            filmes.forEach(function(filme){
+                var poster=
+                    filme.poster_path ||
+                    filme.poster ||
+                    filme.posterUrl ||
+                    filme.poster_url ||
+                    filme.capa ||
+                    filme.imagem ||
+                    "";
+
+                if(!poster) return;
+
+                var url=String(poster);
+
+                if(url.indexOf("http://")===0 ||
+                   url.indexOf("https://")===0){
+                }else if(url.indexOf("//")===0){
+                    url="https:"+url;
+                }else if(url.indexOf("/t/p/")===0){
+                    url="https://image.tmdb.org/t/p/w342"+url.substring(5);
+                }else if(url.charAt(0)==="/"){
+                    url="https://image.tmdb.org/t/p/w342"+url;
+                }else{
+                    return;
+                }
+
+                if(urls.indexOf(url)===-1)
+                    urls.push(url);
+            });
+
+            urls=urls.slice(0,8);
+
+            area.innerHTML="";
+
+            urls.forEach(function(url){
+                var img=document.createElement("img");
+                img.src=url;
+                img.alt="";
+                img.loading="eager";
+                img.draggable=false;
+                img.setAttribute("aria-hidden","true");
+                area.appendChild(img);
+            });
+
+            console.log(
+                "LUKAFILMES: capas automáticas abaixo do logo:",
+                urls.length
+            );
+        })
+        .catch(function(e){
+            console.log("LUKAFILMES: erro nas capas:",e);
+        });
+    }
+
+    if(document.readyState==="loading"){
+        document.addEventListener(
+            "DOMContentLoaded",
+            carregarCapasLogo
+        );
+    }else{
+        carregarCapasLogo();
+    }
+})();
+</script>
+<!-- FIM CAPAS AUTOMÁTICAS ABAIXO DO LOGO -->
+
+<!-- LUKAFILMES — 3 CARDS AUTOMÁTICOS -->
+<div id="luka-cards-entrada">
+    <div class="luka-card-auto" data-card="1"></div>
+    <div class="luka-card-auto" data-card="2"></div>
+    <div class="luka-card-auto" data-card="3"></div>
+</div>
+
+<style id="luka-cards-entrada-css">
+#luka-cards-entrada{
+    width:100%!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    gap:12px!important;
+    margin:18px auto 0!important;
+}
+
+.luka-card-auto{
+    width:min(92%,420px)!important;
+    min-height:110px!important;
+    border-radius:14px!important;
+    background:linear-gradient(
+        135deg,
+        rgba(229,9,20,.22),
+        rgba(20,20,20,.96)
+    )!important;
+    border:1px solid rgba(255,255,255,.13)!important;
+    box-shadow:0 10px 30px rgba(0,0,0,.5)!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+}
+</style>
+
+<script id="luka-cards-entrada-js">
+(function(){
+    function montarCards(){
+        var cards=document.querySelectorAll(".luka-card-auto");
+        if(!cards.length) return;
+
+        fetch("/api/catalogo-filmes")
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+            var filmes=[];
+
+            if(Array.isArray(d)) filmes=d;
+            else if(Array.isArray(d.filmes)) filmes=d.filmes;
+            else if(Array.isArray(d.resultados)) filmes=d.resultados;
+            else if(Array.isArray(d.results)) filmes=d.results;
+
+            cards.forEach(function(card,i){
+                var filme=filmes[i];
+                if(!filme) return;
+
+                var titulo=
+                    filme.title ||
+                    filme.name ||
+                    filme.titulo ||
+                    "Filme";
+
+                card.innerHTML=
+                    '<div style="padding:20px;color:#fff;font-family:Arial;text-align:center;font-weight:800">'+
+                    titulo+
+                    '</div>';
+            });
+        })
+        .catch(function(e){
+            console.log("LUKAFILMES: erro nos cards:",e);
+        });
+    }
+
+    if(document.readyState==="loading"){
+        document.addEventListener("DOMContentLoaded",montarCards);
+    }else{
+        montarCards();
+    }
+})();
+</script>
+<!-- FIM 3 CARDS AUTOMÁTICOS -->
+
 <div id="luka-botoes-trailer">
 
     <div>

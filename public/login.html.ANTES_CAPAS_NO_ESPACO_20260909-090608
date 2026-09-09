@@ -2387,6 +2387,50 @@ body {
     display:block !important;
 }
 </style>
+
+<style id="luka-capas-entrada-ajuste">
+#luka-capas-topo{
+    width:100%!important;
+    max-width:100%!important;
+    margin:18px auto 22px!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
+}
+#luka-capas-topo-linha{
+    display:flex!important;
+    align-items:center!important;
+    gap:10px!important;
+    width:max-content!important;
+    padding:0 10px!important;
+    margin:0!important;
+    overflow:visible!important;
+}
+#luka-capas-topo-linha img{
+    width:82px!important;
+    min-width:82px!important;
+    height:118px!important;
+    min-height:118px!important;
+    object-fit:cover!important;
+    border-radius:8px!important;
+    display:block!important;
+}
+@media(max-width:600px){
+    #luka-capas-topo{
+        margin:12px 0 18px!important;
+    }
+    #luka-capas-topo-linha{
+        gap:7px!important;
+        padding:0 8px!important;
+    }
+    #luka-capas-topo-linha img{
+        width:72px!important;
+        min-width:72px!important;
+        height:104px!important;
+        min-height:104px!important;
+    }
+}
+</style>
+
 </head>
 
 <body>

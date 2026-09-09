@@ -1,0 +1,25 @@
+
+BACKUP: public/login.html.backup_remocao_opcoes_20260908_181930
+536:<style id="luka-entrada-opcoes-css">
+538:.luka-entrada-opcoes{
+621:    .luka-entrada-opcoes{
+710:.luka-entrada-opcoes{
+771:    .luka-entrada-opcoes{
+839:.luka-entrada-opcoes{
+885:    .luka-entrada-opcoes{
+1101:.luka-entrada-opcoes{
+1336:    .luka-entrada-opcoes{
+1424:    .luka-entrada-opcoes{
+1521:    .luka-entrada-opcoes{
+1565:    .luka-entrada-opcoes{
+1652:    .luka-entrada-opcoes {
+1738:    .luka-entrada-opcoes {
+1933:.luka-entrada-opcoes {
+2049:    .luka-entrada-opcoes {
+2249:.luka-entrada-opcoes {
+2328:    .luka-entrada-opcoes {
+2564:    var opcoes = document.querySelector(".luka-entrada-opcoes");
+2634:.luka-entrada-opcoes{
+2646:.luka-entrada-opcoes .luka-entrada-btn{
+2668:    .luka-entrada-opcoes{
+2673:    .luka-entrada-opcoes .luka-entrada-btn{

@@ -3815,19 +3815,22 @@ body{
                         "lukafilmesPagamento";
 
                     tela.style.cssText = `
-                        width: min(94%, 780px);
-                        margin: clamp(18px, 3vw, 42px) auto;
-                        padding: clamp(22px, 3.5vw, 42px);
-                        box-sizing: border-box;
-                        background: linear-gradient(180deg, #242424 0%, #111 100%);
-                        border: 2px solid rgba(255,255,255,.16);
-                        border-radius: clamp(16px, 2vw, 26px);
-                        text-align: center;
-                        color: #fff;
-                        box-shadow: 0 15px 50px rgba(0,0,0,.75);
-                        position: relative;
-                        z-index: 20;
-                        overflow: hidden;
+                        width:100vw;
+                        min-height:calc(100vh - 70px);
+                        margin:0;
+                        padding:clamp(30px,4vw,70px);
+                        box-sizing:border-box;
+                        background:
+                            radial-gradient(circle at 78% 45%, rgba(255,255,255,.10), transparent 28%),
+                            radial-gradient(circle at 15% 80%, rgba(255,255,255,.05), transparent 30%),
+                            linear-gradient(135deg,#050505 0%,#151515 48%,#080808 100%);
+                        border:0;
+                        border-radius:0;
+                        color:#fff;
+                        box-shadow:none;
+                        position:relative;
+                        z-index:20;
+                        overflow:hidden;
                     `;
 
                     tela.dataset.lukaPagamentoResponsivo = "true";
@@ -3836,58 +3839,383 @@ body{
                     estiloPagamento.id = "lukaPagamentoResponsivoStyle";
                     estiloPagamento.textContent = `
                         #lukafilmesPagamento {
-                            max-width: 780px;
+                            width:100vw !important;
+                            max-width:none !important;
+                            min-height:calc(100vh - 70px) !important;
+                            margin:0 !important;
+                            padding:clamp(30px,4vw,70px) !important;
+                            box-sizing:border-box !important;
+                            border:0 !important;
+                            border-radius:0 !important;
+                        }
+
+                        #lukafilmesPagamento::before {
+                            content:"";
+                            position:absolute;
+                            left:0;
+                            right:0;
+                            top:0;
+                            height:3px;
+                            background:linear-gradient(90deg,transparent,#fff,transparent);
+                            opacity:.45;
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoConteudo {
+                            position:relative;
+                            z-index:2;
+                            width:min(94vw,1750px);
+                            min-height:calc(100vh - 190px);
+                            margin:auto;
+                            display:grid;
+                            grid-template-columns:minmax(0,1fr) minmax(430px,560px);
+                            gap:clamp(45px,7vw,120px);
+                            align-items:center;
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoInfo {
+                            min-width:0;
+                            display:flex;
+                            flex-direction:column;
+                            justify-content:center;
+                        }
+
+                        #lukafilmesPagamento .lukaQrTitulo {
+                            display:flex;
+                            flex-direction:column;
+                            align-items:center;
+                            gap:8px;
+                            margin-bottom:24px;
+                            text-align:center;
+                        }
+
+                        #lukafilmesPagamento .lukaQrTitulo span {
+                            font-size:13px;
+                            letter-spacing:4px;
+                            opacity:.6;
+                            font-weight:700;
+                        }
+
+                        #lukafilmesPagamento .lukaQrTitulo strong {
+                            font-size:clamp(18px,1.5vw,24px);
+                            letter-spacing:1px;
+                        }
+
+                        #lukafilmesPagamento .lukaQrAjuda {
+                            margin:20px 0 0;
+                            text-align:center;
+                            font-size:14px;
+                            opacity:.65;
+                            line-height:1.5;
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoPix {
+                            margin-top:24px;
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoInfo > h2 {
+                            font-weight:900 !important;
+                            letter-spacing:-.5px;
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoInfo > p {
+                            opacity:.82;
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoQrArea {
+                            padding:clamp(20px,2.5vw,45px);
+                            border:1px solid rgba(255,255,255,.10);
+                            border-radius:28px;
+                            background:rgba(255,255,255,.045);
+                            box-shadow:0 25px 80px rgba(0,0,0,.35);
+                            backdrop-filter:blur(12px);
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoQrArea {
+                            min-height:600px;
+                            display:flex;
+                            flex-direction:column;
+                            align-items:center;
+                            justify-content:center;
+                            padding:35px;
+                            box-sizing:border-box;
+                            border:1px solid rgba(255,255,255,.12);
+                            border-radius:32px;
+                            background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.025));
+                            box-shadow:0 30px 90px rgba(0,0,0,.5);
+                        }
+
+                        #lukafilmesPagamento #lukafilmesQrCode {
+                            width:clamp(320px,25vw,460px) !important;
+                            height:clamp(320px,25vw,460px) !important;
+                            padding:15px;
+                            box-sizing:border-box;
+                            background:#fff;
+                            border-radius:20px;
+                            box-shadow:0 18px 55px rgba(0,0,0,.55);
+                        }
+
+                        #lukafilmesPagamento #lukafilmesQrCode img,
+                        #lukafilmesPagamento #lukafilmesQrCode canvas {
+                            width:100% !important;
+                            height:100% !important;
                         }
 
                         #lukafilmesPagamento textarea {
-                            min-height: clamp(90px, 10vw, 130px);
+                            width:100% !important;
+                            min-height:115px !important;
+                            box-sizing:border-box;
+                            font-size:clamp(14px,1vw,19px) !important;
                         }
 
                         #lukafilmesPagamento button {
-                            min-height: 52px;
+                            min-height:58px !important;
+                            font-size:clamp(15px,1.15vw,21px) !important;
                         }
 
-                        @media (min-width: 1200px) {
-                            #lukafilmesPagamento {
-                                max-width: 860px !important;
+                        @media (min-width:1800px) {
+                            #lukafilmesPagamento .lukaPagamentoConteudo {
+                                width:min(92vw,1900px);
+                                grid-template-columns:minmax(0,1fr) 600px;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoQrArea {
+                                min-height:620px;
                             }
 
                             #lukafilmesPagamento #lukafilmesQrCode {
-                                width: 300px !important;
-                                min-height: 300px !important;
+                                width:500px !important;
+                                height:500px !important;
                             }
                         }
 
-                        @media (min-width: 1800px) {
+                        @media (max-width:1050px) {
                             #lukafilmesPagamento {
-                                max-width: 980px !important;
+                                padding:30px 20px !important;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoConteudo {
+                                width:min(94vw,760px);
+                                min-height:auto;
+                                grid-template-columns:1fr;
+                                gap:25px;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoQrArea {
+                                min-height:auto;
                             }
                         }
 
-                        @media (max-width: 600px) {
+                        @media (max-width:600px) {
                             #lukafilmesPagamento {
-                                width: 94% !important;
-                                padding: 20px !important;
-                                margin: 16px auto !important;
-                                border-radius: 16px !important;
+                                min-height:100vh !important;
+                                padding:20px 14px !important;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoConteudo {
+                                width:100%;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoInfo,
+                            #lukafilmesPagamento .lukaPagamentoQrArea {
+                                padding:20px;
+                                border-radius:20px;
                             }
 
                             #lukafilmesPagamento #lukafilmesQrCode {
-                                width: min(250px, 72vw) !important;
-                                min-height: min(250px, 72vw) !important;
-                            }
-
-                            #lukafilmesPagamento textarea {
-                                font-size: 12px !important;
+                                width:min(280px,78vw) !important;
+                                height:min(280px,78vw) !important;
                             }
                         }
-                    `;
+`;
+
+                    /* ==========================================
+   LUKAFILMES — PROPORÇÃO PREMIUM
+   ========================================== */
+
+                        #lukafilmesPagamento {
+                            width:100vw !important;
+                            min-height:100vh !important;
+                            padding:32px !important;
+                            box-sizing:border-box !important;
+                            background:
+                                radial-gradient(circle at 75% 50%, rgba(255,255,255,.06), transparent 30%),
+                                linear-gradient(135deg,#0b0b0b,#151515 55%,#090909) !important;
+                            display:flex !important;
+                            align-items:center !important;
+                            justify-content:center !important;
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoConteudo {
+                            width:min(90vw,1500px) !important;
+                            min-height:auto !important;
+                            margin:auto !important;
+                            padding:42px 48px !important;
+                            box-sizing:border-box !important;
+                            display:grid !important;
+                            grid-template-columns:minmax(0,1fr) 460px !important;
+                            gap:60px !important;
+                            align-items:center !important;
+                            border-radius:24px;
+                            background:rgba(255,255,255,.045);
+                            border:1px solid rgba(255,255,255,.09);
+                            box-shadow:0 24px 70px rgba(0,0,0,.45);
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoInfo {
+                            min-width:0 !important;
+                            padding:10px 0 !important;
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoInfo h2 {
+                            margin:0 0 16px !important;
+                            font-size:clamp(28px,2.7vw,46px) !important;
+                            line-height:1.15 !important;
+                            font-weight:900 !important;
+                            letter-spacing:-1px !important;
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoInfo > p {
+                            max-width:600px !important;
+                            margin:8px 0 20px !important;
+                            font-size:clamp(16px,1.2vw,20px) !important;
+                            line-height:1.5 !important;
+                            opacity:.75;
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoInfo > div:not(.lukaPagamentoQrArea) {
+                            font-size:clamp(38px,4vw,62px) !important;
+                            line-height:1 !important;
+                            font-weight:900 !important;
+                            letter-spacing:-2px !important;
+                            margin:20px 0 8px !important;
+                        }
+
+                        #lukafilmesPagamento .lukaPagamentoQrArea {
+                            min-height:0 !important;
+                            padding:28px !important;
+                            box-sizing:border-box !important;
+                            border-radius:22px !important;
+                            background:rgba(0,0,0,.25) !important;
+                            border:1px solid rgba(255,255,255,.09) !important;
+                            display:flex !important;
+                            flex-direction:column !important;
+                            justify-content:center !important;
+                            align-items:center !important;
+                        }
+
+                        #lukafilmesPagamento #lukafilmesQrCode {
+                            width:360px !important;
+                            height:360px !important;
+                            min-height:0 !important;
+                            max-width:100% !important;
+                            margin:14px auto !important;
+                            padding:12px !important;
+                            box-sizing:border-box !important;
+                            background:#fff !important;
+                            border-radius:18px !important;
+                        }
+
+                        #lukafilmesPagamento #lukafilmesQrCode img,
+                        #lukafilmesPagamento #lukafilmesQrCode canvas {
+                            width:100% !important;
+                            height:100% !important;
+                            max-width:100% !important;
+                        }
+
+                        #lukafilmesPagamento textarea {
+                            width:100% !important;
+                            min-height:100px !important;
+                            padding:14px !important;
+                            box-sizing:border-box !important;
+                            border-radius:12px !important;
+                            font-size:15px !important;
+                        }
+
+                        #lukafilmesPagamento button {
+                            min-height:58px !important;
+                            border-radius:12px !important;
+                            font-size:17px !important;
+                        }
+
+                        @media (min-width:1700px) {
+                            #lukafilmesPagamento .lukaPagamentoConteudo {
+                                width:min(88vw,1650px) !important;
+                                grid-template-columns:minmax(0,1fr) 500px !important;
+                                gap:75px !important;
+                            }
+
+                            #lukafilmesPagamento #lukafilmesQrCode {
+                                width:400px !important;
+                                height:400px !important;
+                            }
+                        }
+
+                        @media (max-width:1050px) {
+                            #lukafilmesPagamento {
+                                padding:24px 16px !important;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoConteudo {
+                                width:min(92vw,760px) !important;
+                                padding:30px !important;
+                                grid-template-columns:1fr !important;
+                                gap:30px !important;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoInfo {
+                                text-align:center !important;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoInfo > p {
+                                margin-left:auto !important;
+                                margin-right:auto !important;
+                            }
+
+                            #lukafilmesPagamento #lukafilmesQrCode {
+                                width:min(340px,70vw) !important;
+                                height:min(340px,70vw) !important;
+                            }
+                        }
+
+                        @media (max-width:600px) {
+                            #lukafilmesPagamento {
+                                padding:12px !important;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoConteudo {
+                                width:100% !important;
+                                padding:22px 18px !important;
+                                border-radius:18px !important;
+                                gap:22px !important;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoInfo h2 {
+                                font-size:29px !important;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoInfo > div:not(.lukaPagamentoQrArea) {
+                                font-size:46px !important;
+                            }
+
+                            #lukafilmesPagamento .lukaPagamentoQrArea {
+                                padding:20px !important;
+                            }
+
+                            #lukafilmesPagamento #lukafilmesQrCode {
+                                width:min(280px,74vw) !important;
+                                height:min(280px,74vw) !important;
+                            }
+                        }
+
+
 
                     if (!document.getElementById("lukaPagamentoResponsivoStyle")) {
                         document.head.appendChild(estiloPagamento);
                     }
 
                     tela.innerHTML = `
+                        <div class="lukaPagamentoConteudo">
+                            <div class="lukaPagamentoInfo">
                         <h2 style="
                             margin:0 0 14px;
                             font-size:clamp(22px, 3vw, 34px);
@@ -3908,9 +4236,8 @@ body{
                         </p>
 
                         <div style="
-                            font-size:clamp(28px, 4vw, 42px);
+                            font-size:clamp(32px, 4vw, 52px);
                             font-weight:800;
-                                font-size:clamp(14px, 1.6vw, 18px);
                             margin:15px 0;
                         ">
                             R$ ${valor}
@@ -3920,8 +4247,16 @@ body{
                             Acesso por 30 dias
                         </p>
 
-                        <div
-                            id="lukafilmesQrCode"
+                        </div>
+
+                        <div class="lukaPagamentoQrArea">
+                            <div class="lukaQrTitulo">
+                                <span>PIX</span>
+                                <strong>ESCANEIE PARA PAGAR</strong>
+                            </div>
+
+                            <div
+                                id="lukafilmesQrCode"
                             style="
                                 width:min(300px, 70vw);
                                 min-height:min(300px, 70vw);
@@ -3935,8 +4270,14 @@ body{
                                 align-items:center;
                                 justify-content:center;
                             ">
+                            </div>
+
+                            <p class="lukaQrAjuda">
+                                Aponte a câmera do seu banco para o QR Code
+                            </p>
                         </div>
 
+                        <div class="lukaPagamentoPix">
                         <p style="
                             font-size:14px;
                             margin:14px 0 6px;
@@ -3962,6 +4303,8 @@ body{
                                 line-height:1.45;
                                 outline:none;
                             ">${pix}</textarea>
+
+                        </div>
 
                         <button
                             type="button"
@@ -4008,6 +4351,8 @@ body{
                                 font-size:14px;
                             ">
                         </p>
+                            </div>
+                        </div>
                     `;
 
                     playerFilme.parentNode.insertBefore(

@@ -1,0 +1,7 @@
+========================================
+RESTAURAÇÃO CONCLUÍDA
+========================================
+Restaurado: public/login.html.bak-trailer-limpo-20260908-175913
+Backup do estado atual: public/login.html.bak-antes-voltar-20260908-180551
+login.html voltou quatro backups anteriores.
+========================================

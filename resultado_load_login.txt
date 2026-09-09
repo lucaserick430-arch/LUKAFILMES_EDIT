@@ -1,0 +1,200 @@
+public/index.html:11:<title>LUKAFILMES — Filmes e Séries</title>
+public/index.html:686:   LUKAFILMES — HERO
+public/index.html:804:   LUKAFILMES — PROTEÇÃO FINAL DO HERO
+public/index.html:968:   LUKAFILMES — POSIÇÃO DO CONTEÚDO DO HERO
+public/index.html:1031:   LUKAFILMES — HERO MOBILE
+public/index.html:1077:<style id="lukafilmes-menu-desktop">
+public/index.html:1079:   LUKAFILMES — MENU DO COMPUTADOR
+public/index.html:1128:<style id="lukafilmes-menu-desktop-visible">
+public/index.html:1130:   LUKAFILMES — BOTÃO MENU DESKTOP
+public/index.html:1164:<!-- LUKAFILMES — IDENTIDADE DO NAVEGADOR -->
+public/index.html:1165:<link rel="icon" type="image/png" href="/favicon/lukafilmes.png">
+public/index.html:1166:<link rel="shortcut icon" href="/favicon/lukafilmes.png">
+public/index.html:1167:<link rel="apple-touch-icon" href="/favicon/lukafilmes.png">
+public/index.html:1170:<style id="lukafilmes-continuar-header-final">
+public/index.html:1174:<style id="lukafilmes-mobile-menu-final">
+public/index.html:1176:   LUKAFILMES — MENU MOBILE FINAL
+public/index.html:1248:<style id="lukafilmes-menu-mobile-final">
+public/index.html:1332:        <a href="/login" class="lukafilmes-entrar-btn">🔐 Entrar</a>
+public/index.html:1355:        id="lukafilmesDesktopAdmin"
+public/index.html:1357:        data-lukafilmes-admin-link="true"
+public/index.html:1377:    <a href="/login" class="lukafilmes-entrar-btn-mobile">🔐 Entrar</a>
+public/index.html:1381:        id="lukafilmesMenuPainel"
+public/index.html:1383:        data-lukafilmes-painel="true"
+public/index.html:1412:            <strong>●</strong> LUKAFILMES ORIGINAL
+public/index.html:1479:    <strong>LUKAFILMES</strong> — Filmes e séries para você assistir.
+public/index.html:1598:                document.getElementById("lukafilmesDesktopAdmin");
+public/index.html:2211:        "Assista agora no LUKAFILMES.";
+public/index.html:2239:     * HOME DINÂMICA LUKAFILMES
+public/index.html:2415: * LUKAFILMES — HISTÓRICO PERSISTENTE DO HERO
+public/index.html:2425:        localStorage.getItem("lukafilmes_hero_exibidos") || "[]"
+public/index.html:2724:        "lukafilmes_hero_exibidos",
+public/index.html:2938:<style id="lukafilmes-pesquisa-home-final">
+public/index.html:3000:<script id="lukafilmes-pesquisa-home-final">
+public/index.html:3164:     LUKAFILMES — NOTIFICAÇÃO DE RENOVAÇÃO
+public/index.html:3167:<style id="lukafilmes-renovacao-notificacao-style">
+public/index.html:3259:<script id="lukafilmes-renovacao-notificacao-script">
+public/index.html:3319:                🔔 RENOVAÇÃO DO LUKAFILMES
+public/index.html:3441:                "[LUKAFILMES] Falha ao verificar renovação:",
+public/index.html.bkp:7:<title>LUKAFILMES — Filmes e Séries</title>
+public/index.html.bkp:682:   LUKAFILMES — HERO
+public/index.html.bkp:800:   LUKAFILMES — PROTEÇÃO FINAL DO HERO
+public/index.html.bkp:964:   LUKAFILMES — POSIÇÃO DO CONTEÚDO DO HERO
+public/index.html.bkp:1027:   LUKAFILMES — HERO MOBILE
+public/index.html.bkp:1073:<style id="lukafilmes-menu-desktop">
+public/index.html.bkp:1075:   LUKAFILMES — MENU DO COMPUTADOR
+public/index.html.bkp:1124:<style id="lukafilmes-menu-desktop-visible">
+public/index.html.bkp:1126:   LUKAFILMES — BOTÃO MENU DESKTOP
+public/index.html.bkp:1160:<!-- LUKAFILMES — IDENTIDADE DO NAVEGADOR -->
+public/index.html.bkp:1161:<link rel="icon" type="image/png" href="/favicon/lukafilmes.png">
+public/index.html.bkp:1162:<link rel="shortcut icon" href="/favicon/lukafilmes.png">
+public/index.html.bkp:1163:<link rel="apple-touch-icon" href="/favicon/lukafilmes.png">
+public/index.html.bkp:1166:<style id="lukafilmes-continuar-header-final">
+public/index.html.bkp:1170:<style id="lukafilmes-mobile-menu-final">
+public/index.html.bkp:1172:   LUKAFILMES — MENU MOBILE FINAL
+public/index.html.bkp:1244:<style id="lukafilmes-menu-mobile-final">
+public/index.html.bkp:1390:            <strong>●</strong> LUKAFILMES ORIGINAL
+public/index.html.bkp:1457:    <strong>LUKAFILMES</strong> — Filmes e séries para você assistir.
+public/index.html.bkp:2174:        "Assista agora no LUKAFILMES.";
+public/index.html.bkp:2202:     * HOME DINÂMICA LUKAFILMES
+public/index.html.bkp:2378: * LUKAFILMES — HISTÓRICO PERSISTENTE DO HERO
+public/index.html.bkp:2388:        localStorage.getItem("lukafilmes_hero_exibidos") || "[]"
+public/index.html.bkp:2687:        "lukafilmes_hero_exibidos",
+public/index.html.bkp:2901:<style id="lukafilmes-pesquisa-home-final">
+public/index.html.bkp:2963:<script id="lukafilmes-pesquisa-home-final">
+public/index.html.bkp2:7:<title>LUKAFILMES — Filmes e Séries</title>
+public/index.html.bkp2:682:   LUKAFILMES — HERO
+public/index.html.bkp2:800:   LUKAFILMES — PROTEÇÃO FINAL DO HERO
+public/index.html.bkp2:964:   LUKAFILMES — POSIÇÃO DO CONTEÚDO DO HERO
+public/index.html.bkp2:1027:   LUKAFILMES — HERO MOBILE
+public/index.html.bkp2:1073:<style id="lukafilmes-menu-desktop">
+public/index.html.bkp2:1075:   LUKAFILMES — MENU DO COMPUTADOR
+public/index.html.bkp2:1124:<style id="lukafilmes-menu-desktop-visible">
+public/index.html.bkp2:1126:   LUKAFILMES — BOTÃO MENU DESKTOP
+public/index.html.bkp2:1160:<!-- LUKAFILMES — IDENTIDADE DO NAVEGADOR -->
+public/index.html.bkp2:1161:<link rel="icon" type="image/png" href="/favicon/lukafilmes.png">
+public/index.html.bkp2:1162:<link rel="shortcut icon" href="/favicon/lukafilmes.png">
+public/index.html.bkp2:1163:<link rel="apple-touch-icon" href="/favicon/lukafilmes.png">
+public/index.html.bkp2:1166:<style id="lukafilmes-continuar-header-final">
+public/index.html.bkp2:1170:<style id="lukafilmes-mobile-menu-final">
+public/index.html.bkp2:1172:   LUKAFILMES — MENU MOBILE FINAL
+public/index.html.bkp2:1244:<style id="lukafilmes-menu-mobile-final">
+public/index.html.bkp2:1390:            <strong>●</strong> LUKAFILMES ORIGINAL
+public/index.html.bkp2:1457:    <strong>LUKAFILMES</strong> — Filmes e séries para você assistir.
+public/index.html.bkp2:2174:        "Assista agora no LUKAFILMES.";
+public/index.html.bkp2:2202:     * HOME DINÂMICA LUKAFILMES
+public/index.html.bkp2:2378: * LUKAFILMES — HISTÓRICO PERSISTENTE DO HERO
+public/index.html.bkp2:2388:        localStorage.getItem("lukafilmes_hero_exibidos") || "[]"
+public/index.html.bkp2:2687:        "lukafilmes_hero_exibidos",
+public/index.html.bkp2:2901:<style id="lukafilmes-pesquisa-home-final">
+public/index.html.bkp2:2963:<script id="lukafilmes-pesquisa-home-final">
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:7:<title>LUKAFILMES — Filmes e Séries</title>
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:682:   LUKAFILMES — HERO
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:800:   LUKAFILMES — PROTEÇÃO FINAL DO HERO
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:964:   LUKAFILMES — POSIÇÃO DO CONTEÚDO DO HERO
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1027:   LUKAFILMES — HERO MOBILE
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1073:<style id="lukafilmes-menu-desktop">
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1075:   LUKAFILMES — MENU DO COMPUTADOR
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1124:<style id="lukafilmes-menu-desktop-visible">
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1126:   LUKAFILMES — BOTÃO MENU DESKTOP
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1160:<!-- LUKAFILMES — IDENTIDADE DO NAVEGADOR -->
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1161:<link rel="icon" type="image/png" href="/favicon/lukafilmes.png">
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1162:<link rel="shortcut icon" href="/favicon/lukafilmes.png">
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1163:<link rel="apple-touch-icon" href="/favicon/lukafilmes.png">
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1166:<style id="lukafilmes-continuar-header-final">
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1170:<style id="lukafilmes-mobile-menu-final">
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1172:   LUKAFILMES — MENU MOBILE FINAL
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1244:<style id="lukafilmes-menu-mobile-final">
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1316:<style id="lukafilmes-apk-header-clean">
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1317:/* LUKAFILMES — OCULTAR LOGO DO HEADER NO APK */
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1398:            <strong>●</strong> LUKAFILMES ORIGINAL
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:1465:    <strong>LUKAFILMES</strong> — Filmes e séries para você assistir.
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2182:        "Assista agora no LUKAFILMES.";
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2210:     * HOME DINÂMICA LUKAFILMES
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2386: * LUKAFILMES — HISTÓRICO PERSISTENTE DO HERO
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2396:        localStorage.getItem("lukafilmes_hero_exibidos") || "[]"
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2695:        "lukafilmes_hero_exibidos",
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2909:<style id="lukafilmes-pesquisa-home-final">
+public/index.html.BACKUP-ANTES-HEARTBEAT-20260903-092006:2971:<script id="lukafilmes-pesquisa-home-final">
+public/index.html.BACKUP-BUSCA-20260903_094508:7:<title>LUKAFILMES — Filmes e Séries</title>
+public/index.html.BACKUP-BUSCA-20260903_094508:682:   LUKAFILMES — HERO
+public/index.html.BACKUP-BUSCA-20260903_094508:800:   LUKAFILMES — PROTEÇÃO FINAL DO HERO
+public/index.html.BACKUP-BUSCA-20260903_094508:964:   LUKAFILMES — POSIÇÃO DO CONTEÚDO DO HERO
+public/index.html.BACKUP-BUSCA-20260903_094508:1027:   LUKAFILMES — HERO MOBILE
+public/index.html.BACKUP-BUSCA-20260903_094508:1073:<style id="lukafilmes-menu-desktop">
+public/index.html.BACKUP-BUSCA-20260903_094508:1075:   LUKAFILMES — MENU DO COMPUTADOR
+public/index.html.BACKUP-BUSCA-20260903_094508:1124:<style id="lukafilmes-menu-desktop-visible">
+public/index.html.BACKUP-BUSCA-20260903_094508:1126:   LUKAFILMES — BOTÃO MENU DESKTOP
+public/index.html.BACKUP-BUSCA-20260903_094508:1160:<!-- LUKAFILMES — IDENTIDADE DO NAVEGADOR -->
+public/index.html.BACKUP-BUSCA-20260903_094508:1161:<link rel="icon" type="image/png" href="/favicon/lukafilmes.png">
+public/index.html.BACKUP-BUSCA-20260903_094508:1162:<link rel="shortcut icon" href="/favicon/lukafilmes.png">
+public/index.html.BACKUP-BUSCA-20260903_094508:1163:<link rel="apple-touch-icon" href="/favicon/lukafilmes.png">
+public/index.html.BACKUP-BUSCA-20260903_094508:1166:<style id="lukafilmes-continuar-header-final">
+public/index.html.BACKUP-BUSCA-20260903_094508:1170:<style id="lukafilmes-mobile-menu-final">
+public/index.html.BACKUP-BUSCA-20260903_094508:1172:   LUKAFILMES — MENU MOBILE FINAL
+public/index.html.BACKUP-BUSCA-20260903_094508:1244:<style id="lukafilmes-menu-mobile-final">
+public/index.html.BACKUP-BUSCA-20260903_094508:1390:            <strong>●</strong> LUKAFILMES ORIGINAL
+public/index.html.BACKUP-BUSCA-20260903_094508:1457:    <strong>LUKAFILMES</strong> — Filmes e séries para você assistir.
+public/index.html.BACKUP-BUSCA-20260903_094508:2174:        "Assista agora no LUKAFILMES.";
+public/index.html.BACKUP-BUSCA-20260903_094508:2202:     * HOME DINÂMICA LUKAFILMES
+public/index.html.BACKUP-BUSCA-20260903_094508:2378: * LUKAFILMES — HISTÓRICO PERSISTENTE DO HERO
+public/index.html.BACKUP-BUSCA-20260903_094508:2388:        localStorage.getItem("lukafilmes_hero_exibidos") || "[]"
+public/index.html.BACKUP-BUSCA-20260903_094508:2687:        "lukafilmes_hero_exibidos",
+public/index.html.BACKUP-BUSCA-20260903_094508:2901:<style id="lukafilmes-pesquisa-home-final">
+public/index.html.BACKUP-BUSCA-20260903_094508:2963:<script id="lukafilmes-pesquisa-home-final">
+public/login.html:13:<title>LUKAFILMES — Sua próxima história começa agora</title>
+public/login.html:368:<style id="lukafilmes-login-loader-premium">
+public/login.html:369:#lukafilmesLoginLoader{
+public/login.html:383:#lukafilmesLoginLoader.ativo{
+public/login.html:388:#lukafilmesLoginLoaderBox{
+public/login.html:404:#lukafilmesLoginLoaderLogo{
+public/login.html:414:#lukafilmesLoginLoaderLogo .luka{
+public/login.html:418:#lukafilmesLoginLoaderLogo .filmes{
+public/login.html:422:#lukafilmesLoginLoaderSpinner{
+public/login.html:430:    animation:lukafilmesLoginLoaderSpin .85s linear infinite;
+public/login.html:434:#lukafilmesLoginLoaderTitle{
+public/login.html:442:#lukafilmesLoginLoaderText{
+public/login.html:449:@keyframes lukafilmesLoginLoaderSpin{
+public/login.html:454:    #lukafilmesLoginLoaderBox{
+public/login.html:461:    #lukafilmesLoginLoaderLogo{
+public/login.html:466:    #lukafilmesLoginLoaderSpinner{
+public/login.html:473:    #lukafilmesLoginLoaderTitle{
+public/login.html:477:    #lukafilmesLoginLoaderText{
+public/login.html:676:/* LUKAFILMES — entrada premium responsiva */
+public/login.html:1359:   LUKAFILMES — ENTRADA DESKTOP / TV
+public/login.html:1592:<style id="lukafilmes-correcao-real-desktop-tv">
+public/login.html:1595:   LUKAFILMES — CORREÇÃO REAL DESKTOP TV
+public/login.html:1773:   LUKAFILMES — ENTRADA CINEMATOGRÁFICA
+public/login.html:2366:            LUKAFILMES • ENTRETENIMENTO SEM COMPLICAÇÃO
+public/login.html:2433:<div id="lukafilmesLoginLoader" aria-hidden="true">
+public/login.html:2434:    <div id="lukafilmesLoginLoaderBox">
+public/login.html:2435:        <div id="lukafilmesLoginLoaderLogo">
+public/login.html:2438:        <div id="lukafilmesLoginLoaderSpinner"></div>
+public/login.html:2439:        <h2 id="lukafilmesLoginLoaderTitle">Entrando no LUKAFILMES...</h2>
+public/login.html:2440:        <p id="lukafilmesLoginLoaderText">Preparando sua sessão...</p>
+public/login.html:2446:<script id="lukafilmes-login-funcional">
+public/login.html:2521:<script id="lukafilmes-login-loader-js">
+public/login.html:2524:    var loader = document.getElementById("lukafilmesLoginLoader");
+public/login.html:2539:    window.lukafilmesMostrarLoginLoader = mostrarLoginLoader;
+public/login.html:2540:    window.lukafilmesEsconderLoginLoader = esconderLoginLoader;
+public/login.html:2601:<!-- LUKAFILMES — LOGO ÚNICO E LIMPO -->
+public/login.html:2678:<!-- FIM LUKAFILMES LOGO FINAL -->
+public/login.html:2687:   LUKAFILMES — CORREÇÃO FINAL DA ENTRADA
+public/login.html:2772:/* LUKAFILMES — tela inicial somente com o trailer */
+public/revendedor.html:6:<title>LUKAFILMES — Painel de Revenda</title>
+public/login.html.backup-20260905:13:<title>LUKAFILMES - Login</title>
+public/login.html.backup-20260905:159:<style id="lukafilmes-login-loader-premium">
+public/login.html.backup-20260905:160:#lukafilmesLoginLoader{
+public/login.html.backup-20260905:174:#lukafilmesLoginLoader.ativo{
+public/login.html.backup-20260905:179:#lukafilmesLoginLoaderBox{
+public/login.html.backup-20260905:195:#lukafilmesLoginLoaderLogo{
+public/login.html.backup-20260905:205:#lukafilmesLoginLoaderLogo .luka{
+public/login.html.backup-20260905:209:#lukafilmesLoginLoaderLogo .filmes{
+public/login.html.backup-20260905:213:#lukafilmesLoginLoaderSpinner{
+public/login.html.backup-20260905:221:    animation:lukafilmesLoginLoaderSpin .85s linear infinite;
+public/login.html.backup-20260905:225:#lukafilmesLoginLoaderTitle{
+public/login.html.backup-20260905:233:#lukafilmesLoginLoaderText{
+public/login.html.backup-20260905:240:@keyframes lukafilmesLoginLoaderSpin{
+public/login.html.backup-20260905:245:    #lukafilmesLoginLoaderBox{
+public/login.html.backup-20260905:252:    #lukafilmesLoginLoaderLogo{
+public/login.html.backup-20260905:257:    #lukafilmesLoginLoaderSpinner{

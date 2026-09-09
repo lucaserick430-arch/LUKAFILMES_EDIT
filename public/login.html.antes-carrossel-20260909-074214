@@ -2387,6 +2387,7 @@ body {
     display:block !important;
 }
 </style>
+
 </head>
 
 <body>
@@ -2409,16 +2410,242 @@ body {
         <div class="premium-logo">
             <span>LUKA</span><b>FILMES</b>
         </div>
-        <!-- LUKAFILMES — CAPAS AUTOMÁTICAS ABAIXO DO LOGO -->
-        <div id="luka-capas-topo" aria-hidden="true">
-            <div id="luka-capas-topo-linha"></div>
-        </div>
-<!-- FIM LUKAFILMES — CAPAS AUTOMÁTICAS ABAIXO DO LOGO -->
+        <!-- LUKAFILMES — CAPAS NO TOPO, SOMENTE CELULAR -->
+<div id="luka-mobile-capas-topo" aria-hidden="true">
+    <div id="luka-mobile-capas-topo-linha1"></div>
+    <div id="luka-mobile-capas-topo-linha2"></div>
+    <div id="luka-mobile-capas-topo-linha3"></div>
+    <div id="luka-mobile-capas-topo-linha4"></div>
+</div>
+
+<style id="luka-mobile-capas-topo-css">
+@media screen and (max-width:600px){
+
+    #luka-mobile-capas-topo{
+        position:fixed!important;
+        left:0!important;
+        top:0!important;
+        width:100vw!important;
+        height:100vh!important;
+        overflow:hidden!important;
+        pointer-events:none!important;
+        user-select:none!important;
+        -webkit-user-select:none!important;
+        z-index:999980!important;
+        display:block!important;
+    }
+
+    #luka-mobile-capas-topo > div{
+        position:absolute!important;
+        left:0!important;
+        width:max-content!important;
+        display:flex!important;
+        align-items:center!important;
+        gap:8px!important;
+        height:96px!important;
+        padding:2px 10px!important;
+        box-sizing:border-box!important;
+        will-change:transform!important;
+    }
+
+    #luka-mobile-capas-topo-linha1{
+        animation:lukaTopoLinha1 34s linear infinite!important;
+    }
+
+    #luka-mobile-capas-topo-linha2{
+        animation:lukaTopoLinha2 39s linear infinite!important;
+    }
+
+    #luka-mobile-capas-topo-linha3{
+        animation:lukaTopoLinha3 42s linear infinite!important;
+    }
+
+    #luka-mobile-capas-topo-linha4{
+        animation:lukaTopoLinha4 45s linear infinite!important;
+    }
+
+    @keyframes lukaTopoLinha4{
+        from{transform:translateX(-50%)}
+        to{transform:translateX(0)}
+    }
+
+    #luka-mobile-capas-topo img{
+        display:block!important;
+        width:62px!important;
+        height:90px!important;
+        min-width:62px!important;
+        max-width:62px!important;
+        object-fit:cover!important;
+        border-radius:7px!important;
+        border:1px solid rgba(255,255,255,.14)!important;
+        box-shadow:0 5px 18px rgba(0,0,0,.55)!important;
+        pointer-events:none!important;
+        user-select:none!important;
+        -webkit-user-select:none!important;
+        -webkit-user-drag:none!important;
+    }
+
+    @keyframes lukaTopoLinha1{
+        from{transform:translateX(0)}
+        to{transform:translateX(-50%)}
+    }
+
+    @keyframes lukaTopoLinha2{
+        from{transform:translateX(-50%)}
+        to{transform:translateX(0)}
+    }
+
+    @keyframes lukaTopoLinha3{
+        from{transform:translateX(0)}
+        to{transform:translateX(-50%)}
+    }
+}
+
+@media screen and (min-width:601px){
+    #luka-mobile-capas-topo{
+        display:none!important;
+    }
+}
+</style>
+
+<script id="luka-mobile-capas-topo-js">
+(function(){
+
+    if(window.innerWidth > 600) return;
+
+    function iniciarTopo(){
+
+        var topo = document.getElementById("luka-mobile-capas-topo");
+
+        if(!topo) return;
+
+        var baixo = document.getElementById("luka-mobile-capas");
+
+        if(!baixo){
+            setTimeout(iniciarTopo,300);
+            return;
+        }
+
+        var origem1 = document.getElementById("luka-mobile-capas-linha1");
+        var origem2 = document.getElementById("luka-mobile-capas-linha2");
+        var origem3 = document.getElementById("luka-mobile-capas-linha3");
+
+        if(!origem1 || !origem1.children.length){
+            setTimeout(iniciarTopo,300);
+            return;
+        }
+
+        function copiar(origem,destino){
+
+            if(!origem || !origem.children.length || !destino) return;
+
+            destino.innerHTML = "";
+
+            var imagens = origem.querySelectorAll("img");
+            var urls = [];
+
+            imagens.forEach(function(img){
+                if(img.src && urls.indexOf(img.src) === -1){
+                    urls.push(img.src);
+                }
+            });
+
+            urls = urls.slice(0,12);
+
+            urls.concat(urls).forEach(function(url){
+
+                var img = document.createElement("img");
+
+                img.src = url;
+                img.alt = "";
+                img.draggable = false;
+                img.setAttribute("aria-hidden","true");
+
+                destino.appendChild(img);
+            });
+        }
+
+        copiar(
+            origem1,
+            document.getElementById("luka-mobile-capas-topo-linha1")
+        );
+
+        copiar(
+            origem2 || origem1,
+            document.getElementById("luka-mobile-capas-topo-linha2")
+        );
+
+        copiar(
+            origem3 || origem1,
+            document.getElementById("luka-mobile-capas-topo-linha3")
+        );
+
+        /* 4ª FILEIRA — usa capas da 2ª fileira */
+        copiar(
+            origem2 || origem1,
+            document.getElementById("luka-mobile-capas-topo-linha4")
+        );
+
+        function posicionar(){
+
+            var logo = document.querySelector(".premium-logo");
+
+            if(!logo) return;
+
+            var rect = logo.getBoundingClientRect();
+
+            var altura = 90;
+            var espaco = 8;
+
+            var topoInicial = rect.bottom + espaco;
+
+            var l1 = document.getElementById("luka-mobile-capas-topo-linha1");
+            var l2 = document.getElementById("luka-mobile-capas-topo-linha2");
+            var l3 = document.getElementById("luka-mobile-capas-topo-linha3");
+            var l4 = document.getElementById("luka-mobile-capas-topo-linha4");
+
+            if(l1) l1.style.top = topoInicial + "px";
+            if(l2) l2.style.top = (topoInicial + 94) + "px";
+            if(l3) l3.style.top = (topoInicial + 188) + "px";
+
+            /*
+             * A 4ª fica imediatamente depois da 3ª.
+             * Ela ocupa o espaço antes dos botões.
+             */
+            if(l4){
+                l4.style.top = (topoInicial + 282) + "px";
+                l4.style.display = "flex";
+                l4.style.visibility = "visible";
+                l4.style.opacity = "1";
+            }
+        }
+
+        posicionar();
+
+        setTimeout(posicionar,100);
+        setTimeout(posicionar,300);
+        setTimeout(posicionar,700);
+        setTimeout(posicionar,1200);
+
+        window.addEventListener("resize",posicionar);
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener("DOMContentLoaded",iniciarTopo);
+    }else{
+        iniciarTopo();
+    }
+
+})();
+</script>
+
+<!-- FIM LUKAFILMES — CAPAS NO TOPO, SOMENTE CELULAR -->
 
 
         <div class="premium-linha"></div>
 
         <div class="premium-kicker">
+            LUKAFILMES • ENTRETENIMENTO SEM COMPLICAÇÃO
         </div>
 
         <h1>
@@ -3833,8 +4060,8 @@ body::before {
 
 
 <style id="luka-entrada-somente-trailer">
-/* LUKAFILMES — entrada visível */
+/* LUKAFILMES — tela inicial somente com o trailer */
 .premium-entrada{
-    display:flex !important;
+    display:none !important;
 }
 </style>
