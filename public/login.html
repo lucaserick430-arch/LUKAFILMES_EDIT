@@ -3240,10 +3240,11 @@ body::before {
         position:fixed!important;
         left:0!important;
         right:0!important;
-        bottom:8px!important;
+        top:68px!important;
+        bottom:68px!important;
         width:100vw!important;
-        height:215px!important;
-        z-index:999990!important;
+        height:auto!important;
+        z-index:9990!important;
         overflow:hidden!important;
         pointer-events:none!important;
         user-select:none!important;
@@ -3337,6 +3338,108 @@ body::before {
 
     if(window.innerWidth > 600) return;
 
+    function criarImagem(url){
+        var img = document.createElement("img");
+
+        img.src = url;
+        img.alt = "";
+        img.draggable = false;
+        img.setAttribute("aria-hidden","true");
+
+        img.onclick = function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        };
+
+        return img;
+    }
+
+    function extrairCapas(dados){
+
+        var filmes = [];
+
+        if(Array.isArray(dados)){
+            filmes = dados;
+        }else if(Array.isArray(dados.filmes)){
+            filmes = dados.filmes;
+        }else if(Array.isArray(dados.resultados)){
+            filmes = dados.resultados;
+        }else if(Array.isArray(dados.results)){
+            filmes = dados.results;
+        }
+
+        var mapa = {};
+
+        filmes.forEach(function(filme){
+
+            var caminho =
+                filme.poster_path ||
+                filme.poster ||
+                filme.capa ||
+                filme.imagem ||
+                filme.posterPath ||
+                "";
+
+            if(!caminho) return;
+
+            var url = caminho;
+
+            if(caminho.indexOf("http") === 0){
+                url = caminho;
+            }else if(caminho.indexOf("//") === 0){
+                url = "https:" + caminho;
+            }else if(caminho.indexOf("/t/p/") === 0){
+                url =
+                    "https://image.tmdb.org/t/p/w342" +
+                    caminho.replace("/t/p/","");
+            }else if(caminho.indexOf("/") === 0){
+                url =
+                    "https://image.tmdb.org/t/p/w342" +
+                    caminho;
+            }
+
+            mapa[url] = url;
+        });
+
+        return Object.keys(mapa);
+    }
+
+    function embaralhar(lista){
+
+        for(var i = lista.length - 1; i > 0; i--){
+
+            var j = Math.floor(Math.random() * (i + 1));
+
+            var temp = lista[i];
+            lista[i] = lista[j];
+            lista[j] = temp;
+        }
+
+        return lista;
+    }
+
+    function criarLinha(area,id,lista){
+
+        var linha = document.createElement("div");
+
+        linha.id = id;
+        linha.className = "luka-mobile-capas-linha";
+
+        /*
+         * A segunda cópia é somente para o loop contínuo.
+         * Os filmes continuam pertencendo exclusivamente
+         * a esta fileira.
+         */
+        var repetida = lista.concat(lista);
+
+        repetida.forEach(function(url){
+            linha.appendChild(criarImagem(url));
+        });
+
+        area.appendChild(linha);
+    }
+
     function iniciarCapasMobile(){
 
         if(document.getElementById("luka-mobile-capas")) return;
@@ -3344,132 +3447,126 @@ body::before {
         var area = document.createElement("div");
         area.id = "luka-mobile-capas";
 
-        var linha1 = document.createElement("div");
-        linha1.id = "luka-mobile-capas-linha1";
-        linha1.className = "luka-mobile-capas-linha";
-
-        var linha2 = document.createElement("div");
-        linha2.id = "luka-mobile-capas-linha2";
-        linha2.className = "luka-mobile-capas-linha";
-
-        area.appendChild(linha1);
-        area.appendChild(linha2);
         document.body.appendChild(area);
 
-        fetch("/api/catalogo-filmes")
+        /*
+         * Cada fileira busca UMA categoria diferente.
+         *
+         * 1 = Aventura
+         * 2 = Ação
+         * 3 = Terror
+         * 4 = Comédia
+         * 5 = Ficção científica
+         * 6 = Romance
+         */
+        var categorias = [
+            {
+                nome: "aventura",
+                id: "luka-mobile-capas-linha1"
+            },
+            {
+                nome: "acao",
+                id: "luka-mobile-capas-linha2"
+            },
+            {
+                nome: "terror",
+                id: "luka-mobile-capas-linha3"
+            },
+            {
+                nome: "comedia",
+                id: "luka-mobile-capas-linha4"
+            },
+            {
+                nome: "ficcao-cientifica",
+                id: "luka-mobile-capas-linha5"
+            },
+            {
+                nome: "romance",
+                id: "luka-mobile-capas-linha6"
+            }
+        ];
+
+        var requisicoes = categorias.map(function(categoria){
+
+            return fetch(
+                "/api/catalogo-filmes?categoria=" +
+                encodeURIComponent(categoria.nome) +
+                "&pagina=1"
+            )
             .then(function(res){
-                if(!res.ok) throw new Error("catalogo");
+
+                if(!res.ok){
+                    throw new Error(
+                        "Categoria " + categoria.nome
+                    );
+                }
+
                 return res.json();
             })
             .then(function(dados){
 
-                var filmes = [];
+                var capas = extrairCapas(dados);
 
-                if(Array.isArray(dados)){
-                    filmes = dados;
-                }else if(Array.isArray(dados.filmes)){
-                    filmes = dados.filmes;
-                }else if(Array.isArray(dados.resultados)){
-                    filmes = dados.resultados;
-                }else if(Array.isArray(dados.results)){
-                    filmes = dados.results;
-                }
-
-                var mapa = {};
-
-                filmes.forEach(function(filme){
-
-                    var caminho =
-                        filme.poster_path ||
-                        filme.poster ||
-                        filme.capa ||
-                        filme.imagem ||
-                        filme.posterPath ||
-                        "";
-
-                    if(!caminho) return;
-
-                    var url = caminho;
-
-                    if(caminho.indexOf("http") === 0){
-                        url = caminho;
-                    }else if(caminho.indexOf("//") === 0){
-                        url = "https:" + caminho;
-                    }else if(caminho.indexOf("/t/p/") === 0){
-                        url = "https://image.tmdb.org/t/p/w342" +
-                              caminho.replace("/t/p/","");
-                    }else if(caminho.indexOf("/") === 0){
-                        url = "https://image.tmdb.org/t/p/w342" + caminho;
-                    }
-
-                    mapa[url] = url;
-                });
-
-                var capas = Object.keys(mapa);
-
-                // Embaralha o catalogo inteiro
-                for(var i = capas.length - 1; i > 0; i--){
-                    var j = Math.floor(Math.random() * (i + 1));
-                    var temp = capas[i];
-                    capas[i] = capas[j];
-                    capas[j] = temp;
-                }
+                embaralhar(capas);
 
                 /*
-                 * 24 capas únicas:
-                 * 12 para a primeira linha
-                 * 12 diferentes para a segunda.
+                 * No máximo 12 filmes por fileira.
+                 * Não utiliza filmes de outra categoria
+                 * para completar a fileira.
                  */
-                var total = Math.min(24, capas.length);
+                capas = capas.slice(0,12);
 
-                if(total < 8){
-                    area.remove();
-                    return;
-                }
+                return {
+                    categoria: categoria,
+                    capas: capas
+                };
+            });
+        });
 
-                var primeira = capas.slice(0, Math.ceil(total / 2));
-                var segunda = capas.slice(Math.ceil(total / 2), total);
+        Promise.all(requisicoes)
+            .then(function(resultados){
 
-                function adicionar(linha, lista){
+                resultados.forEach(function(resultado){
 
-                    // Duplica somente a própria linha
-                    // para criar o loop contínuo.
-                    var repetida = lista.concat(lista);
+                    if(!resultado.capas.length){
+                        console.warn(
+                            "LUKAFILMES: sem capas para",
+                            resultado.categoria.nome
+                        );
+                        return;
+                    }
 
-                    repetida.forEach(function(url){
+                    criarLinha(
+                        area,
+                        resultado.categoria.id,
+                        resultado.capas
+                    );
+                });
 
-                        var img = document.createElement("img");
-
-                        img.src = url;
-                        img.alt = "";
-                        img.draggable = false;
-                        img.setAttribute("aria-hidden","true");
-
-                        /*
-                         * Card puramente visual.
-                         * Nenhum clique abre filme.
-                         */
-                        img.onclick = function(e){
-                            e.preventDefault();
-                            e.stopPropagation();
-                            return false;
-                        };
-
-                        linha.appendChild(img);
-                    });
-                }
-
-                adicionar(linha1, primeira);
-                adicionar(linha2, segunda);
-
+                console.log(
+                    "LUKAFILMES: 6 fileiras por gênero criadas.",
+                    resultados.map(function(r){
+                        return r.categoria.nome +
+                            ": " + r.capas.length;
+                    })
+                );
             })
-            .catch(function(){
+            .catch(function(erro){
+
+                console.error(
+                    "LUKAFILMES: erro nas capas por gênero:",
+                    erro
+                );
+
                 area.remove();
             });
     }
 
     if(document.readyState === "loading"){
-        document.addEventListener("DOMContentLoaded", iniciarCapasMobile);
+        document.addEventListener(
+            "DOMContentLoaded",
+            iniciarCapasMobile
+        );
     }else{
         iniciarCapasMobile();
     }
@@ -3480,10 +3577,6 @@ body::before {
 
 <style id="luka-mobile-capas-linha3-css">
 @media (max-width:600px){
-
-    #luka-mobile-capas{
-        height:320px!important;
-    }
 
     #luka-mobile-capas-linha3{
         top:212px!important;
@@ -3498,113 +3591,48 @@ body::before {
             transform:translateX(-50%);
         }
     }
+
+    #luka-mobile-capas-linha4{
+        bottom:212px!important;
+        top:auto!important;
+        animation:lukaCapasLinha4 38s linear infinite!important;
+    }
+
+    #luka-mobile-capas-linha5{
+        bottom:106px!important;
+        top:auto!important;
+        animation:lukaCapasLinha5 43s linear infinite!important;
+    }
+
+    #luka-mobile-capas-linha6{
+        bottom:0!important;
+        top:auto!important;
+        animation:lukaCapasLinha6 40s linear infinite!important;
+    }
+
+    @keyframes lukaCapasLinha4{
+        from{ transform:translateX(-50%); }
+        to{ transform:translateX(0); }
+    }
+
+    @keyframes lukaCapasLinha5{
+        from{ transform:translateX(0); }
+        to{ transform:translateX(-50%); }
+    }
+
+    @keyframes lukaCapasLinha6{
+        from{ transform:translateX(-50%); }
+        to{ transform:translateX(0); }
+    }
 }
 </style>
 
 
 <script id="luka-mobile-capas-linha3-js">
-(function(){
-    if(window.innerWidth > 600) return;
-
-    function adicionarTerceiraLinha(){
-
-        var area = document.getElementById("luka-mobile-capas");
-
-        if(!area){
-            setTimeout(adicionarTerceiraLinha, 300);
-            return;
-        }
-
-        var linhas = area.querySelectorAll(".luka-mobile-capas-linha");
-
-        if(linhas.length < 2){
-            setTimeout(adicionarTerceiraLinha, 300);
-            return;
-        }
-
-        var primeira = linhas[0];
-
-        if(!primeira || !primeira.children.length){
-            setTimeout(adicionarTerceiraLinha, 300);
-            return;
-        }
-
-        /* Evita criar a terceira linha mais de uma vez */
-        var existente = document.getElementById("luka-mobile-capas-linha3");
-
-        if(existente){
-            existente.remove();
-        }
-
-        var linha3 = document.createElement("div");
-        linha3.id = "luka-mobile-capas-linha3";
-        linha3.className = "luka-mobile-capas-linha";
-
-        area.appendChild(linha3);
-
-        var imagens = primeira.querySelectorAll("img");
-        var urls = [];
-
-        imagens.forEach(function(img){
-            if(img.src && urls.indexOf(img.src) === -1){
-                urls.push(img.src);
-            }
-        });
-
-        if(!urls.length){
-            linha3.remove();
-            setTimeout(adicionarTerceiraLinha, 300);
-            return;
-        }
-
-        var quantidade = Math.min(12, urls.length);
-
-        for(var i = 0; i < quantidade; i++){
-
-            var img = document.createElement("img");
-
-            img.src = urls[i];
-            img.alt = "";
-            img.draggable = false;
-            img.setAttribute("aria-hidden","true");
-
-            img.onclick = function(e){
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-            };
-
-            linha3.appendChild(img);
-        }
-
-        for(var j = 0; j < quantidade; j++){
-
-            var clone = document.createElement("img");
-
-            clone.src = urls[j];
-            clone.alt = "";
-            clone.draggable = false;
-            clone.setAttribute("aria-hidden","true");
-
-            clone.onclick = function(e){
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-            };
-
-            linha3.appendChild(clone);
-        }
-
-        console.log("LUKAFILMES: terceira fileira criada:", linha3.children.length, "cards");
-    }
-
-    if(document.readyState === "loading"){
-        document.addEventListener("DOMContentLoaded", adicionarTerceiraLinha);
-    }else{
-        adicionarTerceiraLinha();
-    }
-
-})();
+/*
+ * As seis fileiras agora são criadas pelo
+ * luka-mobile-capas-cards-js acima.
+ */
 </script>
 
 </body>

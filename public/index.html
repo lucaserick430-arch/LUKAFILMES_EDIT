@@ -1,6 +1,159 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<script id="lukafilmes-cache-catalogo">
+(function(){
+
+    if (window.__LUKAFILMES_FETCH_CACHE_ATIVO__) return;
+
+    window.__LUKAFILMES_FETCH_CACHE_ATIVO__ = true;
+
+    const fetchOriginal = window.fetch.bind(window);
+
+    const cache = new Map();
+    const pendentes = new Map();
+
+    const TTL = 30000;
+
+    function ehCatalogo(url){
+
+        return /^\/api\/catalogo-(filmes|series|acao)(?:[?\/]|$)/i.test(url);
+    }
+
+    window.fetch = async function(input, init){
+
+        let url = "";
+
+        try {
+            url =
+                typeof input === "string"
+                    ? input
+                    : input.url;
+        } catch(e) {
+            return fetchOriginal(input, init);
+        }
+
+        const metodo =
+            String(
+                (init && init.method) ||
+                (typeof input !== "string" && input.method) ||
+                "GET"
+            ).toUpperCase();
+
+        if (
+            metodo !== "GET" ||
+            !ehCatalogo(url)
+        ){
+            return fetchOriginal(input, init);
+        }
+
+        const agora = Date.now();
+
+        const salvo = cache.get(url);
+
+        if (
+            salvo &&
+            agora - salvo.tempo < TTL
+        ){
+
+            return new Response(
+                salvo.texto,
+                {
+                    status: salvo.status,
+                    headers: salvo.headers
+                }
+            );
+        }
+
+        if (pendentes.has(url)){
+            const resultado =
+                await pendentes.get(url);
+
+            return new Response(
+                resultado.texto,
+                {
+                    status: resultado.status,
+                    headers: resultado.headers
+                }
+            );
+        }
+
+        const promessa = fetchOriginal(
+            input,
+            init
+        ).then(async resposta => {
+
+            const texto =
+                await resposta.clone().text();
+
+            const headers = {};
+
+            resposta.headers.forEach(
+                (valor, chave) => {
+                    headers[chave] = valor;
+                }
+            );
+
+            const resultado = {
+                texto: texto,
+                status: resposta.status,
+                headers: headers
+            };
+
+            if (resposta.ok){
+
+                cache.set(url, {
+                    texto: texto,
+                    status: resposta.status,
+                    headers: headers,
+                    tempo: Date.now()
+                });
+
+            }
+
+            return resultado;
+
+        });
+
+        pendentes.set(url, promessa);
+
+        try {
+
+            const resultado =
+                await promessa;
+
+            return new Response(
+                resultado.texto,
+                {
+                    status: resultado.status,
+                    headers: resultado.headers
+                }
+            );
+
+        } finally {
+
+            pendentes.delete(url);
+
+        }
+    };
+
+    window.__LUKAFILMES_LIMPAR_CACHE_CATALOGO__ =
+        function(){
+            cache.clear();
+        };
+
+    console.log(
+        "[LUKAFILMES] Cache REAL do catálogo ativado."
+    );
+
+})();
+</script>
+
+
+
+
+
+
     <link rel="preconnect" href="https://image.tmdb.org" crossorigin>
     <link rel="preconnect" href="https://www.youtube.com" crossorigin>
     <link rel="preconnect" href="https://i.ytimg.com" crossorigin>

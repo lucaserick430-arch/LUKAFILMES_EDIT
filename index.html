@@ -9590,9 +9590,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
             var item = document.createElement("a");
 
+            /*
+             * LUKAFILMES — NOTIFICAÇÃO
+             * O filme da notificação precisa ser salvo
+             * pelo próprio ID antes de abrir a página.
+             *
+             * Assim filme.html nunca reutiliza o filme
+             * antigo que estava em "filmeSelecionado".
+             */
             item.href =
                 "paginas/filme.html?id=" +
                 encodeURIComponent(filme.id);
+
+            item.addEventListener("click", function(){
+
+                try{
+
+                    var filmeNotificacao =
+                        Object.assign({}, filme, {
+                            id: Number(filme.id),
+                            tmdb_id: Number(filme.id),
+                            titulo: filme.titulo || "",
+                            title: filme.titulo || "",
+                            poster: filme.poster || "",
+                            capa: filme.poster || "",
+                            tipo: "filme",
+                            media_type: "movie"
+                        });
+
+                    localStorage.setItem(
+                        "filmeSelecionadoHome_" +
+                        String(filme.id),
+                        JSON.stringify(filmeNotificacao)
+                    );
+
+                    localStorage.setItem(
+                        "filmeSelecionado",
+                        JSON.stringify(filmeNotificacao)
+                    );
+
+                    localStorage.removeItem("serieSelecionada");
+
+                }catch(e){
+
+                    console.warn(
+                        "[NOTIFICACAO] Erro ao preparar filme:",
+                        e
+                    );
+
+                }
+
+            });
 
             item.className =
                 "lukafilmes-notificacao-item";
@@ -9789,10 +9837,8 @@ document.addEventListener("DOMContentLoaded", () => {
              * não abre automaticamente para não
              * atrapalhar a visão da Home.
              */
-            if(!window.matchMedia("(max-width: 768px)").matches){
-                abrirPainel();
-                // mostrarNotificacaoTemporaria(filmes[0]);
-            }
+            abrirPainel();
+            mostrarNotificacaoTemporaria(filmes[0]);
 
         }catch(erro){
 

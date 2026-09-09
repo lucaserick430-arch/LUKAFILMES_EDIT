@@ -3153,7 +3153,42 @@ body{
 }
 </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+/* LUKAFILMES — QR Code carregado somente quando necessário */
+let lukaQRCodePromise = null;
+
+function carregarQRCodeLuka() {
+
+    if (typeof QRCode !== "undefined") {
+        return Promise.resolve();
+    }
+
+    if (lukaQRCodePromise) {
+        return lukaQRCodePromise;
+    }
+
+    lukaQRCodePromise = new Promise(function(resolve, reject) {
+
+        const script = document.createElement("script");
+
+        script.src =
+            "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
+
+        script.onload = function() {
+            resolve();
+        };
+
+        script.onerror = function() {
+            lukaQRCodePromise = null;
+            reject(new Error("Não foi possível carregar o QR Code."));
+        };
+
+        document.head.appendChild(script);
+    });
+
+    return lukaQRCodePromise;
+}
+</script>
 </head>
 
 <body>
@@ -3234,8 +3269,11 @@ body{
                     style="text-decoration:none;">
                     ＋ Minha lista
                 </a>
+            </div>
 
-                
+
+
+    </main>
 
 <section
         class="trailer"
@@ -3258,9 +3296,6 @@ body{
 
     </section>
 
-            </div>
-
-    </main>
 
     <section
         class="player-filme"
@@ -4025,20 +4060,31 @@ body{
                             "lukafilmesQrCode"
                         );
 
-                    if (
-                        pix &&
-                        areaQr &&
-                        typeof QRCode !== "undefined"
-                    ) {
+                    if (pix && areaQr) {
 
-                        new QRCode(
-                            areaQr,
-                            {
-                                text: pix,
-                                width: 260,
-                                height: 260
-                            }
-                        );
+                        try {
+
+                            await carregarQRCodeLuka();
+
+                            new QRCode(
+                                areaQr,
+                                {
+                                    text: pix,
+                                    width: 260,
+                                    height: 260
+                                }
+                            );
+
+                        } catch (erroQr) {
+
+                            console.error(
+                                "[QR CODE]",
+                                erroQr
+                            );
+
+                            areaQr.innerHTML =
+                                "<span style='color:#222;'>QR Code indisponível</span>";
+                        }
 
                     }
                     else if (areaQr) {
@@ -6063,6 +6109,165 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 </script>
 
+
+<script src="../js/lukafilmes-tv.js"></script>
+
+
+<style id="lukafilmes-trailer-centralizado-definitivo">
+/* =========================================================
+   LUKAFILMES — TRAILER DEFINITIVAMENTE CENTRALIZADO
+   O trailer NÃO pertence mais ao container dos botões.
+   ========================================================= */
+
+#trailerContainer {
+    display: block !important;
+
+    width: calc(100vw - 80px) !important;
+    max-width: none !important;
+
+    margin: 55px auto 80px !important;
+
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+#trailerContainer .trailer-video {
+    display: block !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 auto !important;
+    padding: 0 !important;
+
+    aspect-ratio: 16 / 9 !important;
+
+    box-sizing: border-box !important;
+
+    overflow: hidden !important;
+    background: #000 !important;
+
+    border-radius: 8px !important;
+}
+
+#trailerContainer #trailerFrame {
+    display: block !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+/* Telas grandes / TV */
+@media screen and (min-width: 1600px) {
+    #trailerContainer {
+        width: calc(100vw - 80px) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+/* Celular */
+@media screen and (max-width: 650px) {
+    #trailerContainer {
+        width: calc(100vw - 28px) !important;
+
+        margin-left: auto !important;
+        margin-right: auto !important;
+
+        margin-top: 35px !important;
+        margin-bottom: 55px !important;
+    }
+
+    #trailerContainer .trailer-video {
+        width: 100% !important;
+        aspect-ratio: 16 / 9 !important;
+    }
+}
+</style>
+
+<style id="lukafilmes-trailer-fora-main-final">
+/* ==========================================================
+   TRAILER — TELA INTEIRA DA TV
+   O trailer fica fora do MAIN para não sofrer limite de largura.
+   ========================================================== */
+
+html,
+body {
+    overflow-x: hidden !important;
+}
+
+#trailerContainer {
+    display: block !important;
+    position: relative !important;
+
+    width: 100vw !important;
+    max-width: none !important;
+
+    margin: 50px 0 80px 0 !important;
+    padding: 0 !important;
+
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+
+    box-sizing: border-box !important;
+}
+
+#trailerContainer .trailer-video {
+    display: block !important;
+
+    width: 100vw !important;
+    max-width: none !important;
+
+    height: auto !important;
+    aspect-ratio: 16 / 9 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: #000 !important;
+    overflow: hidden !important;
+
+    box-sizing: border-box !important;
+    border-radius: 0 !important;
+}
+
+#trailerContainer #trailerFrame {
+    display: block !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+@media (max-width: 650px) {
+    #trailerContainer {
+        width: 100vw !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+    }
+
+    #trailerContainer .trailer-video {
+        width: 100vw !important;
+    }
+}
+</style>
+
 </body>
 </html>
 
@@ -7295,4 +7500,3 @@ body{
     }
 }
 </style>
-

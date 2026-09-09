@@ -1772,7 +1772,42 @@ main {
 }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+/* LUKAFILMES — QR Code carregado somente quando necessário */
+let lukaQRCodePromise = null;
+
+function carregarQRCodeLuka() {
+
+    if (typeof QRCode !== "undefined") {
+        return Promise.resolve();
+    }
+
+    if (lukaQRCodePromise) {
+        return lukaQRCodePromise;
+    }
+
+    lukaQRCodePromise = new Promise(function(resolve, reject) {
+
+        const script = document.createElement("script");
+
+        script.src =
+            "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
+
+        script.onload = function() {
+            resolve();
+        };
+
+        script.onerror = function() {
+            lukaQRCodePromise = null;
+            reject(new Error("Não foi possível carregar o QR Code."));
+        };
+
+        document.head.appendChild(script);
+    });
+
+    return lukaQRCodePromise;
+}
+</script>
 </head>
 
 
@@ -2160,20 +2195,31 @@ async function mostrarPagamentoLuka(acesso, renovacao = false) {
                             "lukafilmesQrCode"
                         );
 
-                    if (
-                        pix &&
-                        areaQr &&
-                        typeof QRCode !== "undefined"
-                    ) {
+                    if (pix && areaQr) {
 
-                        new QRCode(
-                            areaQr,
-                            {
-                                text: pix,
-                                width: 200,
-                                height: 200
-                            }
-                        );
+                        try {
+
+                            await carregarQRCodeLuka();
+
+                            new QRCode(
+                                areaQr,
+                                {
+                                    text: pix,
+                                    width: 200,
+                                    height: 200
+                                }
+                            );
+
+                        } catch (erroQr) {
+
+                            console.error(
+                                "[QR CODE]",
+                                erroQr
+                            );
+
+                            areaQr.innerHTML =
+                                "<span style='color:#222;'>QR Code indisponível</span>";
+                        }
 
                     }
                     else if (areaQr) {
@@ -5054,6 +5100,8 @@ document.addEventListener(
 })();
 </script>
 
+
+<script src="../js/lukafilmes-tv.js"></script>
 </body>
 
 

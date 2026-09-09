@@ -557,6 +557,13 @@ function proximoId(usuarios) {
     ) + 1;
 }
 const app = express();
+
+// ==========================================
+// LUKAFILMES — PERFORMANCE
+// Compressão HTTP de HTML, CSS e JavaScript.
+// Não altera APIs nem conteúdo dinâmico.
+// ==========================================
+
 app.use((req,res,next)=>{ console.log("[TRACE ENTRADA]",req.method,req.url); next(); });
 
 const LUKA_PRESENCA_ONLINE_2026 = new Map();
@@ -2520,12 +2527,30 @@ app.get('/api/serie/:id', async (req, res) => {
 // ============================================================
 app.get("/api/notificacoes/novos-filmes", async (req, res) => {
     try {
+        /*
+         * LUKAFILMES — NOTIFICAÇÕES
+         * Busca páginas recentes diferentes do TMDB
+         * para não mostrar sempre os mesmos filmes.
+         */
+        const paginas = [1, 2, 3];
+        const paginaEscolhida =
+            paginas[Math.floor(Math.random() * paginas.length)];
+
         const dados = await tmdb(
-            "/movie/now_playing?language=pt-BR&region=BR&page=1"
+            "/movie/now_playing?language=pt-BR&region=BR&page=" +
+            paginaEscolhida
         );
 
-        const filmes = (dados.results || [])
-            .filter(f => f && f.id && f.title)
+        const resultados =
+            (dados.results || [])
+                .filter(f => f && f.id && f.title);
+
+        /*
+         * Embaralha os resultados da página escolhida.
+         */
+        resultados.sort(() => Math.random() - 0.5);
+
+        const filmes = resultados
             .slice(0, 10)
             .map(f => ({
                 id: Number(f.id),
@@ -3521,6 +3546,7 @@ app.get('/api/catalogo-filmes', async (req, res) => {
          */
         const mapaCategorias = {
             acao: "28",
+            aventura: "12",
             comedia: "35",
             terror: "27",
             romance: "10749",
@@ -3558,6 +3584,7 @@ app.get('/api/catalogo-filmes', async (req, res) => {
 
             const mapaGenerosCategoria = {
                 acao: 28,
+                aventura: 12,
                 comedia: 35,
                 terror: 27,
                 romance: 10749,
@@ -6334,7 +6361,11 @@ app.get("/", (req, res) => {
 });
 
 app.use(
-    express.static(__dirname)
+    express.static(__dirname, {
+        maxAge: "1d",
+        etag: true,
+        lastModified: true
+    })
 );
 
 app.get("/paginas/filme",(req,res)=>{res.sendFile(require("path").join(__dirname,"paginas","filme.html"));});

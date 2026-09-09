@@ -1,6 +1,159 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<script id="lukafilmes-cache-catalogo">
+(function(){
+
+    if (window.__LUKAFILMES_FETCH_CACHE_ATIVO__) return;
+
+    window.__LUKAFILMES_FETCH_CACHE_ATIVO__ = true;
+
+    const fetchOriginal = window.fetch.bind(window);
+
+    const cache = new Map();
+    const pendentes = new Map();
+
+    const TTL = 30000;
+
+    function ehCatalogo(url){
+
+        return /^\/api\/catalogo-(filmes|series|acao)(?:[?\/]|$)/i.test(url);
+    }
+
+    window.fetch = async function(input, init){
+
+        let url = "";
+
+        try {
+            url =
+                typeof input === "string"
+                    ? input
+                    : input.url;
+        } catch(e) {
+            return fetchOriginal(input, init);
+        }
+
+        const metodo =
+            String(
+                (init && init.method) ||
+                (typeof input !== "string" && input.method) ||
+                "GET"
+            ).toUpperCase();
+
+        if (
+            metodo !== "GET" ||
+            !ehCatalogo(url)
+        ){
+            return fetchOriginal(input, init);
+        }
+
+        const agora = Date.now();
+
+        const salvo = cache.get(url);
+
+        if (
+            salvo &&
+            agora - salvo.tempo < TTL
+        ){
+
+            return new Response(
+                salvo.texto,
+                {
+                    status: salvo.status,
+                    headers: salvo.headers
+                }
+            );
+        }
+
+        if (pendentes.has(url)){
+            const resultado =
+                await pendentes.get(url);
+
+            return new Response(
+                resultado.texto,
+                {
+                    status: resultado.status,
+                    headers: resultado.headers
+                }
+            );
+        }
+
+        const promessa = fetchOriginal(
+            input,
+            init
+        ).then(async resposta => {
+
+            const texto =
+                await resposta.clone().text();
+
+            const headers = {};
+
+            resposta.headers.forEach(
+                (valor, chave) => {
+                    headers[chave] = valor;
+                }
+            );
+
+            const resultado = {
+                texto: texto,
+                status: resposta.status,
+                headers: headers
+            };
+
+            if (resposta.ok){
+
+                cache.set(url, {
+                    texto: texto,
+                    status: resposta.status,
+                    headers: headers,
+                    tempo: Date.now()
+                });
+
+            }
+
+            return resultado;
+
+        });
+
+        pendentes.set(url, promessa);
+
+        try {
+
+            const resultado =
+                await promessa;
+
+            return new Response(
+                resultado.texto,
+                {
+                    status: resultado.status,
+                    headers: resultado.headers
+                }
+            );
+
+        } finally {
+
+            pendentes.delete(url);
+
+        }
+    };
+
+    window.__LUKAFILMES_LIMPAR_CACHE_CATALOGO__ =
+        function(){
+            cache.clear();
+        };
+
+    console.log(
+        "[LUKAFILMES] Cache REAL do catálogo ativado."
+    );
+
+})();
+</script>
+
+
+
+
+
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LUKAFILMES - Filmes</title>
@@ -2645,6 +2798,121 @@ pointer-events:none;}
 }
 </style>
 
+
+<style id="lukafilmes-hero-capa-final">
+/* ==========================================================
+   LUKAFILMES — HERO FILMES
+   SOMENTE CAPA / BACKDROP
+   NENHUM TRAILER
+   ========================================================== */
+
+#heroFilme {
+    position: relative !important;
+    background-color: #080808 !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    overflow: hidden !important;
+}
+
+#heroFilme::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.90),
+            rgba(0,0,0,.45),
+            rgba(0,0,0,.80)
+        ),
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,.20),
+            transparent 55%,
+            rgba(0,0,0,.95)
+        ) !important;
+    pointer-events: none !important;
+}
+
+#heroFilme .hero-conteudo {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+#heroFilme iframe,
+#heroFilme video,
+#heroFilme #trailerFilmes,
+#heroFilme .hero-trailer-filme-bg,
+#heroFilme .hero-trailer-filme-overlay,
+#heroFilmesTouchLayer {
+    display: none !important;
+}
+
+#fundoFilmes,
+#fundoFilmesEscuro {
+    display: none !important;
+}
+</style>
+
+<style id="hero-filmes-capa-definitivo-v2">
+
+/* HERO SOMENTE COM CAPA */
+#heroFilme {
+    background-color:#080808 !important;
+    background-repeat:no-repeat !important;
+    background-position:center center !important;
+    background-size:cover !important;
+    overflow:hidden !important;
+}
+
+/* Escurecimento cinematográfico */
+#heroFilme::before {
+    content:"" !important;
+    position:absolute !important;
+    inset:0 !important;
+    z-index:0 !important;
+    pointer-events:none !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.92),
+            rgba(0,0,0,.48),
+            rgba(0,0,0,.82)
+        ),
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,.15),
+            transparent 50%,
+            rgba(0,0,0,.95)
+        ) !important;
+}
+
+/* Conteúdo na frente */
+#heroFilme .hero-conteudo {
+    position:relative !important;
+    z-index:3 !important;
+}
+
+/* NENHUM vídeo no HERO */
+#heroFilme iframe,
+#heroFilme video,
+#heroFilme .hero-trailer-filme-bg,
+#heroFilme .hero-trailer-filme-overlay,
+#heroFilmesTouchLayer {
+    display:none !important;
+}
+
+/* Remove o fundo de vídeo antigo */
+#fundoFilmes,
+#fundoFilmesEscuro {
+    display:none !important;
+}
+
+</style>
+
 </head>
 
 <body>
@@ -2771,23 +3039,79 @@ pointer-events:none;}
 
     
 
-    <section id="heroFilme" class="hero-filme">
+    
+<style id="lukafilmes-hero-capa-real-final">
+/* ==========================================================
+   HERO FILMES — CAPA/BACKDROP NO LUGAR DO TRAILER
+   ========================================================== */
 
-        <div class="hero-trailer-filme-bg">
-            <iframe
-                id="trailerFilmes"
-                title="Trailer do filme"
-                allow="autoplay; encrypted-media; picture-in-picture"
-                allowfullscreen
-                playsinline>
-            </iframe>
-        </div>
+#heroFilme.hero-filme {
+    position: relative !important;
+    overflow: hidden !important;
+    background-color: #000 !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center center !important;
+}
 
-        <div class="hero-trailer-filme-overlay"></div>
-        <div
-            id="heroFilmesTouchLayer"
-            aria-hidden="true">
-        </div>
+/* O fundo escuro continua por cima da imagem,
+   mas NÃO apaga a imagem. */
+#heroFilme.hero-filme::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+    display: block !important;
+    background: linear-gradient(
+        90deg,
+        rgba(0,0,0,.92) 0%,
+        rgba(0,0,0,.70) 38%,
+        rgba(0,0,0,.28) 72%,
+        rgba(0,0,0,.12) 100%
+    ) !important;
+    pointer-events: none !important;
+}
+
+/* Remove somente elementos do antigo TRAILER do HERO */
+#heroFilme #trailerFilmes,
+#heroFilme iframe,
+#heroFilme video,
+#heroFilme .hero-trailer-filme-bg,
+#heroFilme .hero-trailer-filme-overlay,
+#heroFilmesTouchLayer {
+    display: none !important;
+}
+
+/* Conteúdo sempre acima da capa */
+#heroFilme.hero-filme .hero-conteudo {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* Fundos antigos não podem cobrir o HERO */
+#fundoFilmes,
+#fundoFilmesEscuro {
+    display: none !important;
+}
+</style>
+
+
+<style id="lukafilmes-hero-capa-zoom-ajuste">
+#heroFilme.hero-filme {
+    background-size: 100% auto !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+}
+
+@media (max-width: 900px) {
+    #heroFilme.hero-filme {
+        background-size: cover !important;
+        background-position: center center !important;
+    }
+}
+</style>
+
+<section id="heroFilme" class="hero-filme">
 
 
         <div class="hero-conteudo">
@@ -3200,7 +3524,7 @@ async function carregarFilmes() {
                     card.className = "filme";
 
                     card.innerHTML =
-                        '<img src="' +
+                        '<img loading="lazy" decoding="async" src="' +
                         (filme.capa || "") +
                         '" alt="' +
                         (filme.titulo || "Filme") +
@@ -4013,7 +4337,7 @@ async function buscarFilmes(){
  * Os demais continuam sendo pesquisados
  * em segundo plano para formar uma base grande.
  */
-async function procurarTrailersRapido(filmes){
+async function /* procurarTrailersRapido DESATIVADO */ procurarTrailersRapido_DESATIVADO(filmes){
 
     let indice=0;
 
@@ -4116,55 +4440,542 @@ async function procurarTrailersRapido(filmes){
 
 async function iniciarHeroFilmes(){
 
-    configurarBotoes();
+    console.log("[HERO FILMES] Iniciando catálogo de capas...");
 
     try{
 
-        console.log(
-            "[HERO FILMES] Iniciando busca rápida..."
-        );
-
         /*
-         * Primeiro pegamos os filmes.
+         * =====================================================
+         * PRIMEIRO FILME — APARECE IMEDIATAMENTE
+         * =====================================================
          */
-        const filmes=
-            await buscarFilmes();
 
-        console.log(
-            "[HERO FILMES] Filmes candidatos:",
-            filmes.length
-        );
+        const resposta =
+            await fetch(
+                "/api/catalogo-filmes?pagina=1",
+                {cache:"no-store"}
+            );
 
-        if(!filmes.length)
+        if(!resposta.ok){
+            console.warn(
+                "[HERO FILMES] Catálogo indisponível:",
+                resposta.status
+            );
             return;
+        }
+
+        const dados =
+            await resposta.json();
+
+        const primeiraLista =
+            Array.isArray(dados.filmes)
+                ? dados.filmes
+                : [];
+
+        if(!primeiraLista.length){
+            console.warn(
+                "[HERO FILMES] Nenhum filme recebido."
+            );
+            return;
+        }
 
         /*
-         * NÃO espera 1.000 trailers.
-         *
-         * O primeiro válido aparece assim
-         * que for encontrado.
-         *
-         * A busca continua em paralelo.
+         * =====================================================
+         * ESTOQUE DE ATÉ 2.000 FILMES
+         * =====================================================
          */
-        procurarTrailersRapido(
-            filmes
-        ).catch(
-            erro=>
-                console.warn(
-                    "[HERO FILMES] Busca trailers:",
-                    erro
-                )
+
+        const mapa = new Map();
+
+        function adicionarFilmes(lista){
+
+            if(!Array.isArray(lista))
+                return;
+
+            for(const filme of lista){
+
+                if(!filme)
+                    continue;
+
+                const id = String(
+                    filme.id ||
+                    filme.tmdb_id ||
+                    filme.titulo ||
+                    filme.nome ||
+                    filme.title ||
+                    ""
+                ).trim();
+
+                if(!id)
+                    continue;
+
+                const imagem =
+                    filme.fundo ||
+                    filme.capa ||
+                    filme.backdrop_path ||
+                    filme.poster_path ||
+                    "";
+
+                if(!imagem)
+                    continue;
+
+                if(!mapa.has(id)){
+                    mapa.set(id,filme);
+                }
+
+                if(mapa.size >= 2000)
+                    break;
+            }
+        }
+
+        /*
+         * Coloca os primeiros filmes imediatamente.
+         */
+        adicionarFilmes(primeiraLista);
+
+        /*
+         * =====================================================
+         * MOSTRAR FILME NO HERO
+         * =====================================================
+         */
+
+        function mostrarFilmeHero(filme){
+
+            if(!filme)
+                return;
+
+            filmeHeroAtual = filme;
+
+            window.LUKA_HERO_FILME_ATUAL =
+                filme;
+
+            try{
+
+                localStorage.setItem(
+                    "lukafilmes_hero_filme_atual",
+                    JSON.stringify(filme)
+                );
+
+            }catch(_){}
+
+            const titulo =
+                filme.titulo ||
+                filme.nome ||
+                filme.title ||
+                "Filme";
+
+            const ano =
+                filme.ano ||
+                (
+                    filme.release_date
+                        ? String(
+                            filme.release_date
+                          ).substring(0,4)
+                        : ""
+                );
+
+            const nota =
+                filme.nota ??
+                filme.avaliacao ??
+                filme.vote_average ??
+                "";
+
+            const sinopse =
+                filme.sinopse ||
+                filme.overview ||
+                filme.descricao ||
+                "Assista agora no LUKAFILMES.";
+
+            const tituloEl =
+                document.getElementById(
+                    "heroTitulo"
+                );
+
+            const anoEl =
+                document.getElementById(
+                    "heroAno"
+                );
+
+            const notaEl =
+                document.getElementById(
+                    "heroNota"
+                );
+
+            const sinopseEl =
+                document.getElementById(
+                    "heroSinopse"
+                );
+
+            if(tituloEl)
+                tituloEl.textContent =
+                    titulo;
+
+            if(anoEl)
+                anoEl.textContent =
+                    ano || "";
+
+            if(notaEl)
+                notaEl.textContent =
+                    nota
+                        ? "★ " +
+                          Number(nota).toFixed(1)
+                        : "";
+
+            if(sinopseEl)
+                sinopseEl.textContent =
+                    sinopse;
+
+            /*
+             * FUNDO / CAPA
+             */
+            let imagem =
+                filme.fundo ||
+                filme.capa ||
+                filme.backdrop_path ||
+                filme.poster_path ||
+                "";
+
+            const hero =
+                document.getElementById(
+                    "heroFilme"
+                );
+
+            if(hero && imagem){
+
+                if(
+                    !/^https?:\/\//i.test(
+                        imagem
+                    )
+                ){
+
+                    imagem =
+                        "https://image.tmdb.org/t/p/original" +
+                        (
+                            imagem.startsWith("/")
+                                ? imagem
+                                : "/" + imagem
+                        );
+
+                }
+
+                /*
+                 * PRÉ-CARREGA A NOVA CAPA ANTES DE TROCAR.
+                 *
+                 * Isso evita que a imagem antiga fique
+                 * aparecendo junto com a nova durante
+                 * a troca do Hero.
+                 */
+                const novaImagem =
+                    new Image();
+
+                novaImagem.onload =
+                    function(){
+
+                        hero.style.setProperty(
+                            "background-image",
+                            'url("' +
+                            imagem.replace(
+                                /"/g,
+                                '\\"'
+                            ) +
+                            '")',
+                            "important"
+                        );
+
+                        hero.style.setProperty(
+                            "background-size",
+                            "cover",
+                            "important"
+                        );
+
+                        hero.style.setProperty(
+                            "background-position",
+                            "center center",
+                            "important"
+                        );
+
+                        hero.style.setProperty(
+                            "background-repeat",
+                            "no-repeat",
+                            "important"
+                        );
+
+                        hero.style.setProperty(
+                            "background-color",
+                            "#000",
+                            "important"
+                        );
+
+                        hero.dataset.heroImagem =
+                            imagem;
+
+                    };
+
+                novaImagem.onerror =
+                    function(){
+
+                        console.warn(
+                            "[HERO FILMES] Falha ao carregar capa:",
+                            imagem
+                        );
+
+                    };
+
+                novaImagem.src = imagem;
+
+            }
+
+            /*
+             * O Hero de filmes usa CAPA/FUNDO.
+             * Não ativamos trailer.
+             */
+            const trailer =
+                document.getElementById(
+                    "trailerFilmes"
+                );
+
+            if(trailer){
+                trailer.remove();
+            }
+
+            const fundo =
+                document.getElementById(
+                    "fundoFilmes"
+                );
+
+            if(fundo){
+                fundo.style.display =
+                    "none";
+            }
+
+            const fundoEscuro =
+                document.getElementById(
+                    "fundoFilmesEscuro"
+                );
+
+            if(fundoEscuro){
+                fundoEscuro.style.display =
+                    "none";
+            }
+
+            if(
+                typeof configurarBotoes ===
+                "function"
+            ){
+
+                try{
+                    configurarBotoes(filme);
+                }catch(e){
+
+                    console.warn(
+                        "[HERO FILMES] configurarBotoes:",
+                        e
+                    );
+
+                }
+
+            }
+
+            console.log(
+                "[HERO FILMES] Filme:",
+                titulo
+            );
+
+        }
+
+        /*
+         * =====================================================
+         * PRIMEIRA CAPA — AGORA
+         * =====================================================
+         */
+
+        let filmesHero =
+            Array.from(
+                mapa.values()
+            );
+
+        /*
+         * Embaralha.
+         */
+        filmesHero.sort(
+            () => Math.random() - 0.5
         );
 
-    }catch(erro){
+        let indice = 0;
+
+        mostrarFilmeHero(
+            filmesHero[indice]
+        );
+
+        /*
+         * =====================================================
+         * CARREGAMENTO EM SEGUNDO PLANO
+         * =====================================================
+         */
+
+        (async function(){
+
+            try{
+
+                const TOTAL_PAGINAS =
+                    100;
+
+                const TAMANHO_LOTE =
+                    10;
+
+                for(
+                    let inicioPagina = 2;
+                    inicioPagina <= TOTAL_PAGINAS;
+                    inicioPagina += TAMANHO_LOTE
+                ){
+
+                    if(mapa.size >= 2000)
+                        break;
+
+                    const promessas=[];
+
+                    for(
+                        let pagina =
+                            inicioPagina;
+                        pagina <
+                            inicioPagina +
+                            TAMANHO_LOTE &&
+                            pagina <=
+                            TOTAL_PAGINAS;
+                        pagina++
+                    ){
+
+                        promessas.push(
+                            fetch(
+                                "/api/catalogo-filmes?pagina=" +
+                                pagina,
+                                {cache:"no-store"}
+                            )
+                            .then(
+                                resposta =>
+                                    resposta.ok
+                                        ? resposta.json()
+                                        : null
+                            )
+                            .catch(
+                                () => null
+                            )
+                        );
+
+                    }
+
+                    const resultados =
+                        await Promise.all(
+                            promessas
+                        );
+
+                    for(
+                        const dadosPagina
+                        of resultados
+                    ){
+
+                        if(!dadosPagina)
+                            continue;
+
+                        adicionarFilmes(
+                            dadosPagina.filmes
+                        );
+
+                        if(mapa.size >= 2000)
+                            break;
+
+                    }
+
+                    /*
+                     * Atualiza o estoque do Hero
+                     * sem interromper o filme atual.
+                     */
+                    filmesHero =
+                        Array.from(
+                            mapa.values()
+                        );
+
+                    console.log(
+                        "[HERO FILMES] Estoque:",
+                        filmesHero.length,
+                        "filmes"
+                    );
+
+                }
+
+                /*
+                 * Embaralha novamente quando
+                 * terminar de carregar.
+                 */
+                filmesHero.sort(
+                    () => Math.random() - 0.5
+                );
+
+            }catch(e){
+
+                console.warn(
+                    "[HERO FILMES] Erro carregando catálogo:",
+                    e
+                );
+
+            }
+
+        })();
+
+        /*
+         * =====================================================
+         * TROCA AUTOMÁTICA
+         * =====================================================
+         *
+         * 1 filme diferente a cada 10 segundos.
+         */
+
+        setInterval(
+            function(){
+
+                if(
+                    !filmesHero.length
+                )
+                    return;
+
+                indice++;
+
+                if(
+                    indice >=
+                    filmesHero.length
+                ){
+
+                    indice=0;
+
+                    filmesHero.sort(
+                        () =>
+                            Math.random() - 0.5
+                    );
+
+                }
+
+                mostrarFilmeHero(
+                    filmesHero[indice]
+                );
+
+            },
+            10000
+        );
+
+        console.log(
+            "[HERO FILMES] Automático:",
+            "10 segundos"
+        );
+
+    }catch(e){
 
         console.error(
             "[HERO FILMES] Erro:",
-            erro
+            e
         );
+
     }
 }
-
 
 if(document.readyState==="loading"){
 
@@ -4783,7 +5594,7 @@ if(document.readyState==="loading"){
                 card.className = "filme";
 
                 card.innerHTML =
-                    '<img src="' +
+                    '<img loading="lazy" decoding="async" src="' +
                     (filme.capa || "") +
                     '" alt="' +
                     (filme.titulo || "Filme") +
@@ -4851,6 +5662,74 @@ if(document.readyState==="loading"){
 }
 
 </style>
+
+<script id="hero-filmes-capa-final">
+(function(){
+
+    function aplicarCapaHero(filme){
+
+        const hero = document.getElementById("heroFilme");
+
+        if(!hero || !filme) return;
+
+        const imagem =
+            filme.backdrop ||
+            filme.backdrop_path ||
+            filme.capa ||
+            filme.poster ||
+            filme.poster_path ||
+            "";
+
+        if(!imagem) return;
+
+        let url = imagem;
+
+        if(!/^https?:\/\//i.test(url)){
+
+            if(url.startsWith("/")){
+                url = "https://image.tmdb.org/t/p/original" + url;
+            }else{
+                url = "https://image.tmdb.org/t/p/original/" + url;
+            }
+
+        }
+
+        hero.style.backgroundImage =
+            'url("' + url.replace(/"/g, '\\"') + '")';
+
+        window.LUKA_HERO_FILME_ATUAL = filme;
+
+        console.log(
+            "[HERO FILMES] Capa aplicada:",
+            filme.titulo || filme.title || ""
+        );
+    }
+
+    window.LUKA_APLICAR_CAPA_HERO = aplicarCapaHero;
+
+    /*
+     * Observa a variável global usada pelo HERO.
+     */
+    let ultimo = null;
+
+    setInterval(function(){
+
+        const filme = window.LUKA_HERO_FILME_ATUAL;
+
+        if(
+            filme &&
+            filme !== ultimo
+        ){
+
+            ultimo = filme;
+            aplicarCapaHero(filme);
+
+        }
+
+    }, 500);
+
+})();
+</script>
 
 </body>
 </html>

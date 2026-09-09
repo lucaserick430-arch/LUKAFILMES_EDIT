@@ -1,6 +1,159 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<script id="lukafilmes-cache-catalogo">
+(function(){
+
+    if (window.__LUKAFILMES_FETCH_CACHE_ATIVO__) return;
+
+    window.__LUKAFILMES_FETCH_CACHE_ATIVO__ = true;
+
+    const fetchOriginal = window.fetch.bind(window);
+
+    const cache = new Map();
+    const pendentes = new Map();
+
+    const TTL = 30000;
+
+    function ehCatalogo(url){
+
+        return /^\/api\/catalogo-(filmes|series|acao)(?:[?\/]|$)/i.test(url);
+    }
+
+    window.fetch = async function(input, init){
+
+        let url = "";
+
+        try {
+            url =
+                typeof input === "string"
+                    ? input
+                    : input.url;
+        } catch(e) {
+            return fetchOriginal(input, init);
+        }
+
+        const metodo =
+            String(
+                (init && init.method) ||
+                (typeof input !== "string" && input.method) ||
+                "GET"
+            ).toUpperCase();
+
+        if (
+            metodo !== "GET" ||
+            !ehCatalogo(url)
+        ){
+            return fetchOriginal(input, init);
+        }
+
+        const agora = Date.now();
+
+        const salvo = cache.get(url);
+
+        if (
+            salvo &&
+            agora - salvo.tempo < TTL
+        ){
+
+            return new Response(
+                salvo.texto,
+                {
+                    status: salvo.status,
+                    headers: salvo.headers
+                }
+            );
+        }
+
+        if (pendentes.has(url)){
+            const resultado =
+                await pendentes.get(url);
+
+            return new Response(
+                resultado.texto,
+                {
+                    status: resultado.status,
+                    headers: resultado.headers
+                }
+            );
+        }
+
+        const promessa = fetchOriginal(
+            input,
+            init
+        ).then(async resposta => {
+
+            const texto =
+                await resposta.clone().text();
+
+            const headers = {};
+
+            resposta.headers.forEach(
+                (valor, chave) => {
+                    headers[chave] = valor;
+                }
+            );
+
+            const resultado = {
+                texto: texto,
+                status: resposta.status,
+                headers: headers
+            };
+
+            if (resposta.ok){
+
+                cache.set(url, {
+                    texto: texto,
+                    status: resposta.status,
+                    headers: headers,
+                    tempo: Date.now()
+                });
+
+            }
+
+            return resultado;
+
+        });
+
+        pendentes.set(url, promessa);
+
+        try {
+
+            const resultado =
+                await promessa;
+
+            return new Response(
+                resultado.texto,
+                {
+                    status: resultado.status,
+                    headers: resultado.headers
+                }
+            );
+
+        } finally {
+
+            pendentes.delete(url);
+
+        }
+    };
+
+    window.__LUKAFILMES_LIMPAR_CACHE_CATALOGO__ =
+        function(){
+            cache.clear();
+        };
+
+    console.log(
+        "[LUKAFILMES] Cache REAL do catálogo ativado."
+    );
+
+})();
+</script>
+
+
+
+
+
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>LUKAFILMES - Séries</title>
@@ -565,6 +718,129 @@ body{overflow-x:hidden}
 
 
 
+
+
+<!-- ============================================================
+     LUKAFILMES — HERO SÉRIES
+     ATÉ 100 CAPAS DIFERENTES — SEM REPETIÇÃO
+     ============================================================ -->
+<script id="lukafilmes-hero-series-100-unicas">
+(function(){
+
+    const LIMITE_HERO = 100;
+    const CHAVE_USADAS = "lukafilmes_hero_series_100_unicas_v1";
+
+    function carregarUsadas(){
+        try {
+            const lista = JSON.parse(sessionStorage.getItem(CHAVE_USADAS) || "[]");
+            return new Set(Array.isArray(lista) ? lista : []);
+        } catch(e){
+            return new Set();
+        }
+    }
+
+    function salvarUsadas(set){
+        try {
+            sessionStorage.setItem(
+                CHAVE_USADAS,
+                JSON.stringify(Array.from(set).slice(-LIMITE_HERO))
+            );
+        } catch(e){}
+    }
+
+    function idSerie(serie){
+        if(!serie) return null;
+
+        return String(
+            serie.id ??
+            serie.tmdb_id ??
+            serie.id_tmdb ??
+            serie.name ??
+            serie.title ??
+            serie.original_name ??
+            serie.original_title ??
+            ""
+        ).trim().toLowerCase();
+    }
+
+    function capaSerie(serie){
+        if(!serie) return "";
+
+        return (
+            serie.backdrop_path ||
+            serie.backdrop ||
+            serie.poster_path ||
+            serie.poster ||
+            serie.capa ||
+            ""
+        );
+    }
+
+    /*
+     * Intercepta a seleção do hero.
+     * Quando existir uma lista de séries disponível,
+     * prioriza sempre uma série que ainda não foi utilizada.
+     */
+    window.__LUKAFILMES_HERO_SERIES_UNICAS__ = {
+        LIMITE: LIMITE_HERO,
+
+        escolher(lista){
+            if(!Array.isArray(lista) || !lista.length) return null;
+
+            const usadas = carregarUsadas();
+
+            const validas = lista.filter(serie => {
+                const id = idSerie(serie);
+                const capa = capaSerie(serie);
+                return id && capa;
+            });
+
+            if(!validas.length) return null;
+
+            let disponiveis = validas.filter(serie => {
+                return !usadas.has(idSerie(serie));
+            });
+
+            /*
+             * Chegou às 100 utilizadas?
+             * Começa um novo ciclo, mas continua evitando
+             * repetições dentro do novo ciclo.
+             */
+            if(!disponiveis.length){
+                sessionStorage.removeItem(CHAVE_USADAS);
+                usadas.clear();
+                disponiveis = validas.slice();
+            }
+
+            const escolhida =
+                disponiveis[Math.floor(Math.random() * disponiveis.length)];
+
+            const id = idSerie(escolhida);
+
+            if(id){
+                usadas.add(id);
+                salvarUsadas(usadas);
+            }
+
+            return escolhida;
+        }
+    };
+
+    /*
+     * Guarda também as capas já apresentadas nesta sessão.
+     * Isso impede que a mesma imagem seja reutilizada
+     * imediatamente pelo hero.
+     */
+    window.__LUKAFILMES_HERO_CAPAS_USADAS__ =
+        window.__LUKAFILMES_HERO_CAPAS_USADAS__ || new Set();
+
+    console.log(
+        "[LUKAFILMES HERO SÉRIES] Sistema de até 100 capas únicas ativado."
+    );
+
+})();
+</script>
+
 </body>
 </html>
 <style>
@@ -661,126 +937,286 @@ body{overflow-x:hidden}
 
 <script>
 async function carregarHeroSeries(){
+
     try{
-        const resposta=await fetch("/api/catalogo-series?pagina=1");
-        const dados=await resposta.json();
 
-        const lista=Array.isArray(dados.series)?dados.series:[];
+        /*
+         * PRIMEIRO: mostra imediatamente uma série da página 1.
+         * Não espera as outras páginas carregarem.
+         */
+        const primeiraResposta =
+            await fetch("/api/catalogo-series?pagina=1");
 
-        if(!lista.length)return;
+        const primeiroDados =
+            await primeiraResposta.json();
 
-        const serie=lista[Math.floor(Math.random()*lista.length)];
+        const primeiraLista =
+            Array.isArray(primeiroDados.series)
+            ? primeiroDados.series
+            : [];
 
-        const fundo=serie.fundo||serie.backdrop_path||serie.capa||"";
-
-        const hero=document.getElementById("heroSeries");
-
-        if(fundo){
-            hero.style.backgroundImage='url("'+fundo.replace(/"/g,"%22")+'")';
+        if(!primeiraLista.length){
+            console.error("[HERO SERIES] Catálogo vazio.");
+            return;
         }
 
-        hero.innerHTML=`
-            <div class="hero-conteudo">
-                <div class="hero-tag">LUKAFILMES</div>
+        /*
+         * Monta imediatamente o Hero.
+         */
+        let catalogoHero =
+            primeiraLista.filter(function(serie){
 
-                <h1 id="heroTituloSeries">
-                    ${serie.titulo||"Série"}
-                </h1>
-
-                <div class="hero-meta">
-                    <span>${serie.ano||""}</span>
-                    <span>${serie.nota?"⭐ "+Number(serie.nota).toFixed(1):""}</span>
-                </div>
-
-                <p id="heroSinopseSeries">
-                    ${serie.sinopse||""}
-                </p>
-
-                <div class="hero-botoes">
-                    <button class="hero-btn hero-assistir" id="heroAssistirSeries">
-                        ▶ Assistir
-                    </button>
-
-                    <button class="hero-btn hero-lista" id="heroListaSeries">
-                        ＋ Adicionar aos favoritos
-                    </button>
-                    <a
-                        href="/paginas/minha-lista"
-                        id="heroMinhaListaSeries"
-                        class="hero-btn hero-lista"
-                        style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;margin-left:8px;"
-                    >♥ Meus Favoritos</a>
-                </div>
-            </div>
-        `;
-
-        document.getElementById("heroAssistirSeries").onclick=function(){
-            localStorage.setItem(
-                "serieSelecionada",
-                JSON.stringify(serie)
-            );
-            location.href="serie.html";
-        };
-
-        const botaoListaSeries =
-            document.getElementById("heroListaSeries");
-
-        if (botaoListaSeries) {
-
-            function atualizarBotaoListaSeries(){
-
-                let lista = [];
-
-                try {
-                    lista = JSON.parse(
-                        localStorage.getItem("lukafilmes_minhalista") || "[]"
+                return serie &&
+                    (
+                        serie.fundo ||
+                        serie.backdrop_path ||
+                        serie.capa
                     );
-                } catch(e) {
-                    lista = [];
-                }
 
-                const id = String(
-                    serie.id ||
-                    serie.tmdb_id ||
-                    serie.titulo ||
-                    serie.nome ||
-                    ""
-                );
+            });
 
-                const existe = lista.some(function(item){
+        if(!catalogoHero.length){
+            console.error("[HERO SERIES] Nenhuma capa na página 1.");
+            return;
+        }
 
-                    return String(
-                        item.id ||
-                        item.tmdb_id ||
-                        item.titulo ||
-                        item.nome ||
-                        ""
-                    ) === id;
+        catalogoHero.sort(function(){
+            return Math.random()-0.5;
+        });
 
+        let indice=0;
+
+        function mostrarHeroSerie(){
+
+            const serie=catalogoHero[indice];
+
+            indice++;
+
+            if(indice>=catalogoHero.length){
+                indice=0;
+
+                catalogoHero.sort(function(){
+                    return Math.random()-0.5;
                 });
-
-                botaoListaSeries.textContent =
-                    existe
-                    ? "✓ Na minha lista"
-                    : "＋ Adicionar aos favoritos";
             }
 
-            botaoListaSeries.onclick = function(){
+            const fundo =
+                serie.fundo ||
+                serie.backdrop_path ||
+                serie.capa ||
+                "";
 
-                let lista = [];
+            const hero =
+                document.getElementById("heroSeries");
 
-                try {
-                    lista = JSON.parse(
-                        localStorage.getItem("lukafilmes_minhalista") || "[]"
+            if(!hero)return;
+
+            if(fundo){
+
+                hero.style.backgroundImage =
+                    'url("' +
+                    fundo.replace(/"/g,"%22") +
+                    '")';
+
+            }
+
+            hero.innerHTML=`
+                <div class="hero-conteudo">
+
+                    <div class="hero-tag">
+                        LUKAFILMES
+                    </div>
+
+                    <h1 id="heroTituloSeries">
+                        ${serie.titulo||"Série"}
+                    </h1>
+
+                    <div class="hero-meta">
+                        <span>${serie.ano||""}</span>
+                        <span>
+                            ${serie.nota
+                                ?"⭐ "+Number(serie.nota).toFixed(1)
+                                :""
+                            }
+                        </span>
+                    </div>
+
+                    <p id="heroSinopseSeries">
+                        ${serie.sinopse||""}
+                    </p>
+
+                    <div class="hero-botoes">
+
+                        <button
+                            class="hero-btn hero-assistir"
+                            id="heroAssistirSeries">
+                            ▶ Assistir
+                        </button>
+
+                        <button
+                            class="hero-btn hero-lista"
+                            id="heroListaSeries">
+                            ＋ Adicionar aos favoritos
+                        </button>
+
+                        <a
+                            href="/paginas/minha-lista"
+                            id="heroMinhaListaSeries"
+                            class="hero-btn hero-lista"
+                            style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;margin-left:8px;"
+                        >
+                            ♥ Meus Favoritos
+                        </a>
+
+                    </div>
+                </div>
+            `;
+
+            document.getElementById(
+                "heroAssistirSeries"
+            ).onclick=function(){
+
+                localStorage.setItem(
+                    "serieSelecionada",
+                    JSON.stringify(serie)
+                );
+
+                location.href="serie.html";
+
+            };
+
+            const botaoListaSeries =
+                document.getElementById("heroListaSeries");
+
+            if(botaoListaSeries){
+
+                function atualizar(){
+
+                    let lista=[];
+
+                    try{
+                        lista=JSON.parse(
+                            localStorage.getItem(
+                                "lukafilmes_minhalista"
+                            )||"[]"
+                        );
+                    }catch(e){
+                        lista=[];
+                    }
+
+                    const id=String(
+                        serie.id ||
+                        serie.tmdb_id ||
+                        serie.titulo ||
+                        serie.nome ||
+                        ""
                     );
-                } catch(e) {
-                    lista = [];
+
+                    const existe=lista.some(function(item){
+
+                        return String(
+                            item.id ||
+                            item.tmdb_id ||
+                            item.titulo ||
+                            item.nome ||
+                            ""
+                        )===id;
+
+                    });
+
+                    botaoListaSeries.textContent=
+                        existe
+                        ?"✓ Na minha lista"
+                        :"＋ Adicionar aos favoritos";
+
                 }
 
-                if (!Array.isArray(lista))
-                    lista = [];
+                botaoListaSeries.onclick=function(){
 
-                const id = String(
+                    let lista=[];
+
+                    try{
+                        lista=JSON.parse(
+                            localStorage.getItem(
+                                "lukafilmes_minhalista"
+                            )||"[]"
+                        );
+                    }catch(e){
+                        lista=[];
+                    }
+
+                    if(!Array.isArray(lista))
+                        lista=[];
+
+                    const id=String(
+                        serie.id ||
+                        serie.tmdb_id ||
+                        serie.titulo ||
+                        serie.nome ||
+                        ""
+                    );
+
+                    const pos=lista.findIndex(function(item){
+
+                        return String(
+                            item.id ||
+                            item.tmdb_id ||
+                            item.titulo ||
+                            item.nome ||
+                            ""
+                        )===id;
+
+                    });
+
+                    if(pos===-1){
+
+                        lista.push(
+                            Object.assign(
+                                {},
+                                serie,
+                                {
+                                    tipo:"serie",
+                                    media_type:"tv"
+                                }
+                            )
+                        );
+
+                    }else{
+
+                        lista.splice(pos,1);
+
+                    }
+
+                    localStorage.setItem(
+                        "lukafilmes_minhalista",
+                        JSON.stringify(lista)
+                    );
+
+                    atualizar();
+
+                };
+
+                atualizar();
+
+            }
+
+        }
+
+        /*
+         * MOSTRA A CAPA AGORA.
+         */
+        mostrarHeroSerie();
+
+        /*
+         * Depois carrega o restante em segundo plano.
+         */
+        (async function(){
+
+            const mapa=new Map();
+
+            primeiraLista.forEach(function(serie){
+
+                const id=String(
                     serie.id ||
                     serie.tmdb_id ||
                     serie.titulo ||
@@ -788,63 +1224,101 @@ async function carregarHeroSeries(){
                     ""
                 );
 
-                const indice = lista.findIndex(function(item){
+                if(id) mapa.set(id,serie);
 
-                    return String(
-                        item.id ||
-                        item.tmdb_id ||
-                        item.titulo ||
-                        item.nome ||
-                        ""
-                    ) === id;
+            });
 
-                });
+            for(let pagina=2;pagina<=100;pagina++){
 
-                if (indice === -1) {
+                try{
 
-                    const item = Object.assign({}, serie, {
-                        tipo: "serie",
-                        media_type: "tv"
+                    const resposta=
+                        await fetch(
+                            "/api/catalogo-series?pagina="+pagina
+                        );
+
+                    if(!resposta.ok)continue;
+
+                    const dados=
+                        await resposta.json();
+
+                    const lista=
+                        Array.isArray(dados.series)
+                        ?dados.series
+                        :[];
+
+                    if(!lista.length)break;
+
+                    lista.forEach(function(serie){
+
+                        const id=String(
+                            serie.id ||
+                            serie.tmdb_id ||
+                            serie.titulo ||
+                            serie.nome ||
+                            ""
+                        );
+
+                        const fundo=
+                            serie.fundo ||
+                            serie.backdrop_path ||
+                            serie.capa ||
+                            "";
+
+                        if(id && fundo && !mapa.has(id)){
+                            mapa.set(id,serie);
+                        }
+
                     });
 
-                    lista.push(item);
+                }catch(e){}
 
-                    localStorage.setItem(
-                        "lukafilmes_minhalista",
-                        JSON.stringify(lista)
+            }
+
+            const novas=
+                Array.from(mapa.values()).filter(function(serie){
+
+                    return (
+                        serie.fundo ||
+                        serie.backdrop_path ||
+                        serie.capa
                     );
 
-                } else {
+                }).slice(0,2000);
 
-                    lista.splice(indice, 1);
+            if(novas.length){
 
-                    localStorage.setItem(
-                        "lukafilmes_minhalista",
-                        JSON.stringify(lista)
-                    );
-                }
+                catalogoHero=novas;
 
-                atualizarBotaoListaSeries();
+                catalogoHero.sort(function(){
+                    return Math.random()-0.5;
+                });
 
                 console.log(
-                    "[MINHA LISTA SERIES]",
-                    serie.titulo
+                    "[HERO SERIES] Catálogo ampliado:",
+                    catalogoHero.length,
+                    "capas"
                 );
-            };
 
-            atualizarBotaoListaSeries();
-        }
+            }
 
+        })();
 
-        console.log(
-            "[HERO SERIES] OK:",
-            serie.titulo,
-            "| FUNDO:",
-            fundo
+        /*
+         * Troca automática.
+         */
+        setInterval(
+            mostrarHeroSerie,
+            10000
         );
 
     }catch(erro){
-        console.error("[HERO SERIES] ERRO:",erro);
+
+        console.error(
+            "[HERO SERIES] ERRO:",
+            erro
+        );
+
     }
 }
 
@@ -854,13 +1328,13 @@ carregarHeroSeries();
 #conteudo{
     position:relative;
     z-index:5;
-    padding:20px 4% 60px;
-    margin-top:-35px;
+    padding:5px 4% 60px;
+    margin-top:-65px;
 }
 .pesquisa-series{
     width:100%;
     max-width:520px;
-    margin:0 auto 35px;
+    margin:65px auto 10px;
 }
 #pesquisaSeries{
     width:100%;
@@ -878,7 +1352,7 @@ carregarHeroSeries();
 }
 .titulo-catalogo{
     font-size:24px;
-    margin:0 0 18px;
+    margin:0 0 12px;
 }
 #listaSeries{
     display:grid;
@@ -951,10 +1425,7 @@ listaSeries.innerHTML=`
             placeholder="Pesquisar séries..."
             autocomplete="off">
     </div>
-
-    <h2 class="titulo-catalogo">Séries</h2>
-
-    <div id="listaSeries">
+<div id="listaSeries">
         <div class="estado-series"></div>
     </div>
 `;
@@ -966,23 +1437,108 @@ const TOTAL_PAGINAS_CATALOGO_SERIES = 500;
 
 /*
  * =========================================================
- * LUKAFILMES — SÉRIES COM INFINITE SCROLL REAL
+ * LUKAFILMES — SÉRIES COM CARREGAMENTO ALEATÓRIO + INFINITO
  * =========================================================
  *
- * Paginação sequencial:
- * 1 → 2 → 3 → 4 → 5...
+ * Igual ao catálogo de FILMES:
  *
- * A próxima página só é buscada quando o usuário
- * chega perto do final da página.
- *
- * Se uma página vier vazia, ela é ignorada e a
- * próxima é buscada automaticamente.
- *
- * A categoria permanece ativa durante toda a
- * paginação.
+ * 1. A fila de páginas é embaralhada a cada abertura.
+ * 2. A primeira página muda a cada atualização.
+ * 3. Nenhuma página é repetida durante esta sessão.
+ * 4. Ao descer, novas páginas continuam sendo carregadas.
+ * 5. O infinite scroll continua funcionando normalmente.
  */
 
-let paginaSeries = 1;
+function embaralharFilaSeries(lista){
+
+    const resultado = [...lista];
+
+    for(let i = resultado.length - 1; i > 0; i--){
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            resultado[i],
+            resultado[j]
+        ] = [
+            resultado[j],
+            resultado[i]
+        ];
+    }
+
+    return resultado;
+}
+
+function criarFilaPaginasSeries(){
+
+    const paginasIniciais =
+        Array.from(
+            {
+                length:
+                    Math.min(
+                        50,
+                        TOTAL_PAGINAS_CATALOGO_SERIES
+                    )
+            },
+            (_, i) => i + 1
+        );
+
+    const paginasRestantes =
+        Array.from(
+            {
+                length:
+                    Math.max(
+                        0,
+                        TOTAL_PAGINAS_CATALOGO_SERIES - 50
+                    )
+            },
+            (_, i) => i + 51
+        );
+
+    return [
+        ...embaralharFilaSeries(
+            paginasIniciais
+        ),
+        ...embaralharFilaSeries(
+            paginasRestantes
+        )
+    ];
+}
+
+const filaPaginasSeries =
+    criarFilaPaginasSeries();
+
+let indiceFilaPaginasSeries = 0;
+
+function proximaPaginaSeries(){
+
+    if(
+        indiceFilaPaginasSeries >=
+        filaPaginasSeries.length
+    ){
+        return null;
+    }
+
+    const pagina =
+        filaPaginasSeries[
+            indiceFilaPaginasSeries
+        ];
+
+    indiceFilaPaginasSeries++;
+
+    return pagina;
+}
+
+/*
+ * A PRIMEIRA página agora vem da fila
+ * embaralhada, igual aos filmes.
+ */
+let paginaSeries =
+    proximaPaginaSeries();
+
 let carregandoSeries = false;
 let fimSeries = false;
 
