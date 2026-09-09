@@ -9837,7 +9837,10 @@ document.addEventListener("DOMContentLoaded", () => {
              * não abre automaticamente para não
              * atrapalhar a visão da Home.
              */
-            abrirPainel();
+            if(!window.matchMedia("(max-width: 768px)").matches){
+                abrirPainel();
+                // mostrarNotificacaoTemporaria(filmes[0]);
+            }
 
         }catch(erro){
 

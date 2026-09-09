@@ -9838,6 +9838,7 @@ document.addEventListener("DOMContentLoaded", () => {
              * atrapalhar a visão da Home.
              */
             abrirPainel();
+            mostrarNotificacaoTemporaria(filmes[0]);
 
         }catch(erro){
 
