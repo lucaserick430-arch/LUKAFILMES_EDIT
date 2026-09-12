@@ -4004,6 +4004,80 @@ z-index:2;
 }
 </style>
 
+
+<style id="lukafilmes-iptv-buttons-css">
+.lukafilmes-iptv-desktop-btn{
+    position:fixed;
+    left:14px;
+    top:76px;
+    z-index:9998;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:88px;
+    height:36px;
+    padding:0 14px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,.16);
+    background:rgba(20,20,20,.94);
+    color:#fff;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.2px;
+    box-shadow:0 4px 14px rgba(0,0,0,.35);
+    transition:transform .2s ease,background .2s ease,opacity .2s ease;
+}
+.lukafilmes-iptv-desktop-btn:hover{
+    transform:translateY(-1px);
+    background:rgba(45,45,45,.98);
+}
+.lukafilmes-iptv-mobile-btn{
+    display:none !important;
+}
+@media(max-width:700px){
+    .lukafilmes-iptv-desktop-btn{
+        display:none !important;
+    }
+    .lukafilmes-iptv-mobile-btn{
+        display:block !important;
+    }
+}
+@media(min-width:701px){
+    .lukafilmes-iptv-mobile-btn{
+        display:none !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-iptv-flutuante-mobile-css">
+.lukafilmes-iptv-mobile-flutuante{
+    display:none;
+}
+@media(max-width:700px){
+    .lukafilmes-iptv-mobile-flutuante{
+        display:flex;
+        position:fixed;
+        right:14px;
+        bottom:18px;
+        z-index:9999;
+        align-items:center;
+        justify-content:center;
+        min-width:88px;
+        height:42px;
+        padding:0 14px;
+        border-radius:22px;
+        background:rgba(20,20,20,.95);
+        color:#fff;
+        text-decoration:none;
+        font-size:14px;
+        font-weight:700;
+        box-shadow:0 4px 14px rgba(0,0,0,.4);
+    }
+}
+</style>
+
 </head>
 
 <body>
@@ -4152,6 +4226,13 @@ z-index:2;
         <div class="profile"><img loading="lazy" decoding="async" src="/favicon/file_000000006768820e93d46c5d164e8bd9.png" alt="LUKAFILMES"></div>
     </div>
 </header>
+<a
+    href="/paginas/iptv.html"
+    id="lukafilmesIptvDesktop"
+    class="lukafilmes-iptv-desktop-btn"
+    aria-label="IPTV"
+>📺 IPTV</a>
+
 
 
 <div class="desktop-user-menu" id="desktopUserMenu">
@@ -10431,6 +10512,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 })();
 </script>
+
+<a href="/paginas/iptv.html"
+   class="lukafilmes-iptv-mobile-flutuante"
+   aria-label="IPTV">📺 IPTV</a>
 
 </body>
 

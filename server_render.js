@@ -6273,7 +6273,9 @@ app.use(
 
             req.path === "/paginas/serie.html" ||
 
-            req.path === "/paginas/serie"
+            req.path === "/paginas/serie" ||
+
+            req.path === "/paginas/iptv.html"
 
         ) {
 

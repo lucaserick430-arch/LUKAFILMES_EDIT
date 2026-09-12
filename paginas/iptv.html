@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUKAFILMES — IPTV</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    background:#080808;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    min-height:100vh;
+}
+
+.topo{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 16px;
+    background:rgba(8,8,8,.97);
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.logo{
+    color:#e50914;
+    font-size:22px;
+    font-weight:900;
+    text-decoration:none;
+    white-space:nowrap;
+}
+
+.titulo{
+    font-size:18px;
+    font-weight:700;
+}
+
+.busca{
+    margin-left:auto;
+    width:min(320px,45vw);
+    padding:9px 12px;
+    border-radius:7px;
+    border:1px solid #333;
+    outline:none;
+    background:#151515;
+    color:#fff;
+}
+
+.busca::placeholder{
+    color:#999;
+}
+
+.conteudo{
+    width:min(1400px,100%);
+    margin:auto;
+    padding:18px;
+}
+
+.status{
+    margin-bottom:15px;
+    color:#aaa;
+    font-size:14px;
+}
+
+.secao{
+    margin-bottom:28px;
+}
+
+.secao h2{
+    margin:0 0 12px;
+    font-size:20px;
+}
+
+.canais{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:12px;
+}
+
+.canal{
+    min-height:150px;
+    padding:12px;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:9px;
+    background:#121212;
+    cursor:pointer;
+    transition:.18s;
+}
+
+.canal:hover{
+    transform:translateY(-2px);
+    background:#1b1b1b;
+}
+
+.logo-canal{
+    width:100%;
+    height:78px;
+    object-fit:contain;
+    display:block;
+    margin-bottom:9px;
+    background:#0b0b0b;
+    border-radius:6px;
+}
+
+.nome{
+    font-weight:700;
+    font-size:14px;
+    line-height:1.25;
+}
+
+.categoria{
+    margin-top:5px;
+    color:#999;
+    font-size:12px;
+}
+
+.player-area{
+    display:none;
+    margin-bottom:25px;
+}
+
+.player-area.ativo{
+    display:block;
+}
+
+.player-topo{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+}
+
+.player-titulo{
+    font-size:18px;
+    font-weight:700;
+}
+
+.fechar{
+    border:0;
+    border-radius:6px;
+    padding:8px 12px;
+    background:#252525;
+    color:#fff;
+    cursor:pointer;
+}
+
+.player{
+    width:100%;
+    aspect-ratio:16/9;
+    min-height:300px;
+    background:#000;
+    border-radius:9px;
+    overflow:hidden;
+}
+
+.player iframe{
+    width:100%;
+    height:100%;
+    border:0;
+}
+
+.aviso{
+    padding:20px;
+    border-radius:8px;
+    background:#111;
+    color:#999;
+}
+
+.erro{
+    color:#ff7777;
+}
+
+@media(max-width:700px){
+    .topo{
+        padding:10px;
+        gap:8px;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .titulo{
+        display:none;
+    }
+
+    .busca{
+        width:130px;
+        margin-left:auto;
+        font-size:12px;
+    }
+
+    .conteudo{
+        padding:12px;
+    }
+
+    .canais{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:9px;
+    }
+
+    .canal{
+        min-height:135px;
+        padding:9px;
+    }
+
+    .logo-canal{
+        height:65px;
+    }
+
+    .player{
+        min-height:210px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topo">
+    <a class="logo" href="/">LUKAFILMES</a>
+    <span class="titulo">📺 IPTV</span>
+    <input
+        id="buscaIPTV"
+        class="busca"
+        type="search"
+        placeholder="Buscar canal..."
+        autocomplete="off">
+</header>
+
+<main class="conteudo">
+
+    <div id="statusIPTV" class="status">
+        Carregando canais...
+    </div>
+
+    <section id="playerArea" class="player-area">
+        <div class="player-topo">
+            <div id="playerTitulo" class="player-titulo"></div>
+            <button id="fecharPlayer" class="fechar">Fechar</button>
+        </div>
+
+        <div class="player">
+            <iframe
+                id="playerIPTV"
+                src=""
+                allowfullscreen
+                allow="autoplay; encrypted-media; picture-in-picture">
+            </iframe>
+        </div>
+    </section>
+
+    <section class="secao">
+        <h2>📺 Canais</h2>
+        <div id="listaCanais" class="canais">
+            <div class="aviso">Carregando...</div>
+        </div>
+    </section>
+
+    <section class="secao">
+        <h2>🔴 Ao vivo agora</h2>
+        <div id="listaAoVivo" class="canais">
+            <div class="aviso">Carregando...</div>
+        </div>
+    </section>
+
+</main>
+
+<script>
+const API = 'https://api.reidoscanais.st';
+
+let canais = [];
+let eventos = [];
+
+function escapar(valor){
+    return String(valor ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+}
+
+function logoFallback(){
+    return 'data:image/svg+xml;charset=UTF-8,' +
+        encodeURIComponent(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="150">' +
+            '<rect width="100%" height="100%" fill="#111"/>' +
+            '<text x="50%" y="50%" fill="#777" font-size="22" text-anchor="middle" dominant-baseline="middle">LUKAFILMES</text>' +
+            '</svg>'
+        );
+}
+
+function obterLogo(item){
+    return item?.poster || item?.logo ||
+           item?.teams?.home?.logo ||
+           logoFallback();
+}
+
+function obterEmbed(item){
+    if(!Array.isArray(item?.embeds)) return '';
+
+    const embed = item.embeds.find(x =>
+        x && typeof x.embed_url === 'string' && x.embed_url.trim()
+    );
+
+    return embed ? embed.embed_url.trim() : '';
+}
+
+function abrirPlayer(item){
+    const url = obterEmbed(item);
+
+    if(!url){
+        alert('Este canal não possui player disponível no momento.');
+        return;
+    }
+
+    document.getElementById('playerTitulo').textContent =
+        item.title || item.name || 'IPTV';
+
+    document.getElementById('playerIPTV').src = url;
+
+    document.getElementById('playerArea').classList.add('ativo');
+
+    window.scrollTo({
+        top:document.getElementById('playerArea').offsetTop - 10,
+        behavior:'smooth'
+    });
+}
+
+
+let lukaQRCodePromise = null;
+
+function carregarQRCodeLuka() {
+
+    if (typeof QRCode !== "undefined") {
+        return Promise.resolve();
+    }
+
+    if (lukaQRCodePromise) {
+        return lukaQRCodePromise;
+    }
+
+    lukaQRCodePromise = new Promise(function(resolve, reject) {
+
+        const script = document.createElement("script");
+
+        script.src =
+            "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
+
+        script.onload = function() {
+            resolve();
+        };
+
+        script.onerror = function() {
+            lukaQRCodePromise = null;
+            reject(new Error("Não foi possível carregar o QR Code."));
+        };
+
+        document.head.appendChild(script);
+    });
+
+    return lukaQRCodePromise;
+}
+
+async function mostrarPagamentoIPTV(acesso) {
+    try {
+        const respostaPagamento =
+            await fetch(
+                "/api/pagamentos/criar",
+                {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({})
+                }
+            );
+
+        const dadosPagamento =
+            await respostaPagamento.json();
+
+        if (
+            !respostaPagamento.ok ||
+            !dadosPagamento.sucesso
+        ) {
+            alert(
+                dadosPagamento.mensagem ||
+                "Não foi possível preparar o pagamento."
+            );
+            return;
+        }
+
+        if (
+            dadosPagamento.pagamento_necessario === false
+        ) {
+            return;
+        }
+
+        const pagamento =
+            dadosPagamento.pagamento || null;
+
+        const valor =
+            dadosPagamento.valor ||
+            Number(
+                acesso?.valor || 18
+            ).toFixed(2);
+
+        const pix =
+            dadosPagamento.pix || "";
+
+        const antigo =
+            document.getElementById(
+                "lukafilmesPagamento"
+            );
+
+        if (antigo) {
+            antigo.remove();
+        }
+
+        const tela =
+            document.createElement("div");
+
+        tela.id =
+            "lukafilmesPagamento";
+
+        tela.style.cssText = `
+            width:min(94%,780px);
+            margin:clamp(18px,3vw,42px) auto;
+            padding:clamp(22px,3.5vw,42px);
+            box-sizing:border-box;
+            background:linear-gradient(180deg,#242424 0%,#111 100%);
+            border:2px solid rgba(255,255,255,.16);
+            border-radius:clamp(16px,2vw,26px);
+            text-align:center;
+            color:#fff;
+            box-shadow:0 15px 50px rgba(0,0,0,.75);
+            position:relative;
+            z-index:20;
+            overflow:hidden;
+        `;
+
+        if (!document.getElementById("lukaPagamentoResponsivoStyle")) {
+            const estiloPagamento = document.createElement("style");
+            estiloPagamento.id = "lukaPagamentoResponsivoStyle";
+            estiloPagamento.textContent = `
+                #lukafilmesPagamento button {
+                    min-height: 52px;
+                }
+
+                @media (min-width: 1200px) {
+                    #lukafilmesPagamento {
+                        max-width: 860px !important;
+                    }
+
+                    #lukafilmesPagamento #lukafilmesQrCode {
+                        width: 300px !important;
+                        min-height: 300px !important;
+                    }
+                }
+
+                @media (max-width: 600px) {
+                    #lukafilmesPagamento {
+                        width: 94% !important;
+                        padding: 20px !important;
+                        margin: 16px auto !important;
+                        border-radius: 16px !important;
+                    }
+
+                    #lukafilmesPagamento #lukafilmesQrCode {
+                        width: min(250px, 72vw) !important;
+                        min-height: min(250px, 72vw) !important;
+                    }
+
+                    #lukafilmesPagamento textarea {
+                        font-size: 12px !important;
+                    }
+                }
+            `;
+
+            document.head.appendChild(estiloPagamento);
+        }
+
+
+        tela.innerHTML = `
+            <h2 style="
+                margin:0 0 14px;
+                font-size:clamp(22px,3vw,34px);
+                line-height:1.2;
+            ">
+                🔒 Ative seu acesso
+            </h2>
+
+            <p style="
+                margin:8px auto 20px;
+                max-width:650px;
+                font-size:clamp(15px,1.8vw,20px);
+                line-height:1.5;
+            ">
+                Faça o pagamento via PIX para liberar o acesso ao LUKAFILMES por 30 dias.
+            </p>
+
+            <div style="
+                font-size:clamp(28px,4vw,42px);
+                font-weight:800;
+                margin:15px 0;
+            ">
+                R$ ${valor}
+            </div>
+
+            <p style="margin:8px 0;">
+                Acesso por 30 dias
+            </p>
+
+            <div
+                id="lukafilmesQrCode"
+                style="
+                    width:min(300px,70vw);
+                    min-height:min(300px,70vw);
+                    margin:24px auto;
+                    max-width:300px;
+                    padding:10px;
+                    box-sizing:border-box;
+                    background:#fff;
+                    border-radius:12px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                ">
+            </div>
+
+            <p style="
+                margin:18px 0 8px;
+                font-weight:700;
+            ">
+                PIX copia e cola
+            </p>
+
+            <textarea
+                id="lukafilmesPix"
+                readonly
+                style="
+                    width:100%;
+                    min-height:110px;
+                    box-sizing:border-box;
+                    padding:14px;
+                    border-radius:10px;
+                    border:1px solid rgba(255,255,255,.2);
+                    background:#fff;
+                    color:#111;
+                    resize:none;
+                    font-size:13px;
+                    line-height:1.45;
+                ">${String(pix)
+                    .replace(/&/g,"&amp;")
+                    .replace(/</g,"&lt;")
+                    .replace(/>/g,"&gt;")
+                    .replace(/"/g,"&quot;")
+                    .replace(/'/g,"&#039;")}</textarea>
+
+            <button
+                id="lukafilmesCopiarPix"
+                type="button"
+                style="
+                    width:100%;
+                    margin-top:12px;
+                    min-height:52px;
+                    border:0;
+                    border-radius:10px;
+                    background:#fff;
+                    color:#111;
+                    font-weight:800;
+                    cursor:pointer;
+                    font-size:15px;
+                ">
+                📋 COPIAR CÓDIGO PIX
+            </button>
+
+            <button
+                id="lukafilmesPagamentoFeito"
+                type="button"
+                style="
+                    width:100%;
+                    margin-top:12px;
+                    min-height:52px;
+                    border:0;
+                    border-radius:10px;
+                    background:#e50914;
+                    color:#fff;
+                    font-weight:800;
+                    cursor:pointer;
+                    font-size:15px;
+                ">
+                📲 ENVIAR COMPROVANTE PELO WHATSAPP
+            </button>
+
+            <p
+                id="lukafilmesPagamentoStatus"
+                style="
+                    display:none;
+                    margin-top:14px;
+                    font-size:14px;
+                    line-height:1.5;
+                ">
+            </p>
+        `;
+
+        const playerArea =
+            document.getElementById(
+                "playerArea"
+            );
+
+        if (playerArea && playerArea.parentNode) {
+            playerArea.parentNode.insertBefore(
+                tela,
+                playerArea
+            );
+        } else {
+            document.body.appendChild(tela);
+        }
+
+        tela.scrollIntoView({
+            behavior:"smooth",
+            block:"center"
+        });
+
+        const areaQr =
+            document.getElementById(
+                "lukafilmesQrCode"
+            );
+
+        if (pix && areaQr) {
+            try {
+                await carregarQRCodeLuka();
+
+                new QRCode(
+                    areaQr,
+                    {
+                        text:pix,
+                        width:260,
+                        height:260
+                    }
+                );
+            } catch (erroQr) {
+                console.error(
+                    "[LUKAFILMES IPTV][QR CODE]",
+                    erroQr
+                );
+
+                areaQr.innerHTML =
+                    "<span style='color:#222;'>QR Code indisponível</span>";
+            }
+        } else if (areaQr) {
+            areaQr.innerHTML =
+                "<span style='color:#222;'>QR Code indisponível</span>";
+        }
+
+        const botaoCopiar =
+            document.getElementById(
+                "lukafilmesCopiarPix"
+            );
+
+        if (botaoCopiar) {
+            botaoCopiar.onclick =
+                async function () {
+                    let copiou = false;
+
+                    try {
+                        if (
+                            navigator.clipboard &&
+                            navigator.clipboard.writeText
+                        ) {
+                            await navigator.clipboard.writeText(
+                                String(pix)
+                            );
+                            copiou = true;
+                        }
+                    } catch (_) {}
+
+                    if (!copiou) {
+                        const campo =
+                            document.getElementById(
+                                "lukafilmesPix"
+                            );
+
+                        if (campo) {
+                            campo.focus();
+                            campo.select();
+                            campo.setSelectionRange(
+                                0,
+                                campo.value.length
+                            );
+
+                            try {
+                                copiou =
+                                    document.execCommand(
+                                        "copy"
+                                    );
+                            } catch (_) {}
+                        }
+                    }
+
+                    botaoCopiar.innerHTML =
+                        copiou
+                            ? "✅ PIX COPIADO"
+                            : "⚠️ Não foi possível copiar";
+
+                    setTimeout(
+                        function () {
+                            botaoCopiar.innerHTML =
+                                "📋 COPIAR CÓDIGO PIX";
+                        },
+                        copiou ? 2000 : 2500
+                    );
+                };
+        }
+
+        const botaoFeito =
+            document.getElementById(
+                "lukafilmesPagamentoFeito"
+            );
+
+        if (botaoFeito) {
+            botaoFeito.onclick =
+                function () {
+                    const nomeUsuario =
+                        String(
+                            pagamento &&
+                            pagamento.usuario
+                                ? pagamento.usuario
+                                : "cliente"
+                        );
+
+                    const idPagamento =
+                        pagamento &&
+                        pagamento.id
+                            ? Number(pagamento.id)
+                            : "";
+
+                    const mensagem = [
+                        "🎬 LUKAFILMES — COMPROVANTE DE PAGAMENTO",
+                        "",
+                        "👤 Usuário: " + nomeUsuario,
+                        "🧾 Pagamento: #" + idPagamento,
+                        "💰 Valor: R$ " + valor,
+                        "",
+                        "✅ Já realizei o pagamento via PIX.",
+                        "",
+                        "Estou enviando o comprovante para conferência e aprovação."
+                    ].join("\n");
+
+                    const whatsapp =
+                        "https://wa.me/5511957621653?text=" +
+                        encodeURIComponent(mensagem);
+
+                    const status =
+                        document.getElementById(
+                            "lukafilmesPagamentoStatus"
+                        );
+
+                    if (status) {
+                        status.style.display = "block";
+                        status.innerHTML =
+                            "⏳ Pagamento pendente.<br><br>" +
+                            "📲 Envie o comprovante pelo WhatsApp e depois volte para esta página.<br><br>" +
+                            "Seu acesso será liberado após a aprovação.";
+                    }
+
+                    botaoFeito.disabled = true;
+
+                    botaoFeito.innerHTML =
+                        "📲 ABRINDO WHATSAPP...";
+
+                    window.location.href =
+                        whatsapp;
+
+                    setTimeout(
+                        function () {
+                            botaoFeito.innerHTML =
+                                "⏳ AGUARDANDO APROVAÇÃO";
+                        },
+                        1200
+                    );
+                };
+        }
+
+        console.log(
+            "[LUKAFILMES IPTV] Pagamento preparado:",
+            pagamento
+        );
+
+    } catch (erro) {
+        console.error(
+            "[LUKAFILMES IPTV] Erro na tela de pagamento:",
+            erro
+        );
+
+        alert(
+            "Não foi possível abrir a tela de pagamento."
+        );
+    }
+}
+
+function criarCard(item){
+    const div = document.createElement('div');
+    div.className = 'canal';
+
+    const nome = item.title || item.name || 'Canal';
+    const categoria = item.category || item.competition || 'IPTV';
+    const logo = obterLogo(item);
+
+    div.innerHTML = `
+        <img
+            class="logo-canal"
+            src="${escapar(logo)}"
+            alt="${escapar(nome)}"
+            onerror="this.src='${escapar(logoFallback())}'">
+        <div class="nome">${escapar(nome)}</div>
+        <div class="categoria">${escapar(categoria)}</div>
+    `;
+
+    div.addEventListener('click', async () => {
+        try {
+            const resposta = await fetch("/api/acesso-assistir", {
+                method: "GET",
+                credentials: "same-origin",
+                cache: "no-store"
+            });
+
+            const acesso = await resposta.json();
+
+            console.log("[LUKAFILMES IPTV] Resultado do acesso:", acesso);
+
+            if (acesso.motivo === "nao_logado") {
+                const retorno =
+                    window.location.pathname +
+                    window.location.search;
+
+                window.location.href =
+                    "/cadastro?retorno=" +
+                    encodeURIComponent(retorno);
+
+                return;
+            }
+
+            if (!acesso.permitido) {
+                await mostrarPagamentoIPTV(acesso);
+                return;
+            }
+
+            abrirPlayer(item);
+
+        } catch (erro) {
+            console.error(
+                "[LUKAFILMES IPTV] Erro ao verificar acesso:",
+                erro
+            );
+
+            alert(
+                "Não foi possível verificar seu acesso. Tente novamente."
+            );
+        }
+    });
+
+    return div;
+}
+
+function renderizarCanais(lista){
+    const area = document.getElementById('listaCanais');
+    area.innerHTML = '';
+
+    if(!lista.length){
+        area.innerHTML =
+            '<div class="aviso">Nenhum canal encontrado.</div>';
+        return;
+    }
+
+    lista.forEach(item => area.appendChild(criarCard(item)));
+}
+
+function renderizarAoVivo(lista){
+    const area = document.getElementById('listaAoVivo');
+    area.innerHTML = '';
+
+    if(!lista.length){
+        area.innerHTML =
+            '<div class="aviso">Nenhum evento ao vivo agora.</div>';
+        return;
+    }
+
+    lista.forEach(item => area.appendChild(criarCard(item)));
+}
+
+async function carregarIPTV(){
+    const status = document.getElementById('statusIPTV');
+
+    try{
+        const respostaCanais =
+            await fetch(`${API}/channels`, {cache:'no-store'});
+
+        if(!respostaCanais.ok){
+            throw new Error(
+                'Erro HTTP /channels: ' + respostaCanais.status
+            );
+        }
+
+        const jsonCanais = await respostaCanais.json();
+
+        canais = Array.isArray(jsonCanais.data)
+            ? jsonCanais.data
+            : [];
+
+        const canaisManuais = [
+            {
+                title: "Venus Hot",
+                category: "Adulto",
+                embeds: [
+                    { embed_url: "https://streambetter.shop/canal/venus-hot" }
+                ]
+            },
+            {
+                title: "Sextreme",
+                category: "Adulto",
+                embeds: [
+                    { embed_url: "https://streambetter.shop/canal/sextreme" }
+                ]
+            },
+            {
+                title: "Sexy Hot 2",
+                category: "Adulto",
+                embeds: [
+                    { embed_url: "https://streambetter.shop/canal/sexy-hot-2" }
+                ]
+            },
+            {
+                title: "Playboy TV",
+                category: "Adulto",
+                embeds: [
+                    { embed_url: "https://streambetter.shop/canal/playboy-tv" }
+                ]
+            },
+            {
+                title: "Dream Sex",
+                category: "Adulto",
+                embeds: [
+                    { embed_url: "https://streambetter.shop/canal/dream-sex" }
+                ]
+            }
+        ];
+
+        canais = [...canais, ...canaisManuais];
+
+        renderizarCanais(canais);
+
+        let aoVivo = [];
+
+        try{
+            const respostaLive =
+                await fetch(`${API}/sports?status=live`, {cache:'no-store'});
+
+            if(respostaLive.ok){
+                const jsonLive = await respostaLive.json();
+
+                aoVivo = Array.isArray(jsonLive.data)
+                    ? jsonLive.data
+                    : [];
+            }
+        }catch(e){
+            console.warn('Não foi possível carregar eventos ao vivo:', e);
+        }
+
+        eventos = aoVivo;
+        renderizarAoVivo(eventos);
+
+        status.textContent =
+            `${canais.length} canais carregados` +
+            (eventos.length ? ` • ${eventos.length} ao vivo agora` : '');
+
+    }catch(erro){
+        console.error('IPTV:', erro);
+
+        status.innerHTML =
+            '<span class="erro">Não foi possível carregar os canais.</span>';
+
+        document.getElementById('listaCanais').innerHTML =
+            '<div class="aviso erro">Erro ao consultar a API IPTV.</div>';
+
+        document.getElementById('listaAoVivo').innerHTML =
+            '<div class="aviso">Não foi possível carregar os eventos.</div>';
+    }
+}
+
+document.getElementById('buscaIPTV').addEventListener('input', function(){
+    const termo = this.value.trim().toLowerCase();
+
+    if(!termo){
+        renderizarCanais(canais);
+        renderizarAoVivo(eventos);
+        return;
+    }
+
+    const filtrar = item => {
+        const texto = [
+            item.title,
+            item.name,
+            item.description,
+            item.category,
+            item.competition,
+            item.teams?.home?.name,
+            item.teams?.away?.name
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        return texto.includes(termo);
+    };
+
+    renderizarCanais(canais.filter(filtrar));
+    renderizarAoVivo(eventos.filter(filtrar));
+});
+
+document.getElementById('fecharPlayer').addEventListener('click', () => {
+    document.getElementById('playerIPTV').src = '';
+    document.getElementById('playerArea').classList.remove('ativo');
+});
+
+carregarIPTV();
+</script>
+
+</body>
+</html>
