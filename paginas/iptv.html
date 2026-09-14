@@ -459,7 +459,6 @@ async function abrirPlayer(item){
      * Canais adultos via iframe
      */
     if(
-        !item.xtream_stream_id &&
         item.category === 'Adulto' &&
         item.iframe_url
     ){
@@ -504,171 +503,51 @@ async function abrirPlayer(item){
     }
 
     /*
-     * Xtream IPTV
+     * IPTV normal via embed_url da API /channels
      */
-    if(item.xtream_stream_id){
+    const embedUrl = obterEmbed(item);
 
-        try{
+    if(embedUrl){
 
-            const resposta = await fetch(
-                '/api/xtream/iptv/player/' +
-                encodeURIComponent(String(item.xtream_stream_id)),
-                {
-                    method:'GET',
-                    credentials:'same-origin',
-                    cache:'no-store'
-                }
-            );
+        const iframe =
+            document.getElementById('playerIframeIPTV');
 
-            const dados = await resposta.json();
-
-            if(!resposta.ok || !dados.stream_url){
-                throw new Error(
-                    dados.erro ||
-                    'Não foi possível preparar o canal.'
-                );
-            }
-
-            document.getElementById('playerTitulo').textContent =
-                titulo;
-
-            document.getElementById('playerTitulo').textContent =
-                titulo;
-
-            document.getElementById('playerArea')
-                .classList.add('ativo');
-
-            window.scrollTo({
-                top:
-                    document.getElementById('playerArea')
-                        .offsetTop - 10,
-                behavior:'smooth'
-            });
-
-            if(window.lukaHlsPlayer){
-                try{
-                    window.lukaHlsPlayer.destroy();
-                }catch(e){}
-                window.lukaHlsPlayer = null;
-            }
-
-            const iframe =
-                document.getElementById('playerIframeIPTV');
-
-            if(iframe){
-                iframe.src = 'about:blank';
-                iframe.style.display = 'none';
-            }
-
-            player.style.display = 'block';
-            player.removeAttribute('src');
-            player.load();
-
-            if(window.Hls && Hls.isSupported()){
-
-                window.lukaHlsPlayer =
-                    new Hls({
-                        enableWorker: true,
-                        lowLatencyMode: true,
-                        backBufferLength: 30
-                    });
-
-                window.lukaHlsPlayer.loadSource(
-                    dados.stream_url
-                );
-
-                window.lukaHlsPlayer.attachMedia(player);
-
-                window.lukaHlsPlayer.on(
-                    Hls.Events.ERROR,
-                    function(evento, dadosHls){
-                        console.error(
-                            '[LUKAFILMES IPTV] HLS ERROR:',
-                            dadosHls
-                        );
-                    }
-                );
-
-                window.lukaHlsPlayer.on(
-                    Hls.Events.MANIFEST_PARSED,
-                    function(){
-                        player.play().catch(function(e){
-                            console.log(
-                                '[LUKAFILMES IPTV] Autoplay bloqueado:',
-                                e
-                            );
-                        });
-                    }
-                );
-
-            }else if(
-                player.canPlayType('application/vnd.apple.mpegurl')
-            ){
-
-                player.src = dados.stream_url;
-
-                player.addEventListener(
-                    'loadedmetadata',
-                    function(){
-                        player.play().catch(function(e){
-                            console.log(
-                                '[LUKAFILMES IPTV] Autoplay bloqueado:',
-                                e
-                            );
-                        });
-                    },
-                    {once:true}
-                );
-
-            }else{
-
-                throw new Error(
-                    'Este navegador não suporta reprodução HLS.'
-                );
-            }
-
-        }catch(erro){
-
-            console.error(
-                '[LUKAFILMES IPTV] Erro ao abrir Xtream:',
-                erro
-            );
-
-            alert(
-                erro.message ||
-                'Não foi possível iniciar este canal.'
-            );
+        if(!iframe){
+            alert('Player iframe não encontrado.');
+            return;
         }
 
+        if(window.lukaHlsPlayer){
+            try{
+                window.lukaHlsPlayer.destroy();
+            }catch(e){}
+            window.lukaHlsPlayer = null;
+        }
+
+        player.pause();
+        player.removeAttribute('src');
+        player.load();
+        player.style.display = 'none';
+
+        iframe.src = embedUrl;
+        iframe.style.display = 'block';
+
+        document.getElementById('playerTitulo').textContent =
+            titulo;
+
+        document.getElementById('playerArea')
+            .classList.add('ativo');
+
+        window.scrollTo({
+            top:
+                document.getElementById('playerArea')
+                    .offsetTop - 10,
+            behavior:'smooth'
+        });
+
         return;
     }
 
-    /*
-     * Compatibilidade com canais que ainda possuam embed.
-     */
-    const url = obterEmbed(item);
-
-    if(!url){
-        alert(
-            'Este canal não possui player disponível no momento.'
-        );
-        return;
-    }
-
-    document.getElementById('playerTitulo').textContent =
-        titulo;
-
-    player.src = url;
-
-    document.getElementById('playerArea')
-        .classList.add('ativo');
-
-    window.scrollTo({
-        top:
-            document.getElementById('playerArea')
-                .offsetTop - 10,
-        behavior:'smooth'
-    });
 }
 
 let lukaQRCodePromise = null;
@@ -1353,38 +1232,75 @@ async function carregarIPTV(){
     const status = document.getElementById('statusIPTV');
 
     try{
-        const respostaCanais =
-            await fetch('/api/xtream/iptv/canais', {
-                cache:'no-store'
-            });
+        const [respostaCanais, respostaEsportes] =
+            await Promise.all([
+                fetch(API + '/channels', {
+                    cache:'no-store'
+                }),
+                fetch(API + '/sports?status=live', {
+                    cache:'no-store'
+                })
+            ]);
 
         if(!respostaCanais.ok){
             throw new Error(
-                'Erro HTTP /api/xtream/iptv/canais: ' +
+                'Erro HTTP ' + API + '/channels: ' +
                 respostaCanais.status
             );
         }
 
-        const jsonCanais = await respostaCanais.json();
-
-        const listaXtream = Array.isArray(jsonCanais)
-            ? jsonCanais
-            : (
-                Array.isArray(jsonCanais.data)
-                    ? jsonCanais.data
-                    : []
+        if(!respostaEsportes.ok){
+            throw new Error(
+                'Erro HTTP ' + API + '/sports?status=live: ' +
+                respostaEsportes.status
             );
+        }
 
-        canais = listaXtream.map(item => ({
+        const jsonCanais = await respostaCanais.json();
+        const jsonEsportes = await respostaEsportes.json();
+
+        const listaCanaisAPI = Array.isArray(jsonCanais?.data)
+            ? jsonCanais.data
+            : [];
+
+        const listaEsportesAPI = Array.isArray(jsonEsportes?.data)
+            ? jsonEsportes.data
+            : [];
+
+        const canaisAPI = listaCanaisAPI.map(item => ({
+            id: item.id || '',
             title: item.name || 'Canal',
             name: item.name || 'Canal',
-            category: (item.category_name && item.category_name !== 'IPTV') ? item.category_name : classificarCategoria(item),
-            logo: item.stream_icon || '',
-            xtream_stream_id: item.stream_id,
-            stream_type: item.stream_type || 'live'
+            description: item.description || '',
+            category: item.category || 'TV',
+            logo: item.logo_url || '',
+            embeds: Array.isArray(item.embeds) ? item.embeds : [],
+            epg: item.epg || null,
+            stream_type: 'live'
         }));
 
-        canais = [...canais, ...canaisManuais];
+        const esportesAPI = listaEsportesAPI.map(item => ({
+            id: item.id || '',
+            title: item.title || 'Evento ao vivo',
+            name: item.title || 'Evento ao vivo',
+            description: item.description || '',
+            category: item.category || 'Esportes',
+            competition: item.competition || '',
+            logo: item.poster || item.teams?.home?.logo || '',
+            teams: item.teams || null,
+            embeds: Array.isArray(item.embeds) ? item.embeds : [],
+            start_time: item.start_time || '',
+            start_timestamp: item.start_timestamp || '',
+            status: item.status || 'live',
+            stream_type: 'live'
+        }));
+
+        // Os 5 canais adultos permanecem intocados.
+        canais = [
+            ...canaisAPI,
+            ...esportesAPI,
+            ...canaisManuais
+        ];
 
         renderizarCategorias(canais);
         renderizarCanais(canais);

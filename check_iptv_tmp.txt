@@ -1,0 +1,3 @@
+Blocos JavaScript encontrados: 1
+SINTAXE JAVASCRIPT: OK
+Arquivo validado: paginas/iptv.html

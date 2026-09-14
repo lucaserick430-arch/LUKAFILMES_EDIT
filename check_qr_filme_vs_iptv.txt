@@ -1,0 +1,29 @@
+===== QR FILME =====
+3158:let lukaQRCodePromise = null;
+3160:function carregarQRCodeLuka() {
+3166:    if (lukaQRCodePromise) {
+3167:        return lukaQRCodePromise;
+3170:    lukaQRCodePromise = new Promise(function(resolve, reject) {
+3175:            "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
+3182:            lukaQRCodePromise = null;
+3189:    return lukaQRCodePromise;
+3890:                            #lukafilmesPagamento #lukafilmesQrCode {
+3910:                            #lukafilmesPagamento #lukafilmesQrCode {
+3959:                            id="lukafilmesQrCode"
+4060:                            "lukafilmesQrCode"
+4067:                            await carregarQRCodeLuka();
+4069:                            new QRCode(
+
+===== QR IPTV =====
+345:let lukaQRCodePromise = null;
+347:function carregarQRCodeLuka() {
+353:    if (lukaQRCodePromise) {
+354:        return lukaQRCodePromise;
+357:    lukaQRCodePromise = new Promise(function(resolve, reject) {
+362:            "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
+369:            lukaQRCodePromise = null;
+376:    return lukaQRCodePromise;
+488:                id="lukafilmesQrCode"
+601:                "lukafilmesQrCode"
+606:                await carregarQRCodeLuka();
+608:                new QRCode(

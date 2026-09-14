@@ -1,0 +1,29 @@
+===== SCRIPT/CSP/QR IPTV =====
+282:<script>
+345:let lukaQRCodePromise = null;
+347:function carregarQRCodeLuka() {
+349:    if (typeof QRCode !== "undefined") {
+353:    if (lukaQRCodePromise) {
+354:        return lukaQRCodePromise;
+357:    lukaQRCodePromise = new Promise(function(resolve, reject) {
+362:            "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
+369:            lukaQRCodePromise = null;
+376:    return lukaQRCodePromise;
+488:                id="lukafilmesQrCode"
+601:                "lukafilmesQrCode"
+606:                await carregarQRCodeLuka();
+608:                new QRCode(
+
+===== TESTE CDN =====
+HTTP/2 200 
+access-control-allow-origin: *
+access-control-expose-headers: *
+timing-allow-origin: *
+cache-control: public, max-age=31536000, s-maxage=31536000, immutable
+cross-origin-resource-policy: cross-origin
+x-content-type-options: nosniff
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+content-type: application/javascript; charset=utf-8
+x-jsd-version: 1.0.0
+x-jsd-version-type: version
+etag: W/"4dd7-LQbB+CPzTBmYHGrgsOsPWGHF4Us"

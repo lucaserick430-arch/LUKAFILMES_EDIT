@@ -1,0 +1,5 @@
+345:let lukaQRCodePromise = null;
+347:function carregarQRCodeLuka() {
+362:            "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
+488:                id="lukafilmesQrCode"
+608:                new QRCode(

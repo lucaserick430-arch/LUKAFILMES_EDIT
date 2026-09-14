@@ -1,0 +1,142 @@
+
+                        #lukafilmesPagamento button {
+                            min-height: 52px;
+                        }
+
+                        @media (min-width: 1200px) {
+                            #lukafilmesPagamento {
+                                max-width: 860px !important;
+                            }
+
+                            #lukafilmesPagamento #lukafilmesQrCode {
+                                width: 300px !important;
+                                min-height: 300px !important;
+                            }
+                        }
+
+                        @media (min-width: 1800px) {
+                            #lukafilmesPagamento {
+                                max-width: 980px !important;
+                            }
+                        }
+
+                        @media (max-width: 600px) {
+                            #lukafilmesPagamento {
+                                width: 94% !important;
+                                padding: 20px !important;
+                                margin: 16px auto !important;
+                                border-radius: 16px !important;
+                            }
+
+                            #lukafilmesPagamento #lukafilmesQrCode {
+                                width: min(250px, 72vw) !important;
+                                min-height: min(250px, 72vw) !important;
+                            }
+
+                            #lukafilmesPagamento textarea {
+                                font-size: 12px !important;
+                            }
+                        }
+                    `;
+
+                    if (!document.getElementById("lukaPagamentoResponsivoStyle")) {
+                        document.head.appendChild(estiloPagamento);
+                    }
+
+                    tela.innerHTML = `
+                        <h2 style="
+                            margin:0 0 14px;
+                            font-size:clamp(22px, 3vw, 34px);
+                            line-height:1.2;
+                        ">
+                            ${renovacao ? "🔄 Renovar acesso" : "🔒 Acesso expirado"}
+                        </h2>
+
+                        <p style="
+                            margin:8px auto 20px;
+                            max-width:650px;
+                            font-size:clamp(15px, 1.8vw, 20px);
+                            line-height:1.5;
+                        ">
+                            ${renovacao
+                                ? "Renove seu acesso ao LUKAFILMES por mais 30 dias."
+                                : "Para assistir este filme, renove seu acesso."}
+                        </p>
+
+                        <div style="
+                            font-size:clamp(28px, 4vw, 42px);
+                            font-weight:800;
+                                font-size:clamp(14px, 1.6vw, 18px);
+                            margin:15px 0;
+                        ">
+                            R$ ${valor}
+                        </div>
+
+                        <p style="margin:8px 0;">
+                            Acesso por 30 dias
+                        </p>
+
+                        <div
+                            id="lukafilmesQrCode"
+                            style="
+                                width:min(300px, 70vw);
+                                min-height:min(300px, 70vw);
+                                margin:24px auto;
+                                max-width:300px;
+                                padding:10px;
+                                box-sizing:border-box;
+                                background:#fff;
+                                border-radius:12px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                            ">
+                        </div>
+
+                        <p style="
+                        </p>
+                    `;
+
+                    playerFilme.parentNode.insertBefore(
+                        tela,
+                        playerFilme
+                    );
+
+                    tela.scrollIntoView({
+                        behavior: "auto",
+                        block: "center"
+                    });
+
+                    const areaQr =
+                        document.getElementById(
+                            "lukafilmesQrCode"
+                        );
+
+                    if (pix && areaQr) {
+
+                        try {
+
+                            await carregarQRCodeLuka();
+
+                            new QRCode(
+                                areaQr,
+                                {
+                                    text: pix,
+                                    width: 260,
+                                    height: 260
+                                }
+                            );
+
+                        } catch (erroQr) {
+
+                            console.error(
+                                "[QR CODE]",
+                                erroQr
+                            );
+
+                            areaQr.innerHTML =
+                                "<span style='color:#222;'>QR Code indisponível</span>";
+                        }
+
+                    }
+                    else if (areaQr) {

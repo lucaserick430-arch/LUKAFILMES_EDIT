@@ -1,0 +1,7 @@
+ALTERAÇÃO REALIZADA COM SUCESSO
+Arquivo: paginas/iptv.html
+Adicionado: CSS responsivo do bloco de pagamento/QR
+QR: área branca e dimensões responsivas preservadas
+Pagamento: preservado
+Cadastro/login: preservados
+Player IPTV: preservado
