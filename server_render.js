@@ -1350,12 +1350,17 @@ app.get("/api/acesso-assistir", async (req, res) => {
         const sessao = lukaUsuarioOperacional(req);
 
         if (!sessao) {
+            console.log("[DEBUG ACESSO] sem sessão");
             return res.status(401).json({
                 permitido: false,
                 logado: false,
                 motivo: "nao_logado"
             });
         }
+
+        console.log("[DEBUG ACESSO] sessão encontrada:", {
+            id: sessao.id
+        });
 
         const usuarios = await carregarUsuarios();
 
@@ -2166,6 +2171,91 @@ const TMDB_IMAGE =
 // ==========================================
 // BUSCAR FILMES DO TMDB
 // ==========================================
+
+
+/* ==========================================================
+   LUKAFILMES — XTREAM VOD
+   Credenciais somente no servidor (.env)
+   ========================================================== */
+
+let cacheXtreamFilmes = null;
+let cacheXtreamExpira = 0;
+
+async function xtreamFilmes() {
+
+    const dns = String(process.env.XTREAM_DNS || '')
+        .replace(/\/+$/, '');
+
+    const username = String(
+        process.env.XTREAM_USERNAME || ''
+    ).trim();
+
+    const password = String(
+        process.env.XTREAM_PASSWORD || ''
+    ).trim();
+
+    if (!dns || !username || !password) {
+        throw new Error(
+            'XTREAM_DNS, XTREAM_USERNAME ou XTREAM_PASSWORD não configurado.'
+        );
+    }
+
+    const agora = Date.now();
+
+    if (
+        Array.isArray(cacheXtreamFilmes) &&
+        agora < cacheXtreamExpira
+    ) {
+        return cacheXtreamFilmes;
+    }
+
+    const url =
+        dns +
+        '/player_api.php?username=' +
+        encodeURIComponent(username) +
+        '&password=' +
+        encodeURIComponent(password) +
+        '&action=get_vod_streams';
+
+    const resposta = await fetch(url);
+
+    if (!resposta.ok) {
+        throw new Error(
+            'Xtream respondeu HTTP ' + resposta.status
+        );
+    }
+
+    const dados = await resposta.json();
+
+    if (!Array.isArray(dados)) {
+        throw new Error(
+            'Catálogo VOD Xtream inválido.'
+        );
+    }
+
+    cacheXtreamFilmes = dados;
+    cacheXtreamExpira = agora + (10 * 60 * 1000);
+
+    console.log(
+        '[XTREAM] Catálogo VOD carregado:',
+        dados.length,
+        'filmes'
+    );
+
+    return dados;
+}
+
+function normalizarTituloXtream(titulo) {
+    return String(titulo || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/\[[^\]]*\]/g, ' ')
+        .replace(/\([^)]*\)/g, ' ')
+        .replace(/[^a-z0-9]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
 
 async function tmdb(endpoint) {
 
@@ -4338,6 +4428,736 @@ const linksPorIdTMDB = {
 };
 // LINK DE ORIGEM DO FILME
 // ==========================================
+
+
+/* ==========================================================
+   LUKAFILMES — PLAY 1 XTREAM
+   Resolve filme TMDB -> VOD Xtream
+   ========================================================== */
+
+
+/* ==========================================================
+   LUKAFILMES — XTREAM IPTV LIVE
+   Canais ao vivo via Xtream
+   Credenciais somente no servidor (.env)
+   ========================================================== */
+
+let cacheXtreamLive = null;
+let cacheXtreamLiveExpira = 0;
+
+async function xtreamLiveStreams() {
+    const dns = String(process.env.XTREAM_DNS || '').replace(/\/+$/, '');
+    const username = String(process.env.XTREAM_USERNAME || '').trim();
+    const password = String(process.env.XTREAM_PASSWORD || '').trim();
+
+    if (!dns || !username || !password) {
+        throw new Error('XTREAM_DNS, XTREAM_USERNAME ou XTREAM_PASSWORD não configurado.');
+    }
+
+    const agora = Date.now();
+
+    if (Array.isArray(cacheXtreamLive) && agora < cacheXtreamLiveExpira) {
+        return cacheXtreamLive;
+    }
+
+    const url =
+        dns +
+        '/player_api.php?username=' +
+        encodeURIComponent(username) +
+        '&password=' +
+        encodeURIComponent(password) +
+        '&action=get_live_streams';
+
+    const resposta = await fetch(url);
+
+    if (!resposta.ok) {
+        throw new Error('Xtream LIVE respondeu HTTP ' + resposta.status);
+    }
+
+    const dados = await resposta.json();
+
+    if (!Array.isArray(dados)) {
+        throw new Error('Catálogo LIVE Xtream inválido.');
+    }
+
+    cacheXtreamLive = dados;
+    cacheXtreamLiveExpira = agora + (5 * 60 * 1000);
+
+    console.log('[XTREAM IPTV] Canais LIVE carregados:', dados.length);
+
+    return dados;
+}
+
+
+/* ==========================================================
+   LUKAFILMES — XTREAM IPTV PLAYER
+   Resolve canal LIVE Xtream para reprodução
+   Credenciais permanecem somente no servidor
+   ========================================================== */
+
+app.get('/api/xtream/iptv/player/:id', async (req, res) => {
+    try {
+
+        /*
+         * O player Xtream usa a mesma regra de acesso
+         * da API /api/acesso-assistir.
+         */
+        const sessao = lukaUsuarioOperacional(req);
+
+        if (!sessao) {
+            return res.status(401).json({
+                erro: 'Usuário não autenticado.',
+                motivo: 'nao_logado'
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                erro: 'Usuário não encontrado.',
+                motivo: 'usuario_nao_encontrado'
+            });
+        }
+
+        const tipo =
+            String(pessoa.tipo || 'usuario').toLowerCase();
+
+        const status =
+            String(pessoa.status || 'ativo').toLowerCase();
+
+        if (status !== 'ativo') {
+            return res.status(403).json({
+                erro: 'Seu acesso está desativado.',
+                motivo: 'inativo'
+            });
+        }
+
+        const acessoEspecial =
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO;
+
+        const acessoValido =
+            pessoa.validade &&
+            new Date(pessoa.validade).getTime() > Date.now();
+
+        if (!acessoEspecial && !acessoValido) {
+            return res.status(403).json({
+                erro: 'Seu acesso para assistir está expirado.',
+                motivo: 'expirado'
+            });
+        }
+
+        const id = String(req.params.id || '').trim();
+
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                erro: 'stream_id inválido.'
+            });
+        }
+
+        const dns = String(process.env.XTREAM_DNS || '')
+            .replace(/\/+$/, '');
+
+        const username =
+            String(process.env.XTREAM_USERNAME || '').trim();
+
+        const password =
+            String(process.env.XTREAM_PASSWORD || '').trim();
+
+        if (!dns || !username || !password) {
+            return res.status(500).json({
+                erro: 'Xtream não configurado.'
+            });
+        }
+
+        /*
+         * Importante:
+         * as credenciais continuam somente no servidor.
+         * O navegador recebe apenas uma rota interna.
+         */
+        res.json({
+            stream_url:
+                '/api/xtream/iptv/hls/' +
+                encodeURIComponent(id),
+
+            stream_id: Number(id)
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[XTREAM IPTV PLAYER] Erro:',
+            erro
+        );
+
+        return res.status(500).json({
+            erro: 'Não foi possível preparar o player Xtream.'
+        });
+    }
+});
+
+
+
+app.get('/api/xtream/iptv/hls/:id', async (req, res) => {
+    try {
+        const sessao = lukaUsuarioOperacional(req);
+        if (!sessao) return res.status(401).end();
+
+        const usuarios = await carregarUsuarios();
+        const pessoa = usuarios.find(u => Number(u.id) === Number(sessao.id));
+        if (!pessoa) return res.status(404).end();
+
+        const tipo = String(pessoa.tipo || 'usuario').toLowerCase();
+        const status = String(pessoa.status || 'ativo').toLowerCase();
+
+        if (status !== 'ativo') return res.status(403).end();
+
+        const acessoEspecial =
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO;
+
+        const acessoValido =
+            pessoa.validade &&
+            new Date(pessoa.validade).getTime() > Date.now();
+
+        if (!acessoEspecial && !acessoValido) return res.status(403).end();
+
+        const id = String(req.params.id || '').trim();
+
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).end();
+        }
+
+        const dns = String(process.env.XTREAM_DNS || '').replace(/\/+$/, '');
+        const username = String(process.env.XTREAM_USERNAME || '').trim();
+        const password = String(process.env.XTREAM_PASSWORD || '').trim();
+
+        if (!dns || !username || !password) {
+            return res.status(500).end();
+        }
+
+        const origem =
+            dns +
+            '/live/' +
+            encodeURIComponent(username) +
+            '/' +
+            encodeURIComponent(password) +
+            '/' +
+            id +
+            '.ts';
+
+        const resposta = await fetch(origem);
+
+        if (!resposta.ok) {
+            return res.status(502).end();
+        }
+
+        const tipoConteudo =
+            String(resposta.headers.get('content-type') || '').toLowerCase();
+
+        if (!tipoConteudo.includes('mpegurl') &&
+            !tipoConteudo.includes('m3u8')) {
+            return res.status(502).end();
+        }
+
+        let playlist = await resposta.text();
+
+        const linhas = playlist.split(/\r?\n/);
+
+        const reescrita = linhas.map(linha => {
+            const valor = linha.trim();
+
+            if (!valor || valor.startsWith('#')) {
+                return linha;
+            }
+
+            try {
+                const absoluto = new URL(valor, origem);
+
+                const hostPermitido =
+                    absoluto.hostname === new URL(dns).hostname ||
+                    absoluto.hostname.endsWith('.shshshshdfdf.shop');
+
+                if (!hostPermitido) {
+                    return linha;
+                }
+
+                return '/api/xtream/iptv/segment/' +
+                    encodeURIComponent(id) +
+                    '?url=' +
+                    encodeURIComponent(absoluto.href);
+            } catch (e) {
+                return linha;
+            }
+        }).join('\n');
+
+        res.status(200);
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.apple.mpegurl'
+        );
+        res.setHeader(
+            'Cache-Control',
+            'no-store, no-cache, must-revalidate'
+        );
+
+        res.send(reescrita);
+
+    } catch (erro) {
+        console.error('[XTREAM IPTV HLS] Erro:', erro);
+        if (!res.headersSent) return res.status(500).end();
+        res.destroy();
+    }
+});
+
+app.get('/api/xtream/iptv/segment/:id', async (req, res) => {
+    try {
+        const sessao = lukaUsuarioOperacional(req);
+        if (!sessao) return res.status(401).end();
+
+        const usuarios = await carregarUsuarios();
+        const pessoa = usuarios.find(u => Number(u.id) === Number(sessao.id));
+        if (!pessoa) return res.status(404).end();
+
+        const tipo = String(pessoa.tipo || 'usuario').toLowerCase();
+        const status = String(pessoa.status || 'ativo').toLowerCase();
+
+        if (status !== 'ativo') return res.status(403).end();
+
+        const acessoEspecial =
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO;
+
+        const acessoValido =
+            pessoa.validade &&
+            new Date(pessoa.validade).getTime() > Date.now();
+
+        if (!acessoEspecial && !acessoValido) return res.status(403).end();
+
+        const id = String(req.params.id || '').trim();
+
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).end();
+        }
+
+        const alvo = String(req.query.url || '').trim();
+
+        if (!alvo) return res.status(400).end();
+
+        const destino = new URL(alvo);
+
+        const permitido =
+            destino.hostname.endsWith('.shshshshdfdf.shop');
+
+        if (!permitido) {
+            return res.status(403).end();
+        }
+
+        const resposta = await fetch(destino.href);
+
+        if (!resposta.ok || !resposta.body) {
+            return res.status(502).end();
+        }
+
+        res.status(200);
+        res.setHeader(
+            'Content-Type',
+            resposta.headers.get('content-type') ||
+            'video/mp2t'
+        );
+        res.setHeader(
+            'Cache-Control',
+            'no-store, no-cache, must-revalidate'
+        );
+
+        const { Readable } = require('stream');
+
+        Readable
+            .fromWeb(resposta.body)
+            .pipe(res);
+
+    } catch (erro) {
+        console.error('[XTREAM IPTV SEGMENT] Erro:', erro);
+        if (!res.headersSent) return res.status(500).end();
+        res.destroy();
+    }
+});
+
+app.get('/api/xtream/iptv/stream/:id', async (req, res) => {
+    try {
+
+        const sessao = lukaUsuarioOperacional(req);
+
+        if (!sessao) {
+            return res.status(401).end();
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).end();
+        }
+
+        const tipo =
+            String(pessoa.tipo || 'usuario').toLowerCase();
+
+        const status =
+            String(pessoa.status || 'ativo').toLowerCase();
+
+        if (status !== 'ativo') {
+            return res.status(403).end();
+        }
+
+        const acessoEspecial =
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO;
+
+        const acessoValido =
+            pessoa.validade &&
+            new Date(pessoa.validade).getTime() > Date.now();
+
+        if (!acessoEspecial && !acessoValido) {
+            return res.status(403).end();
+        }
+
+        const id = String(req.params.id || '').trim();
+
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).end();
+        }
+
+        const dns = String(process.env.XTREAM_DNS || '')
+            .replace(/\/+$/, '');
+
+        const username =
+            String(process.env.XTREAM_USERNAME || '').trim();
+
+        const password =
+            String(process.env.XTREAM_PASSWORD || '').trim();
+
+        if (!dns || !username || !password) {
+            return res.status(500).end();
+        }
+
+        const url =
+            dns +
+            '/live/' +
+            encodeURIComponent(username) +
+            '/' +
+            encodeURIComponent(password) +
+            '/' +
+            id +
+            '.ts';
+
+        const resposta = await fetch(url);
+
+        if (!resposta.ok || !resposta.body) {
+            console.error(
+                '[XTREAM IPTV STREAM] HTTP:',
+                resposta.status
+            );
+            return res.status(502).end();
+        }
+
+        res.status(200);
+
+        res.setHeader(
+            'Content-Type',
+            resposta.headers.get('content-type') ||
+            'video/mp2t'
+        );
+
+        res.setHeader(
+            'Cache-Control',
+            'no-store, no-cache, must-revalidate'
+        );
+
+        if (resposta.headers.get('content-length')) {
+            res.setHeader(
+                'Content-Length',
+                resposta.headers.get('content-length')
+            );
+        }
+
+        const { Readable } = require('stream');
+
+        Readable
+            .fromWeb(resposta.body)
+            .pipe(res);
+
+    } catch (erro) {
+
+        console.error(
+            '[XTREAM IPTV STREAM] Erro:',
+            erro
+        );
+
+        if (!res.headersSent) {
+            return res.status(500).end();
+        }
+
+        res.destroy();
+    }
+});
+
+app.get('/api/xtream/iptv/canais', async (req, res) => {
+    try {
+        const canais = await xtreamLiveStreams();
+
+        res.json(
+            canais.map(canal => ({
+                stream_id: canal.stream_id,
+                name: canal.name || 'Canal',
+                stream_icon: canal.stream_icon || '',
+                category_id: canal.category_id || '',
+                category_name: canal.category_name || 'IPTV',
+                stream_type: canal.stream_type || 'live'
+            }))
+        );
+
+    } catch (erro) {
+        console.error('[XTREAM IPTV] Erro:', erro);
+        res.status(500).json({
+            erro: 'Não foi possível carregar os canais Xtream.'
+        });
+    }
+});
+
+app.get('/api/xtream/filme/:id', async (req, res) => {
+
+    try {
+
+        const tmdbId =
+            String(req.params.id || '').trim();
+
+        if (!/^\d+$/.test(tmdbId)) {
+            return res.status(400).json({
+                sucesso: false,
+                encontrado: false,
+                mensagem: 'ID TMDB inválido.'
+            });
+        }
+
+        const filmeTMDB =
+            await tmdb(
+                '/movie/' +
+                tmdbId +
+                '?language=pt-BR'
+            );
+
+        if (!filmeTMDB || !filmeTMDB.id) {
+            return res.status(404).json({
+                sucesso: false,
+                encontrado: false,
+                mensagem: 'Filme não encontrado no TMDB.'
+            });
+        }
+
+        const tituloTMDB =
+            normalizarTituloXtream(
+                filmeTMDB.title || ''
+            );
+
+        const anoTMDB =
+            filmeTMDB.release_date
+                ? String(filmeTMDB.release_date).substring(0, 4)
+                : '';
+
+        if (!tituloTMDB) {
+            return res.status(404).json({
+                sucesso: false,
+                encontrado: false,
+                mensagem: 'Título do filme não encontrado.'
+            });
+        }
+
+        const filmesXtream =
+            await xtreamFilmes();
+
+        let melhor = null;
+        let melhorPontuacao = 0;
+
+        for (const item of filmesXtream) {
+
+            const nomeXtream =
+                String(item.name || '').trim();
+
+            if (!nomeXtream || !item.stream_id) {
+                continue;
+            }
+
+            const tituloXtream =
+                normalizarTituloXtream(
+                    nomeXtream
+                );
+
+            if (!tituloXtream) {
+                continue;
+            }
+
+            let pontuacao = 0;
+
+            if (tituloXtream === tituloTMDB) {
+                pontuacao = 100;
+            }
+            else if (
+                tituloXtream.includes(tituloTMDB) ||
+                tituloTMDB.includes(tituloXtream)
+            ) {
+                pontuacao = 70;
+            }
+            else {
+                const palavrasTMDB =
+                    tituloTMDB.split(' ')
+                        .filter(Boolean);
+
+                const palavrasXtream =
+                    tituloXtream.split(' ')
+                        .filter(Boolean);
+
+                const comuns =
+                    palavrasTMDB.filter(
+                        palavra =>
+                            palavrasXtream.includes(
+                                palavra
+                            )
+                    ).length;
+
+                if (
+                    palavrasTMDB.length &&
+                    comuns >= Math.max(
+                        2,
+                        Math.ceil(
+                            palavrasTMDB.length * 0.7
+                        )
+                    )
+                ) {
+                    pontuacao =
+                        40 +
+                        (
+                            comuns /
+                            palavrasTMDB.length
+                        ) * 30;
+                }
+            }
+
+            const anoTexto =
+                nomeXtream.match(
+                    /\b(19|20)\d{2}\b/
+                );
+
+            const anoXtream =
+                anoTexto
+                    ? anoTexto[0]
+                    : '';
+
+            if (
+                anoTMDB &&
+                anoXtream &&
+                anoTMDB === anoXtream
+            ) {
+                pontuacao += 20;
+            }
+
+            if (pontuacao > melhorPontuacao) {
+                melhorPontuacao = pontuacao;
+                melhor = item;
+            }
+        }
+
+        if (!melhor || melhorPontuacao < 70) {
+
+            console.log(
+                '[XTREAM] Filme não encontrado:',
+                filmeTMDB.title,
+                anoTMDB
+            );
+
+            return res.status(404).json({
+                sucesso: false,
+                encontrado: false,
+                titulo: filmeTMDB.title || '',
+                ano: anoTMDB,
+                mensagem:
+                    'Filme não encontrado no catálogo Xtream.'
+            });
+        }
+
+        const dns =
+            String(process.env.XTREAM_DNS || '')
+                .replace(/\/+$/, '');
+
+        const username =
+            String(
+                process.env.XTREAM_USERNAME || ''
+            ).trim();
+
+        const password =
+            String(
+                process.env.XTREAM_PASSWORD || ''
+            ).trim();
+
+        const extensao =
+            String(
+                melhor.container_extension || 'mp4'
+            ).replace(/^\./, '');
+
+        const streamUrl =
+            dns +
+            '/movie/' +
+            encodeURIComponent(username) +
+            '/' +
+            encodeURIComponent(password) +
+            '/' +
+            encodeURIComponent(
+                String(melhor.stream_id)
+            ) +
+            '.' +
+            extensao;
+
+        console.log(
+            '[XTREAM] Filme encontrado:',
+            filmeTMDB.title,
+            '->',
+            melhor.name,
+            'stream_id:',
+            melhor.stream_id
+        );
+
+        return res.json({
+            sucesso: true,
+            encontrado: true,
+            titulo: filmeTMDB.title || '',
+            ano: anoTMDB,
+            stream_id: melhor.stream_id,
+            extensao: extensao,
+            url: streamUrl
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[XTREAM] Erro ao localizar filme:',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            encontrado: false,
+            mensagem:
+                'Não foi possível localizar o filme no Xtream.'
+        });
+    }
+});
 
 app.get('/api/filme/:id/origem', async (req, res) => {
 
