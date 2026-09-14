@@ -358,7 +358,7 @@ body{
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.13/dist/hls.min.js"></script>
 
 <script>
-const API = 'https://api.reidoscanais.st';
+const API = 'https://reidosembeds.online/api';
 
 let canais = [];
 const canaisManuais = [
@@ -1024,16 +1024,6 @@ async function mostrarPagamentoIPTV(acesso) {
 }
 
 function criarCard(item){
-      console.log(
-          "[DEBUG CARD IPTV]",
-          item.name,
-          "stream_id=",
-          item.stream_id,
-          "xtream_stream_id=",
-          item.xtream_stream_id,
-          "tipo=",
-          typeof item.xtream_stream_id
-      );
 
     const div = document.createElement('div');
     div.className = 'canal';
@@ -1231,16 +1221,15 @@ function renderizarCanais(lista){
 async function carregarIPTV(){
     const status = document.getElementById('statusIPTV');
 
+    if(status){
+        status.textContent = 'Carregando canais IPTV...';
+        status.classList.remove('erro');
+    }
+
     try{
-        const [respostaCanais, respostaEsportes] =
-            await Promise.all([
-                fetch(API + '/channels', {
-                    cache:'no-store'
-                }),
-                fetch(API + '/sports?status=live', {
-                    cache:'no-store'
-                })
-            ]);
+        const respostaCanais = await fetch(API + '/channels', {
+            cache:'no-store'
+        });
 
         if(!respostaCanais.ok){
             throw new Error(
@@ -1249,71 +1238,64 @@ async function carregarIPTV(){
             );
         }
 
-        if(!respostaEsportes.ok){
-            throw new Error(
-                'Erro HTTP ' + API + '/sports?status=live: ' +
-                respostaEsportes.status
-            );
-        }
-
         const jsonCanais = await respostaCanais.json();
-        const jsonEsportes = await respostaEsportes.json();
 
         const listaCanaisAPI = Array.isArray(jsonCanais?.data)
             ? jsonCanais.data
             : [];
 
-        const listaEsportesAPI = Array.isArray(jsonEsportes?.data)
-            ? jsonEsportes.data
-            : [];
+        const canaisAPI = listaCanaisAPI
+            .filter(item => item && item.is_active !== false)
+            .map(item => ({
+                id: item.id || '',
+                title: item.name || 'Canal',
+                name: item.name || 'Canal',
+                description: item.description || '',
+                category: item.category || 'TV',
+                logo: item.logo_url || '',
+                preview_url: item.preview_url || '',
+                embed_url: item.embed_url || '',
+                embeds: item.embed_url
+                    ? [{
+                        provider: 'Rei dos Embeds',
+                        quality: 'HD',
+                        embed_url: item.embed_url
+                    }]
+                    : [],
+                now_playing_title: item.now_playing_title || '',
+                now_playing_progress: item.now_playing_progress || 0,
+                now_playing_has_guide: item.now_playing_has_guide || false,
+                now_playing_next_programmes:
+                    Array.isArray(item.now_playing_next_programmes)
+                        ? item.now_playing_next_programmes
+                        : [],
+                stream_type: 'live'
+            }));
 
-        const canaisAPI = listaCanaisAPI.map(item => ({
-            id: item.id || '',
-            title: item.name || 'Canal',
-            name: item.name || 'Canal',
-            description: item.description || '',
-            category: item.category || 'TV',
-            logo: item.logo_url || '',
-            embeds: Array.isArray(item.embeds) ? item.embeds : [],
-            epg: item.epg || null,
-            stream_type: 'live'
-        }));
+        canais = canaisAPI;
 
-        const esportesAPI = listaEsportesAPI.map(item => ({
-            id: item.id || '',
-            title: item.title || 'Evento ao vivo',
-            name: item.title || 'Evento ao vivo',
-            description: item.description || '',
-            category: item.category || 'Esportes',
-            competition: item.competition || '',
-            logo: item.poster || item.teams?.home?.logo || '',
-            teams: item.teams || null,
-            embeds: Array.isArray(item.embeds) ? item.embeds : [],
-            start_time: item.start_time || '',
-            start_timestamp: item.start_timestamp || '',
-            status: item.status || 'live',
-            stream_type: 'live'
-        }));
-
-        // Os 5 canais adultos permanecem intocados.
-        canais = [
-            ...canaisAPI,
-            ...esportesAPI,
-            ...canaisManuais
-        ];
+        if(status){
+            status.textContent =
+                `${canais.length} canais disponíveis`;
+        }
 
         renderizarCategorias(canais);
         renderizarCanais(canais);
-        status.textContent = `${canais.length} canais carregados`;
 
     }catch(erro){
         console.error('IPTV:', erro);
 
-        status.innerHTML =
-            '<span class="erro">Não foi possível carregar os canais.</span>';
+        if(status){
+            status.innerHTML =
+                '<span class="erro">Não foi possível conectar à API IPTV. Tente novamente.</span>';
+        }
 
-        document.getElementById('listaCanais').innerHTML =
-            '<div class="aviso erro">Erro ao consultar a API IPTV.</div>';
+        const lista = document.getElementById('listaCanais');
+
+        if(lista){
+            lista.innerHTML =
+                '<div class="aviso erro">A transmissão de canais está temporariamente indisponível.</div>';
+        }
     }
 }
 
