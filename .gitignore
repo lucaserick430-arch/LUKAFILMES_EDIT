@@ -55,3 +55,12 @@ teste-*
 *teste*.html
 
 *.bak-*
+
+# BACKUPS LOCAIS - NAO ENVIAR AO GITHUB
+BACKUP-ANTES-VOLTAR-*/
+backup_antes_*.js
+server_netlify.js
+
+server_render.js.BACKUP_*
+
+paginas/iptv.html.antes-rei-embeds-*
