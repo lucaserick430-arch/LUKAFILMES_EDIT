@@ -2502,7 +2502,7 @@ const pesquisaCache = new Map();
 
 // LINKS DE FILMES DO SITE DE ORIGEM
 const fs = require("fs");
-const caminhoLinksFilmes = require("path").join(__dirname, "links_filmes.json");
+const caminhoLinksFilmes = process.env.CLOUDFLARE_WORKERS ? "links_filmes.json" : require("path").join(__dirname, "links_filmes.json");
 
 let linksFilmes = {};
 
