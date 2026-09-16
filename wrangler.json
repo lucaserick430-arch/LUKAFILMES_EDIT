@@ -1,8 +1,10 @@
 {
   "name": "lukafilmes-edit",
-  "main": "worker.js",
+  "main": "worker.mjs",
   "compatibility_date": "2026-09-16",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "vars": {
     "CLOUDFLARE_WORKERS": "true",
     "NODE_ENV": "production"
