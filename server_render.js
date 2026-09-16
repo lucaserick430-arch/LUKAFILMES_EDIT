@@ -630,7 +630,7 @@ app.use((req, res, next) => {
 app.set("trust proxy", 1);
 
 const configuracaoSessao = {
-    secret: process.env.SESSION_SECRET || require("crypto").randomBytes(32).toString("hex"),
+    secret: process.env.SESSION_SECRET || (process.env.CLOUDFLARE_WORKERS ? "LUKAFILMES-CLOUDFLARE-SESSION-SECRET-2026" : require("crypto").randomBytes(32).toString("hex")),
 
     resave: false,
 
