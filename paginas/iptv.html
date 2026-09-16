@@ -358,16 +358,9 @@ body{
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.13/dist/hls.min.js"></script>
 
 <script>
-const API = 'https://reidosembeds.online/api';
+const API = 'https://api.reidoscanais.st';
 
 let canais = [];
-const canaisManuais = [
-    { name: "Venus Hot", category: "Adulto", iframe_url: "https://streambetter.shop/canal/venus-hot", embeds: [{ embed_url: "https://streambetter.shop/canal/venus-hot" }] },
-    { name: "Sextreme", category: "Adulto", iframe_url: "https://streambetter.shop/canal/sextreme", embeds: [{ embed_url: "https://streambetter.shop/canal/sextreme" }] },
-    { name: "Sexy Hot 2", category: "Adulto", iframe_url: "https://streambetter.shop/canal/sexy-hot-2", embeds: [{ embed_url: "https://streambetter.shop/canal/sexy-hot-2" }] },
-    { name: "Playboy TV", category: "Adulto", iframe_url: "https://streambetter.shop/canal/playboy-tv", embeds: [{ embed_url: "https://streambetter.shop/canal/playboy-tv" }] },
-    { name: "Dream Sex", category: "Adulto", iframe_url: "https://streambetter.shop/canal/dream-sex", embeds: [{ embed_url: "https://streambetter.shop/canal/dream-sex" }] }
-];
 function escapar(valor){
     return String(valor ?? '')
         .replace(/&/g,'&amp;')
@@ -404,152 +397,75 @@ function obterEmbed(item){
 }
 
 async function abrirPlayer(item){
-    // Exceção isolada para os 5 canais adultos via iframe direto
-    const canaisEróticos = {
-        "Venus Hot": "https://streambetter.shop/canal/venus-hot",
-        "Sextreme": "https://streambetter.shop/canal/sextreme",
-        "Sexy Hot 2": "https://streambetter.shop/canal/sexy-hot-2",
-        "Playboy TV": "https://streambetter.shop/canal/playboy-tv",
-        "Dream Sex": "https://streambetter.shop/canal/dream-sex"
-    };
+    const iframe = document.getElementById("playerIframeIPTV");
+    const player = document.getElementById("playerIPTV");
+    const playerArea = document.getElementById("playerArea");
+    const playerTitulo = document.getElementById("playerTitulo");
 
-    const nomeCanal = item?.name || item?.title || "";
-    if (canaisEróticos[nomeCanal]) {
-        const iframe = document.getElementById("playerIframeIPTV");
-        const playerVideo = document.getElementById("playerIPTV");
-        const playerArea = document.getElementById("playerArea");
-        const playerTitulo = document.getElementById("playerTitulo");
-
-        if (iframe) {
-            if (window.lukaHlsPlayer) {
-                try { window.lukaHlsPlayer.destroy(); } catch(e){}
-                window.lukaHlsPlayer = null;
-            }
-            if (playerVideo) {
-                playerVideo.pause();
-                playerVideo.style.display = "none";
-            }
-            iframe.src = canaisEróticos[nomeCanal];
-            iframe.style.display = "block";
-            if (playerTitulo) playerTitulo.textContent = nomeCanal;
-            if (playerArea) playerArea.classList.add("ativo");
-
-            window.scrollTo({
-                top: (playerArea ? playerArea.offsetTop - 10 : 0),
-                behavior: "smooth"
-            });
-            return;
-        }
-    }
-
-    const titulo =
-        item.title ||
-        item.name ||
-        'IPTV';
-
-    const player =
-        document.getElementById('playerIPTV');
-
-    if(!player){
-        alert('Player IPTV não encontrado.');
+    if (!playerArea || !playerTitulo) {
+        alert("Player IPTV não encontrado.");
         return;
     }
 
-    /*
-     * Canais adultos via iframe
-     */
-    if(
-        item.category === 'Adulto' &&
-        item.iframe_url
-    ){
+    const nomeCanal = item?.name || item?.title || "IPTV";
 
-        const iframe =
-            document.getElementById('playerIframeIPTV');
+    const embedUrl =
+        item?.embed_url ||
+        (Array.isArray(item?.embeds)
+            ? item.embeds.find(x =>
+                x &&
+                typeof x.embed_url === "string" &&
+                x.embed_url.trim()
+            )?.embed_url
+            : "");
 
-        if(!iframe){
-            alert('Player iframe não encontrado.');
-            return;
-        }
-
-        if(window.lukaHlsPlayer){
-            try{
-                window.lukaHlsPlayer.destroy();
-            }catch(e){}
-            window.lukaHlsPlayer = null;
-        }
-
-        player.pause();
-        player.removeAttribute('src');
-        player.load();
-        player.style.display = 'none';
-
-        iframe.src = item.iframe_url;
-        iframe.style.display = 'block';
-
-        document.getElementById('playerTitulo').textContent =
-            titulo;
-
-        document.getElementById('playerArea')
-            .classList.add('ativo');
-
-        window.scrollTo({
-            top:
-                document.getElementById('playerArea')
-                    .offsetTop - 10,
-            behavior:'smooth'
-        });
-
+    if (!embedUrl) {
+        alert("Este canal não possui embed disponível.");
         return;
     }
 
-    /*
-     * IPTV normal via embed_url da API /channels
-     */
-    const embedUrl = obterEmbed(item);
+    if (window.lukaHlsPlayer) {
+        try {
+            window.lukaHlsPlayer.destroy();
+        } catch(e) {}
+        window.lukaHlsPlayer = null;
+    }
 
-    if(embedUrl){
+    if (player) {
+        try {
+            player.pause();
+        } catch(e) {}
 
-        const iframe =
-            document.getElementById('playerIframeIPTV');
-
-        if(!iframe){
-            alert('Player iframe não encontrado.');
-            return;
-        }
-
-        if(window.lukaHlsPlayer){
-            try{
-                window.lukaHlsPlayer.destroy();
-            }catch(e){}
-            window.lukaHlsPlayer = null;
-        }
-
-        player.pause();
-        player.removeAttribute('src');
+        player.removeAttribute("src");
         player.load();
-        player.style.display = 'none';
+        player.style.display = "none";
+    }
 
+    if (!iframe) {
+        alert("Player iframe não encontrado.");
+        return;
+    }
+
+    iframe.src = "about:blank";
+    iframe.style.display = "block";
+
+    playerTitulo.textContent = nomeCanal;
+    playerArea.classList.add("ativo");
+
+    window.scrollTo({
+        top: playerArea.offsetTop - 10,
+        behavior: "smooth"
+    });
+
+    requestAnimationFrame(() => {
         iframe.src = embedUrl;
-        iframe.style.display = 'block';
+    });
 
-        document.getElementById('playerTitulo').textContent =
-            titulo;
-
-        document.getElementById('playerArea')
-            .classList.add('ativo');
-
-        window.scrollTo({
-            top:
-                document.getElementById('playerArea')
-                    .offsetTop - 10,
-            behavior:'smooth'
-        });
-
-        return;
-    }
-
+    console.log("[LUKAFILMES IPTV REI DOS EMBEDS]", {
+        canal: nomeCanal,
+        embed_url: embedUrl
+    });
 }
-
 let lukaQRCodePromise = null;
 
 function carregarQRCodeLuka() {
@@ -1333,10 +1249,19 @@ document.getElementById('fecharPlayer').addEventListener('click', () => {
     }
 
     const player = document.getElementById('playerIPTV');
+    const iframe = document.getElementById('playerIframeIPTV');
 
-    player.pause();
-    player.removeAttribute('src');
-    player.load();
+    if (player) {
+        player.pause();
+        player.removeAttribute('src');
+        player.load();
+        player.style.display = 'none';
+    }
+
+    if (iframe) {
+        iframe.src = 'about:blank';
+        iframe.style.display = 'none';
+    }
 
     document.getElementById('playerArea').classList.remove('ativo');
 });
@@ -1344,56 +1269,6 @@ document.getElementById('fecharPlayer').addEventListener('click', () => {
 carregarIPTV();
 </script>
 
-
-<script>
-document.addEventListener("click", function(e) {
-    const el = e.target.closest("[data-nome], .canal-item, .card-canal, li, button, div");
-    if (!el) return;
-
-    const texto = (el.innerText || el.textContent || "").trim();
-    const canaisMap = {
-        "Venus Hot": "https://streambetter.shop/canal/venus-hot",
-        "Sextreme": "https://streambetter.shop/canal/sextreme",
-        "Sexy Hot 2": "https://streambetter.shop/canal/sexy-hot-2",
-        "Playboy TV": "https://streambetter.shop/canal/playboy-tv",
-        "Dream Sex": "https://streambetter.shop/canal/dream-sex"
-    };
-
-    for (const [nome, url] of Object.entries(canaisMap)) {
-        if (texto.includes(nome)) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const iframe = document.getElementById("playerIframeIPTV");
-            const playerVideo = document.getElementById("playerIPTV");
-            const playerArea = document.getElementById("playerArea");
-            const playerTitulo = document.getElementById("playerTitulo");
-
-            if (window.lukaHlsPlayer) {
-                try { window.lukaHlsPlayer.destroy(); } catch(err){}
-                window.lukaHlsPlayer = null;
-            }
-
-            if (playerVideo) {
-                playerVideo.pause();
-                playerVideo.style.display = "none";
-            }
-
-            if (iframe) {
-                iframe.src = url;
-                iframe.style.display = "block";
-            }
-
-            if (playerTitulo) playerTitulo.textContent = nome;
-            if (playerArea) playerArea.classList.add("ativo");
-
-            const topo = playerArea ? playerArea.offsetTop - 10 : 0;
-            window.scrollTo({ top: topo, behavior: "smooth" });
-            return false;
-        }
-    }
-}, true);
-</script>
 
 </body>
 </html>

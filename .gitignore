@@ -64,3 +64,15 @@ server_netlify.js
 server_render.js.BACKUP_*
 
 paginas/iptv.html.antes-rei-embeds-*
+
+# Sessões/cookies locais
+*.cookie
+.teste_sessao/
+
+# Arquivos residuais de teste
+200
+
+# Backups específicos
+*.BACKUP
+*.BACKUP_*
+*.broken-*

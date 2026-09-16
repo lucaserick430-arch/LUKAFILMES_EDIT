@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- FUNDO -->
+  <rect width="512" height="512" rx="86" fill="#e50914"/>
+
+  <!-- TEIA -->
+  <g fill="none"
+     stroke="#ffffff"
+     stroke-width="10"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     opacity="0.28">
+
+    <!-- linhas principais -->
+    <path d="M256 30 V482"/>
+    <path d="M30 256 H482"/>
+    <path d="M82 82 L430 430"/>
+    <path d="M430 82 L82 430"/>
+
+    <!-- anéis da teia -->
+    <path d="M175 175 Q256 120 337 175 Q392 256 337 337 Q256 392 175 337 Q120 256 175 175Z"/>
+    <path d="M125 125 Q256 65 387 125 Q447 256 387 387 Q256 447 125 387 Q65 256 125 125Z"/>
+  </g>
+
+  <!-- L CENTRAL -->
+  <text
+    x="256"
+    y="355"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="330"
+    font-weight="900"
+    fill="#ffffff"
+    stroke="#ffffff"
+    stroke-width="4">L</text>
+
+  <!-- pequeno detalhe cinematográfico -->
+  <circle
+    cx="430"
+    cy="82"
+    r="20"
+    fill="#ffffff"
+    opacity="0.9"/>
+</svg>
