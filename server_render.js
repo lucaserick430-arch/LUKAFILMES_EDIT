@@ -7,108 +7,126 @@ const session = require("express-session");
 
 const { getStore } = require("@netlify/blobs");
 
-class NetlifyBlobSessionStore extends session.Store {
-
+class TursoSessionStore extends session.Store {
     constructor() {
         super();
-
-        this.store = getStore({
-            name: "lukafilmes-sessoes",
-            siteID: process.env.NETLIFY_SITE_ID,
-            token: process.env.NETLIFY_AUTH_TOKEN
-        });
+        this.cache = new Map();
     }
 
-    async get(sid, callback) {
+    async preparar() {
+        if (!turso) {
+            throw new Error("Turso não configurado para sessões.");
+        }
 
-        try {
+        await turso.execute(`
+            CREATE TABLE IF NOT EXISTS lukafilmes_sessoes (
+                sid TEXT PRIMARY KEY,
+                dados TEXT NOT NULL,
+                expira_em TEXT
+            )
+        `);
+    }
 
-            const dados = await this.store.get(
-                `sess_${sid}`,
-                {
-                    type: "json"
+    get(sid, callback) {
+        (async () => {
+            try {
+                if (this.cache.has(sid)) {
+                    const sessao = this.cache.get(sid);
+                    if (
+                        sessao &&
+                        sessao.cookie &&
+                        sessao.cookie.expires &&
+                        new Date(sessao.cookie.expires) < new Date()
+                    ) {
+                        this.cache.delete(sid);
+                        return callback(null, null);
+                    }
+                    return callback(null, sessao || null);
                 }
-            );
 
-            if (!dados) {
-                return callback(null, null);
+                await this.preparar();
+
+                const resultado = await turso.execute({
+                    sql: "SELECT dados, expira_em FROM lukafilmes_sessoes WHERE sid = ?",
+                    args: [sid]
+                });
+
+                if (!resultado.rows.length) {
+                    return callback(null, null);
+                }
+
+                const row = resultado.rows[0];
+
+                if (row.expira_em && new Date(String(row.expira_em)) < new Date()) {
+                    await turso.execute({
+                        sql: "DELETE FROM lukafilmes_sessoes WHERE sid = ?",
+                        args: [sid]
+                    });
+                    return callback(null, null);
+                }
+
+                const sessao = JSON.parse(String(row.dados));
+                this.cache.set(sid, sessao);
+                callback(null, sessao);
+            } catch (erro) {
+                callback(erro);
             }
+        })();
+    }
 
-            if (
-                dados.cookie &&
-                dados.cookie.expires &&
-                new Date(dados.cookie.expires) < new Date()
-            ) {
+    set(sid, sess, callback) {
+        (async () => {
+            try {
+                await this.preparar();
 
-                await this.store.delete(`sess_${sid}`);
+                const dados = JSON.stringify(sess);
+                const expira = sess.cookie && sess.cookie.expires
+                    ? new Date(sess.cookie.expires).toISOString()
+                    : null;
 
-                return callback(null, null);
+                this.cache.set(sid, sess);
+
+                await turso.execute({
+                    sql: `
+                        INSERT INTO lukafilmes_sessoes (sid, dados, expira_em)
+                        VALUES (?, ?, ?)
+                        ON CONFLICT(sid) DO UPDATE SET
+                            dados = excluded.dados,
+                            expira_em = excluded.expira_em
+                    `,
+                    args: [sid, dados, expira]
+                });
+
+                callback(null);
+            } catch (erro) {
+                callback(erro);
             }
-
-            callback(null, dados);
-
-        } catch (erro) {
-
-            callback(erro);
-
-        }
-
+        })();
     }
 
-    async set(sid, sess, callback) {
+    destroy(sid, callback) {
+        (async () => {
+            try {
+                this.cache.delete(sid);
 
-        try {
+                if (turso) {
+                    await this.preparar();
+                    await turso.execute({
+                        sql: "DELETE FROM lukafilmes_sessoes WHERE sid = ?",
+                        args: [sid]
+                    });
+                }
 
-            await this.store.setJSON(
-                `sess_${sid}`,
-                sess
-            );
-
-            callback(null);
-
-        } catch (erro) {
-
-            callback(erro);
-
-        }
-
+                callback(null);
+            } catch (erro) {
+                callback(erro);
+            }
+        })();
     }
 
-    async destroy(sid, callback) {
-
-        try {
-
-            await this.store.delete(`sess_${sid}`);
-
-            callback(null);
-
-        } catch (erro) {
-
-            callback(erro);
-
-        }
-
+    touch(sid, sess, callback) {
+        this.set(sid, sess, callback);
     }
-
-    async touch(sid, sess, callback) {
-
-        try {
-
-            await this.store.setJSON(
-                `sess_${sid}`,
-                sess
-            );
-
-            callback(null);
-
-        } catch (erro) {
-
-            callback(erro);
-
-        }
-
-    }
-
 }
 
 let Database = null;
@@ -626,8 +644,8 @@ const configuracaoSessao = {
     }
 };
 
-if (!ambienteLocal) {
-    configuracaoSessao.store = new NetlifyBlobSessionStore();
+if (!ambienteLocal && turso) {
+    configuracaoSessao.store = new TursoSessionStore();
 }
 
 prepararTursoPagamentos()
@@ -824,7 +842,7 @@ app.post("/api/cadastro", async (req, res) => {
             String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
         ) {
 
-            req.session.usuario = {
+        req.session.usuario = {
                 id: novoUsuario.id,
                 usuario: novoUsuario.usuario,
                 tipo: novoUsuario.tipo,
@@ -873,6 +891,38 @@ app.post("/api/cadastro", async (req, res) => {
 // LOGIN POST
 // ==========================================
 
+const LIMITE_LOGIN_LUKA = 5;
+const JANELA_LOGIN_LUKA = 10 * 60 * 1000;
+const tentativasLoginLuka = new Map();
+
+function controleLoginLuka(req, usuario) {
+    const ip = String(req.ip || req.socket?.remoteAddress || "unknown");
+    const chave = ip + "|" + String(usuario || "").trim().toLowerCase();
+    const agora = Date.now();
+    let r = tentativasLoginLuka.get(chave);
+
+    if (!r || agora - r.inicio >= JANELA_LOGIN_LUKA) {
+        r = { inicio: agora, falhas: 0 };
+    }
+
+    if (r.falhas >= LIMITE_LOGIN_LUKA) {
+        return {
+            bloqueado: true,
+            minutos: Math.max(
+                1,
+                Math.ceil(
+                    (JANELA_LOGIN_LUKA - (agora - r.inicio)) / 60000
+                )
+            ),
+            chave,
+            registro: r
+        };
+    }
+
+    tentativasLoginLuka.set(chave, r);
+    return { bloqueado: false, chave, registro: r };
+}
+
 app.post("/login", async (req, res) => {
 
     try {
@@ -882,6 +932,17 @@ app.post("/login", async (req, res) => {
 
         const senha =
             String(req.body.senha || "");
+
+        const controleLogin = controleLoginLuka(req, usuario);
+
+        if (controleLogin.bloqueado) {
+            return res.status(429).json({
+                sucesso: false,
+                mensagem:
+                    "Muitas tentativas. Tente novamente em " +
+                    controleLogin.minutos + " minuto(s)."
+            });
+        }
 
         if (!usuario || !senha) {
 
@@ -928,11 +989,19 @@ app.post("/login", async (req, res) => {
 
         if (!senhaCorreta) {
 
+            controleLogin.registro.falhas += 1;
+            tentativasLoginLuka.set(
+                controleLogin.chave,
+                controleLogin.registro
+            );
+
             return res.json({
                 sucesso: false,
                 mensagem: "Usuário ou senha incorretos."
             });
         }
+
+        tentativasLoginLuka.delete(controleLogin.chave);
 
         req.session.usuario = {
 
@@ -7326,6 +7395,8 @@ module.exports = app
 
 const PORT_RENDER = process.env.PORT || 3000;
 
-app.listen(PORT_RENDER, "0.0.0.0", () => {
-    console.log(`LUKAFILMES iniciado na porta ${PORT_RENDER}`);
-});
+if (!process.env.CLOUDFLARE_WORKERS) {
+    app.listen(PORT_RENDER, "0.0.0.0", () => {
+        console.log(`LUKAFILMES iniciado na porta ${PORT_RENDER}`);
+    });
+}
