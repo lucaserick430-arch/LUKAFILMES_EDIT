@@ -1,4 +1,4 @@
-const { httpServerHandler } = require("cloudflare:node");
+import { httpServerHandler } from "cloudflare:node";
 
 const app = require("./server_render.js");
 
