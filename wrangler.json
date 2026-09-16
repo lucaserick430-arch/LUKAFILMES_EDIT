@@ -8,5 +8,9 @@
   "vars": {
     "CLOUDFLARE_WORKERS": "true",
     "NODE_ENV": "production"
+  },
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
   }
 }
