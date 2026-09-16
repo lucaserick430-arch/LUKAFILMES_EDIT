@@ -2,7 +2,7 @@ require("dotenv").config();
 ﻿
 const express = require("express");
 const path = require("path");
-const LUKAFILMES_DIR = process.cwd();
+const LUKAFILMES_DIR = process.env.CLOUDFLARE_WORKERS ? "." : process.cwd();
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
 
@@ -76,12 +76,9 @@ class TursoSessionStore extends session.Store {
     }
 
     set(sid, sess, callback) {
-        console.log("[TURSO SESSION] SET chamado:", sid);
         (async () => {
             try {
-                console.log("[TURSO SESSION] preparando tabela...");
                 await this.preparar();
-                console.log("[TURSO SESSION] tabela preparada.");
 
                 const dados = JSON.stringify(sess);
                 const expira = sess.cookie && sess.cookie.expires
@@ -578,49 +575,6 @@ function proximoId(usuarios) {
         )
     ) + 1;
 }
-
-const servirArquivoCloudflare = async (req, res, caminhoAsset, opcoes = {}) => {
-    if (!process.env.CLOUDFLARE_WORKERS) {
-        return false;
-    }
-
-    try {
-        const cloudflareEnv = req.app.locals.cloudflareEnv;
-
-        if (!cloudflareEnv || !cloudflareEnv.ASSETS) {
-            throw new Error("Binding ASSETS não disponível.");
-        }
-
-        const assetRequest = new Request(
-            new URL(caminhoAsset, `${req.protocol}://${req.get("host")}`)
-        );
-
-        const resposta = await cloudflareEnv.ASSETS.fetch(assetRequest);
-
-        if (resposta.status === 404) {
-            return false;
-        }
-
-        res.status(resposta.status);
-
-        for (const [nome, valor] of resposta.headers) {
-            res.setHeader(nome, valor);
-        }
-
-        for (const [nome, valor] of Object.entries(opcoes.headers || {})) {
-            res.setHeader(nome, valor);
-        }
-
-        const corpo = Buffer.from(await resposta.arrayBuffer());
-        res.end(corpo);
-
-        return true;
-    } catch (erro) {
-        console.error("[CLOUDFLARE ASSET]", erro);
-        throw erro;
-    }
-};
-
 const app = express();
 
 // ==========================================
@@ -685,7 +639,7 @@ const configuracaoSessao = {
 
     cookie: {
         httpOnly: true,
-        secure: process.env.CLOUDFLARE_WORKERS === "true" ? true : false,
+        secure: !ambienteLocal,
         sameSite: "lax",
         maxAge: 1000 * 60 * 60 * 24
     }
@@ -706,14 +660,10 @@ console.log("[DIAGNOSTICO] rota /login registrada");
 // LOGIN
 // ==========================================
 
-app.get("/login", async (req, res) => {
+app.get("/login", (req, res) => {
 
     if (req.session.usuario) {
         return res.redirect("/");
-    }
-
-    if (await servirArquivoCloudflare(req, res, "/public/login.html")) {
-        return;
     }
 
     res.sendFile(
@@ -742,7 +692,7 @@ app.get("/entrar-visitante", (req, res, next) => {
 // ADMIN
 // ==========================================
 
-app.get("/admin.html", async (req, res) => {
+app.get("/admin.html", (req, res) => {
 
     if (!req.session.usuario) {
         return res.redirect("/login");
@@ -759,22 +709,6 @@ app.get("/admin.html", async (req, res) => {
         "Surrogate-Control": "no-store"
     });
 
-    if (await servirArquivoCloudflare(
-        req,
-        res,
-        "/public/admin.html",
-        {
-            headers: {
-                "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
-                "Pragma": "no-cache",
-                "Expires": "0",
-                "Surrogate-Control": "no-store"
-            }
-        }
-    )) {
-        return;
-    }
-
     res.sendFile(
         path.join(LUKAFILMES_DIR, "public", "admin.html"),
         {
@@ -788,20 +722,7 @@ app.get("/admin.html", async (req, res) => {
 // LUKAFILMES — CADASTRO DE CLIENTE
 // ==========================================
 
-app.get("/cadastro", async (req, res) => {
-    if (await servirArquivoCloudflare(
-        req,
-        res,
-        "/public/cadastro.html",
-        {
-            headers: {
-                "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
-            }
-        }
-    )) {
-        return;
-    }
-
+app.get("/cadastro", (req, res) => {
     res.sendFile(
         path.join(LUKAFILMES_DIR, "public", "cadastro.html"),
         {
@@ -1222,7 +1143,7 @@ app.post("/api/admin/teste/iniciar", async (req, res) => {
 
         res.cookie("luka_modo_teste", "1", {
             httpOnly: true,
-            secure: process.env.CLOUDFLARE_WORKERS ? true : !ambienteLocal,
+            secure: !ambienteLocal,
             sameSite: "lax",
             maxAge: 1000 * 60 * 60 * 6
         });
@@ -1264,7 +1185,7 @@ app.post("/api/admin/teste/encerrar", (req, res) => {
 
     res.clearCookie("luka_modo_teste", {
         httpOnly: true,
-        secure: process.env.CLOUDFLARE_WORKERS ? true : !ambienteLocal,
+        secure: !ambienteLocal,
         sameSite: "lax"
     });
 
@@ -7159,21 +7080,7 @@ app.get(
 // ==========================================
 // FAVICON — IDENTIDADE LUKAFILMES
 // ==========================================
-app.get("/favicon/lukafilmes.svg", async (req, res) => {
-    if (await servirArquivoCloudflare(
-        req,
-        res,
-        "/public/favicon/lukafilmes.svg",
-        {
-            headers: {
-                "Content-Type": "image/svg+xml",
-                "Cache-Control": "public, max-age=86400"
-            }
-        }
-    )) {
-        return;
-    }
-
+app.get("/favicon/lukafilmes.svg", (req, res) => {
     res.sendFile(
         require("path").join(
             LUKAFILMES_DIR,
@@ -7193,39 +7100,135 @@ app.get("/favicon/lukafilmes.svg", async (req, res) => {
 // ==========================================
  // LUKAFILMES — ÍCONE OFICIAL ORIGINAL
  // ==========================================
- app.get("/favicon/file_000000006768820e93d46c5d164e8bd9.png", async (req, res) => {
-    if (await servirArquivoCloudflare(
-        req,
-        res,
-        "/public/favicon/file_000000006768820e93d46c5d164e8bd9.png",
-        {
-            headers: {
-                "Content-Type": "image/png",
-                "Cache-Control": "public, max-age=86400"
-            }
-        }
-    )) {
-        return;
-    }
+ app.get("/favicon/file_000000006768820e93d46c5d164e8bd9.png", (req, res) => {
+     res.sendFile(
+         require("path").join(
+             LUKAFILMES_DIR,
+             "public",
+             "favicon",
+             "file_000000006768820e93d46c5d164e8bd9.png"
+         ),
+         {
+             headers: {
+                 "Content-Type": "image/png",
+                 "Cache-Control": "no-store, no-cache, must-revalidate"
+             }
+         }
+     );
+ });
 
-    res.sendFile(
-        require("path").join(
-            LUKAFILMES_DIR,
-            "public",
-            "favicon",
-            "file_000000006768820e93d46c5d164e8bd9.png"
-        ),
-        {
-            headers: {
-                "Content-Type": "image/png",
-                "Cache-Control": "public, max-age=86400"
-            }
+// ==========================================
+// PROTEÇÃO DAS PÁGINAS
+// ==========================================
+
+app.use(
+    (req, res, next) => {
+
+        console.log(
+            "[DEBUG PROTEÇÃO]",
+            "originalUrl:", req.originalUrl,
+            "url:", req.url,
+            "path:", req.path,
+            "method:", req.method
+        );
+
+        if (
+
+            req.path === "/login" ||
+            req.path === "/favicon/lukafilmes.svg" ||
+            req.path === "/favicon/lukafilmes.png" ||
+            req.path === "/favicon/file_000000006768820e93d46c5d164e8bd9.png" ||
+
+            req.path === "/admin.html" ||
+
+            req.path === "/status" ||
+
+            req.path === "/api/eu" || req.path === "/api/admin/revendedores" || req.path === "/api/revendedor/clientes" ||
+
+            req.path === "/api/pesquisar" ||
+
+            req.path === "/" ||
+
+            req.path === "/index.html" ||
+
+            req.path === "/paginas/filme.html" ||
+
+            req.path === "/paginas/filme" ||
+
+            req.path === "/paginas/filmes.html" ||
+
+            req.path === "/paginas/series.html" ||
+
+            req.path === "/paginas/series" ||
+
+            req.path === "/paginas/serie.html" ||
+
+            req.path === "/paginas/serie" ||
+
+            req.path === "/paginas/iptv.html"
+
+        ) {
+
+            return next();
+
         }
+
+        /*
+         * TODAS AS PÁGINAS DO SITE SÃO PROTEGIDAS.
+         *
+         * Primeiro verifica se existe sessão.
+         * Depois verifica se a validade do usuário expirou.
+         *
+         * Admin não possui expiração.
+         */
+
+
+        /*
+         * APIs de séries devem responder diretamente em JSON.
+         * Não redirecionar detalhes, temporadas e episódios para /login.
+         */
+        if (
+            req.path.startsWith("/api/serie/") ||
+            req.path.startsWith("/api/series") ||
+            req.path === "/api/acesso-assistir" ||
+            req.path === "/api/pagamentos/criar"
+        ) {
+            return next();
+        }
+
+        if (!req.session || !req.session.usuario) {
+
+            return res.redirect("/login");
+
+        }
+
+        const usuarioSessao = req.session.usuario;
+
+        /*
+         * Usuário vencido continua logado e pode navegar pelo catálogo.
+         * A verificação de acesso para assistir será feita no botão
+         * principal "ASSISTIR".
+         *
+         * Admin e isento nunca dependem de validade.
+         */
+
+        next();
+
+    }
+);
+
+// ==========================================
+// ARQUIVOS DO SITE
+// ==========================================
+
+app.get("/revendedor.html", (req, res) => {
+    res.sendFile(
+        require("path").join(LUKAFILMES_DIR, "public", "revendedor.html")
     );
 });
 
 
-app.get("/paginas/minha-lista", async (req, res) => {
+app.get("/paginas/minha-lista", (req, res) => {
     res.sendFile(
         require("path").join(LUKAFILMES_DIR, "paginas", "minha-lista.html")
     );
@@ -7234,91 +7237,19 @@ app.get("/paginas/minha-lista", async (req, res) => {
 // ==========================================
 // LUKAFILMES — TELA INICIAL DE ACESSO
 // ==========================================
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
 
     // Cliente logado ou visitante autorizado: entra na Home
     if (req.session && (req.session.usuario || req.session.visitante)) {
-        if (await servirArquivoCloudflare(req, res, "/public/index.html")) {
-            return;
-        }
-
         return res.sendFile(
             path.join(LUKAFILMES_DIR, "index.html")
         );
     }
 
     // Primeiro acesso: mostra a tela original de login/entrada
-    if (await servirArquivoCloudflare(req, res, "/public/login.html")) {
-        return;
-    }
-
     return res.sendFile(
         path.join(LUKAFILMES_DIR, "public", "login.html")
     );
-});
-
-// ==========================================
-// CLOUDFLARE — ARQUIVOS ESTÁTICOS
-// ==========================================
-app.use(async (req, res, next) => {
-    if (!process.env.CLOUDFLARE_WORKERS) {
-        return next();
-    }
-
-    const caminho = req.path || "/";
-
-    const rotasExpress = new Set([
-        "/",
-        "/login",
-        "/cadastro",
-        "/admin.html",
-        "/revendedor.html",
-        "/entrar-visitante",
-        "/paginas/minha-lista",
-        "/paginas/filme",
-        "/paginas/iptv.html",
-        "/favicon/lukafilmes.svg",
-        "/favicon/lukafilmes.png",
-        "/favicon/file_000000006768820e93d46c5d164e8bd9.png"
-    ]);
-
-    if (rotasExpress.has(caminho) || caminho.startsWith("/api/")) {
-        return next();
-    }
-
-    const extensoesEstaticas = [
-        ".css",
-        ".js",
-        ".png",
-        ".jpg",
-        ".jpeg",
-        ".webp",
-        ".gif",
-        ".svg",
-        ".ico",
-        ".mp4",
-        ".webm",
-        ".woff",
-        ".woff2",
-        ".ttf",
-        ".json"
-    ];
-
-    const ehEstatico = extensoesEstaticas.some(ext =>
-        caminho.toLowerCase().endsWith(ext)
-    );
-
-    if (!ehEstatico) {
-        return next();
-    }
-
-    const servido = await servirArquivoCloudflare(req, res, caminho);
-
-    if (servido) {
-        return;
-    }
-
-    return next();
 });
 
 app.use(
@@ -7329,15 +7260,7 @@ app.use(
     })
 );
 
-app.get("/paginas/filme", async (req, res) => {
-    if (await servirArquivoCloudflare(req, res, "/paginas/filme.html")) {
-        return;
-    }
-
-    res.sendFile(
-        path.join(LUKAFILMES_DIR, "paginas", "filme.html")
-    );
-});
+app.get("/paginas/filme",(req,res)=>{res.sendFile(require("path").join(LUKAFILMES_DIR,"paginas","filme.html"));});
 
 
 

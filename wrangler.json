@@ -1,5 +1,5 @@
 {
-  "name": "lukafilmes",
+  "name": "lukafilmes-edit",
   "main": "worker.mjs",
   "compatibility_date": "2026-09-16",
   "compatibility_flags": [
@@ -8,9 +8,5 @@
   "vars": {
     "CLOUDFLARE_WORKERS": "true",
     "NODE_ENV": "production"
-  },
-  "assets": {
-    "directory": "cloudflare_assets",
-    "binding": "ASSETS"
   }
 }
