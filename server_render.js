@@ -2,6 +2,7 @@ require("dotenv").config();
 ﻿
 const express = require("express");
 const path = require("path");
+const LUKAFILMES_DIR = process.env.CLOUDFLARE_WORKERS ? "." : process.cwd();
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
 
@@ -429,7 +430,7 @@ function obterBancoLocal() {
     if (!bancoLocal) {
 
         bancoLocal = new Database(
-            path.join(__dirname, "banco.db")
+            path.join(LUKAFILMES_DIR, "banco.db")
         );
     }
 
@@ -666,7 +667,7 @@ app.get("/login", (req, res) => {
     }
 
     res.sendFile(
-        path.join(__dirname, "public", "login.html")
+        path.join(LUKAFILMES_DIR, "public", "login.html")
     );
 });
 
@@ -709,7 +710,7 @@ app.get("/admin.html", (req, res) => {
     });
 
     res.sendFile(
-        path.join(__dirname, "public", "admin.html"),
+        path.join(LUKAFILMES_DIR, "public", "admin.html"),
         {
             cacheControl: false
         }
@@ -723,7 +724,7 @@ app.get("/admin.html", (req, res) => {
 
 app.get("/cadastro", (req, res) => {
     res.sendFile(
-        path.join(__dirname, "public", "cadastro.html"),
+        path.join(LUKAFILMES_DIR, "public", "cadastro.html"),
         {
             cacheControl: false
         }
@@ -2502,7 +2503,7 @@ const pesquisaCache = new Map();
 
 // LINKS DE FILMES DO SITE DE ORIGEM
 const fs = require("fs");
-const caminhoLinksFilmes = process.env.CLOUDFLARE_WORKERS ? "links_filmes.json" : require("path").join(__dirname, "links_filmes.json");
+const caminhoLinksFilmes = process.env.CLOUDFLARE_WORKERS ? "links_filmes.json" : require("path").join(LUKAFILMES_DIR, "links_filmes.json");
 
 let linksFilmes = {};
 
@@ -6353,7 +6354,7 @@ app.post("/api/revendedor/clientes", async (req, res) => {
 // PRESENÇA ONLINE — REVENDEDOR / CLIENTES
 // ==========================================
 
-const PRESENCA_FILE = path.join(__dirname, "dados", "presenca.json");
+const PRESENCA_FILE = path.join(LUKAFILMES_DIR, "dados", "presenca.json");
 
 function garantirArquivoPresenca() {
     try {
@@ -7082,7 +7083,7 @@ app.get(
 app.get("/favicon/lukafilmes.svg", (req, res) => {
     res.sendFile(
         require("path").join(
-            __dirname,
+            LUKAFILMES_DIR,
             "public",
             "favicon",
             "lukafilmes.svg"
@@ -7102,7 +7103,7 @@ app.get("/favicon/lukafilmes.svg", (req, res) => {
  app.get("/favicon/file_000000006768820e93d46c5d164e8bd9.png", (req, res) => {
      res.sendFile(
          require("path").join(
-             __dirname,
+             LUKAFILMES_DIR,
              "public",
              "favicon",
              "file_000000006768820e93d46c5d164e8bd9.png"
@@ -7222,14 +7223,14 @@ app.use(
 
 app.get("/revendedor.html", (req, res) => {
     res.sendFile(
-        require("path").join(__dirname, "public", "revendedor.html")
+        require("path").join(LUKAFILMES_DIR, "public", "revendedor.html")
     );
 });
 
 
 app.get("/paginas/minha-lista", (req, res) => {
     res.sendFile(
-        require("path").join(__dirname, "paginas", "minha-lista.html")
+        require("path").join(LUKAFILMES_DIR, "paginas", "minha-lista.html")
     );
 });
 
@@ -7241,25 +7242,25 @@ app.get("/", (req, res) => {
     // Cliente logado ou visitante autorizado: entra na Home
     if (req.session && (req.session.usuario || req.session.visitante)) {
         return res.sendFile(
-            path.join(__dirname, "index.html")
+            path.join(LUKAFILMES_DIR, "index.html")
         );
     }
 
     // Primeiro acesso: mostra a tela original de login/entrada
     return res.sendFile(
-        path.join(__dirname, "public", "login.html")
+        path.join(LUKAFILMES_DIR, "public", "login.html")
     );
 });
 
 app.use(
-    express.static(__dirname, {
+    express.static(LUKAFILMES_DIR, {
         maxAge: "1d",
         etag: true,
         lastModified: true
     })
 );
 
-app.get("/paginas/filme",(req,res)=>{res.sendFile(require("path").join(__dirname,"paginas","filme.html"));});
+app.get("/paginas/filme",(req,res)=>{res.sendFile(require("path").join(LUKAFILMES_DIR,"paginas","filme.html"));});
 
 
 
