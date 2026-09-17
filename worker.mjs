@@ -26,6 +26,11 @@ export default {
             }
         }
 
+        globalThis.__LUKA_TMDB_TOKEN =
+            env.TMDB_TOKEN !== undefined
+                ? String(env.TMDB_TOKEN)
+                : undefined;
+
         return handler.fetch(request, env, ctx);
     }
 };

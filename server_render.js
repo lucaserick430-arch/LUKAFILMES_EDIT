@@ -2330,7 +2330,8 @@ function normalizarTituloXtream(titulo) {
 async function tmdb(endpoint) {
 
     const token =
-        process.env.TMDB_TOKEN;
+        process.env.TMDB_TOKEN ||
+        globalThis.__LUKA_TMDB_TOKEN;
 
     if (!token) {
 
