@@ -1,0 +1,13 @@
+.git/
+node_modules/
+.wrangler/
+.lukafilmes_backups_loader/
+BACKUP-*/
+backup-*/
+*.bak
+*.backup
+*.log
+*.tmp
+*.temp
+.env
+.env.*
