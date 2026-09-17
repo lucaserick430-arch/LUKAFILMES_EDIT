@@ -3869,7 +3869,8 @@ app.get('/api/catalogo', async (req, res) => {
         if (!filmes) {
             return res.status(500).json({
                 sucesso: false,
-                mensagem: 'Não foi possível carregar o catálogo.'
+                mensagem: 'Não foi possível carregar o catálogo.',
+                erro: erro && erro.message ? erro.message : String(erro)
             });
         }
 
