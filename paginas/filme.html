@@ -1284,21 +1284,6 @@ body{
     box-sizing: border-box !important;
 }
 
-#playerFilme > .player-video > #filmeFrame {
-    position: absolute !important;
-    inset: 0 !important;
-    display: block !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    max-width: none !important;
-    max-height: none !important;
-    aspect-ratio: auto !important;
-    border: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
 
 /* MOBILE */
 @media (max-width:700px) {
@@ -1323,13 +1308,7 @@ body{
         box-sizing: border-box !important;
     }
 
-    #playerFilme > .player-video > #filmeFrame {
-        width: 100% !important;
-        height: 950px !important;
-        min-height: 950px !important;
-        max-height: none !important;
-        aspect-ratio: auto !important;
-    }
+    
 }
 </style>
 
@@ -3192,6 +3171,32 @@ function carregarQRCodeLuka() {
 
 
 
+
+<style id="cssTelaCheia">
+.botao-tela-cheia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+  min-height: 46px;
+  margin: 10px auto 20px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 10px;
+  background: #222;
+  color: #fff;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.botao-tela-cheia:hover {
+  transform: translateY(-1px);
+}
+</style>
+
 </head>
 
 <body>
@@ -3316,20 +3321,29 @@ function carregarQRCodeLuka() {
 
             <div
                 id="filmePlayersOpcoes"
-                style="display:none;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin:14px auto;position:relative;z-index:30;">
+                style="display:flex !important;justify-content:center !important;align-items:center !important;gap:10px !important;margin:0 0 18px !important;flex-wrap:wrap !important;">
+
+                <button
+                    type="button"
+                    id="btnRedeFlixFilme"
+                    class="serie-player-btn"
+                    style="display:inline-flex !important;visibility:visible !important;opacity:1 !important;">
+                    ▶ REDEFLIX
+                </button>
 
                 <button
                     type="button"
                     id="btnApiPlayerFilme"
-                    class="player-btn"
-                    style="font-size:20px !important;padding:16px 32px !important;min-width:240px !important;">
+                    class="serie-player-btn"
+                    style="display:inline-flex !important;visibility:visible !important;opacity:1 !important;">
                     ▶ APIPlayer
                 </button>
 
             </div>
 
-            <iframe id="filmeFrame" src="" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:70vh"></iframe>
+            <iframe id="filmeFrame" src="" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:80vh;min-height:600px;display:block"></iframe>
         </div>
+
 
     </section>
     
@@ -5080,19 +5094,6 @@ document.addEventListener("DOMContentLoaded",()=>{
     visibility: visible !important;
 }
 
-#playerFilme > .player-video > #filmeFrame {
-    display: block !important;
-    position: relative !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 100% !important;
-    min-height: 100% !important;
-    border: 0 !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-    background: #000 !important;
-}
 
 /* PLAY CENTRAL fica acima do iframe antes do carregamento */
 #playerFilme > .player-video > #playCentralFilme {
@@ -6108,6 +6109,103 @@ body {
     }
 }
 </style>
+
+
+<script id="jsTelaCheia">
+(function configurarTelaCheiaLuka() {
+  function iniciar() {
+    const botao = document.getElementById("botaoTelaCheia");
+    const iframe = document.getElementById("filmeFrame");
+    const area = document.querySelector(".player-video");
+
+    if (!botao || !iframe || !area) {
+      console.warn("[LUKAFILMES] Elementos da tela cheia não encontrados.");
+      return;
+    }
+
+    if (botao.dataset.configurado === "1") return;
+    botao.dataset.configurado = "1";
+
+    botao.addEventListener("click", async function () {
+      try {
+        if (document.fullscreenElement) {
+          if (document.exitFullscreen) {
+            await document.exitFullscreen();
+          }
+          return;
+        }
+
+        const alvo = iframe.requestFullscreen ? iframe : area;
+
+        if (alvo.requestFullscreen) {
+          await alvo.requestFullscreen();
+        } else if (alvo.webkitRequestFullscreen) {
+          alvo.webkitRequestFullscreen();
+        } else {
+          alert("Tela cheia não é compatível neste navegador.");
+        }
+      } catch (erro) {
+        console.error("[LUKAFILMES] Erro ao abrir tela cheia:", erro);
+      }
+    });
+
+    document.addEventListener("fullscreenchange", function () {
+      botao.textContent =
+        document.fullscreenElement
+          ? "⛶ SAIR DA TELA CHEIA"
+          : "⛶ TELA CHEIA";
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", iniciar);
+  } else {
+    iniciar();
+  }
+})();
+
+
+
+</script>
+
+<script>
+(function () {
+    const btnRedeFlixFilme = document.getElementById("btnRedeFlixFilme");
+    const btnApiPlayerFilme = document.getElementById("btnApiPlayerFilme");
+    const filmeFrame = document.getElementById("filmeFrame");
+
+    if (!btnRedeFlixFilme || !btnApiPlayerFilme || !filmeFrame) return;
+
+    const parametros = new URLSearchParams(window.location.search);
+    const idUrl = parametros.get("id");
+
+    let tmdbId = idUrl ? String(idUrl).trim() : "";
+
+    try {
+        const salvo = localStorage.getItem("filmeSelecionado");
+        if (!tmdbId && salvo) {
+            const filme = JSON.parse(salvo);
+            if (filme && filme.id) tmdbId = String(filme.id).trim();
+        }
+    } catch (e) {}
+
+    if (!tmdbId) return;
+
+    btnRedeFlixFilme.onclick = function () {
+        filmeFrame.src =
+            "https://redeflixapi.store/filme/" +
+            encodeURIComponent(tmdbId);
+    };
+
+    btnApiPlayerFilme.onclick = function () {
+        filmeFrame.src =
+            "https://apiplayer.ru/embed/movie/" +
+            encodeURIComponent(tmdbId) +
+            "?lang=pt";
+    };
+})();
+</script>
+
 
 </body>
 </html>
@@ -7304,16 +7402,6 @@ body{
     box-sizing: border-box !important;
 }
 
-#playerFilme > .player-video > #filmeFrame {
-    display: block !important;
-    width: 100% !important;
-    height: 70vh !important;
-    min-height: 420px !important;
-    max-height: 720px !important;
-    margin: 0 auto !important;
-    border: 0 !important;
-    box-sizing: border-box !important;
-}
 
 @media (max-width: 768px) {
 
@@ -7327,17 +7415,106 @@ body{
         box-sizing: border-box !important;
     }
 
+    
+}
+
+
+/* DESTAQUE DAS OPÇÕES DE PLAYER */
+#filmePlayersOpcoes,
+#redeFlixSeriesPlayers {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    margin: 0 0 20px !important;
+    width: 100% !important;
+}
+
+#filmePlayersOpcoes::before,
+#redeFlixSeriesPlayers::before {
+    content: "ESCOLHA ONDE ASSISTIR" !important;
+    display: block !important;
+    color: #fff !important;
+    font-size: 21px !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+}
+
+#filmePlayersOpcoes::after,
+#redeFlixSeriesPlayers::after {
+    content: "Toque em uma das opções abaixo para começar" !important;
+    display: block !important;
+    color: rgba(255,255,255,.75) !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    order: 3 !important;
+}
+
+#filmePlayersOpcoes .serie-player-btn,
+#redeFlixSeriesPlayers .serie-player-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: min(320px, 90%) !important;
+    min-width: 240px !important;
+    min-height: 60px !important;
+    padding: 12px 24px !important;
+    border-radius: 10px !important;
+    font-size: 19px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    cursor: pointer !important;
+}
+
+
+
+/* OCULTA O PLAY CENTRAL ANTIGO — A ESCOLHA DO PLAYER VEM PRIMEIRO */
+#playCentralFilme {
+    display: none !important;
+}
+
+
+
+
+
+
+
+/* PLAYER FILME — REGRA ÚNICA */
+#playerFilme > .player-video {
+    position: relative !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    background: #000 !important;
+    border-radius: 14px !important;
+}
+
+#playerFilme > .player-video > #filmeFrame {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: 70vh !important;
+    min-height: 520px !important;
+    max-height: none !important;
+    inset: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    box-sizing: border-box !important;
+    background: #000 !important;
+}
+
+@media (max-width: 700px) {
     #playerFilme > .player-video > #filmeFrame {
-        display: block !important;
-        width: 100vw !important;
-        max-width: 100vw !important;
+        width: 100% !important;
         height: 70vh !important;
-        min-height: 0 !important;
+        min-height: 480px !important;
         max-height: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: 0 !important;
-        box-sizing: border-box !important;
     }
 }
+
 </style>
