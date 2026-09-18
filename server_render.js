@@ -3712,6 +3712,8 @@ app.get('/api/catalogo-filmes', async (req, res) => {
             terror: "27",
             romance: "10749",
             fantasia: "14",
+            suspense: "53",
+            drama: "18",
             "ficcao-cientifica": "878",
             animacao: "16"
         };
@@ -3750,6 +3752,8 @@ app.get('/api/catalogo-filmes', async (req, res) => {
                 terror: 27,
                 romance: 10749,
                 fantasia: 14,
+                suspense: 53,
+                drama: 18,
                 "ficcao-cientifica": 878,
                 animacao: 16
             };
@@ -3887,6 +3891,61 @@ app.get('/api/catalogo', async (req, res) => {
         return res.status(500).json({
             sucesso: false,
             mensagem: 'Não foi possível carregar o catálogo.'
+        });
+    }
+});
+
+// ==========================================
+// DETALHES DO FILME — TMDB
+// ==========================================
+
+app.get('/api/filme/:id', async (req, res) => {
+    try {
+
+        const id = String(req.params.id || '').trim();
+
+        if (!id || !/^\d+$/.test(id)) {
+            return res.status(400).json({
+                sucesso: false,
+                encontrado: false,
+                mensagem: 'ID do filme inválido.'
+            });
+        }
+
+        const filmeTMDB = await tmdb(
+            '/movie/' + encodeURIComponent(id) +
+            '?language=pt-BR'
+        );
+
+        if (!filmeTMDB || !filmeTMDB.id) {
+            return res.status(404).json({
+                sucesso: false,
+                encontrado: false,
+                filme: null,
+                mensagem: 'Filme não encontrado no TMDB.'
+            });
+        }
+
+        const filme = converterFilme(filmeTMDB);
+
+        return res.json({
+            sucesso: true,
+            encontrado: true,
+            filme: filme
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[DETALHES FILME] ERRO:',
+            erro?.message || erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            encontrado: false,
+            filme: null,
+            mensagem: 'Não foi possível carregar os detalhes do filme.'
         });
     }
 });

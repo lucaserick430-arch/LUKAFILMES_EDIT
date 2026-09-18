@@ -1369,372 +1369,28 @@ main {
 </style>
 
 
-<style id="serie-play1-play2-css">
-
-.players-serie-opcoes{
-    display:flex;
-    gap:10px;
-    margin:0 0 14px;
-    flex-wrap:wrap;
-}
-
-.serie-player-btn{
-    border:1px solid rgba(255,255,255,.15);
-    background:#181818;
-    color:#fff;
-    border-radius:8px;
-    padding:10px 18px;
-    font-weight:700;
-    cursor:pointer;
-}
-
-.serie-player-btn.ativo{
-    background:#e50914;
-    border-color:#e50914;
-}
-
-@media(max-width:700px){
-
-    .players-serie-opcoes{
-        gap:8px;
-        margin-bottom:10px;
-    }
-
-    .serie-player-btn{
-        flex:1;
-        padding:10px 12px;
-        font-size:13px;
-    }
-
-}
-
-</style>
-
-
-<style id="lukafilmes-serie-mega-maya">
-
-/* =========================================================
-   LUKAFILMES — SERVIDORES DE SÉRIES
-   MEGA + MAYA
-   ========================================================= */
-
-.players-serie-opcoes {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 10px !important;
-    width: 100% !important;
-    margin: 18px auto !important;
-}
-
-.players-serie-opcoes .serie-player-btn {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 115px !important;
-    min-height: 46px !important;
-    padding: 10px 22px !important;
-    border: 1px solid rgba(255,255,255,.14) !important;
-    border-radius: 7px !important;
-    background: #181818 !important;
-    color: #fff !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    letter-spacing: .4px !important;
-    cursor: pointer !important;
-    transition:
-        transform .18s ease,
-        background .18s ease,
-        border-color .18s ease,
-        box-shadow .18s ease !important;
-}
-
-.players-serie-opcoes .serie-player-btn:hover {
-    background: #262626 !important;
-    border-color: rgba(255,255,255,.35) !important;
-    transform: translateY(-1px) !important;
-}
-
-.players-serie-opcoes .serie-player-btn.player-selecionado,
-.players-serie-opcoes .serie-player-btn.active {
-    background: #e50914 !important;
-    border-color: #e50914 !important;
-    color: #fff !important;
-    box-shadow: 0 4px 18px rgba(229,9,20,.25) !important;
-}
-
-.players-serie-opcoes .serie-player-badge {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    line-height: 1 !important;
-}
-
-@media (max-width: 600px) {
-    .players-serie-opcoes {
-        gap: 8px !important;
-    }
-
-    .players-serie-opcoes .serie-player-btn {
-        flex: 1 1 0 !important;
-        min-width: 0 !important;
-        padding: 10px 14px !important;
-    }
-}
-
-</style>
-
-
-<style id="lukafilmes-play1-play2-final">
-.players-serie-opcoes .serie-player-btn {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 9px !important;
-}
-
-.players-serie-opcoes .serie-player-numero {
-    font-size: 11px !important;
-    font-weight: 800 !important;
-    opacity: .65 !important;
-    letter-spacing: .5px !important;
-}
-
-.players-serie-opcoes .serie-player-badge {
-    font-size: 14px !important;
-    font-weight: 800 !important;
-}
-
-.players-serie-opcoes .serie-player-btn.ativo,
-.players-serie-opcoes .serie-player-btn.player-selecionado {
-    background: #e50914 !important;
-    border-color: #e50914 !important;
-    color: #fff !important;
-}
-
-@media(max-width:600px) {
-    .players-serie-opcoes .serie-player-btn {
-        flex: 1 1 0 !important;
-        min-width: 0 !important;
-    }
-}
-</style>
-
-
-<style id="lukafilmes-play-final">
-.players-serie-opcoes {
-    display:flex !important;
-    justify-content:center !important;
-    align-items:center !important;
-    gap:10px !important;
-    width:100% !important;
-    margin:18px auto !important;
-}
-
-.players-serie-opcoes .serie-player-btn {
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    gap:8px !important;
-    min-width:125px !important;
-    min-height:46px !important;
-    padding:10px 18px !important;
-    border:1px solid rgba(255,255,255,.15) !important;
-    border-radius:7px !important;
-    background:#181818 !important;
-    color:#fff !important;
-    font-weight:700 !important;
-    cursor:pointer !important;
-}
-
-.players-serie-opcoes .serie-player-btn.ativo,
-.players-serie-opcoes .serie-player-btn.player-selecionado {
-    background:#e50914 !important;
-    border-color:#e50914 !important;
-}
-
-.serie-player-numero {
-    font-size:11px !important;
-    font-weight:800 !important;
-    opacity:.7 !important;
-}
-
-.serie-player-badge {
-    font-size:14px !important;
-    font-weight:800 !important;
-}
-
-@media(max-width:600px) {
-    .players-serie-opcoes .serie-player-btn {
-        flex:1 !important;
-        min-width:0 !important;
-    }
-}
-</style>
-
-
-<style id="lukafilmes-series-players-visible-final">
-
-/* =========================================================
-   LUKAFILMES — PLAY 1 + PLAY 2
-   Ambos devem permanecer visíveis
-   ========================================================= */
-
-.players-serie-opcoes {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-.players-serie-opcoes .serie-player-btn {
-    display: inline-flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-.players-serie-opcoes .serie-player-btn:nth-child(1),
-.players-serie-opcoes .serie-player-btn:nth-child(2) {
-    display: inline-flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-
-
-.players-serie-opcoes .serie-player-numero {
-    display: inline !important;
-}
-
-.players-serie-opcoes .serie-player-badge {
-    display: inline !important;
-}
-
-/* =========================================================
-   VISUAL
-   ========================================================= */
-
-.players-serie-opcoes {
-    width: 100% !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 10px !important;
-    flex-wrap: wrap !important;
-}
-
-.players-serie-opcoes .serie-player-btn {
-    min-width: 125px !important;
-    min-height: 46px !important;
-    padding: 10px 18px !important;
-    border-radius: 7px !important;
-    background: #181818 !important;
-    border: 1px solid rgba(255,255,255,.15) !important;
-    color: #fff !important;
-}
-
-.players-serie-opcoes .serie-player-btn.ativo {
-    background: #e50914 !important;
-    border-color: #e50914 !important;
-}
-
-@media (max-width:600px) {
-    .players-serie-opcoes .serie-player-btn:nth-child(1),
-    .players-serie-opcoes .serie-player-btn:nth-child(2) {
-        flex: 1 1 calc(50% - 5px) !important;
-    }
-}
-
-</style>
-
-
-<style id="lukafilmes-series-play1-play2-final">
-
-.players-serie-opcoes {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 10px !important;
-}
-
-.players-serie-opcoes .serie-player-btn {
-    display: inline-flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    min-height: 46px !important;
-    padding: 0 20px !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-}
-
-
-
-.players-serie-opcoes .serie-player-btn[data-player="1"],
-.players-serie-opcoes .serie-player-btn[data-player="2"] {
-    display: inline-flex !important;
-}
-
-</style>
-
-
-<style>
-/* LUKAFILMES — FORÇA PLAY 2 SÉRIES */
-.players-serie-opcoes{
-    display:flex !important;
-    flex-wrap:wrap !important;
-    gap:10px !important;
-    visibility:visible !important;
-    opacity:1 !important;
-}
-
-.players-serie-opcoes .serie-player-btn{
-    display:inline-flex !important;
-    visibility:visible !important;
-    opacity:1 !important;
-    position:relative !important;
-    z-index:20 !important;
-}
-
-.players-serie-opcoes .serie-player-btn[data-player="1"],
-.players-serie-opcoes .serie-player-btn[data-player="2"]{
-    display:inline-flex !important;
-    visibility:visible !important;
-    opacity:1 !important;
-}
-
-.players-serie-opcoes .serie-player-btn[data-player="2"]{
-    pointer-events:auto !important;
-}
-</style>
-
-
-<style id="lukafilmes-players-serie-definitivo">
-.players-serie-opcoes{
-    display:flex !important;
-    flex-wrap:wrap !important;
-    gap:10px !important;
-    visibility:visible !important;
-    opacity:1 !important;
-}
-
-.players-serie-opcoes .serie-player-btn[data-player="1"],
-.players-serie-opcoes .serie-player-btn[data-player="2"]{
-    display:inline-flex !important;
-    visibility:visible !important;
-    opacity:1 !important;
-    pointer-events:auto !important;
-    position:relative !important;
-    z-index:100 !important;
-}
-
-@media(max-width:600px){
-    .players-serie-opcoes .serie-player-btn[data-player="1"],
-    .players-serie-opcoes .serie-player-btn[data-player="2"]{
-        flex:1 1 calc(50% - 5px) !important;
-    }
-}
-</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1808,6 +1464,550 @@ function carregarQRCodeLuka() {
     return lukaQRCodePromise;
 }
 </script>
+
+<style id="lukafilmes-apiplayer-secundario-final">
+#redeFlixSeriesPlayers{
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:10px !important;
+    margin:14px 0 !important;
+    flex-wrap:wrap !important;
+}
+#redeFlixSeriesPlayers #btnApiPlayerSerie{
+    display:inline-flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:11px 18px !important;
+    border-radius:8px !important;
+    border:1px solid rgba(255,255,255,.18) !important;
+    background:#222 !important;
+    color:#fff !important;
+    font-weight:700 !important;
+    cursor:pointer !important;
+}
+</style>
+
+
+<style id="lukafilmes-serie-visual-premium">
+/* =========================================================
+   LUKAFILMES — SÉRIE / VISUAL PREMIUM
+   ========================================================= */
+
+.pagina-serie{
+    padding-bottom:90px !important;
+}
+
+.voltar-area{
+    max-width:1200px !important;
+    padding:24px 24px !important;
+}
+
+.detalhes-serie{
+    max-width:1180px !important;
+    margin:45px auto 0 !important;
+    padding:0 24px !important;
+    text-align:left !important;
+}
+
+.poster-serie{
+    width:270px !important;
+    margin:0 auto 28px !important;
+}
+
+.poster-serie img{
+    width:100% !important;
+    aspect-ratio:2/3 !important;
+    object-fit:cover !important;
+    border-radius:16px !important;
+    border:1px solid rgba(255,255,255,.18) !important;
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.75),
+        0 0 0 1px rgba(255,255,255,.04) !important;
+}
+
+#tituloSerie{
+    max-width:1000px !important;
+    margin:0 auto 14px !important;
+    text-align:center !important;
+    font-size:clamp(32px,5vw,58px) !important;
+    line-height:1.05 !important;
+    font-weight:900 !important;
+    letter-spacing:-.7px !important;
+}
+
+.dados-serie{
+    max-width:900px !important;
+    margin:0 auto 22px !important;
+    text-align:center !important;
+    color:#ddd !important;
+    font-size:15px !important;
+    line-height:1.6 !important;
+}
+
+.sinopse-box{
+    max-width:900px !important;
+    margin:28px auto 0 !important;
+    padding:26px 30px !important;
+    border-radius:18px !important;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.075),
+            rgba(255,255,255,.025)
+        ) !important;
+    border:1px solid rgba(255,255,255,.10) !important;
+    box-shadow:0 18px 45px rgba(0,0,0,.25) !important;
+    backdrop-filter:blur(16px) !important;
+}
+
+.sinopse-box h2{
+    margin:0 0 12px !important;
+    font-size:21px !important;
+    font-weight:850 !important;
+}
+
+.sinopse{
+    margin:0 !important;
+    color:#d6d6d6 !important;
+    font-size:15px !important;
+    line-height:1.7 !important;
+}
+
+.temporadas{
+    position:relative !important;
+    z-index:3 !important;
+    width:100% !important;
+    max-width:1180px !important;
+    margin:48px auto 0 !important;
+    padding:0 24px !important;
+}
+
+.temporadas > h2{
+    margin:0 0 18px !important;
+    font-size:clamp(22px,3vw,30px) !important;
+    font-weight:850 !important;
+    letter-spacing:-.4px !important;
+    text-align:left !important;
+}
+
+#selectTemporada{
+    width:100% !important;
+    max-width:320px !important;
+    min-height:46px !important;
+    padding:10px 14px !important;
+    border-radius:12px !important;
+    border:1px solid rgba(255,255,255,.14) !important;
+    background:rgba(20,20,20,.92) !important;
+    color:#fff !important;
+    font-size:15px !important;
+    outline:none !important;
+    margin-bottom:24px !important;
+}
+
+.episodios{
+    display:grid !important;
+    grid-template-columns:repeat(auto-fill,minmax(250px,1fr)) !important;
+    gap:14px !important;
+}
+
+.episodio{
+    border-radius:14px !important;
+    border:1px solid rgba(255,255,255,.09) !important;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.065),
+            rgba(255,255,255,.025)
+        ) !important;
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        background .2s ease !important;
+}
+
+.episodio:hover{
+    transform:translateY(-3px) !important;
+    border-color:rgba(229,9,20,.45) !important;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(229,9,20,.12),
+            rgba(255,255,255,.035)
+        ) !important;
+}
+
+.player-serie{
+    position:relative !important;
+    z-index:4 !important;
+    max-width:1180px !important;
+    margin:55px auto 0 !important;
+    padding:26px 24px 32px !important;
+    border-radius:20px !important;
+    border:1px solid rgba(255,255,255,.10) !important;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.055),
+            rgba(255,255,255,.018)
+        ) !important;
+    box-shadow:0 22px 60px rgba(0,0,0,.40) !important;
+    backdrop-filter:blur(15px) !important;
+}
+
+.player-serie h2{
+    margin:0 0 18px !important;
+    text-align:left !important;
+    font-size:24px !important;
+    font-weight:850 !important;
+}
+
+.players-serie-opcoes,
+#redeFlixSeriesPlayers{
+    justify-content:flex-start !important;
+    margin-bottom:18px !important;
+}
+
+.serie-player-btn{
+    min-height:44px !important;
+    padding:10px 18px !important;
+    border-radius:11px !important;
+    border:1px solid rgba(255,255,255,.14) !important;
+    background:rgba(255,255,255,.07) !important;
+    color:#fff !important;
+    font-weight:800 !important;
+    transition:.2s ease !important;
+}
+
+.serie-player-btn:hover,
+.serie-player-btn.ativo{
+    background:#e50914 !important;
+    border-color:#e50914 !important;
+    transform:translateY(-1px) !important;
+}
+
+.player-video{
+    width:100% !important;
+    overflow:hidden !important;
+    border-radius:14px !important;
+    background:#000 !important;
+    box-shadow:0 15px 45px rgba(0,0,0,.55) !important;
+}
+
+.player-video iframe{
+    display:block !important;
+    width:100% !important;
+    min-height:520px !important;
+    border:0 !important;
+}
+
+@media (max-width:700px){
+
+    .voltar-area{
+        padding:16px 14px !important;
+    }
+
+    .detalhes-serie{
+        margin-top:25px !important;
+        padding:0 14px !important;
+    }
+
+    .poster-serie{
+        width:min(62vw,240px) !important;
+        margin-bottom:22px !important;
+    }
+
+    #tituloSerie{
+        font-size:clamp(29px,9vw,42px) !important;
+        letter-spacing:-.4px !important;
+    }
+
+    .dados-serie{
+        font-size:14px !important;
+    }
+
+    .sinopse-box{
+        padding:21px 18px !important;
+        border-radius:15px !important;
+    }
+
+    .temporadas{
+        margin-top:38px !important;
+        padding:0 14px !important;
+    }
+
+    .temporadas > h2{
+        font-size:22px !important;
+    }
+
+    #selectTemporada{
+        max-width:none !important;
+    }
+
+    .episodios{
+        grid-template-columns:1fr !important;
+        gap:11px !important;
+    }
+
+    .player-serie{
+        margin-top:42px !important;
+        padding:20px 14px 22px !important;
+        border-radius:15px !important;
+    }
+
+    .player-serie h2{
+        font-size:21px !important;
+    }
+
+    .players-serie-opcoes,
+    #redeFlixSeriesPlayers{
+        justify-content:flex-start !important;
+    }
+
+    .serie-player-btn{
+        flex:1 1 140px !important;
+    }
+
+    .player-video{
+        border-radius:10px !important;
+    }
+
+    .player-video iframe{
+        min-height:230px !important;
+    }
+}
+
+@media (prefers-reduced-motion:reduce){
+    .episodio,
+    .serie-player-btn{
+        transition:none !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-episodios-premium">
+/* =========================================================
+   LUKAFILMES — EPISÓDIOS PREMIUM
+   ========================================================= */
+
+.temporadas{
+    max-width:1180px !important;
+}
+
+.episodios{
+    display:grid !important;
+    grid-template-columns:repeat(auto-fill,minmax(245px,1fr)) !important;
+    gap:18px !important;
+}
+
+.episodio{
+    position:relative !important;
+    overflow:hidden !important;
+    padding:0 !important;
+    min-width:0 !important;
+    border-radius:15px !important;
+    background:#111 !important;
+    border:1px solid rgba(255,255,255,.09) !important;
+    box-shadow:0 8px 28px rgba(0,0,0,.28) !important;
+    cursor:pointer !important;
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        border-color .22s ease !important;
+}
+
+.episodio:hover{
+    transform:translateY(-5px) !important;
+    border-color:rgba(229,9,20,.55) !important;
+    box-shadow:0 16px 38px rgba(0,0,0,.48) !important;
+}
+
+.episodio-capa{
+    position:relative !important;
+    width:100% !important;
+    aspect-ratio:16/9 !important;
+    overflow:hidden !important;
+    background:#181818 !important;
+}
+
+.episodio-capa img{
+    width:100% !important;
+    height:100% !important;
+    display:block !important;
+    object-fit:cover !important;
+    transition:transform .3s ease !important;
+}
+
+.episodio:hover .episodio-capa img{
+    transform:scale(1.045) !important;
+}
+
+.episodio-capa::after{
+    content:"" !important;
+    position:absolute !important;
+    inset:0 !important;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,.02),
+            rgba(0,0,0,.08) 45%,
+            rgba(0,0,0,.72) 100%
+        ) !important;
+    pointer-events:none !important;
+}
+
+.episodio-capa .episodio-play{
+    position:absolute !important;
+    left:50% !important;
+    top:50% !important;
+    transform:translate(-50%,-50%) !important;
+    z-index:2 !important;
+    width:48px !important;
+    height:48px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border-radius:50% !important;
+    background:rgba(229,9,20,.94) !important;
+    color:#fff !important;
+    box-shadow:0 8px 24px rgba(0,0,0,.5) !important;
+    opacity:.95 !important;
+    transition:transform .2s ease, opacity .2s ease !important;
+}
+
+.episodio:hover .episodio-capa .episodio-play{
+    transform:translate(-50%,-50%) scale(1.08) !important;
+    opacity:1 !important;
+}
+
+.episodio-info{
+    position:relative !important;
+    padding:14px 15px 16px !important;
+    background:linear-gradient(
+        to bottom,
+        #141414,
+        #101010
+    ) !important;
+}
+
+.episodio-info h3{
+    margin:0 !important;
+    color:#fff !important;
+    font-size:16px !important;
+    line-height:1.3 !important;
+    font-weight:800 !important;
+}
+
+.episodio-info p{
+    margin:7px 0 0 !important;
+    color:#aaa !important;
+    font-size:13px !important;
+    line-height:1.45 !important;
+    display:-webkit-box !important;
+    -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+}
+
+.episodio-duracao{
+    display:inline-flex !important;
+    align-items:center !important;
+    margin-top:9px !important;
+    color:#bdbdbd !important;
+    font-size:12px !important;
+}
+
+.episodio-sem-imagem{
+    width:100% !important;
+    height:100% !important;
+    min-height:135px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:20px !important;
+    text-align:center !important;
+    color:#aaa !important;
+    background:
+        radial-gradient(
+            circle at center,
+            #292929,
+            #111 72%
+        ) !important;
+}
+
+@media (max-width:700px){
+
+    .episodios{
+        grid-template-columns:1fr !important;
+        gap:13px !important;
+    }
+
+    .episodio{
+        display:grid !important;
+        grid-template-columns:145px minmax(0,1fr) !important;
+        min-height:100px !important;
+        border-radius:12px !important;
+    }
+
+    .episodio-capa{
+        height:100% !important;
+        min-height:100px !important;
+        aspect-ratio:auto !important;
+    }
+
+    .episodio-capa .episodio-play{
+        width:40px !important;
+        height:40px !important;
+        font-size:15px !important;
+    }
+
+    .episodio-info{
+        min-width:0 !important;
+        display:flex !important;
+        flex-direction:column !important;
+        justify-content:center !important;
+        padding:12px 13px !important;
+    }
+
+    .episodio-info h3{
+        font-size:15px !important;
+    }
+
+    .episodio-info p{
+        font-size:12px !important;
+        -webkit-line-clamp:3 !important;
+    }
+
+    .episodio-duracao{
+        margin-top:7px !important;
+    }
+}
+
+@media (max-width:390px){
+
+    .episodio{
+        grid-template-columns:125px minmax(0,1fr) !important;
+    }
+
+    .episodio-info{
+        padding:10px 11px !important;
+    }
+}
+
+@media (prefers-reduced-motion:reduce){
+
+    .episodio,
+    .episodio-capa img,
+    .episodio-capa .episodio-play{
+        transition:none !important;
+    }
+}
+</style>
+
 </head>
 
 
@@ -1920,50 +2120,29 @@ function carregarQRCodeLuka() {
         </h2>
 
         
-        <div class="players-serie-opcoes">
+        
+
+
+        <div id="redeFlixSeriesPlayers"
+             style="display:flex !important;justify-content:center !important;align-items:center !important;gap:10px !important;margin:0 0 18px !important;flex-wrap:wrap !important;">
 
             <button
                 type="button"
-                class="serie-player-btn ativo"
-                data-player="1">
-                <span class="serie-player-numero">PLAYER STREAM</span>
-                PLAYER STREAM
+                id="btnRedeFlixSerie"
+                class="serie-player-btn"
+                style="display:inline-flex !important;visibility:visible !important;opacity:1 !important;">
+                ▶ RedeFlix
             </button>
 
             <button
                 type="button"
+                id="btnApiPlayerSerie"
                 class="serie-player-btn"
-                data-player="2">
-                <span class="serie-player-numero">PLAY 1</span>
-                MegaEmbed
-            </button>
-
-            <button
-                type="button"
-                class="serie-player-btn"
-                data-player="3">
-                <span class="serie-player-numero">PLAY 2</span>
-                PipocaCine
-            </button>
-
-            <button
-                type="button"
-                class="serie-player-btn"
-                data-player="4">
-                <span class="serie-player-numero">PLAY 3</span>
-                MyEmbed
-            </button>
-
-            <button
-                type="button"
-                class="serie-player-btn"
-                data-player="5">
-                <span class="serie-player-numero">PLAY 4</span>
-                APIPlayer
+                style="display:inline-flex !important;visibility:visible !important;opacity:1 !important;">
+                ▶ APIPlayer
             </button>
 
         </div>
-
 
         <div class="player-video">
 
@@ -3421,20 +3600,30 @@ function criarTemporadaFallback() {
             "block";
 
         /*
-         * PLAY 1 — MEGA
-         * INICIA COMO PADRÃO
+         * REDEFLIX — PLAYER OFICIAL DO EPISÓDIO
+         *
+         * Formato:
+         * /serie/{id_tmdb}/{temporada}/{episodio}
          */
 
-        const play1Url =
-            "https://mgeb.top/embed/" +
-            idSerie +
+        const redeFlixUrl =
+            "https://redeflixapi.store/serie/" +
+            encodeURIComponent(String(idSerie).trim()) +
             "/" +
-            temporadaId +
+            encodeURIComponent(String(temporadaId).trim()) +
             "/" +
-            episodioId;
+            encodeURIComponent(String(episodioId).trim());
 
-        serieFrame.src =
-            play1Url;
+        /*
+         * NÃO CARREGA PLAYER AUTOMATICAMENTE.
+         * O usuário escolhe RedeFlix ou APIPlayer.
+         */
+
+        serieFrame.src = "";
+
+        console.log(
+            "[SÉRIE PLAYER] Aguardando escolha do player."
+        );
 
         /*
          * CONTINUAR ASSISTINDO
@@ -3483,229 +3672,56 @@ function criarTemporadaFallback() {
         }
 
         /*
-         * MARCA PLAY 1
+         * ESCOLHA DO PLAYER
+         *
+         * RedeFlix = principal
+         * APIPlayer = secundário
          */
 
-        const botoesPlayers =
-            playerSerie.querySelectorAll(
-                ".serie-player-btn"
-            );
+        const btnRedeFlixSerie =
+            document.getElementById("btnRedeFlixSerie");
 
-        botoesPlayers.forEach(function(btn) {
+        const btnApiPlayerSerie =
+            document.getElementById("btnApiPlayerSerie");
 
-            btn.classList.remove(
-                "ativo"
-            );
+        if (btnRedeFlixSerie) {
 
-            btn.classList.remove(
-                "player-selecionado"
-            );
+            btnRedeFlixSerie.onclick = function () {
 
-        });
+                serieFrame.src =
+                    redeFlixUrl;
 
-        const play1 =
-            playerSerie.querySelector(
-                '.serie-player-btn[data-player="1"]'
-            );
+                console.log(
+                    "[REDEFLIX SÉRIE] Player escolhido:",
+                    redeFlixUrl
+                );
 
-        if (play1) {
-
-            play1.classList.add(
-                "ativo"
-            );
-
-            play1.classList.add(
-                "player-selecionado"
-            );
-
+            };
         }
 
-        /*
-         * CONFIGURA PLAY 1 E PLAY 2
-         */
+        if (btnApiPlayerSerie) {
 
-        botoesPlayers.forEach(function(btn) {
+            btnApiPlayerSerie.onclick = function () {
 
-            if (
-                btn.dataset.playerConfigurado === "1"
-            ) {
-                return;
-            }
+                const apiPlayerUrl =
+                    "https://apiplayer.ru/embed/tv/" +
+                    encodeURIComponent(String(idSerie).trim()) +
+                    "/" +
+                    encodeURIComponent(String(temporadaId).trim()) +
+                    "/" +
+                    encodeURIComponent(String(episodioId).trim()) +
+                    "?lang=pt";
 
-            btn.dataset.playerConfigurado =
-                "1";
+                serieFrame.src =
+                    apiPlayerUrl;
 
-            btn.addEventListener(
-                "click",
-                function() {
+                console.log(
+                    "[APIPLAYER SÉRIE] Player escolhido:",
+                    apiPlayerUrl
+                );
 
-                    const numero =
-                        String(
-                            this.dataset.player || ""
-                        );
-
-                    let embedUrl = "";
-
-                    /*
-                     * PLAY 1 — MEGA
-                     */
-
-                    if (numero === "1") {
-
-                        embedUrl =
-                            "https://mgeb.top/embed/" +
-                            idSerie +
-                            "/" +
-                            temporadaId +
-                            "/" +
-                            episodioId;
-                    }
-
-                    /*
-                     * PLAY 2 — MAYA / MYEMBED
-                     */
-
-                    else if (numero === "2") {
-
-                        embedUrl =
-                            "https://pipocacine.lat/embed/" +
-                            String(idSerie).trim() +
-                            "/" +
-                            String(temporadaId).trim() +
-                            "/" +
-                            String(episodioId).trim();
-                    }
-
-                    /*
-                     * PLAY 3 — APIPLAYER
-                     * SÉRIE / TV
-                     * IDIOMA: PORTUGUÊS
-                     */
-
-                    else if (numero === "3") {
-
-                        embedUrl =
-                            "https://myembed.biz/serie/" +
-                            idSerie +
-                            "/" +
-                            temporadaId +
-                            "/" +
-                            episodioId;
-                    }
-
-
-                    else if (numero === "4") {
-
-                        embedUrl =
-                            "https://apiplayer.ru/embed/tv/" +
-                            String(idSerie).trim() +
-                            "/" +
-                            String(temporadaId).trim() +
-                            "/" +
-                            String(episodioId).trim() +
-                            "?lang=pt";
-                    }
-
-                    if (!embedUrl) {
-                        return;
-                    }
-
-                    /*
-                     * DESELECIONA OS OUTROS
-                     */
-
-                    botoesPlayers.forEach(
-                        function(item) {
-
-                            item.classList.remove(
-                                "ativo"
-                            );
-
-                            item.classList.remove(
-                                "player-selecionado"
-                            );
-
-                        }
-                    );
-
-                    /*
-                     * MARCA O ESCOLHIDO
-                     */
-
-                    this.classList.add(
-                        "ativo"
-                    );
-
-                    this.classList.add(
-                        "player-selecionado"
-                    );
-
-                    /*
-                     * TROCA O IFRAME
-                     */
-
-                    serieFrame.src =
-                        embedUrl;
-
-                    console.log(
-                        "[SERIES PLAYER]",
-                        "PLAY " + numero,
-                        embedUrl
-                    );
-
-                    /*
-                     * CONTINUAR ASSISTINDO
-                     *
-                     * Atualiza somente o episódio/player atual.
-                     * O storage já está isolado por conta.
-                     */
-                    if (window.LukaRegistrarSerieContinuar) {
-
-                        window.LukaRegistrarSerieContinuar({
-
-                            id: idSerie,
-
-                            titulo:
-                                serie.name ||
-                                serie.titulo ||
-                                nome ||
-                                "Série",
-
-                            capa:
-                                serie.poster_path
-                                    ? "https://image.tmdb.org/t/p/w500" +
-                                      serie.poster_path
-                                    : "",
-
-                            tipo: "serie",
-
-                            player: String(numero),
-
-                            temporada:
-                                String(temporadaId),
-
-                            episodio:
-                                String(episodioId)
-
-                        });
-
-                        console.log(
-                            "[CONTINUAR SÉRIE] PLAYER ATUALIZADO:",
-                            {
-                                id: idSerie,
-                                temporada: String(temporadaId),
-                                episodio: String(episodioId),
-                                player: String(numero)
-                            }
-                        );
-                    }
-
-                    
-
-                }
-            );
-
-        });
+            };
+        }
 
         /*
          * DESCE ATÉ O PLAYER
@@ -3717,8 +3733,8 @@ function criarTemporadaFallback() {
         });
 
         console.log(
-            "[SERIES PLAYER] PLAY 1 carregado:",
-            play1Url
+            "[SERIES PLAYER] RedeFlix carregado:",
+            redeFlixUrl
         );
 
     }
@@ -4340,22 +4356,7 @@ document.addEventListener(
 </style>
 
 
-<style id="lukafilmes-somente-play1">
 
-/* =========================================================
-   LUKAFILMES — SOMENTE PLAY 1 VISÍVEL
-   Os demais players continuam disponíveis no código.
-   ========================================================= */
-
-/* FILMES — esconder PLAY 2, 3 e 4 */
-.lista-plays .play-card:not(:first-child) {
-    display: none !important;
-}
-
-/* SÉRIES — esconder PLAY 2 e demais */
-
-
-</style>
 
 
 <style id="lukafilmes-favoritos-serie-mobile-topo">

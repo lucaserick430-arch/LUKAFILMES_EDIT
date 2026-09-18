@@ -6542,5 +6542,99 @@ h3,
     }
 }
 
+
+/* =========================================================
+   LUKAFILMES — FILMES / VISUAL PREMIUM
+   ========================================================= */
+
+.catalogo-netflix,
+.catalogo,
+.container{
+    width:100% !important;
+}
+
+.catalogo-netflix{
+    max-width:1400px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    padding-left:24px !important;
+    padding-right:24px !important;
+}
+
+.catalogo-netflix h2{
+    text-align:left !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    font-weight:850 !important;
+    letter-spacing:-.4px !important;
+}
+
+.grid-filmes{
+    display:grid !important;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr)) !important;
+    gap:22px 16px !important;
+    align-items:start !important;
+}
+
+.grid-filmes .card,
+.grid-filmes > div{
+    min-width:0 !important;
+}
+
+.grid-filmes .card{
+    border-radius:12px !important;
+    overflow:hidden !important;
+    background:#101010 !important;
+    box-shadow:0 6px 22px rgba(0,0,0,.30) !important;
+    transition:transform .22s ease, box-shadow .22s ease !important;
+}
+
+.grid-filmes .card:hover{
+    transform:translateY(-5px) !important;
+    box-shadow:0 12px 30px rgba(0,0,0,.45) !important;
+}
+
+.grid-filmes .card img{
+    display:block !important;
+    width:100% !important;
+    aspect-ratio:2/3 !important;
+    object-fit:cover !important;
+}
+
+#heroTitulo{
+    text-align:left !important;
+    margin-left:0 !important;
+    font-weight:900 !important;
+    letter-spacing:-.7px !important;
+}
+
+@media (max-width:900px){
+    .catalogo-netflix{
+        padding-left:18px !important;
+        padding-right:18px !important;
+    }
+
+    .grid-filmes{
+        grid-template-columns:repeat(auto-fill,minmax(135px,1fr)) !important;
+        gap:18px 12px !important;
+    }
+}
+
+@media (max-width:600px){
+    .catalogo-netflix{
+        padding-left:14px !important;
+        padding-right:14px !important;
+    }
+
+    .grid-filmes{
+        grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+        gap:15px 9px !important;
+    }
+
+    .grid-filmes .card{
+        border-radius:9px !important;
+    }
+}
+
 </style>
 
