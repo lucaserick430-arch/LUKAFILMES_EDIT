@@ -2115,9 +2115,22 @@ function carregarQRCodeLuka() {
         style="display: none;"
     >
 
-        <h2 id="tituloPlayer">
+        <h2 id="tituloPlayer"
+            style="width:100%;text-align:center;margin:0 auto 14px !important;">
             🎬 Assistindo
         </h2>
+
+        <div id="mensagemEscolhaPlayerSerie"
+             style="
+                width:100%;
+                text-align:center;
+                margin:0 auto 18px;
+                color:#fff;
+                font-size:18px;
+                font-weight:800;
+            ">
+            Escolha um dos players para assistir
+        </div>
 
         
         
@@ -2129,22 +2142,20 @@ function carregarQRCodeLuka() {
             <button
                 type="button"
                 id="btnRedeFlixSerie"
-                class="serie-player-btn"
-                style="display:inline-flex !important;visibility:visible !important;opacity:1 !important;">
+                class="serie-player-btn" style="display:inline-flex !important;visibility:visible !important;opacity:1 !important;min-width:180px !important;min-height:58px !important;font-size:18px !important;font-weight:700 !important;">
                 ▶ RedeFlix
             </button>
 
             <button
                 type="button"
                 id="btnApiPlayerSerie"
-                class="serie-player-btn"
-                style="display:inline-flex !important;visibility:visible !important;opacity:1 !important;">
+                class="serie-player-btn" style="display:inline-flex !important;visibility:visible !important;opacity:1 !important;min-width:180px !important;min-height:58px !important;font-size:18px !important;font-weight:700 !important;">
                 ▶ APIPlayer
             </button>
 
         </div>
 
-        <div class="player-video">
+        <div class="player-video" id="seriePlayerVideo" style="display:none;">
 
             <iframe
                 id="serieFrame"
@@ -2152,6 +2163,13 @@ function carregarQRCodeLuka() {
                 title="Player da série"
                 allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
                 allowfullscreen>
+
+            <button
+                id="botaoTelaCheiaSerie"
+                class="botao-tela-cheia"
+                type="button">
+                ⛶ TELA CHEIA
+            </button>
             </iframe>
 
         </div>
@@ -3690,6 +3708,7 @@ function criarTemporadaFallback() {
 
                 serieFrame.src =
                     redeFlixUrl;
+                document.getElementById("seriePlayerVideo").style.display = "block";
 
                 console.log(
                     "[REDEFLIX SÉRIE] Player escolhido:",
@@ -3714,6 +3733,7 @@ function criarTemporadaFallback() {
 
                 serieFrame.src =
                     apiPlayerUrl;
+                document.getElementById("seriePlayerVideo").style.display = "block";
 
                 console.log(
                     "[APIPLAYER SÉRIE] Player escolhido:",
@@ -5111,6 +5131,30 @@ document.addEventListener(
 
 
 <script src="../js/lukafilmes-tv.js"></script>
+
+<script>
+(function () {
+    const botao = document.getElementById("botaoTelaCheiaSerie");
+    const frame = document.getElementById("serieFrame");
+
+    if (!botao || !frame) return;
+
+    botao.onclick = async function () {
+        try {
+            if (frame.requestFullscreen) {
+                await frame.requestFullscreen();
+            } else if (frame.webkitRequestFullscreen) {
+                frame.webkitRequestFullscreen();
+            } else if (frame.msRequestFullscreen) {
+                frame.msRequestFullscreen();
+            }
+        } catch (e) {
+            console.log("[FULLSCREEN SÉRIE] Erro:", e);
+        }
+    };
+})();
+</script>
+
 </body>
 
 
@@ -5241,6 +5285,57 @@ document.addEventListener(
     #lukaRenovacaoNotificacao .luka-renovacao-texto {
         font-size: 18px;
     }
+}
+
+
+
+/* DESTAQUE DAS OPÇÕES DE PLAYER */
+#filmePlayersOpcoes,
+#redeFlixSeriesPlayers {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    margin: 0 0 20px !important;
+    width: 100% !important;
+}
+
+#filmePlayersOpcoes::before,
+#redeFlixSeriesPlayers::before {
+    content: "ESCOLHA ONDE ASSISTIR" !important;
+    display: block !important;
+    color: #fff !important;
+    font-size: 21px !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+}
+
+#filmePlayersOpcoes::after,
+#redeFlixSeriesPlayers::after {
+    content: "Toque em uma das opções abaixo para começar" !important;
+    display: block !important;
+    color: rgba(255,255,255,.75) !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    order: 3 !important;
+}
+
+#filmePlayersOpcoes .serie-player-btn,
+#redeFlixSeriesPlayers .serie-player-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: min(320px, 90%) !important;
+    min-width: 240px !important;
+    min-height: 60px !important;
+    padding: 12px 24px !important;
+    border-radius: 10px !important;
+    font-size: 19px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    cursor: pointer !important;
 }
 
 </style>
