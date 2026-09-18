@@ -3310,7 +3310,7 @@ function carregarQRCodeLuka() {
         id="playerFilme"
         style="display:none;">
 
-        <div class="player-video" id="playerVideoArea">
+        <div class="player-video" id="playerVideoArea" style="display:none;">
 
             <button
                 type="button"
@@ -3341,7 +3341,7 @@ function carregarQRCodeLuka() {
 
             </div>
 
-            <iframe id="filmeFrame" src="" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:80vh;min-height:600px;display:block"></iframe>
+            <iframe id="filmeFrame" src="" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:80vh;min-height:600px;display:none"></iframe>
         </div>
 
 
@@ -4380,14 +4380,10 @@ function carregarQRCodeLuka() {
                              * PLAYER PRINCIPAL:
                              * RedeFlix abre automaticamente.
                              */
-                            filmeFrame.src =
-                                "https://redeflixapi.store/filme/" +
-                                encodeURIComponent(
-                                    String(tmdbId).trim()
-                                );
+                            filmeFrame.src = "";
 
                             console.log(
-                                "[REDEFLIX FILME] Player principal carregado automaticamente."
+                                "[FILME PLAYER] Aguardando escolha do player."
                             );
 
                             /*
@@ -4413,6 +4409,8 @@ function carregarQRCodeLuka() {
 
                                 btnApiPlayerFilme.onclick =
                                     function () {
+
+                                        filmeFrame.style.display = "block";
 
                                         filmeFrame.src =
                                             "https://apiplayer.ru/embed/movie/" +
@@ -4446,6 +4444,8 @@ function carregarQRCodeLuka() {
 
                             if (btnRedeFlixFilme) {
                                 btnRedeFlixFilme.onclick = function () {
+                                    filmeFrame.style.display = "block";
+
                                     filmeFrame.src =
                                         "https://redeflixapi.store/filme/" +
                                         encodeURIComponent(
@@ -6192,12 +6192,14 @@ body {
     if (!tmdbId) return;
 
     btnRedeFlixFilme.onclick = function () {
+        filmeFrame.style.setProperty("display", "block", "important");
         filmeFrame.src =
             "https://redeflixapi.store/filme/" +
             encodeURIComponent(tmdbId);
     };
 
     btnApiPlayerFilme.onclick = function () {
+        filmeFrame.style.setProperty("display", "block", "important");
         filmeFrame.src =
             "https://apiplayer.ru/embed/movie/" +
             encodeURIComponent(tmdbId) +
@@ -7495,7 +7497,7 @@ body{
 
 #playerFilme > .player-video > #filmeFrame {
     position: relative !important;
-    display: block !important;
+    display: none !important;
     width: 100% !important;
     height: 70vh !important;
     min-height: 520px !important;
