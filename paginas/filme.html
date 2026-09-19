@@ -1323,47 +1323,7 @@ body{
 
 
 
-<style id="lukafilmes-play-central">
-.player-video{
-    position:relative;
-}
 
-.play-central-filme{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%, -50%);
-    z-index:20;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-width:150px;
-    min-height:58px;
-    padding:14px 28px;
-    border:0;
-    border-radius:10px;
-    background:#e50914;
-    color:#fff;
-    font-size:20px;
-    font-weight:700;
-    cursor:pointer;
-    box-shadow:0 4px 18px rgba(0,0,0,.45);
-    transition:none !important;
-    animation:none !important;
-}
-
-.play-central-filme:hover,
-.play-central-filme:focus,
-.play-central-filme:active{
-    transform:translate(-50%, -50%);
-    transition:none !important;
-    animation:none !important;
-}
-
-.play-central-filme.oculto{
-    display:none !important;
-}
-</style>
 
 <style id="lukafilmes-seletor-plays">
 /* ==========================================
@@ -3220,7 +3180,7 @@ function carregarQRCodeLuka() {
 
     <div class="voltar-area">
         <a href="#" class="voltar" id="voltarFilmes">
-            ← Voltar para tela inicial
+            ← Voltar para filmes
         </a>
     </div>
 
@@ -3284,6 +3244,14 @@ function carregarQRCodeLuka() {
                     href="javascript:void(0)"
                     style="text-decoration:none;">
                     ＋ Minha lista
+                </a>
+
+                <a
+                    class="assistir"
+                    id="botaoMeusFavoritosFilme"
+                    href="/paginas/minha-lista"
+                    style="text-decoration:none;">
+                    ♥ Meus Favoritos
                 </a>
             </div>
 
@@ -3350,7 +3318,7 @@ function carregarQRCodeLuka() {
 
         </div>
 
-        <iframe id="filmeFrame" src="" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:80vh;min-height:600px;display:none"></iframe>
+        <iframe id="filmeFrame" src="" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:80vh;min-height:600px;display:none"></iframe>
 
 
     </section>
@@ -4408,62 +4376,6 @@ function carregarQRCodeLuka() {
                                 opcoesFilme.style.display = "flex";
                             }
 
-                            const btnApiPlayerFilme =
-                                document.getElementById(
-                                    "btnApiPlayerFilme"
-                                );
-
-                            if (btnApiPlayerFilme) {
-
-                                btnApiPlayerFilme.onclick =
-                                    function () {
-
-                                        filmeFrame.style.display = "block";
-
-                                        filmeFrame.src =
-                                            "https://apiplayer.ru/embed/movie/" +
-                                            encodeURIComponent(
-                                                String(tmdbId).trim()
-                                            ) +
-                                            "?lang=pt";
-
-                                        console.log(
-                                            "[APIPLAYER FILME] Segunda opção escolhida."
-                                        );
-                                    };
-                            }
-
-                            if (window.LukaContinuar) {
-                                LukaContinuar.registrarInicio({
-                                    id: filme.id,
-                                    titulo: filme.titulo || "Filme",
-                                    capa: filme.capa || "",
-                                    tipo: "filme",
-                                    player: "1"
-                                });
-                            }
-
-                            const btnRedeFlixFilme =
-                                document.getElementById(
-                                    "btnRedeFlixFilme"
-                                );
-
-                            if (btnRedeFlixFilme) {
-                                btnRedeFlixFilme.onclick = function () {
-                                    filmeFrame.style.display = "block";
-
-                                    filmeFrame.src =
-                                        "https://redeflixapi.store/filme/" +
-                                        encodeURIComponent(
-                                            String(tmdbId).trim()
-                                        );
-
-                                    console.log(
-                                        "[REDEFLIX FILME] Player escolhido."
-                                    );
-                                };
-                            }
-
                         } catch (erro) {
 
                             console.error(
@@ -4628,7 +4540,7 @@ document.getElementById("voltarFilmes").addEventListener(
     "click",
     function(e) {
         e.preventDefault();
-        window.location.href = "/";
+        window.location.href = "/paginas/filmes.html";
     }
 );
 </script>
@@ -4645,69 +4557,9 @@ document.getElementById("voltarFilmes").addEventListener(
 }
 </style>
 
-<style id="filme-favoritos-topo">
-#filmeFavoritosTopo{
-    position:fixed;
-    top:18px;
-    right:18px;
-    left:auto;
-    z-index:99999;
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
 
-#filmeFavoritosTopo button,
-#filmeFavoritosTopo a{
-    border:1px solid rgba(255,255,255,.18);
-    background:rgba(10,10,10,.82);
-    color:#fff;
-    padding:10px 14px;
-    border-radius:8px;
-    font-size:14px;
-    font-weight:600;
-    text-decoration:none;
-    cursor:pointer;
-    backdrop-filter:blur(8px);
-    -webkit-backdrop-filter:blur(8px);
-    transition:.2s;
-}
 
-#filmeFavoritosTopo button:hover,
-#filmeFavoritosTopo a:hover{
-    transform:translateY(-1px);
-    background:rgba(220,20,20,.9);
-}
 
-#filmeFavoritosTopo .favorito-ativo{
-    background:rgba(220,20,20,.9);
-}
-
-@media(max-width:600px){
-    #filmeFavoritosTopo{
-        top:10px;
-        right:10px;
-        left:auto;
-        gap:5px;
-    }
-
-    #filmeFavoritosTopo button,
-    #filmeFavoritosTopo a{
-        padding:8px 10px;
-        font-size:12px;
-    }
-}
-</style>
-
-<div id="filmeFavoritosTopo">
-    <button type="button" id="filmeAdicionarFavorito">
-        ＋ Adicionar aos favoritos
-    </button>
-
-    <a href="/paginas/minha-lista" id="filmeVerFavoritos">
-        ♥ Meus Favoritos
-    </a>
-</div>
 
 <script src="../js/conta-storage.js"></script>
 <script id="filme-favoritos-topo-script">
@@ -6220,6 +6072,24 @@ body {
 
 <script>
 (function () {
+    let historicoPlayerFilmeCriado = false;
+
+    function protegerHistoricoPlayerFilme() {
+        if (historicoPlayerFilmeCriado) return;
+
+        historicoPlayerFilmeCriado = true;
+
+        try {
+            history.pushState(
+                { lukafilmesPlayer: true },
+                "",
+                window.location.href
+            );
+        } catch (erro) {
+            console.warn("[HISTÓRICO PLAYER] Não foi possível proteger o retorno:", erro);
+        }
+    }
+
     const btnRedeFlixFilme = document.getElementById("btnRedeFlixFilme");
     const btnApiPlayerFilme = document.getElementById("btnApiPlayerFilme");
     const filmeFrame = document.getElementById("filmeFrame");
@@ -6242,6 +6112,7 @@ body {
     if (!tmdbId) return;
 
     btnRedeFlixFilme.onclick = function () {
+        protegerHistoricoPlayerFilme();
         filmeFrame.style.setProperty("display", "block", "important");
         filmeFrame.src =
             "https://redeflixapi.store/filme/" +
@@ -6256,6 +6127,7 @@ body {
 
     if (btnStreamFilme) {
         btnStreamFilme.onclick = function () {
+        protegerHistoricoPlayerFilme();
             filmeFrame.style.setProperty("display", "block", "important");
             filmeFrame.src =
                 "https://mgeb.top/embed/" +
@@ -6265,6 +6137,7 @@ body {
 
     if (btnEmbedMoviesFilme) {
         btnEmbedMoviesFilme.onclick = function () {
+        protegerHistoricoPlayerFilme();
             filmeFrame.style.setProperty("display", "block", "important");
             filmeFrame.src =
                 "https://myembed.biz/filme/" +
@@ -6273,6 +6146,7 @@ body {
     }
 
     btnApiPlayerFilme.onclick = function () {
+        protegerHistoricoPlayerFilme();
         filmeFrame.style.setProperty("display", "block", "important");
         filmeFrame.src =
             "https://apiplayer.ru/embed/movie/" +
@@ -6282,6 +6156,19 @@ body {
 })();
 </script>
 
+
+
+<style id="meusFavoritosMesmaCorMinhaLista">
+#botaoMeusFavoritosFilme{
+    background:rgba(70,70,70,.82) !important;
+    color:#fff !important;
+    backdrop-filter:blur(8px) !important;
+}
+
+#botaoMeusFavoritosFilme:hover{
+    background:rgba(100,100,100,.9) !important;
+}
+</style>
 
 </body>
 </html>
@@ -7441,26 +7328,7 @@ body{
 
 
 
-<style id="filmeFavoritosTopo-mobile-tamanho-ajuste">
-@media (max-width: 600px) {
-    #filmeFavoritosTopo {
-        top: 8px !important;
-        right: 8px !important;
-        left: auto !important;
-        gap: 4px !important;
-        max-width: calc(100vw - 16px) !important;
-    }
 
-    #filmeFavoritosTopo button,
-    #filmeFavoritosTopo a {
-        padding: 6px 8px !important;
-        font-size: 10px !important;
-        line-height: 1.15 !important;
-        white-space: nowrap !important;
-        border-radius: 6px !important;
-    }
-}
-</style>
 
 
 

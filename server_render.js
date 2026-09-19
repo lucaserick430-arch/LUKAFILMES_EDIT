@@ -6411,97 +6411,6 @@ app.post("/api/revendedor/clientes", async (req, res) => {
 // ==========================================
 
 
-// ==========================================
-// PRESENÇA ONLINE — REVENDEDOR / CLIENTES
-// ==========================================
-
-const PRESENCA_FILE = path.join(LUKAFILMES_DIR, "dados", "presenca.json");
-
-function garantirArquivoPresenca() {
-    try {
-        const pasta = path.dirname(PRESENCA_FILE);
-
-        if (!fs.existsSync(pasta)) {
-            fs.mkdirSync(pasta, { recursive: true });
-        }
-
-        if (!fs.existsSync(PRESENCA_FILE)) {
-            fs.writeFileSync(
-                PRESENCA_FILE,
-                "{}",
-                "utf8"
-            );
-        }
-    } catch (erro) {
-        console.error("[ERRO CRIAR PRESENCA]", erro);
-    }
-}
-
-function lerPresenca() {
-    garantirArquivoPresenca();
-
-    try {
-        return JSON.parse(
-            fs.readFileSync(PRESENCA_FILE, "utf8")
-        );
-    } catch (erro) {
-        return {};
-    }
-}
-
-function salvarPresenca(dados) {
-    garantirArquivoPresenca();
-
-    fs.writeFileSync(
-        PRESENCA_FILE,
-        JSON.stringify(dados, null, 2),
-        "utf8"
-    );
-}
-
-function usuarioEstaOnline(lastSeen) {
-    const tempo = Number(lastSeen || 0);
-
-    return (
-        tempo > 0 &&
-        Date.now() - tempo <= 45000
-    );
-}
-
-app.post("/api/presenca", (req, res) => {
-    if (!req.session.usuario) {
-        return res.status(401).json({
-            sucesso: false,
-            mensagem: "Não logado."
-        });
-    }
-
-    try {
-        const dados = lerPresenca();
-
-        dados[String(req.session.usuario.id)] = {
-            last_seen: Date.now()
-        };
-
-        salvarPresenca(dados);
-
-        return res.json({
-            sucesso: true
-        });
-
-    } catch (erro) {
-        console.error(
-            "[ERRO PRESENCA]",
-            erro
-        );
-
-        return res.status(500).json({
-            sucesso: false
-        });
-    }
-});
-
-
 app.get("/api/revendedor/clientes", async (req, res) => {
 
     try {
@@ -6536,7 +6445,7 @@ app.get("/api/revendedor/clientes", async (req, res) => {
             });
         }
 
-        const presencas = lerPresenca();
+        const agora = Date.now();
 
         const clientes =
             usuarios
@@ -6546,10 +6455,17 @@ app.get("/api/revendedor/clientes", async (req, res) => {
                 )
                 .map(u => {
                     const presenca =
-                        presencas[String(u.id)] || {};
+                        LUKA_PRESENCA_ONLINE_2026.get(Number(u.id));
 
                     const lastSeen =
-                        Number(presenca.last_seen || 0);
+                        presenca
+                            ? Number(presenca.last_seen || 0)
+                            : 0;
+
+                    const online =
+                        lastSeen > 0 &&
+                        (agora - lastSeen) <= 45000 &&
+                        u.status === "ativo";
 
                     return {
                         id: u.id,
@@ -6558,7 +6474,7 @@ app.get("/api/revendedor/clientes", async (req, res) => {
                         tipo: u.tipo,
                         validade: u.validade,
                         criado_em: u.criado_em,
-                        online: usuarioEstaOnline(lastSeen),
+                        online,
                         last_seen: lastSeen
                     };
                 });

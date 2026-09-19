@@ -4721,8 +4721,11 @@ z-index:2;
 
 </main>
 
-<footer>
-    <strong>LUKAFILMES</strong> — Filmes e séries para você assistir.
+<footer id="lukaFooter" style="display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important; width:100% !important;">
+    <strong>
+    <span style="color:#fff !important;">LUKA</span><span style="color:#e50914 !important;">FILMES</span>
+</strong>
+    <button type="button" id="lukaDireitosBtn">© Direitos</button>
 </footer>
 
 <script>
@@ -5111,21 +5114,46 @@ function renderizar(id,lista,top=false){
 
         container._lukaInfiniteAtivo=true;
 
+        container._lukaUltimoScrollLeft = 0;
+        container._lukaScrollMovido = false;
+
         container.addEventListener(
             "scroll",
             async function(){
 
-                const distancia=
+                const scrollAtual = this.scrollLeft;
+                const scrollAnterior =
+                    Number(this._lukaUltimoScrollLeft || 0);
+
+                /*
+                 * Só considera navegação quando houve
+                 * movimento real para a direita/esquerda
+                 * dentro da fileira.
+                 */
+                if (scrollAtual !== scrollAnterior) {
+                    this._lukaScrollMovido = true;
+                }
+
+                this._lukaUltimoScrollLeft = scrollAtual;
+
+                if (!this._lukaScrollMovido) {
+                    return;
+                }
+
+                const distancia =
                     this.scrollWidth -
                     this.scrollLeft -
                     this.clientWidth;
 
-                if(distancia <= 600){
+                /*
+                 * Só busca novos cards quando o usuário
+                 * realmente navegou até perto do final.
+                 */
+                if (distancia <= 250) {
 
-                    await carregarProximaPaginaCatalogo(
-                        this
-                    );
+                    this._lukaScrollMovido = false;
 
+                    await carregarProximaPaginaCatalogo(this);
                 }
 
             },
@@ -7215,20 +7243,19 @@ try{
             }
 
             /*
-             * Atualiza os catálogos imediatamente
-             * após cada lote.
+             * NÃO renderiza novamente os cards aqui.
+             *
+             * Cada renderização limpava a fileira e fazia
+             * os cards voltarem para o primeiro.
+             *
+             * Os novos resultados ficam apenas acumulados.
+             * A próxima página visual será carregada pelo
+             * próprio Infinite Home quando o usuário arrastar.
              */
-            renderizarGeneros();
 
             console.log(
-                "[GÊNEROS RÁPIDOS]",
-                "Lote:",
-                lote.join(","),
-                "|",
-                GENEROS_HOME.map(g =>
-                    g.nome + "=" +
-                    (acumulados.get(g.id) || []).length
-                ).join(" | ")
+                "[GÊNEROS RÁPIDOS] Lote carregado:",
+                lote.join(",")
             );
 
             /*
@@ -7243,12 +7270,11 @@ try{
         }
 
         /*
-         * Renderização final.
+         * Não redesenha as fileiras no final.
          *
-         * A fileira utiliza a lista completa disponível
-         * e mostra 20 por vez através do Infinite Home.
+         * O catálogo visual já foi criado uma única vez.
+         * Novos cards entram somente pela navegação horizontal.
          */
-        renderizarGeneros();
 
         console.log(
             "[GÊNEROS HOME] FINAL:",
@@ -10781,6 +10807,116 @@ document.addEventListener("DOMContentLoaded", () => {
 <a href="/paginas/iptv.html"
    class="lukafilmes-iptv-mobile-flutuante"
    aria-label="IPTV">📺 IPTV</a>
+
+
+<!-- LUKAFILMES — DIREITOS -->
+<style>
+#lukaDireitosBtn{
+    display:inline-block;
+    margin:8px 0;
+    padding:0;
+    border:0;
+    background:none;
+    color:#aaa;
+    font-size:12px;
+    cursor:pointer;
+}
+
+#lukaDireitosBtn:hover{
+    color:#fff;
+}
+
+#lukaDireitosModal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(0,0,0,.75);
+}
+
+#lukaDireitosModal.ativo{
+    display:flex;
+}
+
+#lukaDireitosCaixa{
+    width:min(420px,100%);
+    padding:20px;
+    border-radius:10px;
+    background:#151515;
+    color:#fff;
+    box-shadow:0 10px 40px rgba(0,0,0,.5);
+    text-align:center;
+}
+
+#lukaDireitosCaixa h3{
+    margin:0 0 12px;
+    font-size:18px;
+}
+
+#lukaDireitosCaixa p{
+    margin:0;
+    color:#ccc;
+    font-size:13px;
+    line-height:1.5;
+}
+
+#lukaDireitosFechar{
+    margin-top:16px;
+    padding:8px 18px;
+    border:0;
+    border-radius:6px;
+    background:#333;
+    color:#fff;
+    cursor:pointer;
+}
+</style>
+
+
+
+<div id="lukaDireitosModal" aria-hidden="true">
+    <div id="lukaDireitosCaixa">
+        <h3>© Direitos</h3>
+        <p>
+            © 2026 LUKAFILMES — Todos os direitos reservados.
+            O LUKAFILMES não hospeda arquivos em seus servidores.
+            Apenas disponibiliza referências para conteúdos hospedados por terceiros.
+        </p>
+        <button type="button" id="lukaDireitosFechar">Fechar</button>
+    </div>
+</div>
+
+<script>
+(function(){
+
+    const btn = document.getElementById("lukaDireitosBtn");
+    const modal = document.getElementById("lukaDireitosModal");
+    const fechar = document.getElementById("lukaDireitosFechar");
+
+    if(!btn || !modal || !fechar) return;
+
+    btn.addEventListener("click", function(){
+        modal.classList.add("ativo");
+        modal.setAttribute("aria-hidden", "false");
+    });
+
+    fechar.addEventListener("click", function(){
+        modal.classList.remove("ativo");
+        modal.setAttribute("aria-hidden", "true");
+    });
+
+    modal.addEventListener("click", function(e){
+        if(e.target === modal){
+            modal.classList.remove("ativo");
+            modal.setAttribute("aria-hidden", "true");
+        }
+    });
+
+})();
+</script>
+
 
 </body>
 
