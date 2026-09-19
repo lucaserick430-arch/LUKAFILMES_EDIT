@@ -3248,6 +3248,14 @@ function carregarQRCodeLuka() {
 
                 <a
                     class="assistir"
+                    id="filmeAdicionarFavorito"
+                    href="javascript:void(0)"
+                    style="text-decoration:none;">
+                    ＋ Adicionar aos favoritos
+                </a>
+
+                <a
+                    class="assistir"
                     id="botaoMeusFavoritosFilme"
                     href="/paginas/minha-lista"
                     style="text-decoration:none;">
@@ -6170,6 +6178,15 @@ body {
 }
 </style>
 
+
+<style id="favorito-pc-apenas">
+@media (max-width: 700px) {
+    #filmeAdicionarFavorito {
+        display: none !important;
+    }
+}
+</style>
+
 </body>
 </html>
 
@@ -7426,3 +7443,34 @@ body{
         padding:7px 8px !important;
     }
 }
+
+
+<style id="adicionarFavoritoMesmaCorMeusFavoritos">
+#filmeAdicionarFavorito{
+    background:rgba(70,70,70,.82) !important;
+    color:#fff !important;
+    backdrop-filter:blur(8px) !important;
+}
+
+#filmeAdicionarFavorito:hover{
+    background:rgba(100,100,100,.9) !important;
+}
+</style>
+
+<style id="favoritoPCVisualFinal">
+@media (min-width: 701px) {
+    .botoes-assistir a#filmeAdicionarFavorito {
+        background: rgba(70,70,70,.82) !important;
+        color: #fff !important;
+        border: 1px solid rgba(255,255,255,.12) !important;
+        box-shadow: none !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+    }
+
+    .botoes-assistir a#filmeAdicionarFavorito:hover {
+        background: rgba(100,100,100,.9) !important;
+        color: #fff !important;
+    }
+}
+</style>
