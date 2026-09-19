@@ -423,6 +423,14 @@ body {
     box-shadow: 0 20px 60px rgba(0,0,0,.8);
 }
 
+#playerVideoArea[style*="display:none"] {
+    display: none !important;
+}
+
+#playerVideoArea[style*="display: block"] {
+    display: block !important;
+}
+
 .player-video iframe {
     width: 100%;
     height: 100%;
@@ -3310,39 +3318,39 @@ function carregarQRCodeLuka() {
         id="playerFilme"
         style="display:none;">
 
-        <div class="player-video" id="playerVideoArea" style="display:none;">
+        <div id="filmePlayersOpcoes">
 
             <button
                 type="button"
-                id="playCentralFilme"
-                class="play-central-filme">
-                ▶ PLAY
+                id="btnRedeFlixFilme"
+                class="serie-player-btn">
+                ▶ REDEFLIX
             </button>
 
-            <div
-                id="filmePlayersOpcoes"
-                style="display:flex !important;justify-content:center !important;align-items:center !important;gap:10px !important;margin:0 0 18px !important;flex-wrap:wrap !important;">
+            <button
+                type="button"
+                id="btnStreamFilme"
+                class="serie-player-btn">
+                ▶ Stream
+            </button>
 
-                <button
-                    type="button"
-                    id="btnRedeFlixFilme"
-                    class="serie-player-btn"
-                    style="display:inline-flex !important;visibility:visible !important;opacity:1 !important;">
-                    ▶ REDEFLIX
-                </button>
+            <button
+                type="button"
+                id="btnEmbedMoviesFilme"
+                class="serie-player-btn">
+                ▶ EmbedMovies
+            </button>
 
-                <button
-                    type="button"
-                    id="btnApiPlayerFilme"
-                    class="serie-player-btn"
-                    style="display:inline-flex !important;visibility:visible !important;opacity:1 !important;">
-                    ▶ APIPlayer
-                </button>
+            <button
+                type="button"
+                id="btnApiPlayerFilme"
+                class="serie-player-btn">
+                ▶ APIPlayer
+            </button>
 
-            </div>
-
-            <iframe id="filmeFrame" src="" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:80vh;min-height:600px;display:none"></iframe>
         </div>
+
+        <iframe id="filmeFrame" src="" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen frameborder="0" scrolling="no" style="width:100%;border:0;height:80vh;min-height:600px;display:none"></iframe>
 
 
     </section>
@@ -4425,8 +4433,6 @@ function carregarQRCodeLuka() {
                                     };
                             }
 
-                            playCentral.classList.add("oculto");
-
                             if (window.LukaContinuar) {
                                 LukaContinuar.registrarInicio({
                                     id: filme.id,
@@ -5125,6 +5131,50 @@ document.addEventListener("DOMContentLoaded",()=>{
     }
 
 }
+
+<style id="lukafilmes-player-area-final">
+/* PLAYER DO FILME — oculto até escolher um player */
+#playerFilme > #playerVideoArea {
+    display: none !important;
+    width: 100% !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+}
+
+#playerFilme > #playerVideoArea[style*="display: block"] {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 16 / 9 !important;
+    background: #000 !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,.8) !important;
+}
+
+#playerFilme > #playerVideoArea[style*="display:block"] {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 16 / 9 !important;
+    background: #000 !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,.8) !important;
+}
+
+@media (max-width: 700px) {
+    #playerFilme > #playerVideoArea[style*="display: block"],
+    #playerFilme > #playerVideoArea[style*="display:block"] {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        aspect-ratio: 16 / 9 !important;
+    }
+}
+</style>
 
 </style>
 
@@ -6197,6 +6247,30 @@ body {
             "https://redeflixapi.store/filme/" +
             encodeURIComponent(tmdbId);
     };
+
+    const btnStreamFilme =
+        document.getElementById("btnStreamFilme");
+
+    const btnEmbedMoviesFilme =
+        document.getElementById("btnEmbedMoviesFilme");
+
+    if (btnStreamFilme) {
+        btnStreamFilme.onclick = function () {
+            filmeFrame.style.setProperty("display", "block", "important");
+            filmeFrame.src =
+                "https://mgeb.top/embed/" +
+                encodeURIComponent(tmdbId);
+        };
+    }
+
+    if (btnEmbedMoviesFilme) {
+        btnEmbedMoviesFilme.onclick = function () {
+            filmeFrame.style.setProperty("display", "block", "important");
+            filmeFrame.src =
+                "https://myembed.biz/filme/" +
+                encodeURIComponent(tmdbId);
+        };
+    }
 
     btnApiPlayerFilme.onclick = function () {
         filmeFrame.style.setProperty("display", "block", "important");
@@ -7421,102 +7495,66 @@ body{
 }
 
 
-/* DESTAQUE DAS OPÇÕES DE PLAYER */
-#filmePlayersOpcoes,
-#redeFlixSeriesPlayers {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 12px !important;
-    margin: 0 0 20px !important;
-    width: 100% !important;
+/* LUKAFILMES — PLAYERS FILME */
+#filmePlayersOpcoes{
+    display:grid !important;
+    grid-template-columns:repeat(2, minmax(150px, 180px)) !important;
+    justify-content:center !important;
+    gap:8px !important;
+    width:100% !important;
+    margin:8px auto 16px !important;
 }
 
-#filmePlayersOpcoes::before,
-#redeFlixSeriesPlayers::before {
-    content: "ESCOLHA ONDE ASSISTIR" !important;
-    display: block !important;
-    color: #fff !important;
-    font-size: 21px !important;
-    font-weight: 800 !important;
-    text-align: center !important;
+#filmePlayersOpcoes::before{
+    content:"Escolha um dos players" !important;
+    grid-column:1 / -1 !important;
+    display:block !important;
+    text-align:center !important;
+    color:#fff !important;
+    font-size:15px !important;
+    font-weight:700 !important;
+    margin-bottom:2px !important;
 }
 
-#filmePlayersOpcoes::after,
-#redeFlixSeriesPlayers::after {
-    content: "Toque em uma das opções abaixo para começar" !important;
-    display: block !important;
-    color: rgba(255,255,255,.75) !important;
-    font-size: 16px !important;
-    font-weight: 500 !important;
-    text-align: center !important;
-    order: 3 !important;
+#filmePlayersOpcoes::after{
+    content:none !important;
 }
 
-#filmePlayersOpcoes .serie-player-btn,
-#redeFlixSeriesPlayers .serie-player-btn {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: min(320px, 90%) !important;
-    min-width: 240px !important;
-    min-height: 60px !important;
-    padding: 12px 24px !important;
-    border-radius: 10px !important;
-    font-size: 19px !important;
-    font-weight: 800 !important;
-    line-height: 1.2 !important;
-    cursor: pointer !important;
+#filmePlayersOpcoes .serie-player-btn{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:100% !important;
+    min-width:0 !important;
+    min-height:40px !important;
+    padding:8px 10px !important;
+    border:1px solid rgba(255,255,255,.14) !important;
+    border-radius:7px !important;
+    background:#181818 !important;
+    color:#fff !important;
+    font-size:13px !important;
+    font-weight:700 !important;
+    cursor:pointer !important;
+    transition:.18s ease !important;
 }
 
-
-
-/* OCULTA O PLAY CENTRAL ANTIGO — A ESCOLHA DO PLAYER VEM PRIMEIRO */
-#playCentralFilme {
-    display: none !important;
+#filmePlayersOpcoes .serie-player-btn:hover,
+#filmePlayersOpcoes .serie-player-btn.ativo{
+    background:#e50914 !important;
+    border-color:#e50914 !important;
+    transform:translateY(-1px) !important;
 }
 
+@media(max-width:600px){
+    #filmePlayersOpcoes{
+        grid-template-columns:repeat(2,minmax(120px,145px)) !important;
+        gap:7px !important;
+        margin:6px auto 14px !important;
+    }
 
-
-
-
-
-
-/* PLAYER FILME — REGRA ÚNICA */
-#playerFilme > .player-video {
-    position: relative !important;
-    width: 100% !important;
-    min-height: 0 !important;
-    height: auto !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-    background: #000 !important;
-    border-radius: 14px !important;
-}
-
-#playerFilme > .player-video > #filmeFrame {
-    position: relative !important;
-    display: none !important;
-    width: 100% !important;
-    height: 70vh !important;
-    min-height: 520px !important;
-    max-height: none !important;
-    inset: auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    box-sizing: border-box !important;
-    background: #000 !important;
-}
-
-@media (max-width: 700px) {
-    #playerFilme > .player-video > #filmeFrame {
-        width: 100% !important;
-        height: 70vh !important;
-        min-height: 480px !important;
-        max-height: none !important;
+    #filmePlayersOpcoes .serie-player-btn{
+        min-height:38px !important;
+        font-size:12px !important;
+        padding:7px 8px !important;
     }
 }
-
-</style>
