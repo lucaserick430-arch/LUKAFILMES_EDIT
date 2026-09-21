@@ -1553,17 +1553,6 @@ function carregarQRCodeLuka() {
     font-weight:800 !important;
 }
 
-.players-serie-opcoes,
-#redeFlixSeriesPlayers{
-    display:grid !important;
-    grid-template-columns:repeat(2,170px) !important;
-    gap:8px !important;
-    width:100% !important;
-    max-width:356px !important;
-    margin:0 auto 14px !important;
-    justify-content:center !important;
-    align-items:center !important;
-}
 
 .serie-player-btn{
     min-width:0 !important;
@@ -1740,55 +1729,149 @@ function carregarQRCodeLuka() {
 }
 </style>
 
+<style id="lukafilmes-player-serie-igual-filme">
 
+#playerSerie{
+    width:100%;
+    box-sizing:border-box;
+    margin:28px auto 110px !important;
+    padding:0 14px !important;
+    text-align:center;
+}
 
+#playerSerie .lukafilmes-player-header{
+    width:100%;
+    max-width:900px;
+    margin:0 auto 20px;
+    text-align:center;
+}
 
+#playerSerie .lukafilmes-player-kicker{
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:#e50914;
+    margin-bottom:7px;
+}
 
-<style id="lukafilmes-player-selector-final">
+#playerSerie .titulo-escolha-player{
+    margin:0 !important;
+    color:#fff !important;
+    font-size:clamp(22px,4vw,32px) !important;
+    font-weight:800 !important;
+    line-height:1.15 !important;
+}
+
+#playerSerie .lukafilmes-player-subtitulo{
+    margin:8px 0 0 !important;
+    color:rgba(255,255,255,.62) !important;
+    font-size:14px !important;
+}
+
 #redeFlixSeriesPlayers{
-    display:grid !important;
-    grid-template-columns:repeat(2, minmax(150px, 180px)) !important;
-    justify-content:center !important;
-    gap:8px !important;
     width:100% !important;
-    margin:8px auto 16px !important;
+    max-width:760px !important;
+    margin:0 auto 24px !important;
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:12px !important;
+    box-sizing:border-box !important;
 }
 
 #redeFlixSeriesPlayers .serie-player-btn{
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    visibility:visible !important;
+    opacity:1 !important;
     width:100% !important;
     min-width:0 !important;
-    min-height:40px !important;
-    padding:8px 10px !important;
+    min-height:52px !important;
+    padding:12px 14px !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
     border:1px solid rgba(255,255,255,.14) !important;
-    border-radius:7px !important;
-    background:#181818 !important;
+    border-radius:10px !important;
+    background:rgba(255,255,255,.055) !important;
     color:#fff !important;
     font-size:13px !important;
-    font-weight:700 !important;
+    font-weight:800 !important;
     cursor:pointer !important;
-    transition:.18s ease !important;
+    transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease !important;
 }
 
 #redeFlixSeriesPlayers .serie-player-btn:hover,
+#redeFlixSeriesPlayers .serie-player-btn:focus-visible,
 #redeFlixSeriesPlayers .serie-player-btn.ativo{
-    background:#e50914 !important;
-    border-color:#e50914 !important;
-    transform:translateY(-1px) !important;
+    transform:translateY(-2px) !important;
+    background:rgba(229,9,20,.16) !important;
+    border-color:rgba(229,9,20,.55) !important;
+    outline:none !important;
 }
 
 @media(max-width:600px){
+
+    #playerSerie{
+        padding:0 10px !important;
+        margin-top:22px !important;
+    }
+
     #redeFlixSeriesPlayers{
-        grid-template-columns:repeat(2, minmax(120px, 145px)) !important;
-        gap:7px !important;
-        margin:6px auto 14px !important;
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:9px !important;
     }
 
     #redeFlixSeriesPlayers .serie-player-btn{
-        min-height:38px !important;
+        min-height:48px !important;
+        padding:10px 7px !important;
         font-size:12px !important;
-        padding:7px 8px !important;
     }
 }
+
+</style>
+
+
+<style id="lukafilmes-player-serie-centralizado-final">
+
+#playerSerie .lukafilmes-player-header{
+    text-align:center !important;
+}
+
+#playerSerie .lukafilmes-player-kicker{
+    text-align:center !important;
+}
+
+#playerSerie .titulo-escolha-player{
+    width:100% !important;
+    display:block !important;
+    margin:0 auto !important;
+    text-align:center !important;
+}
+
+#playerSerie .lukafilmes-player-subtitulo{
+    width:100% !important;
+    display:block !important;
+    margin:8px auto 0 !important;
+    text-align:center !important;
+}
+
+/* A tela preta começa escondida */
+#playerSerie #seriePlayerVideo{
+    display:none !important;
+}
+
+/* Os quatro players ficam centralizados abaixo do cabeçalho */
+#playerSerie #redeFlixSeriesPlayers{
+    margin-left:auto !important;
+    margin-right:auto !important;
+}
+
 </style>
 
 </head>
@@ -1906,22 +1989,25 @@ function carregarQRCodeLuka() {
         style="display: none;"
     >
 
-        <h2 id="tituloPlayer"
-            style="width:100%;text-align:center;margin:0 auto 14px !important;">
+        <div class="lukafilmes-player-header">
+            <div class="lukafilmes-player-kicker">
+                LUKAFILMES ORIGINAL
+            </div>
 
+            <h2 class="titulo-escolha-player">
+                Escolha um player
+            </h2>
+
+            <p class="lukafilmes-player-subtitulo">
+                Selecione uma opção para assistir
+            </p>
+        </div>
+
+        <h2 id="tituloPlayer"
+            style="display:none !important;">
         </h2>
 
-        <div id="mensagemEscolhaPlayerSerie"
-             style="
-                width:100%;
-                text-align:center;
-                margin:0 auto 18px;
-                color:#fff;
-                font-size:18px;
-                font-weight:800;
-            ">
-            Escolha um dos players para assistir
-        </div>
+
 
         
         
@@ -3536,7 +3622,12 @@ function criarTemporadaFallback() {
             }
 
             serieFrame.src = url;
-            seriePlayerVideo.style.display = "block";
+
+            seriePlayerVideo.style.setProperty(
+                "display",
+                "block",
+                "important"
+            );
 
             console.log(
                 "[SÉRIE PLAYER] Player escolhido:",
@@ -5628,6 +5719,85 @@ document.addEventListener(
 
 </style>
 
+
+
+
+<!-- LUKAFILMES — NAVEGAÇÃO INFERIOR MOBILE — SÉRIE -->
+<style id="lukafilmes-mobile-bottom-nav-serie">
+@media (max-width:700px){
+
+    #lukafilmesMobileBottomNavSerie{
+        position:fixed !important;
+        left:0 !important;
+        right:0 !important;
+        bottom:0 !important;
+        z-index:2147483647 !important;
+
+        display:flex !important;
+        align-items:center !important;
+        justify-content:space-around !important;
+
+        height:64px !important;
+        padding:7px 8px calc(7px + env(safe-area-inset-bottom)) !important;
+
+        background:rgba(8,8,8,.94) !important;
+        border-top:1px solid rgba(255,255,255,.08) !important;
+
+        backdrop-filter:blur(18px) !important;
+        -webkit-backdrop-filter:blur(18px) !important;
+
+        box-shadow:0 -10px 30px rgba(0,0,0,.45) !important;
+    }
+
+    #lukafilmesMobileBottomNavSerie a{
+        flex:1 1 0 !important;
+        min-width:0 !important;
+
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+
+        height:44px !important;
+        padding:0 4px !important;
+
+        color:rgba(255,255,255,.65) !important;
+        text-decoration:none !important;
+
+        font-family:Arial,Helvetica,sans-serif !important;
+        font-size:11px !important;
+        font-weight:700 !important;
+
+        border-radius:10px !important;
+        -webkit-tap-highlight-color:transparent !important;
+    }
+
+    #lukafilmesMobileBottomNavSerie a:hover,
+    #lukafilmesMobileBottomNavSerie a:active{
+        color:#fff !important;
+        background:rgba(255,255,255,.06) !important;
+    }
+
+    #lukafilmesMobileBottomNavSerie a.luka-nav-serie-ativa{
+        color:#fff !important;
+        background:rgba(229,9,20,.12) !important;
+    }
+
+}
+
+@media (min-width:701px){
+    #lukafilmesMobileBottomNavSerie{
+        display:none !important;
+    }
+}
+</style>
+
+<nav id="lukafilmesMobileBottomNavSerie" aria-label="Navegação principal">
+    <a href="/" aria-label="Início">Início</a>
+    <a href="/paginas/filmes.html" aria-label="Filmes">Filmes</a>
+    <a href="/paginas/series.html" class="luka-nav-serie-ativa" aria-label="Séries">Séries</a>
+    <a href="/paginas/categorias.html" aria-label="Categorias">Categorias</a>
+</nav>
+
 </body>
 
 
@@ -6397,3 +6567,161 @@ window.addEventListener(
 
 </style>
 
+
+<!-- LUKAFILMES - NAVEGAÇÃO CONTEXTUAL DESKTOP/TV -->
+<style>
+@media (min-width:701px){
+
+    /* Remove as navegações antigas */
+    #lukafilmesSeriesNavPC,
+    #lukafilmesSeriesNavDesktop{
+        display:none !important;
+    }
+
+    #lukafilmesNavContextualSerie{
+        position:fixed !important;
+        top:24px !important;
+        right:18px !important;
+        z-index:2147483647 !important;
+
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+
+        min-width:88px !important;
+        height:38px !important;
+        padding:0 14px !important;
+
+        border:1px solid rgba(255,255,255,.22) !important;
+        border-radius:8px !important;
+
+        background:rgba(10,10,10,.82) !important;
+        color:#fff !important;
+
+        font-family:Arial,sans-serif !important;
+        font-size:14px !important;
+        font-weight:700 !important;
+        text-decoration:none !important;
+
+        backdrop-filter:blur(8px) !important;
+        -webkit-backdrop-filter:blur(8px) !important;
+
+        box-shadow:0 4px 18px rgba(0,0,0,.35) !important;
+
+        transition:
+            background .2s ease,
+            border-color .2s ease,
+            transform .2s ease !important;
+    }
+
+    #lukafilmesNavContextualSerie:hover{
+        background:#e50914 !important;
+        border-color:#e50914 !important;
+        transform:translateY(-1px) !important;
+    }
+}
+
+@media (max-width:700px){
+    #lukafilmesNavContextualSerie{
+        display:none !important;
+    }
+}
+</style>
+
+<script>
+(function(){
+
+    function criarBotaoContextualSerie(){
+
+        if(window.innerWidth <= 700){
+            return;
+        }
+
+        var antigo =
+            document.getElementById("lukafilmesNavContextualSerie");
+
+        if(antigo){
+            return;
+        }
+
+        var botao = document.createElement("a");
+
+        botao.id = "lukafilmesNavContextualSerie";
+        botao.href = "/paginas/series.html";
+        botao.textContent = "← Séries";
+        botao.setAttribute(
+            "aria-label",
+            "Voltar para Séries"
+        );
+
+        document.body.appendChild(botao);
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener(
+            "DOMContentLoaded",
+            criarBotaoContextualSerie
+        );
+    }else{
+        criarBotaoContextualSerie();
+    }
+
+})();
+</script>
+
+<!-- LUKAFILMES - REMOVER SOMENTE BOTÃO CONTEXTUAL ADICIONADO -->
+<style id="lukafilmes-remover-nav-contextual-serie">
+
+@media (min-width:701px){
+
+    #lukafilmesNavContextualSerie{
+        display:none !important;
+        visibility:hidden !important;
+        opacity:0 !important;
+        pointer-events:none !important;
+    }
+
+}
+
+@media (max-width:700px){
+
+    #lukafilmesNavContextualSerie{
+        display:none !important;
+    }
+
+}
+
+</style>
+
+<script id="lukafilmes-remover-nav-contextual-serie-script">
+(function(){
+
+    function removerBotaoAdicionado(){
+
+        var botao =
+            document.getElementById(
+                "lukafilmesNavContextualSerie"
+            );
+
+        if(botao){
+            botao.remove();
+        }
+
+    }
+
+    if(document.readyState === "loading"){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            removerBotaoAdicionado,
+            {once:true}
+        );
+
+    }else{
+
+        removerBotaoAdicionado();
+
+    }
+
+})();
+</script>

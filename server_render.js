@@ -3477,6 +3477,168 @@ app.get('/api/catalogo-acao', async (req, res) => {
 
 
 
+
+/*
+ * =====================================================
+ * LUKAFILMES — PESQUISA DIRETA DE FILMES
+ * =====================================================
+ *
+ * Pesquisa pelo nome diretamente no TMDB.
+ * Não altera o catálogo normal.
+ */
+app.get('/api/pesquisar-filmes', async (req, res) => {
+    try {
+
+        const termo =
+            String(req.query.q || "").trim();
+
+        const pagina =
+            Math.max(
+                1,
+                Number(req.query.pagina || 1)
+            );
+
+        const categoria =
+            String(req.query.categoria || "")
+                .trim()
+                .toLowerCase();
+
+        if (!termo) {
+            return res.json({
+                sucesso: true,
+                filmes: [],
+                total: 0,
+                pagina: 1,
+                total_paginas: 0,
+                acabou: true
+            });
+        }
+
+        const url =
+            '/search/movie?language=pt-BR' +
+            '&query=' +
+            encodeURIComponent(termo) +
+            '&page=' +
+            pagina +
+            '&include_adult=false';
+
+        console.log(
+            '[BUSCA FILMES] Termo:',
+            termo,
+            '| Página:',
+            pagina
+        );
+
+        const resposta =
+            await tmdb(url);
+
+        let resultados =
+            Array.isArray(resposta.results)
+                ? resposta.results
+                : [];
+
+        /*
+         * Mantém o filtro de categoria quando
+         * a pesquisa estiver dentro de uma categoria.
+         */
+        const mapaCategorias = {
+            acao: 28,
+            aventura: 12,
+            comedia: 35,
+            terror: 27,
+            romance: 10749,
+            fantasia: 14,
+            suspense: 53,
+            drama: 18,
+            "ficcao-cientifica": 878,
+            animacao: 16
+        };
+
+        if (
+            categoria &&
+            mapaCategorias[categoria]
+        ) {
+
+            const generoAlvo =
+                mapaCategorias[categoria];
+
+            resultados =
+                resultados.filter(filme =>
+                    Array.isArray(filme.genre_ids) &&
+                    filme.genre_ids.includes(generoAlvo)
+                );
+        }
+
+        const mapa =
+            new Map();
+
+        for (const filme of resultados) {
+
+            if (!filme || !filme.id) {
+                continue;
+            }
+
+            const convertido =
+                converterFilme(filme);
+
+            if (!convertido) {
+                continue;
+            }
+
+            const id =
+                String(
+                    convertido.id ||
+                    convertido.tmdb_id ||
+                    filme.id
+                );
+
+            if (!mapa.has(id)) {
+                mapa.set(
+                    id,
+                    convertido
+                );
+            }
+        }
+
+        const filmes =
+            Array.from(
+                mapa.values()
+            );
+
+        const totalPaginas =
+            Number(
+                resposta.total_pages || 1
+            );
+
+        return res.json({
+            sucesso: true,
+            filmes,
+            total: Number(
+                resposta.total_results || filmes.length
+            ),
+            pagina,
+            total_paginas: totalPaginas,
+            acabou:
+                pagina >= totalPaginas
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[BUSCA FILMES] Erro:',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            filmes: [],
+            total: 0,
+            mensagem:
+                'Erro ao pesquisar filmes.'
+        });
+    }
+});
+
 app.get('/api/catalogo-filmes', async (req, res) => {
     try {
         const paginaSolicitada = Math.max(

@@ -187,6 +187,388 @@ h1{
 }
 </style>
 
+
+<style id="lukafilmes-favoritos-tecnologico-v1">
+
+html,body{
+    background:
+        radial-gradient(circle at 50% -15%,rgba(229,9,20,.12),transparent 38%),
+        #050505 !important;
+}
+
+body{
+    overflow-x:hidden !important;
+}
+
+main{
+    background:transparent !important;
+}
+
+#lista{
+    display:grid !important;
+    grid-template-columns:repeat(auto-fill,minmax(175px,1fr)) !important;
+    gap:30px 17px !important;
+    width:100% !important;
+}
+
+#lista > *{
+    min-width:0 !important;
+}
+
+#lista img{
+    width:100% !important;
+    aspect-ratio:2 / 3 !important;
+    object-fit:cover !important;
+    display:block !important;
+    border-radius:13px !important;
+    background:#111 !important;
+    box-shadow:
+        0 12px 28px rgba(0,0,0,.42),
+        0 0 0 1px rgba(255,255,255,.06) !important;
+    transition:
+        transform .25s ease,
+        filter .25s ease,
+        box-shadow .25s ease !important;
+}
+
+#lista > *:hover img{
+    transform:translateY(-5px) scale(1.015) !important;
+    filter:brightness(1.06) !important;
+    box-shadow:
+        0 18px 38px rgba(0,0,0,.58),
+        0 0 0 1px rgba(255,255,255,.11) !important;
+}
+
+@media(max-width:700px){
+
+    #lista{
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:25px 12px !important;
+    }
+
+    #lista img{
+        border-radius:11px !important;
+        box-shadow:
+            0 9px 22px rgba(0,0,0,.42),
+            0 0 0 1px rgba(255,255,255,.05) !important;
+    }
+
+    #lista > *:active img{
+        transform:scale(.975) !important;
+    }
+}
+
+</style>
+
+<style id="lukafilmes-favoritos-tech-v2">
+
+html{
+    background:#030303 !important;
+}
+
+body{
+    background:
+        radial-gradient(circle at 50% -18%,rgba(229,9,20,.16),transparent 34%),
+        radial-gradient(circle at 0% 45%,rgba(229,9,20,.045),transparent 28%),
+        #030303 !important;
+    min-height:100vh !important;
+}
+
+.topo{
+    position:sticky !important;
+    top:0 !important;
+    z-index:1000 !important;
+    height:72px !important;
+    padding:0 5% !important;
+    background:rgba(5,5,5,.72) !important;
+    border-bottom:1px solid rgba(255,255,255,.07) !important;
+    box-shadow:0 12px 35px rgba(0,0,0,.38) !important;
+    backdrop-filter:blur(20px) saturate(140%) !important;
+    -webkit-backdrop-filter:blur(20px) saturate(140%) !important;
+}
+
+.logo{
+    font-size:24px !important;
+    letter-spacing:-1px !important;
+    text-shadow:0 0 24px rgba(229,9,20,.22) !important;
+}
+
+.inicio{
+    padding:9px 15px !important;
+    border:1px solid rgba(255,255,255,.10) !important;
+    border-radius:10px !important;
+    background:rgba(255,255,255,.055) !important;
+    color:rgba(255,255,255,.88) !important;
+    font-size:13px !important;
+    font-weight:700 !important;
+    backdrop-filter:blur(10px) !important;
+    transition:.22s ease !important;
+}
+
+.inicio:hover{
+    background:rgba(255,255,255,.10) !important;
+    color:#fff !important;
+    transform:translateY(-1px) !important;
+}
+
+h1{
+    position:relative !important;
+    margin:38px 5% 26px !important;
+    font-size:30px !important;
+    font-weight:900 !important;
+    letter-spacing:-.8px !important;
+}
+
+h1::after{
+    content:"";
+    display:block;
+    width:42px;
+    height:3px;
+    margin-top:10px;
+    border-radius:99px;
+    background:linear-gradient(90deg,#e50914,rgba(229,9,20,0));
+    box-shadow:0 0 12px rgba(229,9,20,.35);
+}
+
+.lista-acoes{
+    margin:0 auto 24px !important;
+    padding:0 5% !important;
+}
+
+#btnRemoverSelecionados{
+    border:1px solid rgba(255,255,255,.10) !important;
+    border-radius:10px !important;
+    padding:9px 14px !important;
+    background:rgba(255,255,255,.055) !important;
+    color:rgba(255,255,255,.78) !important;
+    font-size:12px !important;
+    box-shadow:0 6px 18px rgba(0,0,0,.18) !important;
+    backdrop-filter:blur(10px) !important;
+    transition:.2s ease !important;
+}
+
+#btnRemoverSelecionados:hover{
+    background:rgba(229,9,20,.13) !important;
+    border-color:rgba(229,9,20,.35) !important;
+    color:#fff !important;
+}
+
+#lista{
+    padding:0 5% 60px !important;
+    grid-template-columns:repeat(auto-fill,minmax(175px,1fr)) !important;
+    gap:30px 17px !important;
+}
+
+.card-lista{
+    position:relative !important;
+    min-width:0 !important;
+    border-radius:14px !important;
+    transition:
+        transform .25s ease,
+        filter .25s ease !important;
+}
+
+.card-lista:hover{
+    transform:translateY(-6px) !important;
+}
+
+.card-lista::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:14px;
+    pointer-events:none;
+    border:1px solid rgba(255,255,255,.045);
+    transition:border-color .25s ease,box-shadow .25s ease;
+}
+
+.card-lista:hover::after{
+    border-color:rgba(255,255,255,.11);
+    box-shadow:0 16px 38px rgba(0,0,0,.40);
+}
+
+.card img{
+    border-radius:13px !important;
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.42),
+        0 0 0 1px rgba(255,255,255,.055) !important;
+    transition:
+        transform .25s ease,
+        filter .25s ease,
+        box-shadow .25s ease !important;
+}
+
+.card-lista:hover img{
+    filter:brightness(1.08) saturate(1.04) !important;
+    box-shadow:
+        0 18px 38px rgba(0,0,0,.58),
+        0 0 0 1px rgba(255,255,255,.10) !important;
+}
+
+.info{
+    padding:10px 2px 0 !important;
+}
+
+.info h3{
+    margin:0 0 5px !important;
+    font-size:14px !important;
+    font-weight:800 !important;
+    color:#f4f4f4 !important;
+    line-height:1.3 !important;
+}
+
+.info p{
+    color:rgba(255,255,255,.48) !important;
+    font-size:11px !important;
+}
+
+.selecionar-lista{
+    top:10px !important;
+    left:10px !important;
+    width:22px !important;
+    height:22px !important;
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    border:1px solid rgba(255,255,255,.45) !important;
+    border-radius:7px !important;
+    background:rgba(0,0,0,.45) !important;
+    backdrop-filter:blur(8px) !important;
+    transition:.18s ease !important;
+}
+
+.selecionar-lista:checked{
+    background:#e50914 !important;
+    border-color:#e50914 !important;
+    box-shadow:0 0 14px rgba(229,9,20,.45) !important;
+}
+
+.card-lista.selecionado{
+    outline:2px solid rgba(229,9,20,.9) !important;
+    outline-offset:3px !important;
+    border-radius:14px !important;
+}
+
+.btn-remover-lista{
+    margin-top:9px !important;
+    padding:8px 10px !important;
+    border:1px solid rgba(255,255,255,.07) !important;
+    border-radius:8px !important;
+    background:rgba(255,255,255,.035) !important;
+    color:rgba(255,255,255,.48) !important;
+    font-size:10px !important;
+    font-weight:600 !important;
+    box-shadow:none !important;
+    transition:
+        color .2s ease,
+        background .2s ease,
+        border-color .2s ease !important;
+}
+
+.btn-remover-lista:hover{
+    background:rgba(229,9,20,.09) !important;
+    border-color:rgba(229,9,20,.25) !important;
+    color:rgba(255,255,255,.88) !important;
+}
+
+.vazio{
+    padding:70px 20px !important;
+    text-align:center !important;
+    color:rgba(255,255,255,.42) !important;
+}
+
+@media(max-width:600px){
+
+    .topo{
+        height:62px !important;
+        padding:0 15px !important;
+    }
+
+    .logo{
+        font-size:20px !important;
+    }
+
+    .inicio{
+        padding:8px 12px !important;
+        font-size:12px !important;
+        border-radius:9px !important;
+    }
+
+    h1{
+        margin:28px 14px 22px !important;
+        font-size:24px !important;
+    }
+
+    #lista{
+        padding:0 14px 45px !important;
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:25px 12px !important;
+    }
+
+    .card-lista{
+        border-radius:11px !important;
+    }
+
+    .card img{
+        border-radius:11px !important;
+    }
+
+    .card-lista:active{
+        transform:scale(.975) !important;
+    }
+
+    .info{
+        padding-top:8px !important;
+    }
+
+    .info h3{
+        font-size:12.5px !important;
+    }
+
+    .info p{
+        font-size:10px !important;
+    }
+
+    .btn-remover-lista{
+        padding:7px 6px !important;
+        font-size:9.5px !important;
+        border-radius:7px !important;
+    }
+
+    .lista-acoes{
+        padding:0 14px !important;
+    }
+}
+
+</style>
+
+<style id="lukafilmes-favoritos-titulos-proporcionais">
+
+.info h3{
+    height:36px !important;
+    min-height:36px !important;
+    max-height:36px !important;
+    margin:0 0 5px !important;
+    overflow:hidden !important;
+    display:-webkit-box !important;
+    -webkit-box-orient:vertical !important;
+    -webkit-line-clamp:2 !important;
+    line-clamp:2 !important;
+    text-overflow:ellipsis !important;
+    line-height:18px !important;
+}
+
+@media(max-width:600px){
+    .info h3{
+        height:32px !important;
+        min-height:32px !important;
+        max-height:32px !important;
+        line-height:16px !important;
+        -webkit-line-clamp:2 !important;
+        line-clamp:2 !important;
+    }
+}
+
+</style>
 </head>
 
 <body>

@@ -1412,26 +1412,12 @@ z-index:2;
         z-index:30 !important;
     }
 
-    /* ☰ — diretamente abaixo do L */
-    .menu-btn{
-        display:block !important;
-        position:absolute !important;
-        right:17px !important;
-        top:38px !important;
-        width:30px !important;
-        height:26px !important;
-        padding:0 !important;
-        margin:0 !important;
-        z-index:30 !important;
-        line-height:26px !important;
-    }
-
-    /* 🔍 — diretamente abaixo do menu */
+    /* 🔍 — pesquisa ocupa o antigo lugar do Menu */
     .search-btn{
         display:block !important;
         position:absolute !important;
         right:17px !important;
-        top:64px !important;
+        top:38px !important;
         width:30px !important;
         height:26px !important;
         padding:0 !important;
@@ -4037,7 +4023,9 @@ z-index:2;
 }
 @media(max-width:700px){
     .lukafilmes-iptv-desktop-btn{
-        display:none !important;
+        display:inline-flex !important;
+        left:14px;
+        top:76px;
     }
     .lukafilmes-iptv-mobile-btn{
         display:block !important;
@@ -4313,6 +4301,197 @@ z-index:2;
 }
 </style>
 
+
+<style id="lukafilmes-app-bottom-nav">
+/* =========================================================
+   LUKAFILMES — NAVEGAÇÃO MOBILE ESTILO APLICATIVO
+   Desktop permanece inalterado.
+   ========================================================= */
+
+.lukafilmes-app-bottom-nav{
+    display:none;
+}
+
+@media (max-width:700px){
+
+    body{
+        padding-bottom:76px !important;
+    }
+
+    .lukafilmes-app-bottom-nav{
+        position:fixed;
+        left:0;
+        right:0;
+        bottom:0;
+        height:64px;
+        display:grid;
+        grid-template-columns:repeat(5,1fr);
+        align-items:stretch;
+        z-index:99999;
+
+        background:rgba(10,10,10,.94);
+        border-top:1px solid rgba(255,255,255,.16);
+
+        backdrop-filter:blur(18px);
+        -webkit-backdrop-filter:blur(18px);
+
+        padding-bottom:env(safe-area-inset-bottom);
+    }
+
+    .lukafilmes-app-bottom-nav a{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+
+        min-width:0;
+        height:64px;
+
+        color:rgba(255,255,255,.68);
+        text-decoration:none;
+
+        font-size:12px;
+        font-weight:600;
+        letter-spacing:.1px;
+
+        white-space:nowrap;
+
+        -webkit-tap-highlight-color:transparent;
+        touch-action:manipulation;
+
+        transition:
+            color .18s ease,
+            background .18s ease;
+    }
+
+    .lukafilmes-app-bottom-nav a:active{
+        background:rgba(255,255,255,.08);
+    }
+
+    .lukafilmes-app-bottom-nav a.active{
+        color:#fff;
+        font-weight:700;
+    }
+
+    .lukafilmes-app-bottom-nav a.active::after{
+        content:"";
+        position:absolute;
+        bottom:0;
+        height:2px;
+        width:30px;
+        border-radius:2px;
+        background:#fff;
+    }
+
+    .lukafilmes-app-bottom-nav a{
+        position:relative;
+    }
+
+    .lukafilmes-app-bottom-nav .categorias{
+        font-size:11.5px;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-admin-icon-final">
+#lukafilmesAdminIcon{
+    border:0;
+    background:none;
+    color:#fff;
+    cursor:pointer;
+    font-size:18px;
+    line-height:1;
+    padding:4px;
+    margin:0;
+}
+#lukafilmesAdminIcon:hover{
+    color:#ddd;
+}
+@media(max-width:768px){
+    #lukafilmesAdminIcon{
+        font-size:17px;
+        padding:3px;
+    }
+}
+</style>
+
+<script>
+(function(){
+    const botao = document.getElementById("lukafilmesAdminIcon");
+    if(!botao) return;
+
+    fetch("/api/eu", {
+        credentials:"same-origin",
+        cache:"no-store"
+    })
+    .then(function(res){
+        if(!res.ok) throw new Error("nao autenticado");
+        return res.json();
+    })
+    .then(function(dados){
+        if(
+            dados &&
+            dados.logado === true &&
+            dados.usuario &&
+            String(dados.usuario.tipo || "").toLowerCase() === "admin"
+        ){
+            botao.style.display = "inline-flex";
+            botao.addEventListener("click", function(){
+                window.location.href = "/admin.html";
+            });
+        }
+    })
+    .catch(function(){});
+})();
+</script>
+
+<style id="lukafilmes-admin-header">
+#lukafilmesAdminIcon{
+    border:0;
+    background:transparent;
+    color:#fff;
+    cursor:pointer;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    width:32px;
+    height:32px;
+    padding:0;
+    margin:0;
+    font-size:18px;
+    line-height:1;
+}
+#lukafilmesAdminIcon:active{
+    transform:scale(.92);
+}
+</style>
+
+
+<style id="lukafilmes-continuar-series-mobile-only">
+.luka-btn-continuar-mobile{
+    display:none !important;
+}
+
+@media(max-width:700px){
+    .luka-btn-continuar-mobile{
+        display:inline-flex !important;
+        transform:translateY(-12px) !important;
+        padding:6px 10px !important;
+        border-radius:10px !important;
+        background:rgba(255,255,255,.07) !important;
+        border:1px solid rgba(255,255,255,.13) !important;
+        color:rgba(255,255,255,.92) !important;
+        font-size:10.5px !important;
+        font-weight:600 !important;
+        letter-spacing:.1px !important;
+        box-shadow:0 4px 14px rgba(0,0,0,.16) !important;
+        backdrop-filter:blur(8px);
+        -webkit-backdrop-filter:blur(8px);
+        transition:transform .2s ease,background .2s ease,border-color .2s ease !important;
+    }
+}
+</style>
+
 </head>
 
 <body>
@@ -4407,40 +4586,7 @@ z-index:2;
 
         <a href="paginas/series.html">Séries</a>
 
-        <div class="lukafilmes-catalogo-menu">
-            <button
-                type="button"
-                class="lukafilmes-catalogo-btn"
-                aria-haspopup="true"
-                aria-expanded="false"
-            >Categorias <span>▾</span></button>
-
-            <div class="lukafilmes-catalogo-dropdown">
-
-                <a href="/paginas/filmes.html">
-                    🎬 Filmes
-                </a>
-
-                <a href="/paginas/series.html">
-                    📺 Séries
-                </a>
-
-                <div class="lukafilmes-catalogo-separador"></div>
-
-                <div class="lukafilmes-catalogo-titulo">
-                    Categorias
-                </div>
-
-                <a href="/paginas/filmes.html?categoria=acao">Ação</a>
-                <a href="/paginas/filmes.html?categoria=comedia">Comédia</a>
-                <a href="/paginas/filmes.html?categoria=terror">Terror</a>
-                <a href="/paginas/filmes.html?categoria=romance">Romance</a>
-                <a href="/paginas/filmes.html?categoria=fantasia">Fantasia</a>
-                <a href="/paginas/filmes.html?categoria=ficcao-cientifica">Ficção científica</a>
-                <a href="/paginas/filmes.html?categoria=animacao">Animação</a>
-
-            </div>
-        </div>
+        <a href="/paginas/categorias.html">Categorias</a>
 
         <a
             href="/paginas/continuar-assistindo.html"
@@ -4456,7 +4602,14 @@ z-index:2;
 
         <button class="search-btn" onclick="toggleSearch()" aria-label="Pesquisar">⌕</button>
 
-        <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
+        
+
+        
+<button id="lukafilmesAdminIcon"
+        type="button"
+        aria-label="Painel administrativo"
+        title="Painel administrativo"
+        style="display:none">⚙</button>
 
         <div class="profile"><img loading="lazy" decoding="async" src="/favicon/file_000000006768820e93d46c5d164e8bd9.png" alt="LUKAFILMES"></div>
     </div>
@@ -4632,7 +4785,11 @@ z-index:2;
 
             <div class="luka-series-continuar-acoes">
 
-
+                <a
+                    href="/paginas/continuar-assistindo.html"
+                    class="luka-btn-continuar luka-btn-continuar-mobile"
+                    aria-label="Continuar assistindo"
+                >▶ Continuar assistindo</a>
 
             </div>
         </div>
@@ -10918,6 +11075,50 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
+
+
+<nav class="lukafilmes-app-bottom-nav" aria-label="Navegação principal">
+    <a href="/" class="active">Início</a>
+    <a href="/paginas/filmes.html">Filmes</a>
+    <a href="/paginas/series.html">Séries</a>
+    <a href="/paginas/categorias.html" class="categorias">Categorias</a>
+    <a href="#" onclick="logout(); return false;">Sair</a>
+</nav>
+
+
+
+<!-- FIM MINI BOTÃO ADMIN -->
+
+<script id="lukafilmes-admin-header-script">
+(function(){
+    const botao = document.getElementById("lukafilmesAdminIcon");
+    if(!botao) return;
+
+    fetch("/api/eu", {
+        credentials:"same-origin",
+        cache:"no-store"
+    })
+    .then(function(res){
+        if(!res.ok) throw new Error("nao autenticado");
+        return res.json();
+    })
+    .then(function(dados){
+        if(
+            dados &&
+            dados.logado === true &&
+            dados.usuario &&
+            String(dados.usuario.tipo || "").toLowerCase() === "admin"
+        ){
+            botao.style.display = "inline-flex";
+
+            botao.onclick = function(){
+                window.location.href = "/admin.html";
+            };
+        }
+    })
+    .catch(function(){});
+})();
+</script>
 </body>
 
 

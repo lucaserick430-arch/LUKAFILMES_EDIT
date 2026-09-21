@@ -380,6 +380,164 @@ body{overflow-x:hidden}
 }
 </style>
 
+
+<style id="lukafilmes-hero-series-igual-filmes">
+/* =========================================
+   HERO SERIES — MESMA CONFIGURAÇÃO DOS FILMES
+   ========================================= */
+
+#heroSeries{
+    position:relative !important;
+    width:100vw !important;
+    max-width:100vw !important;
+
+    height:78vh !important;
+    min-height:680px !important;
+    max-height:850px !important;
+
+    margin-left:calc(50% - 50vw) !important;
+    margin-right:0 !important;
+
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+
+    background-size:cover !important;
+    background-position:center center !important;
+    background-repeat:no-repeat !important;
+
+    box-shadow:none !important;
+}
+
+/* REMOVE TODA A SOMBRA/GRADIENTE SOBRE A CAPA */
+#heroSeries::after{
+    display:none !important;
+    content:none !important;
+    background:none !important;
+    box-shadow:none !important;
+}
+
+/* CONTEÚDO PARADO NO MESMO PONTO */
+#heroSeries .hero-conteudo{
+    position:absolute !important;
+
+    left:5% !important;
+    right:auto !important;
+    top:320px !important;
+    bottom:auto !important;
+
+    width:min(620px,90%) !important;
+    max-width:620px !important;
+    height:auto !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    transform:none !important;
+    animation:none !important;
+    transition:none !important;
+
+    z-index:10 !important;
+}
+
+/* NENHUM ELEMENTO DO CONTEÚDO SE MOVIMENTA */
+#heroSeries .hero-conteudo,
+#heroSeries .hero-conteudo *,
+#heroSeries .hero-tag,
+#heroSeries #heroTituloSeries,
+#heroSeries .hero-meta,
+#heroSeries .hero-botoes,
+#heroSeries .hero-btn{
+    transform:none !important;
+    animation:none !important;
+    transition:none !important;
+}
+
+/* TÍTULO — MÁXIMO 2 LINHAS */
+#heroSeries #heroTituloSeries{
+    display:-webkit-box !important;
+    -webkit-box-orient:vertical !important;
+    -webkit-line-clamp:2 !important;
+    overflow:hidden !important;
+
+    max-height:2.15em !important;
+    line-height:1.05 !important;
+
+    margin:0 !important;
+}
+
+/* SINOPSE OCULTA */
+#heroSeries #heroSinopseSeries{
+    display:none !important;
+}
+
+/* BOTÕES */
+#heroSeries .hero-botoes{
+    display:block !important;
+
+    position:relative !important;
+    top:auto !important;
+    bottom:auto !important;
+    left:auto !important;
+    right:auto !important;
+
+    width:100% !important;
+    height:auto !important;
+    min-height:48px !important;
+
+    margin:22px 0 0 0 !important;
+    padding:0 !important;
+
+    overflow:visible !important;
+}
+
+/* ESCONDE FAVORITOS DO HERO */
+#heroSeries #heroListaSeries,
+#heroSeries #heroMinhaListaSeries{
+    display:none !important;
+}
+
+/* SOMENTE ASSISTIR */
+#heroSeries #heroAssistirSeries{
+    display:inline-flex !important;
+
+    position:relative !important;
+    top:auto !important;
+    bottom:auto !important;
+    left:auto !important;
+    right:auto !important;
+
+    visibility:visible !important;
+    opacity:1 !important;
+}
+
+/* CELULAR */
+@media(max-width:700px){
+
+    #heroSeries{
+        width:100vw !important;
+        min-height:600px !important;
+        height:72vh !important;
+        max-height:760px !important;
+
+        margin-left:calc(50% - 50vw) !important;
+    }
+
+    #heroSeries .hero-conteudo{
+        left:20px !important;
+        right:20px !important;
+        top:300px !important;
+        bottom:auto !important;
+
+        width:auto !important;
+        max-width:none !important;
+    }
+
+    #heroSeries .hero-botoes{
+        margin-top:18px !important;
+    }
+}
+</style>
+
 </head>
 <body>
 
@@ -403,7 +561,7 @@ body{overflow-x:hidden}
 
 
 <a class="logo" href="../index.html">LUKA<span>FILMES</span></a>
-<a class="inicio" href="../index.html">Início</a>
+
 
 
 </header>
@@ -837,6 +995,132 @@ body{overflow-x:hidden}
     console.log(
         "[LUKAFILMES HERO SÉRIES] Sistema de até 100 capas únicas ativado."
     );
+
+})();
+</script>
+
+
+<style id="lukafilmes-app-bottom-nav-style">
+.lukafilmes-app-bottom-nav{
+    display:none;
+}
+
+@media(max-width:700px){
+    .lukafilmes-app-bottom-nav{
+        position:fixed;
+        left:0;
+        right:0;
+        bottom:0;
+        height:64px;
+        padding:
+            7px
+            max(8px, env(safe-area-inset-right))
+            calc(7px + env(safe-area-inset-bottom))
+            max(8px, env(safe-area-inset-left));
+        box-sizing:border-box;
+
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        gap:6px;
+
+        background:
+            linear-gradient(
+                180deg,
+                rgba(12,12,12,.94),
+                rgba(3,3,3,.99)
+            );
+
+        border-top:1px solid rgba(255,255,255,.10);
+        box-shadow:0 -8px 30px rgba(0,0,0,.55);
+
+        z-index:999999;
+
+        backdrop-filter:blur(14px);
+        -webkit-backdrop-filter:blur(14px);
+    }
+
+    .lukafilmes-app-bottom-nav a{
+        min-width:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+
+        color:#aaa;
+        text-decoration:none;
+
+        font-size:12px;
+        font-weight:700;
+
+        border-radius:10px;
+        transition:
+            background .18s ease,
+            color .18s ease,
+            transform .18s ease;
+    }
+
+    .lukafilmes-app-bottom-nav a:active{
+        transform:scale(.96);
+    }
+
+    .lukafilmes-app-bottom-nav a.active{
+        color:#fff;
+        background:
+            linear-gradient(
+                180deg,
+                rgba(190,0,0,.30),
+                rgba(120,0,0,.16)
+            );
+        box-shadow:
+            inset 0 0 0 1px rgba(220,0,0,.28);
+    }
+
+    .lukafilmes-app-bottom-nav a.active::after{
+        content:"";
+        position:absolute;
+    }
+
+    body{
+        padding-bottom:74px !important;
+    }
+}
+</style>
+
+<nav class="lukafilmes-app-bottom-nav" aria-label="Navegação principal">
+    <a href="/" data-nav="inicio">Início</a>
+    <a href="/paginas/filmes.html" data-nav="filmes">Filmes</a>
+    <a href="/paginas/series.html" data-nav="series">Séries</a>
+    <a href="/paginas/categorias.html" data-nav="categorias">Categorias</a>
+</nav>
+
+<script id="lukafilmes-app-bottom-nav-script">
+(function(){
+
+    const nav = document.querySelector(".lukafilmes-app-bottom-nav");
+    if(!nav) return;
+
+    const path = window.location.pathname.toLowerCase();
+
+    let atual = "inicio";
+
+    if(path === "/" || path.endsWith("/index.html")){
+        atual = "inicio";
+    }
+    else if(path.endsWith("/filmes.html") || path.endsWith("/filme.html")){
+        atual = "filmes";
+    }
+    else if(path.endsWith("/series.html") || path.endsWith("/serie.html")){
+        atual = "series";
+    }
+    else if(path.endsWith("/categorias.html")){
+        atual = "categorias";
+    }
+
+    nav.querySelectorAll("[data-nav]").forEach(function(link){
+        link.classList.toggle(
+            "active",
+            link.dataset.nav === atual
+        );
+    });
 
 })();
 </script>
@@ -1418,13 +1702,31 @@ carregarHeroSeries();
 const listaSeries=document.getElementById("conteudo");
 
 listaSeries.innerHTML=`
-    <div class="pesquisa-series">
-        <input
-            id="pesquisaSeries"
-            type="search"
-            placeholder="Pesquisar séries..."
-            autocomplete="off">
-    </div>
+    <section class="series-pesquisa">
+        <div class="series-pesquisa-topo">
+            <button
+                type="button"
+                class="series-search-btn"
+                id="seriesSearchBtn"
+                aria-label="Pesquisar séries"
+                aria-expanded="false"
+                onclick="togglePesquisaSeries()"
+            >⌕</button>
+        </div>
+
+        <div
+            class="series-pesquisa-box"
+            id="seriesPesquisaBox"
+        >
+            <input
+                id="pesquisaSeries"
+                type="search"
+                placeholder="Pesquisar séries..."
+                autocomplete="off"
+                aria-label="Pesquisar séries">
+        </div>
+    </section>
+
 <div id="listaSeries">
         <div class="estado-series"></div>
     </div>
@@ -1927,3 +2229,1905 @@ carregarCatalogoSeries();
 }
 
 </style>
+
+<script id="lukafilmes-pesquisa-series-ui">
+<script id="lukafilmes-pesquisa-series-ui">
+(function(){
+
+    window.togglePesquisaSeries = function(){
+
+        const box =
+            document.getElementById("seriesPesquisaBox");
+
+        const btn =
+            document.getElementById("seriesSearchBtn");
+
+        const input =
+            document.getElementById("pesquisaSeries");
+
+        if(!box || !input) return;
+
+        const aberta =
+            box.classList.toggle("aberta");
+
+        if(btn){
+            btn.setAttribute(
+                "aria-expanded",
+                aberta ? "true" : "false"
+            );
+        }
+
+        if(aberta){
+
+            setTimeout(function(){
+                input.focus();
+            },120);
+
+        }else{
+
+            input.blur();
+
+        }
+
+    };
+
+    document.addEventListener(
+        "click",
+        function(event){
+
+            const box =
+                document.getElementById("seriesPesquisaBox");
+
+            const btn =
+                document.getElementById("seriesSearchBtn");
+
+            if(!box || !btn) return;
+
+            if(
+                !box.contains(event.target) &&
+                !btn.contains(event.target) &&
+                box.classList.contains("aberta")
+            ){
+
+                box.classList.remove("aberta");
+
+                btn.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+            }
+
+        }
+    );
+
+})();
+</script>
+
+
+<style id="lukafilmes-series-visual-filmes">
+
+/* =========================================================
+   SÉRIES — IDENTIDADE VISUAL PADRÃO FILMES
+   SOMENTE VISUAL
+   ========================================================= */
+
+#heroSeries{
+    position:relative !important;
+    height:620px !important;
+    min-height:620px !important;
+    overflow:hidden !important;
+    background-color:#050505 !important;
+    background-position:center !important;
+    background-size:cover !important;
+}
+
+#heroSeries::after{
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.96) 0%,
+            rgba(0,0,0,.72) 34%,
+            rgba(0,0,0,.25) 72%,
+            rgba(0,0,0,.08) 100%
+        ),
+        linear-gradient(
+            0deg,
+            #141414 0%,
+            rgba(20,20,20,.78) 14%,
+            transparent 62%
+        ) !important;
+}
+
+.hero-conteudo{
+    left:5% !important;
+    bottom:95px !important;
+    max-width:600px !important;
+}
+
+.hero-tag{
+    color:#e50914 !important;
+    font-size:13px !important;
+    font-weight:800 !important;
+    letter-spacing:2px !important;
+    text-transform:uppercase !important;
+}
+
+#heroTituloSeries{
+    font-size:clamp(38px,5vw,64px) !important;
+    font-weight:900 !important;
+    line-height:1.05 !important;
+    margin:0 0 16px !important;
+}
+
+.hero-meta{
+    gap:16px !important;
+    color:#ddd !important;
+    font-size:14px !important;
+}
+
+#heroSinopseSeries{
+    max-width:570px !important;
+    color:#ddd !important;
+    font-size:16px !important;
+    line-height:1.5 !important;
+}
+
+.hero-botoes{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:10px !important;
+}
+
+.hero-btn{
+    border:0 !important;
+    border-radius:4px !important;
+    padding:12px 20px !important;
+    font-size:15px !important;
+    font-weight:700 !important;
+    transition:transform .18s ease,opacity .18s ease !important;
+}
+
+.hero-btn:hover{
+    transform:translateY(-1px) !important;
+}
+
+.hero-assistir{
+    background:#fff !important;
+    color:#000 !important;
+}
+
+.hero-lista{
+    background:rgba(109,109,110,.78) !important;
+    color:#fff !important;
+}
+
+/* =========================================================
+   ÁREA DO CATÁLOGO
+   ========================================================= */
+
+#conteudo{
+    position:relative !important;
+    z-index:5 !important;
+    padding:0 4% 80px !important;
+    margin-top:-55px !important;
+}
+
+#listaSeries{
+    display:grid !important;
+    grid-template-columns:repeat(auto-fill,minmax(170px,1fr)) !important;
+    gap:18px !important;
+}
+
+/* =========================================================
+   PESQUISA — MESMA IDEIA DA FILMES
+   ========================================================= */
+
+.series-pesquisa{
+    position:relative !important;
+    width:100% !important;
+    height:58px !important;
+    margin:0 0 22px !important;
+    display:flex !important;
+    justify-content:flex-end !important;
+    align-items:center !important;
+    pointer-events:none !important;
+}
+
+.series-pesquisa-topo{
+    width:100% !important;
+    display:flex !important;
+    justify-content:flex-end !important;
+    align-items:center !important;
+    pointer-events:none !important;
+}
+
+.series-search-btn{
+    width:46px !important;
+    height:46px !important;
+    border:0 !important;
+    border-radius:50% !important;
+    background:rgba(0,0,0,.68) !important;
+    color:#fff !important;
+    font-size:27px !important;
+    line-height:1 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    cursor:pointer !important;
+    pointer-events:auto !important;
+    transition:
+        background .18s ease,
+        transform .18s ease !important;
+}
+
+.series-search-btn:hover{
+    background:rgba(229,9,20,.88) !important;
+}
+
+.series-search-btn:active{
+    transform:scale(.94) !important;
+}
+
+.series-pesquisa-box{
+    position:absolute !important;
+    top:58px !important;
+    left:50% !important;
+    width:min(520px,92vw) !important;
+    opacity:0 !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+    transform:translate(-50%,-8px) scale(.98) !important;
+    transition:
+        opacity .18s ease,
+        transform .18s ease,
+        visibility .18s ease !important;
+    z-index:100 !important;
+}
+
+.series-pesquisa-box.aberta{
+    opacity:1 !important;
+    visibility:visible !important;
+    pointer-events:auto !important;
+    transform:translate(-50%,0) scale(1) !important;
+}
+
+#pesquisaSeries{
+    width:100% !important;
+    height:48px !important;
+    padding:0 18px !important;
+    border:1px solid rgba(255,255,255,.25) !important;
+    border-radius:6px !important;
+    outline:none !important;
+    background:rgba(18,18,18,.97) !important;
+    color:#fff !important;
+    font-size:16px !important;
+    text-align:center !important;
+    box-shadow:0 12px 35px rgba(0,0,0,.45) !important;
+}
+
+#pesquisaSeries::placeholder{
+    color:#999 !important;
+    text-align:center !important;
+}
+
+#pesquisaSeries:focus{
+    border-color:rgba(255,255,255,.55) !important;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.card-serie{
+    min-width:0 !important;
+    background:#181818 !important;
+    border-radius:5px !important;
+    overflow:hidden !important;
+    cursor:pointer !important;
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease !important;
+}
+
+.card-serie:hover{
+    transform:scale(1.045) !important;
+    z-index:3 !important;
+    box-shadow:0 12px 30px rgba(0,0,0,.45) !important;
+}
+
+.card-serie img{
+    display:block !important;
+    width:100% !important;
+    aspect-ratio:2/3 !important;
+    object-fit:cover !important;
+    background:#222 !important;
+}
+
+.card-info{
+    padding:10px !important;
+}
+
+.card-info h3{
+    margin:0 0 7px !important;
+    font-size:15px !important;
+    font-weight:700 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+}
+
+.card-info p{
+    margin:0 !important;
+    font-size:13px !important;
+    color:#aaa !important;
+}
+
+.estado-series{
+    grid-column:1/-1 !important;
+    text-align:center !important;
+    padding:40px 10px !important;
+    color:#aaa !important;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:700px){
+
+    #heroSeries{
+        height:560px !important;
+        min-height:560px !important;
+        background-position:center !important;
+    }
+
+    .hero-conteudo{
+        left:20px !important;
+        right:20px !important;
+        bottom:70px !important;
+    }
+
+    #heroTituloSeries{
+        font-size:38px !important;
+    }
+
+    #heroSinopseSeries{
+        font-size:15px !important;
+    }
+
+    #conteudo{
+        padding:
+            0 18px
+            calc(90px + env(safe-area-inset-bottom))
+            !important;
+        margin-top:-45px !important;
+    }
+
+    .series-pesquisa{
+        height:54px !important;
+        margin-bottom:18px !important;
+    }
+
+    .series-search-btn{
+        width:44px !important;
+        height:44px !important;
+    }
+
+    .series-pesquisa-box{
+        top:54px !important;
+        width:min(92vw,500px) !important;
+    }
+
+    #listaSeries{
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:12px !important;
+    }
+
+    .card-info{
+        padding:8px !important;
+    }
+
+    .card-info h3{
+        font-size:14px !important;
+    }
+
+    .card-info p{
+        font-size:12px !important;
+    }
+
+}
+
+</style>
+
+<style id="lukafilmes-series-visual-FINAL">
+/* =========================================================
+   LUKAFILMES — SÉRIES
+   VISUAL FINAL IGUAL AO PADRÃO DA PÁGINA FILMES
+   ========================================================= */
+
+/* ===== BASE ===== */
+
+html,
+body{
+    background:#050505 !important;
+    color:#fff !important;
+}
+
+/* ===== TOPO ===== */
+
+.topo{
+    position:absolute !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:70px !important;
+    padding:0 4% !important;
+    z-index:9000 !important;
+    background:linear-gradient(
+        180deg,
+        rgba(5,5,5,.96) 0%,
+        rgba(5,5,5,.78) 45%,
+        transparent 100%
+    ) !important;
+}
+
+.logo{
+    font-size:28px !important;
+    font-weight:900 !important;
+    color:#fff !important;
+}
+
+.logo span{
+    color:#e50914 !important;
+}
+
+/* =========================================================
+   HERO — MESMA IDENTIDADE DOS FILMES
+   ========================================================= */
+
+#heroSeries{
+    position:relative !important;
+    height:620px !important;
+    min-height:620px !important;
+    overflow:hidden !important;
+    background-color:#050505 !important;
+    background-position:center !important;
+    background-size:cover !important;
+    background-repeat:no-repeat !important;
+}
+
+#heroSeries::before{
+    content:"" !important;
+    position:absolute !important;
+    inset:0 !important;
+    z-index:1 !important;
+    pointer-events:none !important;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(5,5,5,.98) 0%,
+            rgba(5,5,5,.88) 28%,
+            rgba(5,5,5,.48) 58%,
+            rgba(5,5,5,.12) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(5,5,5,.72) 0%,
+            transparent 35%,
+            rgba(229,9,20,.12) 100%
+        ) !important;
+}
+
+#heroSeries::after{
+    content:"" !important;
+    position:absolute !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    height:250px !important;
+    z-index:1 !important;
+    pointer-events:none !important;
+    background:
+        linear-gradient(
+            0deg,
+            #050505 0%,
+            rgba(5,5,5,.92) 18%,
+            rgba(5,5,5,.38) 65%,
+            transparent 100%
+        ) !important;
+}
+
+.hero-conteudo{
+    position:absolute !important;
+    left:5% !important;
+    bottom:85px !important;
+    max-width:620px !important;
+    z-index:5 !important;
+}
+
+.hero-tag{
+    margin:0 0 13px !important;
+    color:#e50914 !important;
+    font-size:11px !important;
+    font-weight:800 !important;
+    letter-spacing:3px !important;
+    text-transform:uppercase !important;
+}
+
+#heroTituloSeries{
+    margin:0 0 16px !important;
+    max-width:900px !important;
+    font-size:clamp(45px,7vw,78px) !important;
+    line-height:.95 !important;
+    letter-spacing:-4px !important;
+    font-weight:900 !important;
+}
+
+.hero-meta{
+    display:flex !important;
+    align-items:center !important;
+    gap:16px !important;
+    margin:0 0 15px !important;
+    color:#ddd !important;
+}
+
+#heroSinopseSeries{
+    max-width:620px !important;
+    margin:0 0 24px !important;
+    color:rgba(255,255,255,.68) !important;
+    font-size:16px !important;
+    line-height:1.65 !important;
+}
+
+.hero-botoes{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:10px !important;
+}
+
+.hero-btn{
+    border:0 !important;
+    border-radius:9px !important;
+    padding:12px 20px !important;
+    font-size:14px !important;
+    font-weight:800 !important;
+    cursor:pointer !important;
+    transition:transform .2s ease,opacity .2s ease !important;
+}
+
+.hero-btn:hover{
+    transform:translateY(-2px) !important;
+}
+
+.hero-assistir{
+    background:#fff !important;
+    color:#000 !important;
+}
+
+.hero-lista{
+    background:rgba(255,255,255,.14) !important;
+    color:#fff !important;
+    border:1px solid rgba(255,255,255,.12) !important;
+}
+
+/* =========================================================
+   ÁREA DO CATÁLOGO
+   ========================================================= */
+
+#conteudo{
+    position:relative !important;
+    z-index:10 !important;
+    padding:5px 4% 100px !important;
+    margin-top:-55px !important;
+}
+
+/* =========================================================
+   LUPA — EXATAMENTE NO ALTO DIREITO
+   ========================================================= */
+
+.series-pesquisa{
+    position:relative !important;
+    width:100% !important;
+    height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    z-index:99999 !important;
+}
+
+.series-pesquisa-topo{
+    position:fixed !important;
+    top:24px !important;
+    right:18px !important;
+    z-index:2147483000 !important;
+    width:38px !important;
+    height:38px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+}
+
+.series-search-btn{
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    position:relative !important;
+    z-index:2147483001 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    width:38px !important;
+    height:38px !important;
+    padding:0 !important;
+    margin:0 !important;
+
+    border:0 !important;
+    outline:0 !important;
+    border-radius:50% !important;
+
+    background:transparent !important;
+    color:#fff !important;
+
+    cursor:pointer !important;
+    font-family:Arial,Helvetica,sans-serif !important;
+    font-size:27px !important;
+    font-weight:400 !important;
+    line-height:38px !important;
+
+    opacity:.94 !important;
+
+    visibility:visible !important;
+    pointer-events:auto !important;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease !important;
+}
+
+.series-search-btn:hover{
+    opacity:1 !important;
+    transform:scale(1.08) !important;
+}
+
+.series-search-btn:active{
+    transform:scale(.94) !important;
+}
+
+/* ===== CAIXA DA PESQUISA ===== */
+
+.series-pesquisa-box{
+    position:fixed !important;
+
+    top:50% !important;
+    left:50% !important;
+    right:auto !important;
+
+    width:min(440px,calc(100vw - 40px)) !important;
+    max-width:none !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    opacity:0 !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+
+    transform:translate(-50%,-50%) scale(.98) !important;
+
+    z-index:2147482000 !important;
+
+    transition:
+        opacity .18s ease,
+        visibility .18s ease,
+        transform .18s ease !important;
+}
+
+.series-pesquisa-box.aberta{
+    opacity:1 !important;
+    visibility:visible !important;
+    pointer-events:auto !important;
+
+    transform:translate(-50%,-50%) scale(1) !important;
+}
+
+#pesquisaSeries{
+    display:block !important;
+    width:100% !important;
+    height:44px !important;
+
+    box-sizing:border-box !important;
+
+    padding:0 15px !important;
+
+    border:1px solid rgba(255,255,255,.13) !important;
+    border-radius:9px !important;
+
+    outline:none !important;
+
+    background:rgba(12,12,12,.97) !important;
+    color:#fff !important;
+
+    font-size:14px !important;
+    font-weight:400 !important;
+
+    text-align:center !important;
+
+    box-shadow:
+        0 14px 35px rgba(0,0,0,.55),
+        inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+#pesquisaSeries::placeholder{
+    color:rgba(255,255,255,.42) !important;
+    text-align:center !important;
+}
+
+#pesquisaSeries:focus{
+    border-color:rgba(229,9,20,.58) !important;
+    background:#111 !important;
+
+    box-shadow:
+        0 14px 38px rgba(0,0,0,.62),
+        0 0 0 1px rgba(229,9,20,.08) !important;
+}
+
+/* =========================================================
+   GRADE — MESMO PADRÃO DOS FILMES
+   ========================================================= */
+
+#listaSeries{
+    display:grid !important;
+    grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+    gap:20px 14px !important;
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+}
+
+.card-serie{
+    min-width:0 !important;
+    cursor:pointer !important;
+    background:transparent !important;
+    border-radius:0 !important;
+    overflow:visible !important;
+    transition:none !important;
+}
+
+.card-serie:hover{
+    transform:none !important;
+    z-index:3 !important;
+}
+
+.card-serie img{
+    display:block !important;
+    width:100% !important;
+    aspect-ratio:2 / 3 !important;
+    height:auto !important;
+    object-fit:cover !important;
+
+    border-radius:10px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.08),
+            rgba(255,255,255,.02)
+        ) !important;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.28) !important;
+
+    transition:
+        transform .25s ease,
+        box-shadow .2s ease !important;
+}
+
+.card-serie:hover img{
+    transform:translateY(-4px) scale(1.01) !important;
+    box-shadow:0 14px 35px rgba(0,0,0,.48) !important;
+}
+
+.card-info{
+    padding:0 !important;
+}
+
+.card-info h3{
+    margin:9px 0 0 !important;
+
+    font-size:13px !important;
+    line-height:1.3 !important;
+    font-weight:700 !important;
+
+    color:#fff !important;
+
+    display:-webkit-box !important;
+    -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+
+    white-space:normal !important;
+}
+
+.card-info p{
+    margin:4px 0 0 !important;
+
+    color:rgba(255,255,255,.48) !important;
+    font-size:11px !important;
+}
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media(max-width:1100px){
+    #listaSeries{
+        grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    }
+}
+
+@media(max-width:850px){
+    #listaSeries{
+        grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+        gap:18px 11px !important;
+    }
+}
+
+@media(max-width:600px){
+
+    .topo{
+        height:64px !important;
+        padding:0 14px !important;
+    }
+
+    .logo{
+        font-size:24px !important;
+    }
+
+    #heroSeries{
+        height:560px !important;
+        min-height:560px !important;
+        background-position:center !important;
+    }
+
+    .hero-conteudo{
+        left:20px !important;
+        right:20px !important;
+        bottom:55px !important;
+    }
+
+    #heroTituloSeries{
+        font-size:clamp(40px,13vw,62px) !important;
+        letter-spacing:-3px !important;
+    }
+
+    #heroSinopseSeries{
+        font-size:14px !important;
+        line-height:1.55 !important;
+    }
+
+    #conteudo{
+        padding-left:14px !important;
+        padding-right:14px !important;
+        padding-bottom:100px !important;
+        margin-top:-35px !important;
+    }
+
+    /* TRÊS CARDS, IGUAL FILMES */
+
+    #listaSeries{
+        grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+        gap:18px 9px !important;
+    }
+
+    .card-info h3{
+        font-size:12px !important;
+    }
+
+    .card-info p{
+        font-size:10px !important;
+    }
+
+    /* LUPA NO MESMO PADRÃO DO FILMES */
+
+    .series-pesquisa-topo{
+        top:16px !important;
+        right:12px !important;
+        width:36px !important;
+        height:36px !important;
+    }
+
+    .series-search-btn{
+        width:36px !important;
+        height:36px !important;
+        font-size:26px !important;
+    }
+
+    .series-pesquisa-box{
+        top:72px !important;
+        left:50% !important;
+        width:calc(100vw - 40px) !important;
+        transform:translate(-50%,-8px) scale(.98) !important;
+    }
+
+    .series-pesquisa-box.aberta{
+        transform:translate(-50%,0) scale(1) !important;
+    }
+
+    #pesquisaSeries{
+        height:42px !important;
+        border-radius:8px !important;
+        font-size:15px !important;
+    }
+}
+
+@media(max-width:390px){
+    #listaSeries{
+        grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+        gap:16px 8px !important;
+    }
+}
+
+/* Remove qualquer decoração antiga da caixa */
+
+.series-pesquisa-box::before,
+.series-pesquisa-box::after{
+    display:none !important;
+    content:none !important;
+}
+
+</style>
+
+<script id="lukafilmes-series-search-FINAL">
+(function(){
+
+    function inicializarPesquisaSeries(){
+
+        const box =
+            document.getElementById("seriesPesquisaBox");
+
+        const btn =
+            document.getElementById("seriesSearchBtn");
+
+        const input =
+            document.getElementById("pesquisaSeries");
+
+        if(!box || !btn || !input){
+            return;
+        }
+
+        window.togglePesquisaSeries = function(){
+
+            const aberta =
+                box.classList.toggle("aberta");
+
+            btn.setAttribute(
+                "aria-expanded",
+                aberta ? "true" : "false"
+            );
+
+            if(aberta){
+
+                setTimeout(function(){
+                    input.focus();
+                },80);
+
+            }else{
+
+                input.blur();
+
+            }
+        };
+
+        document.addEventListener(
+            "keydown",
+            function(event){
+
+                if(
+                    event.key === "Escape" &&
+                    box.classList.contains("aberta")
+                ){
+
+                    box.classList.remove("aberta");
+
+                    btn.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+                    input.blur();
+                }
+
+            }
+        );
+
+        document.addEventListener(
+            "click",
+            function(event){
+
+                if(
+                    !box.classList.contains("aberta")
+                ){
+                    return;
+                }
+
+                if(
+                    event.target === btn ||
+                    btn.contains(event.target) ||
+                    box.contains(event.target)
+                ){
+                    return;
+                }
+
+                box.classList.remove("aberta");
+
+                btn.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+            }
+        );
+
+        console.log(
+            "[LUKAFILMES] Pesquisa de séries visual inicializada."
+        );
+    }
+
+    if(document.readyState === "loading"){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            inicializarPesquisaSeries,
+            {once:true}
+        );
+
+    }else{
+
+        inicializarPesquisaSeries();
+
+    }
+
+})();
+</script>
+
+
+<style id="lukafilmes-series-sombra-suave">
+#heroSeries::before{
+    background:
+        linear-gradient(
+            90deg,
+            rgba(5,5,5,.55) 0%,
+            rgba(5,5,5,.28) 32%,
+            rgba(5,5,5,.08) 68%,
+            transparent 100%
+        ) !important;
+}
+</style>
+
+
+<style id="lukafilmes-series-remover-sombra-hero">
+#heroSeries::before,
+#heroSeries::after{
+    display:none !important;
+    background:none !important;
+    box-shadow:none !important;
+}
+</style>
+
+
+<style id="lukafilmes-series-lupa-original-final">
+
+/* =========================================================
+   LUKAFILMES ORIGINAL — HERO DE SÉRIES
+   ========================================================= */
+
+#heroSeries .hero-tag{
+    font-size:0 !important;
+}
+
+#heroSeries .hero-tag::before{
+    content:"LUKAFILMES ORIGINAL" !important;
+    color:#e50914 !important;
+    font-size:11px !important;
+    font-weight:800 !important;
+    letter-spacing:3px !important;
+    text-transform:uppercase !important;
+}
+
+
+/* =========================================================
+   LUPA — FICA ACIMA DO HERO E DO HEADER
+   ========================================================= */
+
+body > .series-pesquisa{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    width:100% !important;
+    height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    z-index:2147483647 !important;
+    pointer-events:none !important;
+}
+
+body > .series-pesquisa .series-pesquisa-topo{
+    position:fixed !important;
+    top:24px !important;
+    right:18px !important;
+    width:38px !important;
+    height:38px !important;
+    z-index:2147483647 !important;
+    pointer-events:auto !important;
+}
+
+body > .series-pesquisa .series-search-btn{
+    position:relative !important;
+    z-index:2147483647 !important;
+    pointer-events:auto !important;
+    cursor:pointer !important;
+}
+
+
+/* Caixa da pesquisa continua clicável */
+
+body > .series-pesquisa .series-pesquisa-box{
+    z-index:2147483646 !important;
+    pointer-events:none !important;
+}
+
+body > .series-pesquisa .series-pesquisa-box.aberta{
+    pointer-events:auto !important;
+}
+
+
+@media(max-width:600px){
+
+    body > .series-pesquisa .series-pesquisa-topo{
+        top:16px !important;
+        right:12px !important;
+        width:36px !important;
+        height:36px !important;
+    }
+
+}
+
+</style>
+
+<script id="lukafilmes-series-lupa-original-final-script">
+(function(){
+
+    function corrigirLupaSeries(){
+
+        const pesquisa =
+            document.querySelector(".series-pesquisa");
+
+        if(!pesquisa){
+            return;
+        }
+
+        /*
+         * Retira a pesquisa de dentro do #conteudo.
+         * Assim ela não fica atrás do Hero/header.
+         */
+        if(pesquisa.parentElement !== document.body){
+            document.body.appendChild(pesquisa);
+        }
+
+        /*
+         * Garante que o texto fique exatamente igual ao Filmes.
+         */
+        const tag =
+            document.querySelector("#heroSeries .hero-tag");
+
+        if(tag){
+            tag.textContent = "LUKAFILMES ORIGINAL";
+        }
+
+        console.log(
+            "[LUKAFILMES] Lupa de Séries corrigida."
+        );
+    }
+
+    if(document.readyState === "loading"){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            corrigirLupaSeries,
+            {once:true}
+        );
+
+    }else{
+
+        corrigirLupaSeries();
+
+    }
+
+    /*
+     * O Hero é carregado dinamicamente.
+     * Reaplica somente o texto quando necessário.
+     */
+    const observador =
+        new MutationObserver(function(){
+
+            const tag =
+                document.querySelector("#heroSeries .hero-tag");
+
+            if(tag && tag.textContent.trim() !== "LUKAFILMES ORIGINAL"){
+                tag.textContent = "LUKAFILMES ORIGINAL";
+            }
+
+        });
+
+    observador.observe(
+        document.documentElement,
+        {
+            childList:true,
+            subtree:true
+        }
+    );
+
+})();
+
+</script>
+
+
+<style id="lukafilmes-series-lupa-scroll-final">
+body > .series-pesquisa{
+    transition:opacity .2s ease, visibility .2s ease !important;
+}
+
+body > .series-pesquisa.lupa-escondida{
+    opacity:0 !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+}
+
+body > .series-pesquisa.lupa-escondida .series-pesquisa-box.aberta{
+    opacity:0 !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+}
+</style>
+
+<script id="lukafilmes-series-lupa-scroll-final-script">
+(function(){
+
+    function configurarLupaScroll(){
+
+        const pesquisa =
+            document.querySelector("body > .series-pesquisa");
+
+        if(!pesquisa) return;
+
+        function atualizar(){
+
+            if(window.scrollY > 20){
+
+                pesquisa.classList.add("lupa-escondida");
+
+            }else{
+
+                pesquisa.classList.remove("lupa-escondida");
+
+            }
+
+        }
+
+        window.addEventListener(
+            "scroll",
+            atualizar,
+            {passive:true}
+        );
+
+        atualizar();
+    }
+
+    if(document.readyState === "loading"){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            configurarLupaScroll,
+            {once:true}
+        );
+
+    }else{
+
+        configurarLupaScroll();
+
+    }
+
+})();
+</script>
+
+
+<style id="lukafilmes-series-nav-pc-final">
+
+@media(min-width:701px){
+
+    #lukafilmesSeriesNavPC{
+        position:fixed !important;
+
+        top:24px !important;
+        right:72px !important;
+        left:auto !important;
+
+        transform:none !important;
+
+        display:flex !important;
+        align-items:center !important;
+        gap:24px !important;
+
+        height:38px !important;
+
+        z-index:2147483645 !important;
+    }
+
+    #lukafilmesSeriesNavPC a{
+        color:rgba(255,255,255,.78) !important;
+        text-decoration:none !important;
+
+        font-size:14px !important;
+        font-weight:700 !important;
+
+        white-space:nowrap !important;
+
+        transition:
+            color .2s ease,
+            opacity .2s ease !important;
+    }
+
+    #lukafilmesSeriesNavPC a:hover{
+        color:#fff !important;
+    }
+
+    #lukafilmesSeriesNavPC a.ativo{
+        color:#fff !important;
+    }
+
+    #lukafilmesSeriesNavPC a.ativo::after{
+        display:none !important;
+    }
+
+    /* Esconde Séries porque já estamos na página Séries */
+    #lukafilmesSeriesNavPC a[data-nav="series"]{
+        display:none !important;
+    }
+
+}
+
+@media(max-width:700px){
+
+    #lukafilmesSeriesNavPC{
+        display:none !important;
+    }
+
+}
+
+</style>
+
+<script id="lukafilmes-series-nav-pc-final-script">
+(function(){
+
+    function corrigirNavSeries(){
+
+        const nav =
+            document.getElementById("lukafilmesSeriesNavPC");
+
+        if(!nav) return;
+
+        const series =
+            nav.querySelector('[data-nav="series"]');
+
+        if(series){
+            series.remove();
+        }
+
+    }
+
+    if(document.readyState === "loading"){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            corrigirNavSeries,
+            {once:true}
+        );
+
+    }else{
+
+        corrigirNavSeries();
+
+    }
+
+})();
+</script>
+
+
+<style id="lukafilmes-series-nav-pc-tv-final">
+
+/* =========================================================
+   SÉRIES — NAVEGAÇÃO COMPUTADOR + TV
+   ========================================================= */
+
+@media(min-width:701px){
+
+    #lukafilmesSeriesNavPC{
+        position:fixed !important;
+
+        top:24px !important;
+        right:70px !important;
+        left:auto !important;
+
+        width:auto !important;
+        height:38px !important;
+
+        display:flex !important;
+        align-items:center !important;
+        justify-content:flex-end !important;
+
+        gap:26px !important;
+
+        margin:0 !important;
+        padding:0 !important;
+
+        transform:none !important;
+
+        z-index:2147483646 !important;
+
+        visibility:visible !important;
+        opacity:1 !important;
+    }
+
+    #lukafilmesSeriesNavPC a{
+        display:block !important;
+
+        color:rgba(255,255,255,.82) !important;
+        background:transparent !important;
+
+        text-decoration:none !important;
+        white-space:nowrap !important;
+
+        font-family:Arial,Helvetica,sans-serif !important;
+        font-size:14px !important;
+        font-weight:700 !important;
+        line-height:38px !important;
+
+        padding:0 !important;
+        margin:0 !important;
+
+        cursor:pointer !important;
+
+        transition:
+            color .2s ease,
+            opacity .2s ease !important;
+    }
+
+    #lukafilmesSeriesNavPC a:hover{
+        color:#fff !important;
+        opacity:1 !important;
+    }
+
+    #lukafilmesSeriesNavPC a[data-nav="series"]{
+        display:none !important;
+    }
+
+    #lukafilmesSeriesNavPC a.ativo::after{
+        display:none !important;
+        content:none !important;
+    }
+
+}
+
+
+/* =========================================================
+   TV / TELAS GRANDES
+   ========================================================= */
+
+@media(min-width:1400px){
+
+    #lukafilmesSeriesNavPC{
+        top:28px !important;
+        right:92px !important;
+        height:42px !important;
+        gap:32px !important;
+    }
+
+    #lukafilmesSeriesNavPC a{
+        font-size:16px !important;
+        line-height:42px !important;
+    }
+
+}
+
+
+/* =========================================================
+   CELULAR — NÃO ALTERAR A NAVEGAÇÃO INFERIOR
+   ========================================================= */
+
+@media(max-width:700px){
+
+    #lukafilmesSeriesNavPC{
+        display:none !important;
+    }
+
+}
+
+</style>
+
+<script id="lukafilmes-series-nav-pc-tv-final-script">
+(function(){
+
+    function garantirNavegacao(){
+
+        const nav =
+            document.getElementById("lukafilmesSeriesNavPC");
+
+        if(!nav) return;
+
+        const series =
+            nav.querySelector('[data-nav="series"]');
+
+        if(series){
+            series.remove();
+        }
+
+        nav.style.display = "";
+
+    }
+
+    if(document.readyState === "loading"){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            garantirNavegacao,
+            {once:true}
+        );
+
+    }else{
+
+        garantirNavegacao();
+
+    }
+
+})();
+</script>
+
+
+<!-- LUKAFILMES - NAVEGAÇÃO CONTEXTUAL DESKTOP/TV -->
+<style>
+@media (min-width:701px){
+
+    /* Remove as navegações antigas desta página */
+    #lukafilmesSeriesNavPC,
+    #lukafilmesSeriesNavDesktop{
+        display:none !important;
+    }
+
+    #lukafilmesNavContextualSeries{
+        position:fixed !important;
+        top:24px !important;
+        right:70px !important;
+        z-index:2147483647 !important;
+
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+
+        min-width:88px !important;
+        height:38px !important;
+        padding:0 14px !important;
+
+        border:1px solid rgba(255,255,255,.22) !important;
+        border-radius:8px !important;
+
+        background:rgba(10,10,10,.82) !important;
+        color:#fff !important;
+
+        font-family:Arial,sans-serif !important;
+        font-size:14px !important;
+        font-weight:700 !important;
+        text-decoration:none !important;
+
+        backdrop-filter:blur(8px) !important;
+        -webkit-backdrop-filter:blur(8px) !important;
+
+        box-shadow:0 4px 18px rgba(0,0,0,.35) !important;
+
+        transition:
+            background .2s ease,
+            border-color .2s ease,
+            transform .2s ease !important;
+    }
+
+    #lukafilmesNavContextualSeries:hover{
+        background:#e50914 !important;
+        border-color:#e50914 !important;
+        transform:translateY(-1px) !important;
+    }
+}
+
+@media (max-width:700px){
+    #lukafilmesNavContextualSeries{
+        display:none !important;
+    }
+}
+</style>
+
+<script>
+(function(){
+
+    function criarBotaoContextualSeries(){
+
+        if(window.innerWidth <= 700){
+            return;
+        }
+
+        var antigo =
+            document.getElementById("lukafilmesNavContextualSeries");
+
+        if(antigo){
+            return;
+        }
+
+        var botao = document.createElement("a");
+
+        botao.id = "lukafilmesNavContextualSeries";
+        botao.href = "/";
+        botao.textContent = "← Início";
+        botao.setAttribute(
+            "aria-label",
+            "Voltar para Início"
+        );
+
+        document.body.appendChild(botao);
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener(
+            "DOMContentLoaded",
+            criarBotaoContextualSeries
+        );
+    }else{
+        criarBotaoContextualSeries();
+    }
+
+})();
+</script>
+
+<!-- LUKAFILMES - NAVEGAÇÃO FINAL DA PÁGINA DE SÉRIES -->
+<style id="lukafilmes-nav-series-final">
+
+@media (min-width:701px){
+
+    /* Remove todas as navegações desktop antigas */
+    #lukafilmesSeriesNavPC,
+    #lukafilmesSeriesNavDesktop,
+    #lukafilmesNavContextualSeries{
+        display:none !important;
+        visibility:hidden !important;
+        opacity:0 !important;
+        pointer-events:none !important;
+    }
+
+    /* Esconde somente o logo original no desktop/TV */
+    header.topo > .logo{
+        display:none !important;
+    }
+
+    /* Botão que ocupa o lugar do logo */
+    #lukafilmesVoltarInicioSeries{
+        position:absolute !important;
+        top:0 !important;
+        left:4% !important;
+
+        height:70px !important;
+
+        display:flex !important;
+        align-items:center !important;
+
+        color:#fff !important;
+        text-decoration:none !important;
+
+        font-family:Arial,Helvetica,sans-serif !important;
+        font-size:16px !important;
+        font-weight:700 !important;
+
+        white-space:nowrap !important;
+
+        z-index:2147483647 !important;
+
+        transition:
+            color .2s ease,
+            opacity .2s ease !important;
+    }
+
+    #lukafilmesVoltarInicioSeries:hover{
+        color:#e50914 !important;
+    }
+}
+
+@media (max-width:700px){
+
+    /* CELULAR: não altera o cabeçalho */
+    #lukafilmesVoltarInicioSeries{
+        display:none !important;
+    }
+
+}
+
+</style>
+
+<script id="lukafilmes-nav-series-final-script">
+(function(){
+
+    function aplicarNavegacaoSeries(){
+
+        if(window.innerWidth <= 700){
+            return;
+        }
+
+        /* Remove qualquer botão contextual antigo */
+        var antigos = [
+            "lukafilmesNavContextualSeries",
+            "lukafilmesSeriesNavDesktop"
+        ];
+
+        antigos.forEach(function(id){
+            var elemento = document.getElementById(id);
+            if(elemento){
+                elemento.remove();
+            }
+        });
+
+        /* Remove a navegação desktop antiga */
+        var navAntiga =
+            document.getElementById("lukafilmesSeriesNavPC");
+
+        if(navAntiga){
+            navAntiga.style.display = "none";
+            navAntiga.style.visibility = "hidden";
+            navAntiga.style.pointerEvents = "none";
+        }
+
+        /* Se já existe, não duplica */
+        if(document.getElementById("lukafilmesVoltarInicioSeries")){
+            return;
+        }
+
+        var header =
+            document.querySelector("header.topo");
+
+        if(!header){
+            return;
+        }
+
+        var botao =
+            document.createElement("a");
+
+        botao.id =
+            "lukafilmesVoltarInicioSeries";
+
+        botao.href = "/";
+
+        botao.textContent =
+            "← Voltar para o início";
+
+        botao.setAttribute(
+            "aria-label",
+            "Voltar para o início"
+        );
+
+        header.appendChild(botao);
+    }
+
+    if(document.readyState === "loading"){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            aplicarNavegacaoSeries,
+            {once:true}
+        );
+
+    }else{
+
+        aplicarNavegacaoSeries();
+
+    }
+
+})();
+</script>
+
+<!-- LUKAFILMES - ESTILO FINAL BOTÃO VOLTAR PARA INÍCIO -->
+<style id="lukafilmes-botao-inicio-final">
+
+@media (min-width:701px){
+
+    #lukafilmesVoltarInicioSeries{
+        position:absolute !important;
+        top:16px !important;
+        left:4% !important;
+
+        height:38px !important;
+        min-width:145px !important;
+        padding:0 14px !important;
+
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+
+        background:rgba(10,10,10,.82) !important;
+        border:1px solid rgba(255,255,255,.22) !important;
+        border-radius:8px !important;
+
+        color:#fff !important;
+        text-decoration:none !important;
+
+        font-family:Arial,Helvetica,sans-serif !important;
+        font-size:14px !important;
+        font-weight:700 !important;
+
+        box-shadow:0 4px 18px rgba(0,0,0,.35) !important;
+
+        backdrop-filter:blur(8px) !important;
+        -webkit-backdrop-filter:blur(8px) !important;
+
+        z-index:2147483647 !important;
+
+        transition:
+            background .2s ease,
+            border-color .2s ease !important;
+    }
+
+    #lukafilmesVoltarInicioSeries:hover{
+        background:rgba(25,25,25,.95) !important;
+        border-color:rgba(255,255,255,.38) !important;
+        color:#fff !important;
+    }
+
+}
+
+@media (max-width:700px){
+
+    #lukafilmesVoltarInicioSeries{
+        display:none !important;
+    }
+
+}
+
+</style>
+
+<script>
+(function(){
+
+    function corrigirTextoBotao(){
+
+        var botao =
+            document.getElementById(
+                "lukafilmesVoltarInicioSeries"
+            );
+
+        if(!botao) return;
+
+        botao.textContent =
+            "Voltar para o início";
+
+        botao.href = "/";
+
+    }
+
+    if(document.readyState === "loading"){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            corrigirTextoBotao,
+            {once:true}
+        );
+
+    }else{
+
+        corrigirTextoBotao();
+
+    }
+
+})();
+</script>
