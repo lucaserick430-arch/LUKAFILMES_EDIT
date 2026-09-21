@@ -741,11 +741,12 @@ app.post("/api/cadastro", async (req, res) => {
         const usuario = String(req.body.usuario || "").trim();
         const senha = String(req.body.senha || "");
         const telefone = String(req.body.telefone || "").trim();
+        const telefoneNumeros = telefone.replace(/\D/g, "");
 
         if (!nome || !usuario || !senha || !telefone) {
             return res.status(400).json({
                 sucesso: false,
-                mensagem: "Preencha nome, usuário, senha e telefone."
+                mensagem: "Preencha nome, usuário, senha e número do WhatsApp."
             });
         }
 
@@ -760,6 +761,13 @@ app.post("/api/cadastro", async (req, res) => {
             return res.status(400).json({
                 sucesso: false,
                 mensagem: "O usuário precisa ter pelo menos 3 caracteres."
+            });
+        }
+
+        if (telefoneNumeros.length < 10 || telefoneNumeros.length > 13) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Digite um número de WhatsApp válido."
             });
         }
 
@@ -1063,6 +1071,7 @@ function lukaCookieTesteAtivo(req) {
         );
     });
 }
+
 
 function lukaUsuarioOperacional(req) {
     if (
@@ -2178,6 +2187,9 @@ app.get("/api/admin/presenca", async (req, res) => {
             return {
                 id: u.id,
                 usuario: u.usuario,
+                nome: u.nome || "",
+                telefone: u.telefone || u.whatsapp || "",
+                whatsapp: u.whatsapp || u.telefone || "",
                 tipo: u.tipo || "usuario",
                 status: u.status,
                 validade: u.validade || null,

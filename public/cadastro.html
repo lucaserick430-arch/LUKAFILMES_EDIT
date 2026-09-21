@@ -195,6 +195,27 @@ button {
     pointer-events: none;
 }
 </style>
+
+<style id="luka-whatsapp-cadastro">
+.whatsapp-ajuda{
+    display:block;
+    margin-top:8px;
+    font-size:12px;
+    line-height:1.45;
+    opacity:.78;
+}
+
+#telefone{
+    border-color:rgba(37,211,102,.45);
+    box-shadow:0 0 0 1px rgba(37,211,102,.08);
+}
+
+#telefone:focus{
+    border-color:#25d366;
+    box-shadow:0 0 0 3px rgba(37,211,102,.14);
+}
+</style>
+
 </head>
 
 <body>
@@ -243,12 +264,20 @@ button {
         </div>
 
         <div class="campo">
-            <label for="telefone">WhatsApp / telefone</label>
+            <label for="telefone">Número do WhatsApp</label>
             <input
                 id="telefone"
                 type="tel"
                 autocomplete="tel"
-                placeholder="(11) 99999-9999">
+                inputmode="tel"
+                maxlength="15"
+                placeholder="(11) 99999-9999"
+                required
+                aria-required="true">
+            <small class="whatsapp-ajuda">
+                Informe um número que você realmente usa no WhatsApp.
+                Usaremos este contato para ajudar com seu acesso e pagamento.
+            </small>
         </div>
 
         <button
@@ -276,7 +305,7 @@ button {
         </div>
 
         <div class="dado">
-            <small>WhatsApp / telefone</small>
+            <small>WhatsApp</small>
             <strong id="telefoneCriado"></strong>
         </div>
 
@@ -324,6 +353,63 @@ const senhaInput =
 const telefoneInput =
     document.getElementById("telefone");
 
+function formatarWhatsApp(valor) {
+    let numeros = String(valor || "").replace(/\D/g, "");
+
+    if (numeros.length > 11) {
+        numeros = numeros.slice(0, 11);
+    }
+
+    if (numeros.length <= 10) {
+        return numeros
+            .replace(/^(\d{2})(\d)/, "($1) $2")
+            .replace(/(\d{4})(\d)/, "$1-$2");
+    }
+
+    return numeros
+        .replace(/^(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{5})(\d)/, "$1-$2");
+}
+
+telefoneInput.addEventListener("input", () => {
+    telefoneInput.value = formatarWhatsApp(telefoneInput.value);
+});
+
+function validarWhatsAppObrigatorio(){
+
+    const numero =
+        String(telefoneInput.value || "")
+            .replace(/\D/g, "");
+
+    if(!numero){
+
+        telefoneInput.focus();
+
+        mensagem.textContent =
+            "Digite seu número do WhatsApp para continuar.";
+
+        mensagem.className =
+            "mensagem erro";
+
+        return false;
+    }
+
+    if(numero.length < 10 || numero.length > 11){
+
+        telefoneInput.focus();
+
+        mensagem.textContent =
+            "Digite um número de WhatsApp válido com DDD.";
+
+        mensagem.className =
+            "mensagem erro";
+
+        return false;
+    }
+
+    return true;
+}
+
 const btnCriar =
     document.getElementById("btnCriar");
 
@@ -345,6 +431,11 @@ function mostrarMensagem(texto, erro = false) {
 
 btnCriar.addEventListener("click", async () => {
 
+    if(!validarWhatsAppObrigatorio()){
+        return;
+    }
+
+
     const nome =
         nomeInput.value.trim();
 
@@ -357,11 +448,23 @@ btnCriar.addEventListener("click", async () => {
     const telefone =
         telefoneInput.value.trim();
 
+    const telefoneNumeros =
+        telefone.replace(/\D/g, "");
+
     if (!nome || !usuario || !senha || !telefone) {
         mostrarMensagem(
             "Preencha todos os campos.",
             true
         );
+        return;
+    }
+
+    if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
+        mostrarMensagem(
+            "Digite um número de WhatsApp válido.",
+            true
+        );
+        telefoneInput.focus();
         return;
     }
 

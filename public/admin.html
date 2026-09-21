@@ -1664,6 +1664,174 @@ main,
 }
 
 </style>
+
+<style id="luka-whatsapp-admin">
+.cliente-nome{
+    display:block;
+    margin-top:3px;
+    font-size:11px;
+    opacity:.65;
+}
+
+.wa-cliente-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    border:1px solid rgba(37,211,102,.35);
+    background:rgba(37,211,102,.09);
+    color:inherit;
+    border-radius:10px;
+    padding:7px 10px;
+    cursor:pointer;
+    font-weight:700;
+    transition:.2s ease;
+}
+
+.wa-cliente-btn:hover{
+    transform:translateY(-1px);
+    background:rgba(37,211,102,.16);
+    border-color:rgba(37,211,102,.7);
+}
+
+.wa-dot,
+.wa-icon,
+.wa-icon-grande{
+    color:#25d366;
+}
+
+.wa-sem{
+    opacity:.5;
+    font-size:12px;
+}
+
+.luka-conta-whatsapp{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    margin:18px 0;
+}
+
+.wa-principal,
+.wa-pagamento{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    border-radius:14px;
+    padding:13px 15px;
+    cursor:pointer;
+    text-align:left;
+    transition:.2s ease;
+}
+
+.wa-principal{
+    background:linear-gradient(135deg,rgba(37,211,102,.18),rgba(37,211,102,.07));
+    border:1px solid rgba(37,211,102,.45);
+}
+
+.wa-pagamento{
+    background:linear-gradient(135deg,rgba(255,193,7,.16),rgba(255,193,7,.06));
+    border:1px solid rgba(255,193,7,.35);
+}
+
+.wa-principal:hover,
+.wa-pagamento:hover{
+    transform:translateY(-2px);
+}
+
+.wa-principal strong,
+.wa-pagamento strong{
+    display:block;
+    font-size:12px;
+}
+
+.wa-principal small,
+.wa-pagamento small{
+    display:block;
+    margin-top:3px;
+    opacity:.7;
+    font-size:10px;
+}
+
+.wa-detalhe-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border:0;
+    background:rgba(37,211,102,.1);
+    color:inherit;
+    border-radius:9px;
+    padding:7px 10px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.wa-detalhe-btn strong{
+    color:#25d366;
+    font-size:10px;
+}
+
+@media(max-width:700px){
+    .luka-conta-whatsapp{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+
+<style id="luka-pagamento-cliente-acoes">
+.cliente-pagamento-acoes{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:7px;
+}
+
+.cliente-pendente-btn,
+.cliente-recusar-btn{
+    border:0;
+    border-radius:9px;
+    padding:7px 9px;
+    font-size:10px;
+    font-weight:900;
+    cursor:pointer;
+    transition:.2s ease;
+    white-space:nowrap;
+}
+
+.cliente-pendente-btn{
+    color:#111;
+    background:linear-gradient(135deg,#ffd54a,#ffb300);
+    box-shadow:0 3px 10px rgba(255,193,7,.18);
+}
+
+.cliente-recusar-btn{
+    color:#fff;
+    background:linear-gradient(135deg,#ef5350,#c62828);
+    box-shadow:0 3px 10px rgba(198,40,40,.18);
+}
+
+.cliente-pendente-btn:hover,
+.cliente-recusar-btn:hover{
+    transform:translateY(-1px);
+    filter:brightness(1.08);
+}
+
+@media(max-width:700px){
+    .cliente-pagamento-acoes{
+        flex-direction:column;
+    }
+
+    .cliente-pendente-btn,
+    .cliente-recusar-btn{
+        width:100%;
+    }
+}
+</style>
+
+
+
+
 </head>
 
 <body>
@@ -1777,6 +1945,7 @@ main,
 <thead>
 <tr>
 <th>Usuário</th>
+<th>WhatsApp</th>
 <th>Tipo</th>
 <th>Status</th>
 <th>Validade</th>
@@ -2096,6 +2265,30 @@ main,
             <div class="luka-conta-expira">
                 <small>⏰ Expiração</small>
                 <strong id="lukaContaValidade">—</strong>
+            </div>
+
+            <div class="luka-conta-whatsapp">
+                <button
+                    type="button"
+                    class="wa-principal"
+                    onclick="abrirWhatsAppCliente(contaDetalhesAberta)">
+                    <span class="wa-icon-grande">●</span>
+                    <span>
+                        <strong>CHAMAR NO WHATSAPP</strong>
+                        <small>Entrar em contato com este cliente</small>
+                    </span>
+                </button>
+
+                <button
+                    type="button"
+                    class="wa-pagamento"
+                    onclick="abrirWhatsAppCliente(contaDetalhesAberta, true)">
+                    <span>💳</span>
+                    <span>
+                        <strong>PAGAMENTO PENDENTE</strong>
+                        <small>Mensagem pronta para ajudar na conclusão</small>
+                    </span>
+                </button>
             </div>
 
             <div class="luka-conta-acoes">
@@ -2836,6 +3029,75 @@ function status(x){
  : '<span class="badge off">● Suspenso</span>';
 }
 
+function pagamentoPendenteUsuario(u){
+    const pagamentos =
+        Array.isArray(window.LUKA_PAGAMENTOS_ADMIN)
+            ? window.LUKA_PAGAMENTOS_ADMIN
+            : [];
+
+    return pagamentos.find(p =>
+        Number(p.usuario_id) === Number(u.id) &&
+        String(p.status || "pendente").toLowerCase() === "pendente"
+    ) || null;
+}
+
+function acoesPagamentoUsuario(u){
+    const pagamento = pagamentoPendenteUsuario(u);
+
+    if(!pagamento){
+        return "";
+    }
+
+    const id = Number(pagamento.id);
+
+    return `
+        <div class="cliente-pagamento-acoes">
+            <button
+                type="button"
+                class="cliente-pendente-btn"
+                onclick="LUKA_ABRIR_PAGAMENTO_PENDENTE(${id})"
+                title="Ver pagamento pendente">
+                💳 PENDENTE
+            </button>
+
+            <button
+                type="button"
+                class="cliente-recusar-btn"
+                onclick="LUKA_RECUSAR_PAGAMENTO(${id})"
+                title="Recusar pagamento">
+                ❌ RECUSAR
+            </button>
+        </div>
+    `;
+}
+
+function LUKA_ABRIR_PAGAMENTO_PENDENTE(id){
+    const pagamentos =
+        Array.isArray(window.LUKA_PAGAMENTOS_ADMIN)
+            ? window.LUKA_PAGAMENTOS_ADMIN
+            : [];
+
+    const pagamento =
+        pagamentos.find(p => Number(p.id) === Number(id));
+
+    if(!pagamento){
+        toast("Pagamento pendente não encontrado.");
+        return;
+    }
+
+    const usuario =
+        window.usuarios.find(
+            u => Number(u.id) === Number(pagamento.usuario_id)
+        );
+
+    if(!usuario){
+        toast("Cliente do pagamento não encontrado.");
+        return;
+    }
+
+    abrirWhatsAppCliente(usuario, true);
+}
+
 function acoes(u){
 
  return `
@@ -2848,6 +3110,115 @@ function acoes(u){
  </div>`;
 }
 
+function numeroWhatsApp(valor){
+    let numero = String(valor || "").replace(/\D/g, "");
+
+    if(!numero) return "";
+
+    if(
+        !numero.startsWith("55") &&
+        numero.length >= 10 &&
+        numero.length <= 11
+    ){
+        numero = "55" + numero;
+    }
+
+    return numero;
+}
+
+function abrirWhatsAppCliente(usuario, pagamentoPendente = false){
+    if(!usuario) return;
+
+    const numero = numeroWhatsApp(
+        usuario.telefone || usuario.whatsapp
+    );
+
+    if(!numero){
+        toast("⚠️ Este cliente não possui WhatsApp cadastrado.");
+        return;
+    }
+
+    const nome =
+        String(usuario.nome || usuario.usuario || "cliente")
+            .trim();
+
+    const mensagem = pagamentoPendente
+        ? `Olá, ${nome}! Tudo bem? Vi que seu pagamento do LUKAFILMES ainda não foi concluído. Posso te ajudar a finalizar seu acesso?`
+        : `Olá, ${nome}! Tudo bem? Aqui é do LUKAFILMES. Estou entrando em contato para ajudar com seu acesso.`;
+
+    const texto =
+        encodeURIComponent(mensagem);
+
+    /*
+     * Android:
+     * tenta abrir especificamente o WhatsApp Business
+     * instalado no aparelho.
+     */
+    const intent =
+        "intent://send?phone=" +
+        numero +
+        "&text=" +
+        texto +
+        "#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end";
+
+    const fallback =
+        "https://wa.me/" +
+        numero +
+        "?text=" +
+        texto;
+
+    let saiuDaPágina = false;
+
+    const detectarSaida = () => {
+        if(document.hidden){
+            saiuDaPágina = true;
+        }
+    };
+
+    document.addEventListener(
+        "visibilitychange",
+        detectarSaida
+    );
+
+    window.location.href = intent;
+
+    setTimeout(() => {
+
+        document.removeEventListener(
+            "visibilitychange",
+            detectarSaida
+        );
+
+        if(!saiuDaPágina){
+            window.open(
+                fallback,
+                "_blank",
+                "noopener,noreferrer"
+            );
+        }
+
+    }, 1200);
+}
+function whatsappAcao(u){
+    const numero =
+        u.telefone || u.whatsapp || "";
+
+    if(!numero){
+        return '<span class="wa-sem">Não informado</span>';
+    }
+
+    return `
+        <button
+            class="wa-cliente-btn"
+            type="button"
+            onclick="abrirWhatsAppCliente(window.usuarios.find(x=>Number(x.id)===Number(${Number(u.id)})))"
+            title="Abrir WhatsApp">
+            <span class="wa-dot">●</span>
+            <span>${escapeHtml(numero)}</span>
+        </button>
+    `;
+}
+
 function renderUsuarios(){
 
  const el=document.getElementById("tabelaUsuarios");
@@ -2857,22 +3228,33 @@ function renderUsuarios(){
 
  const lista=usuarios.filter(u=>
   u.tipo==="usuario" &&
-  String(u.usuario||"").toLowerCase().includes(q)
+  (
+    String(u.usuario||"").toLowerCase().includes(q) ||
+    String(u.nome||"").toLowerCase().includes(q) ||
+    String(u.telefone||u.whatsapp||"").toLowerCase().includes(q)
+  )
  );
 
  if(!lista.length){
-  el.innerHTML='<tr><td colspan="6" class="empty">Nenhum usuário encontrado.</td></tr>';
+  el.innerHTML='<tr><td colspan="7" class="empty">Nenhum usuário encontrado.</td></tr>';
   return;
  }
 
  el.innerHTML=lista.map(u=>`
  <tr>
- <td><b>${escapeHtml(u.usuario)}</b></td>
+ <td>
+   <b>${escapeHtml(u.usuario)}</b>
+   ${u.nome ? `<small class="cliente-nome">${escapeHtml(u.nome)}</small>` : ""}
+ </td>
+ <td>${whatsappAcao(u)}</td>
  <td>Usuário</td>
  <td>${status(u)}</td>
  <td>${data(u.validade)}</td>
  <td>${u.online?'<span class="badge active">● Online</span>':'<span class="badge off">○ Offline</span>'}</td>
- <td>${acoes(u)}</td>
+ <td>
+    ${acoesPagamentoUsuario(u)}
+    ${acoes(u)}
+ </td>
  </tr>`).join("");
 }
 
@@ -3051,8 +3433,26 @@ function abrirContaDetalhes(id){
     document.getElementById("lukaContaValor").textContent =
         formatarValorConta(u.valor ?? u.valor_mensal ?? 0);
 
-    document.getElementById("lukaContaTelefone").textContent =
-        u.telefone || u.whatsapp || "Não informado";
+    const telefoneConta =
+        u.telefone || u.whatsapp || "";
+
+    const telefoneEl =
+        document.getElementById("lukaContaTelefone");
+
+    if(telefoneConta){
+        telefoneEl.innerHTML = `
+            <button
+                type="button"
+                class="wa-detalhe-btn"
+                onclick="abrirWhatsAppCliente(contaDetalhesAberta)">
+                <span class="wa-icon">●</span>
+                <span>${escapeHtml(telefoneConta)}</span>
+                <strong>ABRIR</strong>
+            </button>
+        `;
+    }else{
+        telefoneEl.textContent = "Não informado";
+    }
 
     document.getElementById("lukaContaCriado").textContent =
         formatarDataHoraConta(u.criado_em);
@@ -5298,6 +5698,12 @@ async function LUKA_CARREGAR_PAGAMENTOS(){
                 ? dados.pagamentos
                 : [];
 
+        window.LUKA_PAGAMENTOS_ADMIN = pagamentosTodos;
+
+        if(typeof renderUsuarios === "function"){
+            renderUsuarios();
+        }
+
         // A área visual mostra somente pagamentos que ainda precisam
         // de decisão. Aprovados e recusados permanecem apenas nos
         // contadores/resumo e não ficam acumulados na lista.
@@ -5748,6 +6154,9 @@ async function LUKA_TESTAR_COMO_USUARIO() {
 </script>
 
 <!-- FIM LUKA_MODO_TESTE_USUARIO_V1 -->
+
+
+
 
 </body>
 </html>
