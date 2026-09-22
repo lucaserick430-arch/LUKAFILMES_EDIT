@@ -6,90 +6,146 @@
 <title>LUKAFILMES — IPTV</title>
 
 <style>
-*{
-    box-sizing:border-box;
+:root{
+    --red:#e50914;
+    --red-dark:#8b0008;
+    --black:#050505;
+    --white:#fff;
+    --muted:rgba(255,255,255,.58);
+    --border:rgba(255,255,255,.10);
 }
 
-html,body{
-    margin:0;
-    padding:0;
-    background:#080808;
-    color:#fff;
-    font-family:Arial,Helvetica,sans-serif;
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html{
+    min-height:100%;
+    background:#050505;
+    scroll-behavior:smooth;
 }
 
 body{
+    margin:0;
     min-height:100vh;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at 50% -15%,rgba(229,9,20,.30),transparent 38%),
+        radial-gradient(circle at 0% 50%,rgba(120,0,8,.16),transparent 30%),
+        radial-gradient(circle at 100% 70%,rgba(120,0,8,.14),transparent 30%),
+        linear-gradient(180deg,#090909 0%,#050505 100%);
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255,255,255,.012) 50%,
+        transparent 100%
+    );
+}
+
+a{
+    color:inherit;
+    text-decoration:none;
 }
 
 .topo{
     position:sticky;
     top:0;
     z-index:1000;
+    min-height:76px;
     display:flex;
     align-items:center;
-    gap:12px;
-    padding:12px 16px;
-    background:rgba(8,8,8,.97);
-    border-bottom:1px solid rgba(255,255,255,.08);
+    gap:18px;
+    padding:0 24px;
+    background:rgba(5,5,5,.88);
+    border-bottom:1px solid rgba(255,255,255,.07);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
 }
 
 .logo{
-    color:#e50914;
-    font-size:22px;
+    color:#fff;
+    font-size:24px;
     font-weight:900;
-    text-decoration:none;
+    letter-spacing:-1px;
     white-space:nowrap;
 }
 
+.logo::first-letter{
+    color:#fff;
+}
+
 .titulo{
-    font-size:18px;
-    font-weight:700;
+    color:var(--red);
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    white-space:nowrap;
 }
 
 .busca{
     margin-left:auto;
-    width:min(320px,45vw);
-    padding:9px 12px;
-    border-radius:7px;
-    border:1px solid #333;
+    width:min(330px,42vw);
+    min-height:42px;
+    padding:0 16px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:11px;
     outline:none;
-    background:#151515;
+    background:rgba(255,255,255,.045);
     color:#fff;
+    font-size:13px;
+    transition:.2s ease;
+}
+
+.busca:focus{
+    border-color:rgba(229,9,20,.65);
+    background:rgba(229,9,20,.07);
+    box-shadow:0 0 0 3px rgba(229,9,20,.08);
 }
 
 .busca::placeholder{
-    color:#999;
+    color:rgba(255,255,255,.40);
 }
 
 .conteudo{
-    width:min(1400px,100%);
+    width:min(1280px,100%);
     margin:auto;
-    padding:18px;
+    padding:0 24px 60px;
 }
 
 .status{
-    margin-bottom:15px;
-    color:#aaa;
-    font-size:14px;
+    padding:24px 0 8px;
+    color:rgba(255,255,255,.40);
+    font-size:11px;
+    letter-spacing:.8px;
 }
 
 .secao{
-    margin-bottom:28px;
+    margin-bottom:35px;
 }
 
 .secao h2{
-    margin:0 0 12px;
-    font-size:20px;
+    margin:0 0 20px;
+    font-size:19px;
+    font-weight:800;
 }
-
 
 .categorias-iptv{
     display:flex;
-    gap:8px;
+    gap:9px;
     overflow-x:auto;
-    padding:4px 2px 14px;
-    margin-bottom:8px;
+    padding:3px 1px 16px;
+    margin-bottom:5px;
     scrollbar-width:none;
 }
 
@@ -99,76 +155,167 @@ body{
 
 .categoria-btn{
     flex:0 0 auto;
+    min-height:38px;
     border:1px solid rgba(255,255,255,.10);
-    background:#121212;
-    color:#aaa;
-    border-radius:20px;
-    padding:9px 16px;
-    font-size:13px;
-    font-weight:600;
+    border-radius:11px;
+    padding:0 15px;
+    background:rgba(255,255,255,.045);
+    color:rgba(255,255,255,.55);
+    font-size:12px;
+    font-weight:700;
     cursor:pointer;
-    transition:.18s;
+    transition:.2s ease;
     white-space:nowrap;
 }
 
 .categoria-btn:hover{
-    background:#1b1b1b;
+    border-color:rgba(229,9,20,.55);
+    background:rgba(229,9,20,.10);
     color:#fff;
-    border-color:rgba(255,255,255,.20);
 }
 
 .categoria-btn.ativo{
-    background:#fff;
-    color:#111;
-    border-color:#fff;
+    background:var(--red);
+    color:#fff;
+    border-color:var(--red);
+    box-shadow:0 8px 25px rgba(229,9,20,.20);
 }
 
 .canais{
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-    gap:12px;
+    grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+    gap:18px;
 }
 
 .canal{
-    min-height:150px;
-    padding:12px;
-    border:1px solid rgba(255,255,255,.09);
-    border-radius:9px;
-    background:#121212;
+    --accent:rgba(229,9,20,.70);
+    position:relative;
+    min-height:190px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    overflow:hidden;
+    padding:18px;
+    border:1px solid var(--border);
+    border-radius:21px;
+    background:
+        radial-gradient(circle at 90% 10%,var(--accent),transparent 38%),
+        linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.018));
+    box-shadow:0 18px 45px rgba(0,0,0,.28);
+    isolation:isolate;
     cursor:pointer;
-    transition:.18s;
+    transition:
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
 }
 
-.canal:hover{
-    transform:translateY(-2px);
-    background:#1b1b1b;
+.canal::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:-2;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.94) 0%,
+            rgba(0,0,0,.70) 38%,
+            rgba(0,0,0,.35) 70%,
+            rgba(0,0,0,.62) 100%
+        ),
+        linear-gradient(
+            0deg,
+            rgba(0,0,0,.88) 0%,
+            rgba(0,0,0,.22) 65%,
+            rgba(229,9,20,.16) 100%
+        );
+}
+
+.canal::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:3px;
+    z-index:3;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--red),
+            transparent
+        );
+    opacity:.75;
 }
 
 .logo-canal{
+    position:absolute;
+    inset:0;
+    z-index:-3;
     width:100%;
-    height:78px;
-    object-fit:contain;
+    height:100%;
+    object-fit:cover;
     display:block;
-    margin-bottom:9px;
-    background:#0b0b0b;
-    border-radius:6px;
+    margin:0;
+    padding:18px;
+    background:transparent;
+    border-radius:21px;
+    opacity:.55;
+    transform:scale(1.03);
+    transition:
+        opacity .45s ease,
+        transform .55s ease;
+}
+
+.canal:hover{
+    transform:translateY(-5px);
+    border-color:rgba(229,9,20,.55);
+    box-shadow:
+        0 25px 55px rgba(0,0,0,.38),
+        0 0 35px rgba(229,9,20,.08);
+}
+
+.canal:hover .logo-canal{
+    opacity:.70;
+    transform:scale(1.08);
 }
 
 .nome{
-    font-weight:700;
-    font-size:14px;
-    line-height:1.25;
+    position:relative;
+    z-index:2;
+    margin-top:auto;
+    color:#fff;
+    font-size:17px;
+    line-height:1.08;
+    font-weight:800;
+    letter-spacing:-.3px;
+    text-shadow:
+        0 2px 10px rgba(0,0,0,.75),
+        0 4px 22px rgba(0,0,0,.65);
 }
 
 .categoria{
-    margin-top:5px;
-    color:#999;
-    font-size:12px;
+    position:relative;
+    z-index:2;
+    margin-top:7px;
+    color:rgba(255,255,255,.40);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
 }
 
 .player-area{
     display:none;
-    margin-bottom:25px;
+    margin:28px 0 35px;
+    padding:20px;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:21px;
+    background:
+        radial-gradient(circle at 90% 0%,rgba(229,9,20,.14),transparent 35%),
+        rgba(255,255,255,.025);
+    box-shadow:0 20px 55px rgba(0,0,0,.30);
 }
 
 .player-area.ativo{
@@ -180,113 +327,48 @@ body{
     align-items:center;
     justify-content:space-between;
     gap:10px;
-    margin-bottom:10px;
+    margin-bottom:14px;
 }
 
 .player-titulo{
+    color:#fff;
     font-size:18px;
-    font-weight:700;
+    font-weight:800;
 }
 
 .fechar{
-    border:0;
-    border-radius:6px;
-    padding:8px 12px;
-    background:#252525;
+    min-height:40px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:11px;
+    padding:0 15px;
+    background:rgba(255,255,255,.045);
     color:#fff;
+    font-size:12px;
+    font-weight:700;
     cursor:pointer;
+    transition:.2s ease;
+}
+
+.fechar:hover{
+    border-color:rgba(229,9,20,.55);
+    background:rgba(229,9,20,.10);
 }
 
 .player{
+    position:relative;
     width:100%;
     aspect-ratio:16/9;
     min-height:300px;
-    background:#000;
-    border-radius:9px;
     overflow:hidden;
+    background:#000;
+    border-radius:15px;
+    box-shadow:0 20px 50px rgba(0,0,0,.45);
 }
 
 .player iframe{
     width:100%;
     height:100%;
     border:0;
-}
-
-.aviso{
-    padding:20px;
-    border-radius:8px;
-    background:#111;
-    color:#999;
-}
-
-.erro{
-    color:#ff7777;
-}
-
-@media(max-width:700px){
-    .topo{
-        padding:10px;
-        gap:8px;
-    }
-
-    .logo{
-        font-size:18px;
-    }
-
-    .titulo{
-        display:none;
-    }
-
-    .busca{
-        width:130px;
-        margin-left:auto;
-        font-size:12px;
-    }
-
-    .conteudo{
-        padding:12px;
-    }
-
-    .canais{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:9px;
-    }
-
-    .canal{
-        min-height:135px;
-        padding:9px;
-    }
-
-    .logo-canal{
-        height:65px;
-    }
-
-    .player{
-        min-height:210px;
-    }
-}
-
-.live-indicador{
-    position:absolute;
-    top:12px;
-    left:12px;
-    z-index:20;
-    padding:6px 10px;
-    border-radius:5px;
-    background:#111;
-    border:1px solid rgba(255,255,255,.18);
-    color:#fff;
-    font-size:11px;
-    font-weight:800;
-    letter-spacing:.8px;
-    line-height:1;
-    pointer-events:none;
-}
-
-.player{
-    position:relative;
-    overflow:hidden;
-    background:#000;
 }
 
 .player video::-webkit-media-controls-timeline{
@@ -297,6 +379,469 @@ body{
 .player video::-webkit-media-controls-time-remaining-display{
     display:none !important;
 }
+
+.aviso{
+    padding:25px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:15px;
+    background:rgba(255,255,255,.035);
+    color:rgba(255,255,255,.40);
+}
+
+.erro{
+    color:#ff7777;
+}
+
+@media(max-width:700px){
+
+    .topo{
+        min-height:68px;
+        padding:0 12px;
+        gap:10px;
+    }
+
+    .logo{
+        font-size:20px;
+    }
+
+    .titulo{
+        font-size:9px;
+        letter-spacing:2px;
+    }
+
+    .busca{
+        width:145px;
+        min-height:38px;
+        padding:0 12px;
+        font-size:12px;
+    }
+
+    .conteudo{
+        width:100%;
+        padding:0 12px calc(30px + env(safe-area-inset-bottom));
+    }
+
+    .status{
+        padding:20px 0 8px;
+    }
+
+    .secao h2{
+        font-size:18px;
+        margin-bottom:17px;
+    }
+
+    .categorias-iptv{
+        margin-left:-2px;
+        margin-right:-2px;
+    }
+
+    .canais{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:12px;
+    }
+
+    .canal{
+        min-height:155px;
+        padding:14px;
+        border-radius:18px;
+    }
+
+    .logo-canal{
+        border-radius:18px;
+        padding:14px;
+    }
+
+    .nome{
+        font-size:14px;
+    }
+
+    .categoria{
+        font-size:9px;
+    }
+
+    .player-area{
+        margin-top:20px;
+        padding:13px;
+        border-radius:18px;
+    }
+
+    .player{
+        min-height:210px;
+        border-radius:12px;
+    }
+}
+
+@media(min-width:1600px){
+
+    .canais{
+        grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+    }
+
+    .canal::before{
+        background:
+            linear-gradient(
+                90deg,
+                rgba(0,0,0,.91),
+                rgba(0,0,0,.58) 48%,
+                rgba(0,0,0,.30)
+            ),
+            linear-gradient(
+                0deg,
+                rgba(0,0,0,.78),
+                transparent
+            );
+    }
+}
+
+/* ========================================================= */
+/* =============== IPTV PREMIUM — VISUAL V2 ================ */
+/* ========================================================= */
+
+.iptv-hero{
+    position:relative;
+    overflow:hidden;
+    margin:42px 0 20px;
+    padding:48px 42px 38px;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:26px;
+    background:
+        radial-gradient(
+            circle at 88% 15%,
+            rgba(229,9,20,.30),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 5% 100%,
+            rgba(120,0,8,.20),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.065),
+            rgba(255,255,255,.012)
+        );
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.34),
+        inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.iptv-hero::before{
+    content:"";
+    position:absolute;
+    width:330px;
+    height:330px;
+    right:-150px;
+    top:-190px;
+    border-radius:50%;
+    background:rgba(229,9,20,.30);
+    filter:blur(65px);
+    pointer-events:none;
+}
+
+.iptv-hero::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:3px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(229,9,20,.95),
+            transparent
+        );
+    opacity:.75;
+}
+
+.iptv-kicker{
+    position:relative;
+    z-index:2;
+    margin-bottom:14px;
+    color:var(--red);
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:3px;
+    text-transform:uppercase;
+}
+
+.iptv-hero h1{
+    position:relative;
+    z-index:2;
+    margin:0;
+    color:#fff;
+    font-size:clamp(48px,7vw,78px);
+    line-height:.92;
+    font-weight:900;
+    letter-spacing:-4px;
+}
+
+.iptv-hero h1 span{
+    color:var(--red);
+}
+
+.iptv-hero p{
+    position:relative;
+    z-index:2;
+    max-width:650px;
+    margin:22px 0 30px;
+    color:rgba(255,255,255,.54);
+    font-size:14px;
+    line-height:1.7;
+}
+
+.iptv-hero-meta{
+    position:relative;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    gap:22px;
+}
+
+.hero-meta-item{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.hero-meta-item strong{
+    color:#fff;
+    font-size:13px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.hero-meta-item small{
+    color:rgba(255,255,255,.32);
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:2px;
+}
+
+.hero-meta-line{
+    width:1px;
+    height:28px;
+    background:rgba(255,255,255,.10);
+}
+
+.hero-live{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    margin-left:auto;
+    padding:8px 11px;
+    border:1px solid rgba(229,9,20,.30);
+    border-radius:9px;
+    background:rgba(229,9,20,.08);
+    color:rgba(255,255,255,.70);
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:1.5px;
+}
+
+.hero-live i{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--red);
+    box-shadow:0 0 10px rgba(229,9,20,.85);
+    animation:iptvPulse 1.5s infinite;
+}
+
+@keyframes iptvPulse{
+    0%,100%{
+        opacity:1;
+        transform:scale(1);
+    }
+    50%{
+        opacity:.45;
+        transform:scale(.72);
+    }
+}
+
+.status{
+    display:flex;
+    align-items:center;
+    min-height:22px;
+    margin:0 0 12px;
+    padding:0;
+    color:rgba(255,255,255,.30);
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.8px;
+}
+
+.secao{
+    position:relative;
+}
+
+.secao h2{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:0 0 20px;
+    font-size:20px;
+    letter-spacing:-.4px;
+}
+
+.secao h2::before{
+    content:"";
+    width:3px;
+    height:19px;
+    border-radius:3px;
+    background:var(--red);
+    box-shadow:0 0 12px rgba(229,9,20,.45);
+}
+
+.categorias-iptv{
+    padding-bottom:17px;
+}
+
+.categoria-btn{
+    position:relative;
+    overflow:hidden;
+}
+
+.categoria-btn::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:2px;
+    background:var(--red);
+    transform:scaleX(0);
+    transition:.2s ease;
+}
+
+.categoria-btn:hover::after,
+.categoria-btn.ativo::after{
+    transform:scaleX(1);
+}
+
+.canais{
+    grid-template-columns:repeat(auto-fill,minmax(205px,1fr));
+    gap:18px;
+}
+
+.canal{
+    min-height:205px;
+    padding:20px;
+    border-radius:21px;
+}
+
+.canal::after{
+    height:2px;
+}
+
+.canal .nome::before{
+    content:"AO VIVO";
+    display:block;
+    width:max-content;
+    margin-bottom:9px;
+    padding:4px 7px;
+    border-radius:5px;
+    background:rgba(229,9,20,.13);
+    border:1px solid rgba(229,9,20,.25);
+    color:rgba(255,255,255,.65);
+    font-size:7px;
+    font-weight:900;
+    letter-spacing:1.4px;
+}
+
+.logo-canal{
+    padding:22px;
+    opacity:.58;
+}
+
+.canal:hover .logo-canal{
+    opacity:.76;
+}
+
+.player-area{
+    position:relative;
+    border-color:rgba(229,9,20,.16);
+}
+
+.player-area::before{
+    content:"";
+    position:absolute;
+    width:240px;
+    height:140px;
+    right:-90px;
+    top:-80px;
+    border-radius:50%;
+    background:rgba(229,9,20,.14);
+    filter:blur(55px);
+    pointer-events:none;
+}
+
+.fechar{
+    position:relative;
+    z-index:2;
+}
+
+@media(max-width:700px){
+
+    .iptv-hero{
+        margin:24px 0 18px;
+        padding:32px 22px 27px;
+        border-radius:21px;
+    }
+
+    .iptv-kicker{
+        margin-bottom:11px;
+        font-size:9px;
+        letter-spacing:2.4px;
+    }
+
+    .iptv-hero h1{
+        font-size:clamp(42px,14vw,58px);
+        letter-spacing:-3px;
+    }
+
+    .iptv-hero p{
+        margin:17px 0 23px;
+        font-size:13px;
+        line-height:1.6;
+    }
+
+    .iptv-hero-meta{
+        gap:13px;
+    }
+
+    .hero-meta-line{
+        height:23px;
+    }
+
+    .hero-live{
+        padding:7px 8px;
+        font-size:8px;
+    }
+
+    .canais{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:12px;
+    }
+
+    .canal{
+        min-height:175px;
+        padding:14px;
+        border-radius:18px;
+    }
+
+    .logo-canal{
+        padding:15px;
+        border-radius:18px;
+    }
+
+    .canal .nome::before{
+        margin-bottom:7px;
+        font-size:6px;
+    }
+}
+
 </style>
 </head>
 
@@ -304,7 +849,7 @@ body{
 
 <header class="topo">
     <a class="logo" href="/">LUKAFILMES</a>
-    <span class="titulo">📺 IPTV</span>
+    <span class="titulo">IPTV</span>
     <input
         id="buscaIPTV"
         class="busca"
@@ -314,6 +859,34 @@ body{
 </header>
 
 <main class="conteudo">
+
+    <section class="iptv-hero">
+        <div class="iptv-kicker">LUKAFILMES ORIGINAL</div>
+        <h1>IPTV <span>AO VIVO</span></h1>
+        <p>
+            Assista aos seus canais favoritos em um só lugar,
+            com acesso rápido e reprodução em tela cheia.
+        </p>
+
+        <div class="iptv-hero-meta">
+            <div class="hero-meta-item">
+                <strong id="heroStatus">CANAIS</strong>
+                <small>TRANSMISSÃO</small>
+            </div>
+
+            <div class="hero-meta-line"></div>
+
+            <div class="hero-meta-item">
+                <strong>HD</strong>
+                <small>QUALIDADE</small>
+            </div>
+
+            <div class="hero-live">
+                <i></i>
+                AO VIVO
+            </div>
+        </div>
+    </section>
 
     <div id="statusIPTV" class="status">
         Carregando canais...
@@ -362,12 +935,834 @@ const API = 'https://reidosembeds.online/api';
 
 let canais = [];
 const canaisManuais = [
-    { name: "Venus Hot", category: "Adulto", iframe_url: "https://streambetter.shop/canal/venus-hot", embeds: [{ embed_url: "https://streambetter.shop/canal/venus-hot" }] },
-    { name: "Sextreme", category: "Adulto", iframe_url: "https://streambetter.shop/canal/sextreme", embeds: [{ embed_url: "https://streambetter.shop/canal/sextreme" }] },
-    { name: "Sexy Hot 2", category: "Adulto", iframe_url: "https://streambetter.shop/canal/sexy-hot-2", embeds: [{ embed_url: "https://streambetter.shop/canal/sexy-hot-2" }] },
-    { name: "Playboy TV", category: "Adulto", iframe_url: "https://streambetter.shop/canal/playboy-tv", embeds: [{ embed_url: "https://streambetter.shop/canal/playboy-tv" }] },
-    { name: "Dream Sex", category: "Adulto", iframe_url: "https://streambetter.shop/canal/dream-sex", embeds: [{ embed_url: "https://streambetter.shop/canal/dream-sex" }] }
+    {
+        id: "nicktoonsbrasil",
+        title: "NickToons Brasil",
+        name: "NickToons Brasil",
+        description: "NickToons Brasil",
+        category: "Entretenimento",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://stmv2.srvif.com/nicktoons/nicktoons/playlist.m3u8",
+        embed_url: "https://stmv2.srvif.com/nicktoons/nicktoons/playlist.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://stmv2.srvif.com/nicktoons/nicktoons/playlist.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "sbt",
+        title: "SBT",
+        name: "SBT",
+        description: "SBT",
+        category: "TV Aberta",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/AratuOn.br",
+        embed_url: "https://freetv.studio/embed/AratuOn.br",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://freetv.studio/embed/AratuOn.br"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "cindietv",
+        title: "CINDIE TV",
+        name: "CINDIE TV",
+        description: "CINDIE TV",
+        category: "Entretenimento",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://cc-hqw8u5r1nshjc.akamaized.net/scheduler/scheduleMaster/352/variant/22099961.m3u8",
+        embed_url: "https://cc-hqw8u5r1nshjc.akamaized.net/scheduler/scheduleMaster/352/variant/22099961.m3u8",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://cc-hqw8u5r1nshjc.akamaized.net/scheduler/scheduleMaster/352/variant/22099961.m3u8" }],
+        stream_type: "live"
+    },
+    {
+        id: "classiquetv",
+        title: "CLASSIQUE TV",
+        name: "CLASSIQUE TV",
+        description: "CLASSIQUE TV",
+        category: "Entretenimento",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://stmv1.srvif.com/classique/classique/playlist.m3u8",
+        embed_url: "https://stmv1.srvif.com/classique/classique/playlist.m3u8",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://stmv1.srvif.com/classique/classique/playlist.m3u8" }],
+        stream_type: "live"
+    },
+    {
+        id: "mytime",
+        title: "My Time",
+        name: "My Time",
+        description: "My Time",
+        category: "Entretenimento",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://appletree-mytime-samsungbrazil.amagi.tv/playlist720p.m3u8",
+        embed_url: "https://appletree-mytime-samsungbrazil.amagi.tv/playlist720p.m3u8",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://appletree-mytime-samsungbrazil.amagi.tv/playlist720p.m3u8" }],
+        stream_type: "live"
+    },
+    {
+        id: "kpoptvplay",
+        title: "KPOP TV Play",
+        name: "KPOP TV Play",
+        description: "KPOP TV Play",
+        category: "Música",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://giatv.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8",
+        embed_url: "https://giatv.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://giatv.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8" }],
+        stream_type: "live"
+    },
+    {
+        id: "lgchannels",
+        title: "LG Channels",
+        name: "LG Channels",
+        description: "LG Channels",
+        category: "Entretenimento",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://d1bl6tskrpq9ze.cloudfront.net/manifest/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_lgchannels-cdp-springserve/dd5dcc9d-275a-4aee-8a14-4a5877a59561/4.m3u8",
+        embed_url: "https://d1bl6tskrpq9ze.cloudfront.net/manifest/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_lgchannels-cdp-springserve/dd5dcc9d-275a-4aee-8a14-4a5877a59561/4.m3u8",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://d1bl6tskrpq9ze.cloudfront.net/manifest/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_lgchannels-cdp-springserve/dd5dcc9d-275a-4aee-8a14-4a5877a59561/4.m3u8" }],
+        stream_type: "live"
+    },
+    {
+        id: "awtv",
+        title: "AWTV",
+        name: "AWTV",
+        description: "AWTV",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/AWTV.br",
+        embed_url: "https://freetv.studio/embed/AWTV.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/AWTV.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "ararunatv",
+        title: "Araruna TV",
+        name: "Araruna TV",
+        description: "Araruna TV",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/ArarunaTV.br",
+        embed_url: "https://freetv.studio/embed/ArarunaTV.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/ArarunaTV.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "sbtnews",
+        title: "SBT News",
+        name: "SBT News",
+        description: "SBT News",
+        category: "Notícias",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/SBTNews.br",
+        embed_url: "https://freetv.studio/embed/SBTNews.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/SBTNews.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "recordnews",
+        title: "Record News",
+        name: "Record News",
+        description: "Record News",
+        category: "Notícias",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/RecordNews.br",
+        embed_url: "https://freetv.studio/embed/RecordNews.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/RecordNews.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "canalmetropolitanodenoticias",
+        title: "Canal Metropolitano de Notícias",
+        name: "Canal Metropolitano de Notícias",
+        description: "Canal Metropolitano de Notícias",
+        category: "Notícias",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/CanalMetropolitanodeNoticias.br",
+        embed_url: "https://freetv.studio/embed/CanalMetropolitanodeNoticias.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/CanalMetropolitanodeNoticias.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "stztv",
+        title: "STZ TV",
+        name: "STZ TV",
+        description: "STZ TV",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/STZTV.br",
+        embed_url: "https://freetv.studio/embed/STZTV.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/STZTV.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "tcm10hd",
+        title: "TCM 10 HD",
+        name: "TCM 10 HD",
+        description: "TCM 10 HD",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/TCM10HD.br",
+        embed_url: "https://freetv.studio/embed/TCM10HD.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/TCM10HD.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "tvafolha",
+        title: "TV A Folha",
+        name: "TV A Folha",
+        description: "TV A Folha",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/TVAFolha.br",
+        embed_url: "https://freetv.studio/embed/TVAFolha.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/TVAFolha.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "tvseries",
+        title: "TV Séries",
+        name: "TV Séries",
+        description: "TV Séries",
+        category: "Entretenimento",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/TVSeries.br",
+        embed_url: "https://freetv.studio/embed/TVSeries.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/TVSeries.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "foratediotv",
+        title: "Fora Tédio TV",
+        name: "Fora Tédio TV",
+        description: "Fora Tédio TV",
+        category: "Entretenimento",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/ForaTedioTV.br",
+        embed_url: "https://freetv.studio/embed/ForaTedioTV.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/ForaTedioTV.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "nickelodeon",
+        title: "Nickelodeon",
+        name: "Nickelodeon",
+        description: "Nickelodeon",
+        category: "Infantil",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/Nickelodeon.br",
+        embed_url: "https://freetv.studio/embed/Nickelodeon.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/Nickelodeon.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "bemmaistv",
+        title: "Bem Mais TV",
+        name: "Bem Mais TV",
+        description: "Bem Mais TV",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/BemMaisTV.br",
+        embed_url: "https://freetv.studio/embed/BemMaisTV.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/BemMaisTV.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "tvers",
+        title: "TVERS",
+        name: "TVERS",
+        description: "TVERS",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/TVERS.br",
+        embed_url: "https://freetv.studio/embed/TVERS.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/TVERS.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "gospelmovietv",
+        title: "Gospel Movie TV",
+        name: "Gospel Movie TV",
+        description: "Gospel Movie TV",
+        category: "Entretenimento",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/GospelMovieTV.br",
+        embed_url: "https://freetv.studio/embed/GospelMovieTV.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/GospelMovieTV.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "gospelcartoon",
+        title: "Gospel Cartoon",
+        name: "Gospel Cartoon",
+        description: "Gospel Cartoon",
+        category: "Infantil",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/GospelCartoon.br",
+        embed_url: "https://freetv.studio/embed/GospelCartoon.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/GospelCartoon.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "despertartv",
+        title: "Despertar TV",
+        name: "Despertar TV",
+        description: "Despertar TV",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://freetv.studio/embed/DespertarTV.br",
+        embed_url: "https://freetv.studio/embed/DespertarTV.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/DespertarTV.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "tvbrasil",
+        title: "TV Brasil",
+        name: "TV Brasil",
+        description: "TV Brasil",
+        category: "TV Aberta",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://hqf6tcxuhk.singularcdn.net.br/live/0194f211-4229-749f-a47e-58f819471024/s1/playlist-720p.m3u8?sjwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIxMjhiY2Q0LTJkY2UtNDgxMy1iZjA0LWUzYjNhY2FjYWNhMyIsImlzcyI6IlNwYWxsYSIsImlhdCI6MTc5MDExMDIxNSwibmJmIjoxNzkwMTEwMjE1LCJleHAiOjE3OTI3MDIyMTUsInVyaV9zdWIiOiIvMDE5NGYyMTEtNDIyOS03NDlmLWE0N2UtNThmODE5NDcxMDI0LyIsInVpZCI6ImIxMjhiY2Q0LTJkY2UtNDgxMy1iZjA0LWUzYjNhY2FjYWNhMyIsImJleSI6ZmFsc2UsImlpcCI6ZmFsc2UsImRwciI6ZmFsc2V9.Qg_NoOeKYi7_dYiA9h1CPSx6Nt8ytqXftuLcivxElko&uid=b128bcd4-2dce-4813-bf04-e3b3acacaca3",
+        embed_url: "https://hqf6tcxuhk.singularcdn.net.br/live/0194f211-4229-749f-a47e-58f819471024/s1/playlist-720p.m3u8?sjwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IlNwYWxsYSIsImlhdCI6MTc5MDExMDIxNSwibmJmIjoxNzkwMTEwMjE1LCJleHAiOjE3OTI3MDIyMTUsInVyaV9zdWIiOiIvMDE5NGYyMTEtNDIyOS03NDlmLWE0N2UtNThmODE5NDcxMDI0LyJ9.Qg_NoOeKYi7_dYiA9h1CPSx6Nt8ytqXftuLcivxElko&uid=b128bcd4-2dce-4813-bf04-e3b3acacaca3",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://hqf6tcxuhk.singularcdn.net.br/live/0194f211-4229-749f-a47e-58f819471024/s1/playlist-720p.m3u8?sjwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIxMjhiY2Q0LTJkY2UtNDgxMy1iZjA0LWUzYjNhY2FjYWNhMyIsImlzcyI6IlNwYWxsYSIsImlhdCI6MTc5MDExMDIxNSwibmJmIjoxNzkwMTEwMjE1LCJleHAiOjE3OTI3MDIyMTUsInVyaV9zdWIiOiIvMDE5NGYyMTEtNDIyOS03NDlmLWE0N2UtNThmODE5NDcxMDI0LyIsInVpZCI6ImIxMjhiY2Q0LTJkY2UtNDgxMy1iZjA0LWUzYjNhY2FjYWNhMyIsImJleSI6ZmFsc2UsImlpcCI6ZmFsc2UsImRwciI6ZmFsc2V9.Qg_NoOeKYi7_dYiA9h1CPSx6Nt8ytqXftuLcivxElko&uid=b128bcd4-2dce-4813-bf04-e3b3acacaca3" }],
+        stream_type: "live"
+    },
+    {
+        id: "band",
+        title: "Band",
+        name: "Band",
+        description: "Band",
+        category: "TV Aberta",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://video05.logicahost.com.br/guiatvpombal/guiatvpombal/chunklist_w1372617907.m3u8",
+        embed_url: "https://video05.logicahost.com.br/guiatvpombal/guiatvpombal/chunklist_w1372617907.m3u8",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://video05.logicahost.com.br/guiatvpombal/guiatvpombal/chunklist_w1372617907.m3u8" }],
+        stream_type: "live"
+    },
+    {
+        id: "tvPortugal",
+        title: "TVI Portugal",
+        name: "TVI Portugal",
+        description: "TVI Portugal",
+        category: "TV Internacional",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://video-auth6.iol.pt/live_tvi/live_tvi/edge_servers/tvi-720p/chunks.m3u8?nimblesessionid=2965808001&wmsAuthSign=c2VydmVyX3RpbWU9OS8yMi8yMDI2IDk6MjowIFBNJmhhc2hfdmFsdWU9Y254L0FicXNjcExVMHpkS1lhVTUrUT09JnZhbGlkbWludXRlcz0xNDQwJmlkPWQ4Y2QwNzVkLTUyMWMtNDY1Zi1hN2RlLTdkMjYyNmQ2ZGVlNg==",
+        embed_url: "https://video-auth6.iol.pt/live_tvi/live_tvi/edge_servers/tvi-720p/chunks.m3u8?nimblesessionid=2965808001&wmsAuthSign=c2VydmVyX3RpbWU9OS8yMi8yMDI2IDk6MjowIFBNJmhhc2hfdmFsdWU9Y254L0FicXNjcExVMHpkS1lhVTUrUT09JnZhbGlkbWludXRlcz0xNDQwJmlkPWQ4Y2QwNzVkLTUyMWMtNDY1Zi1hN2RlLTdkMjYyNmQ2ZGVlNg==",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://video-auth6.iol.pt/live_tvi/live_tvi/edge_servers/tvi-720p/chunks.m3u8?nimblesessionid=2965808001&wmsAuthSign=c2VydmVyX3RpbWU9OS8yMi8yMDI2IDk6MjowIFBNJmhhc2hfdmFsdWU9Y254L0FicXNjcExVMHpkS1lhVTUrUT09JnZhbGlkbWludXRlcz0xNDQwJmlkPWQ4Y2QwNzVkLTUyMWMtNDY1Zi1hN2RlLTdkMjYyNmQ2ZGVlNg=="
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "filmesonline",
+        title: "Filmes Online",
+        name: "Filmes Online",
+        description: "Filmes Online",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://stream.ads.ottera.tv/cl/260922dapeun63ltcc73abfcp0/1920x1080_6046040_3_f.m3u8?i=728_6178",
+        embed_url: "https://stream.ads.ottera.tv/cl/260922dapeun63ltcc73abfcp0/1920x1080_6046040_3_f.m3u8?i=728_6178",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://stream.ads.ottera.tv/cl/260922dapeun63ltcc73abfcp0/1920x1080_6046040_3_f.m3u8?i=728_6178"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "tvnafilmes",
+        title: "TVNA Filmes",
+        name: "TVNA Filmes",
+        description: "TVNA Filmes",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://stmv6.voxtvhd.com.br/tvnafilmes/tvnafilmes/playlist.m3u8",
+        embed_url: "https://stmv6.voxtvhd.com.br/tvnafilmes/tvnafilmes/playlist.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://stmv6.voxtvhd.com.br/tvnafilmes/tvnafilmes/playlist.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "tvcultura",
+        title: "TV Cultura",
+        name: "TV Cultura",
+        description: "TV Cultura",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://player-tvcultura.stream.uol.com.br/live/tvcultura_lsd.m3u8?vhost=player-tvcultura.stream.uol.com.br",
+        embed_url: "https://player-tvcultura.stream.uol.com.br/live/tvcultura_lsd.m3u8?vhost=player-tvcultura.stream.uol.com.br",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://player-tvcultura.stream.uol.com.br/live/tvcultura_lsd.m3u8?vhost=player-tvcultura.stream.uol.com.br"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "redetv",
+        title: "RedeTV!",
+        name: "RedeTV!",
+        description: "RedeTV!",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://stream.esemrede.com.br/live/redetves.m3u8",
+        embed_url: "https://stream.esemrede.com.br/live/redetves.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://stream.esemrede.com.br/live/redetves.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "animetv",
+        title: "Anime TV",
+        name: "Anime TV",
+        description: "Anime TV",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://stmv2.painelvideocast.com.br/animetv/animetv/chunklist_w477445737.m3u8",
+        embed_url: "https://stmv2.painelvideocast.com.br/animetv/animetv/chunklist_w477445737.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://stmv2.painelvideocast.com.br/animetv/animetv/chunklist_w477445737.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "otakusign",
+        title: "Otaku Sign",
+        name: "Otaku Sign",
+        description: "Otaku Sign",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://stmv1.srvif.com/anime/anime/playlist.m3u8",
+        embed_url: "https://stmv1.srvif.com/anime/anime/playlist.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://stmv1.srvif.com/anime/anime/playlist.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "retrocartoon",
+        title: "Retro Cartoon",
+        name: "Retro Cartoon",
+        description: "Retro Cartoon",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://stmv1.video.brstream.com.br/retrotv/retrotv/chunklist_w1119502709.m3u8",
+        embed_url: "https://stmv1.video.brstream.com.br/retrotv/retrotv/chunklist_w1119502709.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://stmv1.video.brstream.com.br/retrotv/retrotv/chunklist_w1119502709.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "channel",
+        title: "CHANNEL",
+        name: "CHANNEL",
+        description: "CHANNEL",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://stmv2.painelvideocast.com.br/movies1/movies1/chunklist_w617740703.m3u8",
+        embed_url: "https://stmv2.painelvideocast.com.br/movies1/movies1/chunklist_w617740703.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://stmv2.painelvideocast.com.br/movies1/movies1/chunklist_w617740703.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "acao",
+        title: "Ação",
+        name: "Ação",
+        description: "Ação",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://run-rt-ra.otteravision.com/run/rt_ra/rt_ra_720.m3u8",
+        embed_url: "https://run-rt-ra.otteravision.com/run/rt_ra/rt_ra_720.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://run-rt-ra.otteravision.com/run/rt_ra/rt_ra_720.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "cinema",
+        title: "CINEMA",
+        name: "CINEMA",
+        description: "CINEMA",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://run-rt-br.otteravision.com/run/rt_br/rt_br_720p_high.m3u8",
+        embed_url: "https://run-rt-br.otteravision.com/run/rt_br/rt_br_720p_high.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://run-rt-br.otteravision.com/run/rt_br/rt_br_720p_high.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "comedia",
+        title: "Comédia",
+        name: "Comédia",
+        description: "Comédia",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://run-rc-br.otteravision.com/run/rc_br/rc_br_720.m3u8",
+        embed_url: "https://run-rc-br.otteravision.com/run/rc_br/rc_br_720.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://run-rc-br.otteravision.com/run/rc_br/rc_br_720.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "crime",
+        title: "Crime",
+        name: "Crime",
+        description: "Crime",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://run-cr-br.otteravision.com/run/cr_br/cr_br_720.m3u8",
+        embed_url: "https://run-cr-br.otteravision.com/run/cr_br/cr_br_720.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://run-cr-br.otteravision.com/run/cr_br/cr_br_720.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "familia",
+        title: "Família",
+        name: "Família",
+        description: "Família",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://run-rufb.otteravision.com/run/rufb/rufb_720.m3u8",
+        embed_url: "https://run-rufb.otteravision.com/run/rufb/rufb_720.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://run-rufb.otteravision.com/run/rufb/rufb_720.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "romance",
+        title: "Romance",
+        name: "Romance",
+        description: "Romance",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://run-ro-br.otteravision.com/run/ro_br/ro_br_720.m3u8",
+        embed_url: "https://run-ro-br.otteravision.com/run/ro_br/ro_br_720.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://run-ro-br.otteravision.com/run/ro_br/ro_br_720.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "sonyone",
+        title: "Sony One",
+        name: "Sony One",
+        description: "Sony One",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://spt-sonyoneemocoes-1-br.samsung.wurl.tv/3000.m3u8",
+        embed_url: "https://spt-sonyoneemocoes-1-br.samsung.wurl.tv/3000.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://spt-sonyoneemocoes-1-br.samsung.wurl.tv/3000.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "sessaotrash",
+        title: "Sessão Trash",
+        name: "Sessão Trash",
+        description: "Sessão Trash",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://amg00711-zylo-amg00711c12-plex-us-8636.playouts.now.amagi.tv/playlist1080p.m3u8",
+        embed_url: "https://amg00711-zylo-amg00711c12-plex-us-8636.playouts.now.amagi.tv/playlist1080p.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://amg00711-zylo-amg00711c12-plex-us-8636.playouts.now.amagi.tv/playlist1080p.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "rakutentv",
+        title: "Rakuten TV",
+        name: "Rakuten TV",
+        description: "Rakuten TV",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://family-rakuten-tv-pt.fast.rakuten.tv/v1/manifest/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6213/4cd5cdae-d458-469e-a620-901f3b91e0ea/2.m3u8",
+        embed_url: "https://family-rakuten-tv-pt.fast.rakuten.tv/v1/manifest/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6213/4cd5cdae-d458-469e-a620-901f3b91e0ea/2.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://family-rakuten-tv-pt.fast.rakuten.tv/v1/manifest/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6213/4cd5cdae-d458-469e-a620-901f3b91e0ea/2.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "rakutentvportugues",
+        title: "Rakuten TV Português",
+        name: "Rakuten TV Português",
+        description: "Rakuten TV Português",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://b0d59c8c98974e708e5ccb9a27cdfdfc.mediatailor.eu-west-1.amazonaws.com/v1/manifest/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6741/b7b150a2-e53e-4240-bc71-284749543c16/2.m3u8",
+        embed_url: "https://b0d59c8c98974e708e5ccb9a27cdfdfc.mediatailor.eu-west-1.amazonaws.com/v1/manifest/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6741/b7b150a2-e53e-4240-bc71-284749543c16/2.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://b0d59c8c98974e708e5ccb9a27cdfdfc.mediatailor.eu-west-1.amazonaws.com/v1/manifest/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6741/b7b150a2-e53e-4240-bc71-284749543c16/2.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "cinecatastrofe",
+        title: "Cine Catástrofe",
+        name: "Cine Catástrofe",
+        description: "Cine Catástrofe",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://video05.logicahost.com.br/cinecatastrofe/cinecatastrofe/chunklist_w54774135.m3u8",
+        embed_url: "https://video05.logicahost.com.br/cinecatastrofe/cinecatastrofe/chunklist_w54774135.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://video05.logicahost.com.br/cinecatastrofe/cinecatastrofe/chunklist_w54774135.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "chaves",
+        title: "Chaves",
+        name: "Chaves",
+        description: "Chaves",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://fa723fc1b171.sae13.playlist.live-video.net/v1/playlist/CsEGkzJeQ1NxX2ANuMFirokRrj4-TmJIu5NDSqkcc3QvQN6K5lG8ELr6s1IlQNZEb7dQfSMKp_2y23QJ6tBqdswMcMJ_bG8AfOdzzbwRPUvoTzhaaQXQvoI6qK_wyecxrgPCXsqu38csEq8kODBWgsYJE5RCyHL0K15yFcwSp6cg4GHCikuzLxa5UbhwztnYoyzr1sQ3BDVQDsPEZ_z3-fopZ29K-NFXD2C2GdVeg5g8t40l_W6e87ACvQb-IGQVF9-QkNw9tCKrGck9NeBL7Qw0qA4jctIRK7i6RUAzxqjMze8-QbdMXpWblwSVTujWJxEafivzyhp4YzE5RNbQY-0avX1LDusd_oJ14b9cEhaQ_rnOgVeJXSJ9RFshq0M86EoztA5dDmyJiSn6lCtPxOZZVzxyYQ89Jo4Z8pg3efAMrlSNzu9cnC8fR6RePGLgxT0vA0lpV9Trm5RdiLap9mdq1sw9B1rz1zDq0oqyBefbveG0hAKrTBYkfn3nNkpVAB_yhH5TosDOALdc4RXr4Sn5gi2Xv_2LKKzaTWCKpgUMRwILUKvGdrUVLD7ayAumdsRAsC9lxCrL0ogceCTEFxQdKSMeCYPg2Xtaju6dL9pJ1didz10i_4AqXENUwrq9Ffkbj4hkeLLyL6J3sCzw1vha_u9ziOCm1YN9fkwGXpO9v4HHO-LcAjBLjAIGP2KgRtKjwGxPfst64A9veNr2dCLxARTJK8-j3QOjTPGZ0puCfizLzRG975XXFwOVb-owY-CwsE2fZBoGHmWpb456UMR-Lc9BvtfJtpDKLy6ZfvlJFQ7TynV5r2bHftbo9Gnh76FMF2PDdRMUS9E81ZlX219K6jmCx9jAvd8-ZacEeOIxUrhMnD7ePyr4BDwK4h_KwwMZk4S-qmXfNnrKrDPcXOYqEG5ZrwjOZWOji5sn8am9Wxvod2ffL3VaGcCNnG4HnOfHOAXYMFRnAYeE9H6xHdpyTg-E7ciOD62JihiImC2J81nAklIEdK89zjm3HnU0SG9RUUDr2SV1Zt033bJPXbrW5gWL7Ybtj6wIGwKPxp774KauDSDsod0UHSGvl",
+        embed_url: "https://fa723fc1b171.sae13.playlist.live-video.net/v1/playlist/CsEGkzJeQ1NxX2ANuMFirokRrj4-TmJIu5NDSqkcc3QvQN6K5lG8ELr6s1IlQNZEb7dQfSMKp_2y23QJ6tBqdswMcMJ_bG8AfOdzzbwRPUvoTzhaaQXQvoI6qK_wyecxrgPCXsqu38csEq8kODBWgsYJE5RCyHL0K15yFcwSp6cg4GHCikuzLxa5UbhwztnYoyzr1sQ3BDVQDsPEZ_z3-fopZ29K-NFXD2C2GdVeg5g8t40l_W6e87ACvQb-IGQVF9-QkNw9tCKrGck9NeBL7Qw0qA4jctIRK7i6RUAzxqjMze8-QbdMXpWblwSVTujWJxEafivzyhp4YzE5RNbQY-0avX1LDusd_oJ14b9cEhaQ_rnOgVeJXSJ9RFshq0M86EoztA5dDmyJiSn6lCtPxOZZVzxyYQ89Jo4Z8pg3efAMrlSNzu9cnC8fR6RePGLgxT0vA0lpV9Trm5RdiLap9mdq1sw9B1rz1zDq0oqyBefbveG0hAKrTBYkfn3nNkpVAB_yhH5TosDOALdc4RXr4Sn5gi2Xv_2LKKzaTWCKpgUMRwILUKvGdrUVLD7ayAumdsRAsC9lxCrL0ogceCTEFxQdKSMeCYPg2Xtaju6dL9pJ1didz10i_4AqXENUwrq9Ffkbj4hkeLLyL6J3sCzw1vha_u9ziOCm1YN9fkwGXpO9v4HHO-LcAjBLjAIGP2KgRtKjwGxPfst64A9veNr2dCLxARTJK8-j3QOjTPGZ0puCfizLzRG975XXFwOVb-owY-CwsE2fZBoGHmWpb456UMR-Lc9BvtfJtpDKLy6ZfvlJFQ7TynV5r2bHftbo9Gnh76FMF2PDdRMUS9E81ZlX219K6jmCx9jAvd8-ZacEeOIxUrhMnD7ePyr4BDwK4h_KwwMZk4S-qmXfNnrKrDPcXOYqEG5ZrwjOZWOji5sn8am9Wxvod2ffL3VaGcCNnG4HnOfHOAXYMFRnAYeE9H6xHdpyTg-E7ciOD62JihiImC2J81nAklIEdK89zjm3HnU0SG9RUUDr2SV1Zt033bJPXbrW5gWL7Ybtj6wIGwKPxp774KauDSDsod0UHSGvl",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://fa723fc1b171.sae13.playlist.live-video.net/v1/playlist/CsEGkzJeQ1NxX2ANuMFirokRrj4-TmJIu5NDSqkcc3QvQN6K5lG8ELr6s1IlQNZEb7dQfSMKp_2y23QJ6tBqdswMcMJ_bG8AfOdzzbwRPUvoTzhaaQXQvoI6qK_wyecxrgPCXsqu38csEq8kODBWgsYJE5RCyHL0K15yFcwSp6cg4GHCikuzLxa5UbhwztnYoyzr1sQ3BDVQDsPEZ_z3-fopZ29K-NFXD2C2GdVeg5g8t40l_W6e87ACvQb-IGQVF9-QkNw9tCKrGck9NeBL7Qw0qA4jctIRK7i6RUAzxqjMze8-QbdMXpWblwSVTujWJxEafivzyhp4YzE5RNbQY-0avX1LDusd_oJ14b9cEhaQ_rnOgVeJXSJ9RFshq0M86EoztA5dDmyJiSn6lCtPxOZZVzxyYQ89Jo4Z8pg3efAMrlSNzu9cnC8fR6RePGLgxT0vA0lpV9Trm5RdiLap9mdq1sw9B1rz1zDq0oqyBefbveG0hAKrTBYkfn3nNkpVAB_yhH5TosDOALdc4RXr4Sn5gi2Xv_2LKKzaTWCKpgUMRwILUKvGdrUVLD7ayAumdsRAsC9lxCrL0ogceCTEFxQdKSMeCYPg2Xtaju6dL9pJ1didz10i_4AqXENUwrq9Ffkbj4hkeLLyL6J3sCzw1vha_u9ziOCm1YN9fkwGXpO9v4HHO-LcAjBLjAIGP2KgRtKjwGxPfst64A9veNr2dCLxARTJK8-j3QOjTPGZ0puCfizLzRG975XXFwOVb-owY-CwsE2fZBoGHmWpb456UMR-Lc9BvtfJtpDKLy6ZfvlJFQ7TynV5r2bHftbo9Gnh76FMF2PDdRMUS9E81ZlX219K6jmCx9jAvd8-ZacEeOIxUrhMnD7ePyr4BDwK4h_KwwMZk4S-qmXfNnrKrDPcXOYqEG5ZrwjOZWOji5sn8am9Wxvod2ffL3VaGcCNnG4HnOfHOAXYMFRnAYeE9H6xHdpyTg-E7ciOD62JihiImC2J81nAklIEdK89zjm3HnU0SG9RUUDr2SV1Zt033bJPXbrW5gWL7Ybtj6wIGwKPxp774KauDSDsod0UHSGvl"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "sbcpipoca",
+        title: "SBC Pipoca",
+        name: "SBC Pipoca",
+        description: "SBC Pipoca",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://video01.brascast.com/d8e52626/d8e52626/playlist.m3u8?hls_ctx=8w7zpjq0",
+        embed_url: "https://video01.brascast.com/d8e52626/d8e52626/playlist.m3u8?hls_ctx=8w7zpjq0",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://video01.brascast.com/d8e52626/d8e52626/playlist.m3u8?hls_ctx=8w7zpjq0"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "sbckids",
+        title: "SBC Kids",
+        name: "SBC Kids",
+        description: "SBC Kids",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://video01.brascast.com/rede1220/rede1220/playlist.m3u8?hls_ctx=r3j37593",
+        embed_url: "https://video01.brascast.com/rede1220/rede1220/playlist.m3u8?hls_ctx=r3j37593",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://video01.brascast.com/rede1220/rede1220/playlist.m3u8?hls_ctx=r3j37593"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "sbcstudio",
+        title: "SBC Studio",
+        name: "SBC Studio",
+        description: "SBC Studio",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://video01.brascast.com/tv411747/tv411747/playlist.m3u8?hls_ctx=4u0238r6",
+        embed_url: "https://video01.brascast.com/tv411747/tv411747/playlist.m3u8?hls_ctx=4u0238r6",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://video01.brascast.com/tv411747/tv411747/playlist.m3u8?hls_ctx=4u0238r6"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "megaonetv",
+        title: "Mega One TV",
+        name: "Mega One TV",
+        description: "Mega One TV",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://stmv6.voxtvhd.com.br/megaonetv/megaonetv/playlist.m3u8",
+        embed_url: "https://stmv6.voxtvhd.com.br/megaonetv/megaonetv/playlist.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://stmv6.voxtvhd.com.br/megaonetv/megaonetv/playlist.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "cinepixtv",
+        title: "CinePix TV",
+        name: "CinePix TV",
+        description: "CinePix TV",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://stream.ads.ottera.tv/cl/260922dapffssar47c738ddttg/1920x1080_6046040_3_f.m3u8?i=728_6178",
+        embed_url: "https://stream.ads.ottera.tv/cl/260922dapffssar47c738ddttg/1920x1080_6046040_3_f.m3u8?i=728_6178",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://stream.ads.ottera.tv/cl/260922dapffssar47c738ddttg/1920x1080_6046040_3_f.m3u8?i=728_6178"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "musicatracebrasil",
+        title: "Música Trace Brasil",
+        name: "Música Trace Brasil",
+        description: "Música Trace Brasil",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://amg01131-tracetv-tracebrazuca-xiaomi-vvr19.amagi.tv/ts-us-e2-n1/playlist/amg01131-tracetv-tracebrazuca-xiaomi/cb543d197b6c6d8f84c83e67cef043a0f94b1fde1d6988693eb5518975d1073edce2a59caa08ff16388f1ede7f0a66413a3e951fda77118fd87eb141453c5728cfffe729a2c05616b7db083429b56a062a866a68ac39437ed0e21f48a238b6720a5aa82a66443d80b846ac7351db80148b61299bce8c37683f03409a5e5afba358b38ab50a5ad969a2af1c56953145f596179d8518b888d75e83118025a7099c93a68ace19848ec07eab51e06d5900202bc8852dc5fbbfd7b0eb01b321c2493c7c77d4e1f5dc5c3d9c4e4f2e8095a98c448fdd4a1447fb0d04b4158c47c411876eb800a4e034d2c52d72f1204bcfe75a7326b0eca39ff23732ff129333356f120efbc524022efa6cd7621b3985f1c45ee49152fed3523d557a3bcc26c6e5e29da4ac91c6876d3c6fbbe6f99d2f4b4d624b3187529daa6cce25d2420faf793c71425ea49659c5c98c10602207b18950d01c0caa9ba5b79f5f6b8430401adf69d70d51378c2c3a28ac6dd88a2c608c110f871e34ef1760d315b2eb7ab5eff0cd32169992874ef664eaf52dd7f509a6247c7a0aa1fd215a0a1d2883a0364360379305d7d2cce065004fb9a49ab0930578223d101d5ddeb1a920d5de8e796f63ab3911697a1418811796388f722e2e1a894f83e2590eca6c4800efa42d52496390dcc3e8aadfc956ba6cdcc9e943411e5d64b873486659dab88956ea2b09195e589304704cad0d3913b9c229845f11c57bfaac2277267b96a632118e4332c1fd1803/137/1920x1080_4143876/index.m3u8",
+        embed_url: "https://amg01131-tracetv-tracebrazuca-xiaomi-vvr19.amagi.tv/ts-us-e2-n1/playlist/amg01131-tracetv-tracebrazuca-xiaomi/cb543d197b6c6d8f84c83e67cef043a0f94b1fde1d6988693eb5518975d1073edce2a59caa08ff16388f1ede7f0a66413a3e951fda77118fd87eb141453c5728cfffe729a2c05616b7db083429b56a062a866a68ac39437ed0e21f48a238b6720a5aa82a66443d80b846ac7351db80148b61299bce8c37683f03409a5e5afba358b38ab50a5ad969a2af1c56953145f596179d8518b888d75e83118025a7099c93a68ace19848ec07eab51e06d5900202bc8852dc5fbbfd7b0eb01b321c2493c7c77d4e1f5dc5c3d9c4e4f2e8095a98c448fdd4a1447fb0d04b4158c47c411876eb800a4e034d2c52d72f1204bcfe75a7326b0eca39ff23732ff129333356f120efbc524022efa6cd7621b3985f1c45ee49152fed3523d557a3bcc26c6e5e29da4ac91c6876d3c6fbbe6f99d2f4b4d624b3187529daa6cce25d2420faf793c71425ea49659c5c98c10602207b18950d01c0caa9ba5b79f5f6b8430401adf69d70d51378c2c3a28ac6dd88a2c608c110f871e34ef1760d315b2eb7ab5eff0cd32169992874ef664eaf52dd7f509a6247c7a0aa1fd215a0a1d2883a0364360379305d7d2cce065004fb9a49ab0930578223d101d5ddeb1a920d5de8e796f63ab3911697a1418811796388f722e2e1a894f83e2590eca6c4800efa42d52496390dcc3e8aadfc956ba6cdcc9e943411e5d64b873486659dab88956ea2b09195e589304704cad0d3913b9c229845f11c57bfaac2277267b96a632118e4332c1fd1803/137/1920x1080_4143876/index.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://amg01131-tracetv-tracebrazuca-xiaomi-vvr19.amagi.tv/ts-us-e2-n1/playlist/amg01131-tracetv-tracebrazuca-xiaomi/cb543d197b6c6d8f84c83e67cef043a0f94b1fde1d6988693eb5518975d1073edce2a59caa08ff16388f1ede7f0a66413a3e951fda77118fd87eb141453c5728cfffe729a2c05616b7db083429b56a062a866a68ac39437ed0e21f48a238b6720a5aa82a66443d80b846ac7351db80148b61299bce8c37683f03409a5e5afba358b38ab50a5ad969a2af1c56953145f596179d8518b888d75e83118025a7099c93a68ace19848ec07eab51e06d5900202bc8852dc5fbbfd7b0eb01b321c2493c7c77d4e1f5dc5c3d9c4e4f2e8095a98c448fdd4a1447fb0d04b4158c47c411876eb800a4e034d2c52d72f1204bcfe75a7326b0eca39ff23732ff129333356f120efbc524022efa6cd7621b3985f1c45ee49152fed3523d557a3bcc26c6e5e29da4ac91c6876d3c6fbbe6f99d2f4b4d624b3187529daa6cce25d2420faf793c71425ea49659c5c98c10602207b18950d01c0caa9ba5b79f5f6b8430401adf69d70d51378c2c3a28ac6dd88a2c608c110f871e34ef1760d315b2eb7ab5eff0cd32169992874ef664eaf52dd7f509a6247c7a0aa1fd215a0a1d2883a0364360379305d7d2cce065004fb9a49ab0930578223d101d5ddeb1a920d5de8e796f63ab3911697a1418811796388f722e2e1a894f83e2590eca6c4800efa42d52496390dcc3e8aadfc956ba6cdcc9e943411e5d64b873486659dab88956ea2b09195e589304704cad0d3913b9c229845f11c57bfaac2277267b96a632118e4332c1fd1803/137/1920x1080_4143876/index.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "musicatracelatina",
+        title: "Música Trace Latina",
+        name: "Música Trace Latina",
+        description: "Música Trace Latina",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://amg01131-tracetv-tracelatina-glewed-vtnk7.amagi.tv/playlist1080P.m3u8",
+        embed_url: "https://amg01131-tracetv-tracelatina-glewed-vtnk7.amagi.tv/playlist1080P.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://amg01131-tracetv-tracelatina-glewed-vtnk7.amagi.tv/playlist1080P.m3u8"
+        }],
+        stream_type: "live"
+    },
+    {
+        id: "musicakpop",
+        title: "Música K-Pop",
+        name: "Música K-Pop",
+        description: "Música K-Pop",
+        category: "TV",
+        logo: "",
+        preview_url: "",
+        iframe_url: "https://live20.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8",
+        embed_url: "https://live20.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8",
+        embeds: [{
+            provider: "LUKAFILMES",
+            quality: "HD",
+            embed_url: "https://live20.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8"
+        }],
+        stream_type: "live"
+    }
 ];
+
 function escapar(valor){
     return String(valor ?? '')
         .replace(/&/g,'&amp;')
@@ -1179,7 +2574,7 @@ function renderizarCategorias(lista){
             const categoriaSelecionada = botao.dataset.categoria;
 
             if(categoriaSelecionada === '__todos__'){
-                renderizarCanais(canais);
+                renderizarCanais(ordenarPorCategoria(canais));
                 return;
             }
 
@@ -1210,6 +2605,112 @@ function renderizarCanais(lista){
     lista.forEach(item => area.appendChild(criarCard(item)));
 }
 
+
+function normalizarCategoria(item){
+    const id = String(item?.id || '').toLowerCase();
+    const nome = String(
+        item?.title ||
+        item?.name ||
+        ''
+    ).toLowerCase();
+
+    const texto = id + ' ' + nome;
+
+    if(
+        /nick|cartoon|kids|infantil|gospelcartoon|sbckids/.test(texto)
+    ){
+        return 'Infantil';
+    }
+
+    if(
+        /anime|otaku/.test(texto)
+    ){
+        return 'Anime';
+    }
+
+    if(
+        /trace|kpop|musica|música|music/.test(texto)
+    ){
+        return 'Música';
+    }
+
+    if(
+        /gospel|despertar/.test(texto)
+    ){
+        return 'Gospel';
+    }
+
+    if(
+        /news|not[ií]cia|noticias|sbtnews|recordnews|metropolitano/.test(texto)
+    ){
+        return 'Notícias';
+    }
+
+    if(
+        /filme|cinema|cine|pipoca|sess[aã]o trash|sony one|sonyone|rakuten/.test(texto)
+    ){
+        return 'Filmes';
+    }
+
+    if(
+        /chaves|s[eé]ries|series|classique|retro/.test(texto)
+    ){
+        return 'Séries e Clássicos';
+    }
+
+    if(
+        /sbt|band|redetv|rede tv|cultura|tv brasil|tvbrasil|tvers|araruna|awtv|stz|tcm|folha|tvi portugal|tvportugal/.test(texto)
+    ){
+        return 'TV Aberta';
+    }
+
+    if(
+        /bem mais|bemmais|mega one|megaonetv|fora t[eé]dio|foratedio|channel|studio|entretenimento/.test(texto)
+    ){
+        return 'Entretenimento';
+    }
+
+    if(
+        /portugal|internacional|my time|mytime|lg channels|lgchannels/.test(texto)
+    ){
+        return 'Internacionais';
+    }
+
+    return 'Outros';
+}
+
+const ORDEM_CATEGORIAS = [
+    'TV Aberta',
+    'Notícias',
+    'Filmes',
+    'Séries e Clássicos',
+    'Infantil',
+    'Anime',
+    'Gospel',
+    'Música',
+    'Entretenimento',
+    'Internacionais',
+    'Outros'
+];
+
+function ordenarPorCategoria(lista){
+    return [...lista].sort((a, b) => {
+        const ca = normalizarCategoria(a);
+        const cb = normalizarCategoria(b);
+
+        const ia = ORDEM_CATEGORIAS.indexOf(ca);
+        const ib = ORDEM_CATEGORIAS.indexOf(cb);
+
+        if(ia !== ib) return ia - ib;
+
+        return String(a.title || a.name || '')
+            .localeCompare(
+                String(b.title || b.name || ''),
+                'pt-BR'
+            );
+    });
+}
+
 async function carregarIPTV(){
     const status = document.getElementById('statusIPTV');
 
@@ -1234,7 +2735,117 @@ async function carregarIPTV(){
 
         const listaCanaisAPI = Array.isArray(jsonCanais?.data)
             ? jsonCanais.data
-            : [];
+            : [,
+    {
+        id: "awtv",
+        title: "AWTV",
+        name: "AWTV",
+        description: "AWTV",
+        category: "TV",
+        iframe_url: "https://freetv.studio/embed/AWTV.br",
+        embed_url: "https://freetv.studio/embed/AWTV.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/AWTV.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "ararunatv",
+        title: "Araruna TV",
+        name: "Araruna TV",
+        description: "Araruna TV",
+        category: "TV",
+        iframe_url: "https://freetv.studio/embed/ArarunaTV.br",
+        embed_url: "https://freetv.studio/embed/ArarunaTV.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/ArarunaTV.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "sbtnews",
+        title: "SBT News",
+        name: "SBT News",
+        description: "SBT News",
+        category: "Notícias",
+        iframe_url: "https://freetv.studio/embed/SBTNews.br",
+        embed_url: "https://freetv.studio/embed/SBTNews.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/SBTNews.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "recordnews",
+        title: "Record News",
+        name: "Record News",
+        description: "Record News",
+        category: "Notícias",
+        iframe_url: "https://freetv.studio/embed/RecordNews.br",
+        embed_url: "https://freetv.studio/embed/RecordNews.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/RecordNews.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "canalmetropolitanodenoticias",
+        title: "Canal Metropolitano de Notícias",
+        name: "Canal Metropolitano de Notícias",
+        description: "Canal Metropolitano de Notícias",
+        category: "Notícias",
+        iframe_url: "https://freetv.studio/embed/CanalMetropolitanodeNoticias.br",
+        embed_url: "https://freetv.studio/embed/CanalMetropolitanodeNoticias.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/CanalMetropolitanodeNoticias.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "stztv",
+        title: "STZ TV",
+        name: "STZ TV",
+        description: "STZ TV",
+        category: "TV",
+        iframe_url: "https://freetv.studio/embed/STZTV.br",
+        embed_url: "https://freetv.studio/embed/STZTV.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/STZTV.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "tcm10hd",
+        title: "TCM 10 HD",
+        name: "TCM 10 HD",
+        description: "TCM 10 HD",
+        category: "TV",
+        iframe_url: "https://freetv.studio/embed/TCM10HD.br",
+        embed_url: "https://freetv.studio/embed/TCM10HD.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/TCM10HD.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "tvafolha",
+        title: "TV A Folha",
+        name: "TV A Folha",
+        description: "TV A Folha",
+        category: "TV",
+        iframe_url: "https://freetv.studio/embed/TVAFolha.br",
+        embed_url: "https://freetv.studio/embed/TVAFolha.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/TVAFolha.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "tvseries",
+        title: "TV Séries",
+        name: "TV Séries",
+        description: "TV Séries",
+        category: "Entretenimento",
+        iframe_url: "https://freetv.studio/embed/TVSeries.br",
+        embed_url: "https://freetv.studio/embed/TVSeries.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/TVSeries.br" }],
+        stream_type: "live"
+    },
+    {
+        id: "foratediotv",
+        title: "Fora Tédio TV",
+        name: "Fora Tédio TV",
+        description: "Fora Tédio TV",
+        category: "Entretenimento",
+        iframe_url: "https://freetv.studio/embed/ForaTedioTV.br",
+        embed_url: "https://freetv.studio/embed/ForaTedioTV.br",
+        embeds: [{ provider: "LUKAFILMES", quality: "HD", embed_url: "https://freetv.studio/embed/ForaTedioTV.br" }],
+        stream_type: "live"
+    }];
 
         const canaisAPI = listaCanaisAPI
             .filter(item => item && item.is_active !== false)
@@ -1264,7 +2875,12 @@ async function carregarIPTV(){
                 stream_type: 'live'
             }));
 
-        canais = canaisAPI;
+        canais = canaisManuais.map(item => ({
+        ...item,
+        category: normalizarCategoria(item)
+    }));
+
+    canais = ordenarPorCategoria(canais);
 
         if(status){
             status.textContent =
