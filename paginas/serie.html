@@ -2043,6 +2043,13 @@ function carregarQRCodeLuka() {
                 ▶ APIPlayer
             </button>
 
+            <button
+                type="button"
+                id="btnVidemSerie"
+                class="serie-player-btn">
+                ▶ VIDEM
+            </button>
+
         </div>
 
         <div class="player-video" id="seriePlayerVideo" style="display:none;">
@@ -3612,6 +3619,9 @@ function criarTemporadaFallback() {
         const btnApiPlayerSerie =
             document.getElementById("btnApiPlayerSerie");
 
+        const btnVidemSerie =
+            document.getElementById("btnVidemSerie");
+
         const seriePlayerVideo =
             document.getElementById("seriePlayerVideo");
 
@@ -3704,6 +3714,26 @@ function criarTemporadaFallback() {
                 carregarPlayerSerie(
                     apiPlayerUrl,
                     "APIPlayer"
+                );
+
+            };
+        }
+
+        if (btnVidemSerie) {
+
+            btnVidemSerie.onclick = function () {
+
+                const videmUrl =
+                    "https://videm.xyz/embed/tv/" +
+                    encodeURIComponent(String(idSerie).trim()) +
+                    "/" +
+                    encodeURIComponent(String(temporadaId).trim()) +
+                    "/" +
+                    encodeURIComponent(String(episodioId).trim());
+
+                carregarPlayerSerie(
+                    videmUrl,
+                    "VIDEM"
                 );
 
             };

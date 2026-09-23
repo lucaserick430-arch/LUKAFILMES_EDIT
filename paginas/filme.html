@@ -3784,8 +3784,7 @@ body{
         </div>
 
         <div id="filmePlayersOpcoes" class="lukafilmes-players-limpos players-ocultos">
-
-            <button
+<button
                 type="button"
                 id="btnRedeFlixFilme"
                 class="serie-player-btn">
@@ -3812,6 +3811,13 @@ body{
                 class="serie-player-btn">
                 ▶ APIPlayer
             </button>
+
+        <button
+            type="button"
+            id="btnVidemFilme"
+            class="serie-player-btn">
+            ▶ VIDEM
+        </button>
 
         </div>
 
@@ -6727,8 +6733,14 @@ body {
             console.warn("[HISTÓRICO PLAYER] Não foi possível proteger o retorno:", erro);
         }
     }
-    const btnRedeFlixFilme = document.getElementById("btnRedeFlixFilme");
-    const btnApiPlayerFilme = document.getElementById("btnApiPlayerFilme");
+const btnRedeFlixFilme =
+        document.getElementById("btnRedeFlixFilme");
+
+    const btnApiPlayerFilme =
+        document.getElementById("btnApiPlayerFilme");
+
+    const btnVidemFilme =
+        document.getElementById("btnVidemFilme");
     const filmeFrame = document.getElementById("filmeFrame");
 
     if (!btnRedeFlixFilme || !btnApiPlayerFilme || !filmeFrame) return;
@@ -6747,8 +6759,7 @@ body {
     } catch (e) {}
 
     if (!tmdbId) return;
-
-    btnRedeFlixFilme.onclick = function () {
+btnRedeFlixFilme.onclick = function () {
         protegerHistoricoPlayerFilme();
         filmeFrame.style.setProperty("display", "block", "important");
         filmeFrame.src =
@@ -6790,6 +6801,17 @@ body {
             encodeURIComponent(tmdbId) +
             "?lang=pt";
     };
+
+    if (btnVidemFilme) {
+        btnVidemFilme.onclick = function () {
+            protegerHistoricoPlayerFilme();
+            filmeFrame.style.setProperty("display", "block", "important");
+            filmeFrame.src =
+                "https://videm.xyz/embed/movie/" +
+                encodeURIComponent(tmdbId);
+        };
+    }
+
 })();
 </script>
 
