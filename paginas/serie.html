@@ -1874,6 +1874,30 @@ function carregarQRCodeLuka() {
 
 </style>
 
+<style id="lukafilmes-acesso-moderno-v1">
+.lukaAcessoModal{
+position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.86);backdrop-filter:blur(14px);
+}
+.lukaAcessoModal.ativo{display:flex}
+.lukaAcessoCard{
+width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,255,255,.12);border-radius:26px;padding:30px 24px;background:linear-gradient(180deg,#171717,#070707);color:#fff;text-align:center;box-shadow:0 30px 100px rgba(0,0,0,.8);
+}
+.lukaAcessoKicker{color:#e50914;font-size:11px;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px}
+.lukaAcessoCard h2{font-size:clamp(27px,7vw,40px);line-height:1;margin:0 0 12px;font-weight:900}
+.lukaAcessoCard p{color:rgba(255,255,255,.68);line-height:1.55;margin:10px auto 20px}
+.lukaAcessoTimer{font-size:14px;font-weight:800;color:#fff;margin:14px 0}
+.lukaAcessoTimer strong{color:#e50914;font-size:20px}
+.lukaAcessoPixBox{display:none;margin-top:20px}
+.lukaAcessoQr{width:220px;height:220px;margin:0 auto 18px;padding:10px;background:#fff;border-radius:18px;box-sizing:border-box}
+.lukaAcessoQr img,.lukaAcessoQr canvas{max-width:100%;max-height:100%}
+.lukaAcessoPix{width:100%;height:86px;box-sizing:border-box;resize:none;background:#050505;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:11px;font-size:11px}
+.lukaAcessoBtn{width:100%;border:0;border-radius:12px;padding:14px;margin-top:10px;background:#e50914;color:#fff;font-weight:900;cursor:pointer}
+.lukaAcessoStatus{font-size:13px;color:rgba(255,255,255,.58);margin-top:14px}
+@media(max-width:600px){
+.lukaAcessoCard{padding:24px 16px;border-radius:22px}
+.lukaAcessoQr{width:190px;height:190px}
+}
+</style>
 </head>
 
 
@@ -3380,6 +3404,22 @@ function criarTemporadaFallback() {
             );
 
             /*
+             * TESTE GRÁTIS
+             * Usa a expiração registrada pelo servidor.
+             */
+            if (
+                acesso &&
+                acesso.permitido &&
+                acesso.teste_gratis &&
+                acesso.teste_gratis_expira &&
+                window.__lukaIniciarTesteSerie
+            ) {
+                window.__lukaIniciarTesteSerie(
+                    acesso
+                );
+            }
+
+            /*
              * USUÁRIO NÃO LOGADO:
              * manda para o cadastro e depois
              * retorna para esta série.
@@ -3411,8 +3451,12 @@ function criarTemporadaFallback() {
             if (!acesso.permitido) {
 
                 if (
+                    (
                     acesso.motivo ===
-                    "expirado"
+                    "expirado" ||
+                    acesso.motivo ===
+                    "teste_expirado"
+                )
                 ) {
 
                     await mostrarPagamentoLuka(
@@ -3625,25 +3669,94 @@ function criarTemporadaFallback() {
         const seriePlayerVideo =
             document.getElementById("seriePlayerVideo");
 
-        function carregarPlayerSerie(url, nome) {
+        async function carregarPlayerSerie(url, nome) {
 
             if (!url || !serieFrame || !seriePlayerVideo) {
                 return;
             }
 
-            serieFrame.src = url;
+            try {
 
-            seriePlayerVideo.style.setProperty(
-                "display",
-                "block",
-                "important"
-            );
+                const resposta =
+                    await fetch(
+                        "/api/acesso-assistir",
+                        {
+                            method: "GET",
+                            credentials: "same-origin",
+                            cache: "no-store"
+                        }
+                    );
 
-            console.log(
-                "[SÉRIE PLAYER] Player escolhido:",
-                nome,
-                url
-            );
+                const acessoAtual =
+                    await resposta.json();
+
+                console.log(
+                    "[LUKAFILMES] Verificação antes de abrir player:",
+                    acessoAtual
+                );
+
+                if (!acessoAtual.permitido) {
+
+                    if (
+                        acessoAtual.motivo === "expirado" ||
+                        acessoAtual.motivo === "teste_expirado"
+                    ) {
+
+                        if (window.__lukaTesteSerieBloqueado) {
+                            window.__lukaTesteSerieBloqueado();
+                        }
+
+                        await mostrarPagamentoLuka(
+                            acessoAtual
+                        );
+
+                    } else {
+
+                        alert(
+                            acessoAtual.mensagem ||
+                            "Seu acesso não está liberado para assistir."
+                        );
+
+                    }
+
+                    return;
+                }
+
+                if (
+                    acessoAtual.teste_gratis &&
+                    acessoAtual.teste_gratis_expira &&
+                    window.__lukaIniciarTesteSerie
+                ) {
+                    window.__lukaIniciarTesteSerie(
+                        acessoAtual
+                    );
+                }
+
+                serieFrame.src = url;
+
+                seriePlayerVideo.style.setProperty(
+                    "display",
+                    "block",
+                    "important"
+                );
+
+                console.log(
+                    "[SÉRIE PLAYER] Player escolhido:",
+                    nome,
+                    url
+                );
+
+            } catch (erro) {
+
+                console.error(
+                    "[LUKAFILMES] Erro ao verificar acesso do player:",
+                    erro
+                );
+
+                alert(
+                    "Não foi possível verificar seu acesso. Tente novamente."
+                );
+            }
         }
 
         if (btnRedeFlixSerie) {
@@ -4536,6 +4649,187 @@ document.addEventListener(
 </script>
 
 
+
+
+<script id="lukafilmes-teste-gratis-serie">
+(function () {
+    "use strict";
+
+    let timerTesteSerie = null;
+    let pagamentoTesteSerieAberto = false;
+    let testeSerieBloqueado = false;
+
+    function bloquearPlayersSerie() {
+
+        testeSerieBloqueado = true;
+
+        if (timerTesteSerie) {
+            clearTimeout(timerTesteSerie);
+            timerTesteSerie = null;
+        }
+
+        const frame = document.getElementById("serieFrame");
+        const video = document.getElementById("seriePlayerVideo");
+        const player = document.getElementById("playerSerie");
+
+        if (frame) {
+            frame.src = "";
+            frame.style.display = "none";
+        }
+
+        if (video) {
+            video.style.setProperty(
+                "display",
+                "none",
+                "important"
+            );
+        }
+
+        if (player) {
+            player.querySelectorAll(
+                ".serie-player-btn"
+            ).forEach(function (botao) {
+                botao.disabled = true;
+                botao.style.pointerEvents = "none";
+                botao.style.opacity = "0.5";
+            });
+        }
+
+        console.log(
+            "[LUKAFILMES] Teste grátis da série expirou. Players bloqueados."
+        );
+    }
+
+    async function abrirPagamentoTesteSerie(forcarPagamento = false) {
+
+        if (pagamentoTesteSerieAberto) {
+            return;
+        }
+
+        pagamentoTesteSerieAberto = true;
+
+        try {
+
+            const resposta = await fetch(
+                "/api/acesso-assistir",
+                {
+                    method: "GET",
+                    credentials: "same-origin",
+                    cache: "no-store"
+                }
+            );
+
+            const acesso = await resposta.json();
+
+            if (
+                acesso &&
+                acesso.permitido &&
+                acesso.teste_gratis &&
+                !forcarPagamento
+            ) {
+                pagamentoTesteSerieAberto = false;
+                iniciarTesteGratisSerie(acesso);
+                return;
+            }
+
+            bloquearPlayersSerie();
+
+            await mostrarPagamentoLuka(
+                acesso || {
+                    permitido: false,
+                    motivo: "teste_expirado",
+                    mensagem: "Seu acesso temporário terminou."
+                }
+            );
+
+        } catch (erro) {
+
+            console.error(
+                "[LUKAFILMES] Erro ao abrir pagamento após teste da série:",
+                erro
+            );
+
+            pagamentoTesteSerieAberto = false;
+
+        }
+    }
+
+    function iniciarTesteGratisSerie(acesso) {
+
+        if (
+            !acesso ||
+            !acesso.teste_gratis
+        ) {
+            return;
+        }
+
+        if (timerTesteSerie) {
+            clearTimeout(timerTesteSerie);
+            timerTesteSerie = null;
+        }
+
+        testeSerieBloqueado = false;
+
+        /*
+         * SÉRIE — ACESSO TEMPORÁRIO DE 1 MINUTO
+         * Controle local para o player da série.
+         * Não altera os 30 dias do acesso pago.
+         */
+        const expira = Date.now() + (1 * 60 * 1000);
+
+        const restante = expira - Date.now();
+
+        if (restante <= 0) {
+
+            testeSerieBloqueado = true;
+
+            bloquearPlayersSerie();
+
+            abrirPagamentoTesteSerie(true);
+
+            return;
+        }
+
+        console.log(
+            "[LUKAFILMES] Acesso temporário da série iniciado: 1 minuto."
+        );
+
+        timerTesteSerie = setTimeout(
+            async function () {
+
+                timerTesteSerie = null;
+
+                testeSerieBloqueado = true;
+
+                bloquearPlayersSerie();
+
+                console.log(
+                    "[LUKAFILMES] Acesso temporário da série encerrado."
+                );
+
+                try {
+                    await abrirPagamentoTesteSerie(true);
+                } catch (erro) {
+                    console.error(
+                        "[LUKAFILMES] Erro ao abrir pagamento da série:",
+                        erro
+                    );
+                    pagamentoTesteSerieAberto = false;
+                }
+
+            },
+            60000
+        );
+    }
+
+    window.__lukaTesteSerieBloqueado = function () {
+        return testeSerieBloqueado;
+    };
+
+    window.__lukaIniciarTesteSerie = iniciarTesteGratisSerie;
+
+})();
+</script>
 
 <script id="lukafilmes-serie-protecao-popup-final">
 (function () {
@@ -5827,6 +6121,175 @@ document.addEventListener(
     <a href="/paginas/series.html" class="luka-nav-serie-ativa" aria-label="Séries">Séries</a>
     <a href="/paginas/categorias.html" aria-label="Categorias">Categorias</a>
 </nav>
+
+<script id="lukafilmes-acesso-moderno-v1">
+(function(){
+"use strict";
+
+window.LukaAcessoModerno = {
+
+overlay:null,
+timer:null,
+expira:null,
+pagamentoAberto:false,
+
+criar:function(titulo,descricao){
+
+if(this.overlay)return this.overlay;
+
+var o=document.createElement("div");
+o.className="lukaAcessoModal";
+o.innerHTML=
+"<div class="lukaAcessoCard">"+
+"<div class="lukaAcessoKicker">LUKAFILMES</div>"+
+"<h2>"+(titulo||"Comece seu teste gratuito")+"</h2>"+
+"<p>"+(descricao||"Crie sua conta e aproveite seu período gratuito.")+"</p>"+
+"<div class="lukaAcessoTimer">Teste gratuito: <strong id="lukaAcessoTempo">--:--</strong></div>"+
+"<div class="lukaAcessoPixBox" id="lukaAcessoPixBox">"+
+"<div class="lukaAcessoQr" id="lukaAcessoQr"></div>"+
+"<textarea class="lukaAcessoPix" id="lukaAcessoPix" readonly></textarea>"+
+"<button class="lukaAcessoBtn" id="lukaAcessoCopiar">COPIAR PIX</button>"+
+"<div class="lukaAcessoStatus" id="lukaAcessoStatus">Preparando pagamento...</div>"+
+"</div>"+
+"</div>";
+
+document.body.appendChild(o);
+this.overlay=o;
+return o;
+},
+
+mostrarTeste:function(restante){
+
+var o=this.criar();
+
+o.classList.add("ativo");
+
+this.expira=Date.now()+(Number(restante)*1000);
+
+var self=this;
+
+if(this.timer)clearInterval(this.timer);
+
+this.timer=setInterval(function(){
+
+var r=Math.max(0,Math.ceil((self.expira-Date.now())/1000));
+var m=Math.floor(r/60);
+var s=r%60;
+
+var el=document.getElementById("lukaAcessoTempo");
+
+if(el)el.textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+
+if(r<=0){
+clearInterval(self.timer);
+self.abrirPagamento();
+}
+
+},250);
+
+},
+
+abrirPagamento:async function(){
+
+if(this.pagamentoAberto)return;
+
+this.pagamentoAberto=true;
+
+var o=this.criar(
+"Seu teste terminou",
+"Continue no LUKAFILMES realizando o pagamento do seu acesso."
+);
+
+o.classList.add("ativo");
+
+var box=document.getElementById("lukaAcessoPixBox");
+var status=document.getElementById("lukaAcessoStatus");
+
+if(box)box.style.display="block";
+
+try{
+
+var resposta=await fetch("/api/pagamentos/criar",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+credentials:"same-origin",
+body:JSON.stringify({renovacao:false})
+});
+
+var dados=await resposta.json();
+
+if(!resposta.ok||!dados||!dados.sucesso){
+throw new Error(dados&&dados.mensagem?dados.mensagem:"Não foi possível preparar o pagamento.");
+}
+
+var pix=String(dados.pix||"").trim();
+
+if(!pix)throw new Error("PIX não foi disponibilizado.");
+
+document.getElementById("lukaAcessoPix").value=pix;
+
+if(typeof QRCode==="undefined"){
+await new Promise(function(resolve,reject){
+var sc=document.createElement("script");
+sc.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+sc.onload=resolve;
+sc.onerror=reject;
+document.head.appendChild(sc);
+});
+}
+
+new QRCode(document.getElementById("lukaAcessoQr"),{
+text:pix,width:190,height:190
+});
+
+document.getElementById("lukaAcessoCopiar").onclick=async function(){
+
+try{
+await navigator.clipboard.writeText(pix);
+}catch(e){
+var a=document.getElementById("lukaAcessoPix");
+a.focus();
+a.select();
+document.execCommand("copy");
+}
+
+this.textContent="PIX COPIADO";
+setTimeout(()=>this.textContent="COPIAR PIX",2000);
+
+};
+
+if(status)status.textContent="Escaneie o QR Code ou copie o PIX para realizar o pagamento.";
+
+}catch(e){
+
+console.error("[LUKAFILMES] Pagamento moderno:",e);
+
+if(status)status.textContent=e.message||"Erro ao preparar pagamento.";
+
+}
+
+}
+
+};
+
+})();
+</script>
+
+<style id="lukafilmes-teste-remover-linhas-decorativas">
+/* TESTE TEMPORÁRIO — somente linhas decorativas horizontais */
+
+.iptv-hero::after{
+    display:none !important;
+}
+
+.filmes-pesquisa-box::before{
+    display:none !important;
+}
+
+.episodio .episodio-capa::after{
+    display:none !important;
+}
+</style>
 
 </body>
 

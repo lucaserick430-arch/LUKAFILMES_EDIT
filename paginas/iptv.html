@@ -843,6 +843,30 @@ a{
 }
 
 </style>
+<style id="lukafilmes-acesso-moderno-v1">
+.lukaAcessoModal{
+position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.86);backdrop-filter:blur(14px);
+}
+.lukaAcessoModal.ativo{display:flex}
+.lukaAcessoCard{
+width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,255,255,.12);border-radius:26px;padding:30px 24px;background:linear-gradient(180deg,#171717,#070707);color:#fff;text-align:center;box-shadow:0 30px 100px rgba(0,0,0,.8);
+}
+.lukaAcessoKicker{color:#e50914;font-size:11px;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px}
+.lukaAcessoCard h2{font-size:clamp(27px,7vw,40px);line-height:1;margin:0 0 12px;font-weight:900}
+.lukaAcessoCard p{color:rgba(255,255,255,.68);line-height:1.55;margin:10px auto 20px}
+.lukaAcessoTimer{font-size:14px;font-weight:800;color:#fff;margin:14px 0}
+.lukaAcessoTimer strong{color:#e50914;font-size:20px}
+.lukaAcessoPixBox{display:none;margin-top:20px}
+.lukaAcessoQr{width:220px;height:220px;margin:0 auto 18px;padding:10px;background:#fff;border-radius:18px;box-sizing:border-box}
+.lukaAcessoQr img,.lukaAcessoQr canvas{max-width:100%;max-height:100%}
+.lukaAcessoPix{width:100%;height:86px;box-sizing:border-box;resize:none;background:#050505;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:11px;font-size:11px}
+.lukaAcessoBtn{width:100%;border:0;border-radius:12px;padding:14px;margin-top:10px;background:#e50914;color:#fff;font-weight:900;cursor:pointer}
+.lukaAcessoStatus{font-size:13px;color:rgba(255,255,255,.58);margin-top:14px}
+@media(max-width:600px){
+.lukaAcessoCard{padding:24px 16px;border-radius:22px}
+.lukaAcessoQr{width:190px;height:190px}
+}
+</style>
 </head>
 
 <body>
@@ -2572,7 +2596,46 @@ function criarCard(item){
                 return;
             }
 
+            /*
+             * Acesso pago, admin ou isento:
+             * mantém acesso normal.
+             */
+            if (acesso.permitido && !acesso.teste_gratis) {
+                abrirPlayer(item);
+                return;
+            }
+
+            /*
+             * Conta recém-criada:
+             * libera o canal por 1 minuto, sem contador visível.
+             */
+            if (acesso.teste_gratis) {
+                if (iniciarAcessoIPTV1Minuto()) {
+                    abrirPlayer(item);
+                } else {
+                    await mostrarPagamentoIPTV({
+                        permitido: false,
+                        logado: true,
+                        motivo: "acesso_1min_expirado",
+                        mensagem: "Seu acesso temporário terminou."
+                    });
+                }
+                return;
+            }
+
             if (!acesso.permitido) {
+                if (
+                    acesso.logado &&
+                    acesso.motivo === "expirado"
+                ) {
+                    if (iniciarAcessoIPTV1Minuto()) {
+                        abrirPlayer(item);
+                    } else {
+                        await mostrarPagamentoIPTV(acesso);
+                    }
+                    return;
+                }
+
                 await mostrarPagamentoIPTV(acesso);
                 return;
             }
@@ -2594,6 +2657,78 @@ function criarCard(item){
     return div;
 }
 
+
+
+let lukaIPTVAcesso1MinutoAtivo = false;
+let lukaIPTVAcesso1MinutoUsado = false;
+let lukaIPTVTimer1Minuto = null;
+
+function iniciarAcessoIPTV1Minuto() {
+
+    if (lukaIPTVAcesso1MinutoAtivo || lukaIPTVAcesso1MinutoUsado) {
+        return false;
+    }
+
+    lukaIPTVAcesso1MinutoAtivo = true;
+    lukaIPTVAcesso1MinutoUsado = true;
+
+    console.log("[LUKAFILMES IPTV] Acesso temporário de 1 minuto iniciado.");
+
+    if (lukaIPTVTimer1Minuto) {
+        clearTimeout(lukaIPTVTimer1Minuto);
+    }
+
+    lukaIPTVTimer1Minuto = setTimeout(async function() {
+
+        lukaIPTVTimer1Minuto = null;
+        lukaIPTVAcesso1MinutoAtivo = false;
+
+        if (window.LukaAcessoModerno &&
+            typeof window.LukaAcessoModerno.bloquearPlayer === "function") {
+
+            window.LukaAcessoModerno.bloquearPlayer();
+
+        } else {
+
+            const iframe = document.getElementById("playerIframeIPTV");
+            const video = document.getElementById("playerIPTV");
+            const area = document.getElementById("playerArea");
+
+            if (window.lukaHlsPlayer) {
+                try { window.lukaHlsPlayer.destroy(); } catch(e) {}
+                window.lukaHlsPlayer = null;
+            }
+
+            if (video) {
+                try { video.pause(); } catch(e) {}
+                video.removeAttribute("src");
+                video.load();
+                video.style.display = "none";
+            }
+
+            if (iframe) {
+                iframe.src = "";
+                iframe.style.display = "none";
+            }
+
+            if (area) {
+                area.classList.remove("ativo");
+            }
+        }
+
+        console.log("[LUKAFILMES IPTV] Acesso temporário encerrado.");
+
+        await mostrarPagamentoIPTV({
+            permitido: false,
+            logado: true,
+            motivo: "acesso_1min_expirado",
+            mensagem: "Seu acesso temporário terminou."
+        });
+
+    }, 60000);
+
+    return true;
+}
 
 function classificarCategoria(item){
     const nome = String(item.title || item.name || '').toLowerCase().trim();
@@ -3121,6 +3256,177 @@ document.addEventListener("click", function(e) {
     }
 }, true);
 </script>
+
+<script id="lukafilmes-acesso-moderno-v1">
+(function(){
+"use strict";
+
+window.LukaAcessoModerno = {
+
+overlay:null,
+timer:null,
+expira:null,
+pagamentoAberto:false,
+
+criar:function(titulo,descricao){
+
+if(this.overlay)return this.overlay;
+
+var o=document.createElement("div");
+o.className="lukaAcessoModal";
+o.innerHTML=
+"<div class="lukaAcessoCard">"+
+"<div class="lukaAcessoKicker">LUKAFILMES</div>"+
+"<h2>"+(titulo||"Acesso ao LUKAFILMES")+"</h2>"+
+"<p>"+(descricao||"Realize o pagamento para continuar assistindo.")+"</p>"+
+
+"<div class="lukaAcessoPixBox" id="lukaAcessoPixBox">"+
+"<div class="lukaAcessoQr" id="lukaAcessoQr"></div>"+
+"<textarea class="lukaAcessoPix" id="lukaAcessoPix" readonly></textarea>"+
+"<button class="lukaAcessoBtn" id="lukaAcessoCopiar">COPIAR PIX</button>"+
+"<div class="lukaAcessoStatus" id="lukaAcessoStatus">Preparando pagamento...</div>"+
+"</div>"+
+"</div>";
+
+document.body.appendChild(o);
+this.overlay=o;
+return o;
+},
+
+bloquearPlayer:function(){
+
+var iframe=document.getElementById("playerIframeIPTV");
+var video=document.getElementById("playerIPTV");
+var area=document.getElementById("playerArea");
+
+if(window.lukaHlsPlayer){
+try{window.lukaHlsPlayer.destroy();}catch(e){}
+window.lukaHlsPlayer=null;
+}
+
+if(video){
+try{video.pause();}catch(e){}
+video.removeAttribute("src");
+video.load();
+video.style.display="none";
+}
+
+if(iframe){
+iframe.src="";
+iframe.style.display="none";
+}
+
+if(area){
+area.classList.remove("ativo");
+}
+
+console.log("[LUKAFILMES IPTV] Player bloqueado.");
+
+},
+
+abrirPagamento:async function(){
+
+if(this.pagamentoAberto)return;
+
+this.pagamentoAberto=true;
+
+var o=this.criar(
+"Acesso bloqueado",
+"Continue no LUKAFILMES realizando o pagamento do seu acesso."
+);
+
+o.classList.add("ativo");
+
+this.bloquearPlayer();
+
+var box=document.getElementById("lukaAcessoPixBox");
+var status=document.getElementById("lukaAcessoStatus");
+
+if(box)box.style.display="block";
+
+try{
+
+var resposta=await fetch("/api/pagamentos/criar",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+credentials:"same-origin",
+body:JSON.stringify({renovacao:false})
+});
+
+var dados=await resposta.json();
+
+if(!resposta.ok||!dados||!dados.sucesso){
+throw new Error(dados&&dados.mensagem?dados.mensagem:"Não foi possível preparar o pagamento.");
+}
+
+var pix=String(dados.pix||"").trim();
+
+if(!pix)throw new Error("PIX não foi disponibilizado.");
+
+document.getElementById("lukaAcessoPix").value=pix;
+
+if(typeof QRCode==="undefined"){
+await new Promise(function(resolve,reject){
+var sc=document.createElement("script");
+sc.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+sc.onload=resolve;
+sc.onerror=reject;
+document.head.appendChild(sc);
+});
+}
+
+new QRCode(document.getElementById("lukaAcessoQr"),{
+text:pix,width:190,height:190
+});
+
+document.getElementById("lukaAcessoCopiar").onclick=async function(){
+
+try{
+await navigator.clipboard.writeText(pix);
+}catch(e){
+var a=document.getElementById("lukaAcessoPix");
+a.focus();
+a.select();
+document.execCommand("copy");
+}
+
+this.textContent="PIX COPIADO";
+setTimeout(()=>this.textContent="COPIAR PIX",2000);
+
+};
+
+if(status)status.textContent="Escaneie o QR Code ou copie o PIX para realizar o pagamento.";
+
+}catch(e){
+
+console.error("[LUKAFILMES] Pagamento moderno:",e);
+
+if(status)status.textContent=e.message||"Erro ao preparar pagamento.";
+
+}
+
+}
+
+};
+
+})();
+</script>
+
+<style id="lukafilmes-teste-remover-linhas-decorativas">
+/* TESTE TEMPORÁRIO — somente linhas decorativas horizontais */
+
+.iptv-hero::after{
+    display:none !important;
+}
+
+.filmes-pesquisa-box::before{
+    display:none !important;
+}
+
+.episodio .episodio-capa::after{
+    display:none !important;
+}
+</style>
 
 </body>
 </html>

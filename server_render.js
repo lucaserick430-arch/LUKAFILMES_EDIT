@@ -140,6 +140,7 @@ const { createClient } = require("@libsql/client/http");
 const CONFIGURACAO_ACESSO_LUKAFILMES = {
     valorMensal: 18.00,
     diasAcesso: 30,
+    testeGratisMinutos: 30,
 
     tipos: {
         ADMIN: "admin",
@@ -805,6 +806,11 @@ app.post("/api/cadastro", async (req, res) => {
             status: "ativo",
             tipo: "usuario",
             validade: null,
+            teste_gratis_inicio: new Date().toISOString(),
+            teste_gratis_expira: new Date(
+                Date.now() +
+                (CONFIGURACAO_ACESSO_LUKAFILMES.testeGratisMinutos * 60 * 1000)
+            ).toISOString(),
             criado_em: new Date().toISOString()
         };
 
@@ -855,7 +861,8 @@ app.post("/api/cadastro", async (req, res) => {
                 id: novoUsuario.id,
                 usuario: novoUsuario.usuario,
                 tipo: novoUsuario.tipo,
-                validade: null
+                validade: novoUsuario.validade,
+                teste_lukafilmes: true
             };
         }
 
@@ -1488,6 +1495,50 @@ app.get("/api/acesso-assistir", async (req, res) => {
                 logado: true,
                 tipo,
                 validade: pessoa.validade
+            });
+        }
+
+        // =====================================================
+        // TESTE GRÁTIS TEMPORÁRIO
+        // Durante o teste, o cliente pode assistir normalmente.
+        // O relógio é controlado pelo servidor.
+        // =====================================================
+        if (pessoa.teste_gratis_expira) {
+
+            const agora = Date.now();
+            const testeExpira =
+                new Date(pessoa.teste_gratis_expira).getTime();
+
+            if (
+                Number.isFinite(testeExpira) &&
+                testeExpira > agora
+            ) {
+                const restanteSegundos =
+                    Math.max(
+                        0,
+                        Math.ceil((testeExpira - agora) / 1000)
+                    );
+
+                return res.json({
+                    permitido: true,
+                    logado: true,
+                    tipo,
+                    teste_gratis: true,
+                    teste_gratis_expira: pessoa.teste_gratis_expira,
+                    restante_segundos: restanteSegundos
+                });
+            }
+
+            return res.json({
+                permitido: false,
+                logado: true,
+                tipo,
+                motivo: "teste_expirado",
+                teste_gratis: false,
+                teste_gratis_expira: pessoa.teste_gratis_expira,
+                valor: CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+                dias: CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso,
+                validade: pessoa.validade || null
             });
         }
 
