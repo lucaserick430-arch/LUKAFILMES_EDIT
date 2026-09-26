@@ -290,6 +290,44 @@ button {
 
     </section>
 
+    <section id="verificacaoWhatsApp" class="conta-criada" style="display:none;">
+
+        <h3>📱 Verifique seu WhatsApp</h3>
+
+        <p>
+            Enviamos um código de 6 dígitos para o número
+            <strong id="telefoneVerificacao"></strong>.
+        </p>
+
+        <div class="campo">
+            <label for="codigoWhatsApp">Código de verificação</label>
+            <input
+                id="codigoWhatsApp"
+                type="text"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                maxlength="6"
+                placeholder="Digite os 6 dígitos">
+        </div>
+
+        <button
+            id="btnVerificarWhatsApp"
+            class="btn-criar">
+            CONFIRMAR CÓDIGO
+        </button>
+
+        <button
+            id="btnReenviarWhatsApp"
+            class="btn-secundario"
+            type="button"
+            disabled>
+            REENVIAR CÓDIGO
+        </button>
+
+        <div id="mensagemOTP" class="mensagem"></div>
+
+    </section>
+
     <section id="contaCriada" class="conta-criada">
 
         <h3>🎉 Conta criada com sucesso!</h3>
@@ -353,6 +391,39 @@ const senhaInput =
 const telefoneInput =
     document.getElementById("telefone");
 
+const btnCriar =
+    document.getElementById("btnCriar");
+
+const mensagem =
+    document.getElementById("mensagem");
+
+const formulario =
+    document.getElementById("formulario");
+
+const verificacaoWhatsApp =
+    document.getElementById("verificacaoWhatsApp");
+
+const telefoneVerificacao =
+    document.getElementById("telefoneVerificacao");
+
+const codigoWhatsApp =
+    document.getElementById("codigoWhatsApp");
+
+const btnVerificarWhatsApp =
+    document.getElementById("btnVerificarWhatsApp");
+
+const btnReenviarWhatsApp =
+    document.getElementById("btnReenviarWhatsApp");
+
+const mensagemOTP =
+    document.getElementById("mensagemOTP");
+
+const contaCriada =
+    document.getElementById("contaCriada");
+
+let telefoneCadastroPendente = "";
+let intervaloReenvio = null;
+
 function formatarWhatsApp(valor) {
     let numeros = String(valor || "").replace(/\D/g, "");
 
@@ -372,16 +443,22 @@ function formatarWhatsApp(valor) {
 }
 
 telefoneInput.addEventListener("input", () => {
-    telefoneInput.value = formatarWhatsApp(telefoneInput.value);
+    telefoneInput.value =
+        formatarWhatsApp(telefoneInput.value);
 });
 
-function validarWhatsAppObrigatorio(){
+codigoWhatsApp.addEventListener("input", () => {
+    codigoWhatsApp.value =
+        codigoWhatsApp.value.replace(/\D/g, "").slice(0, 6);
+});
+
+function validarWhatsAppObrigatorio() {
 
     const numero =
         String(telefoneInput.value || "")
             .replace(/\D/g, "");
 
-    if(!numero){
+    if (!numero) {
 
         telefoneInput.focus();
 
@@ -394,7 +471,7 @@ function validarWhatsAppObrigatorio(){
         return false;
     }
 
-    if(numero.length < 10 || numero.length > 11){
+    if (numero.length < 10 || numero.length > 11) {
 
         telefoneInput.focus();
 
@@ -410,18 +487,6 @@ function validarWhatsAppObrigatorio(){
     return true;
 }
 
-const btnCriar =
-    document.getElementById("btnCriar");
-
-const mensagem =
-    document.getElementById("mensagem");
-
-const formulario =
-    document.getElementById("formulario");
-
-const contaCriada =
-    document.getElementById("contaCriada");
-
 function mostrarMensagem(texto, erro = false) {
     mensagem.textContent = texto;
     mensagem.className =
@@ -429,12 +494,49 @@ function mostrarMensagem(texto, erro = false) {
         (erro ? "erro" : "sucesso");
 }
 
-btnCriar.addEventListener("click", async () => {
+function mostrarMensagemOTP(texto, erro = false) {
+    mensagemOTP.textContent = texto;
+    mensagemOTP.className =
+        "mensagem " +
+        (erro ? "erro" : "sucesso");
+}
 
-    if(!validarWhatsAppObrigatorio()){
+function iniciarContagemReenvio(segundos = 60) {
+
+    clearInterval(intervaloReenvio);
+
+    let restante = segundos;
+
+    btnReenviarWhatsApp.disabled = true;
+    btnReenviarWhatsApp.textContent =
+        `REENVIAR CÓDIGO (${restante}s)`;
+
+    intervaloReenvio = setInterval(() => {
+
+        restante--;
+
+        if (restante <= 0) {
+
+            clearInterval(intervaloReenvio);
+
+            btnReenviarWhatsApp.disabled = false;
+            btnReenviarWhatsApp.textContent =
+                "REENVIAR CÓDIGO";
+
+            return;
+        }
+
+        btnReenviarWhatsApp.textContent =
+            `REENVIAR CÓDIGO (${restante}s)`;
+
+    }, 1000);
+}
+
+async function enviarCadastroInicial() {
+
+    if (!validarWhatsAppObrigatorio()) {
         return;
     }
-
 
     const nome =
         nomeInput.value.trim();
@@ -452,24 +554,32 @@ btnCriar.addEventListener("click", async () => {
         telefone.replace(/\D/g, "");
 
     if (!nome || !usuario || !senha || !telefone) {
+
         mostrarMensagem(
             "Preencha todos os campos.",
             true
         );
+
         return;
     }
 
-    if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
+    if (telefoneNumeros.length < 10 ||
+        telefoneNumeros.length > 11) {
+
         mostrarMensagem(
             "Digite um número de WhatsApp válido.",
             true
         );
+
         telefoneInput.focus();
+
         return;
     }
 
+    btnCriar.disabled = true;
     btnCriar.classList.add("carregando");
-    btnCriar.textContent = "CRIANDO CONTA...";
+    btnCriar.textContent =
+        "ENVIANDO CÓDIGO...";
 
     try {
 
@@ -495,12 +605,14 @@ btnCriar.addEventListener("click", async () => {
             await resposta.json();
 
         if (!resposta.ok || !dados.sucesso) {
+
             mostrarMensagem(
                 dados.mensagem ||
-                "Não foi possível criar sua conta.",
+                "Não foi possível enviar o código.",
                 true
             );
 
+            btnCriar.disabled = false;
             btnCriar.classList.remove("carregando");
             btnCriar.textContent =
                 "CRIAR MINHA CONTA";
@@ -508,30 +620,31 @@ btnCriar.addEventListener("click", async () => {
             return;
         }
 
-        document.getElementById(
-            "usuarioCriado"
-        ).textContent = dados.usuario;
+        telefoneCadastroPendente =
+            dados.telefone || telefone;
 
-        document.getElementById(
-            "senhaCriada"
-        ).textContent = senha;
-
-        document.getElementById(
-            "telefoneCriado"
-        ).textContent = dados.telefone;
+        telefoneVerificacao.textContent =
+            formatarWhatsApp(
+                telefoneCadastroPendente
+                    .replace(/^\+55/, "")
+            );
 
         formulario.style.display = "none";
-        contaCriada.style.display = "block";
+        verificacaoWhatsApp.style.display = "block";
 
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+        mostrarMensagemOTP(
+            dados.mensagem ||
+            "Código enviado para seu WhatsApp."
+        );
+
+        iniciarContagemReenvio(60);
+
+        codigoWhatsApp.focus();
 
     } catch (erro) {
 
         console.error(
-            "[CADASTRO]",
+            "[CADASTRO OTP]",
             erro
         );
 
@@ -540,11 +653,202 @@ btnCriar.addEventListener("click", async () => {
             true
         );
 
+        btnCriar.disabled = false;
         btnCriar.classList.remove("carregando");
         btnCriar.textContent =
             "CRIAR MINHA CONTA";
     }
-});
+}
+
+btnCriar.addEventListener(
+    "click",
+    enviarCadastroInicial
+);
+
+btnVerificarWhatsApp.addEventListener(
+    "click",
+    async () => {
+
+        const codigo =
+            codigoWhatsApp.value.trim();
+
+        if (!/^\d{6}$/.test(codigo)) {
+
+            mostrarMensagemOTP(
+                "Digite o código de 6 dígitos recebido no WhatsApp.",
+                true
+            );
+
+            codigoWhatsApp.focus();
+
+            return;
+        }
+
+        btnVerificarWhatsApp.disabled = true;
+        btnVerificarWhatsApp.classList.add("carregando");
+        btnVerificarWhatsApp.textContent =
+            "VERIFICANDO...";
+
+        try {
+
+            const resposta =
+                await fetch(
+                    "/api/cadastro/verificar-otp",
+                    {
+                        method: "POST",
+                        credentials: "same-origin",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            telefone:
+                                telefoneCadastroPendente,
+                            codigo
+                        })
+                    }
+                );
+
+            const dados =
+                await resposta.json();
+
+            if (!resposta.ok || !dados.sucesso) {
+
+                mostrarMensagemOTP(
+                    dados.mensagem ||
+                    "Código inválido ou expirado.",
+                    true
+                );
+
+                btnVerificarWhatsApp.disabled = false;
+                btnVerificarWhatsApp.classList.remove("carregando");
+                btnVerificarWhatsApp.textContent =
+                    "CONFIRMAR CÓDIGO";
+
+                codigoWhatsApp.focus();
+
+                return;
+            }
+
+            clearInterval(intervaloReenvio);
+
+            document.getElementById(
+                "usuarioCriado"
+            ).textContent =
+                dados.usuario;
+
+            document.getElementById(
+                "senhaCriada"
+            ).textContent =
+                senhaInput.value;
+
+            document.getElementById(
+                "telefoneCriado"
+            ).textContent =
+                dados.telefone ||
+                telefoneCadastroPendente;
+
+            verificacaoWhatsApp.style.display = "none";
+            contaCriada.style.display = "block";
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        } catch (erro) {
+
+            console.error(
+                "[VERIFICACAO OTP]",
+                erro
+            );
+
+            mostrarMensagemOTP(
+                "Erro de conexão. Tente novamente.",
+                true
+            );
+
+            btnVerificarWhatsApp.disabled = false;
+            btnVerificarWhatsApp.classList.remove("carregando");
+            btnVerificarWhatsApp.textContent =
+                "CONFIRMAR CÓDIGO";
+        }
+    }
+);
+
+btnReenviarWhatsApp.addEventListener(
+    "click",
+    async () => {
+
+        if (!telefoneCadastroPendente) {
+            return;
+        }
+
+        btnReenviarWhatsApp.disabled = true;
+        btnReenviarWhatsApp.textContent =
+            "ENVIANDO...";
+
+        try {
+
+            const resposta =
+                await fetch(
+                    "/api/cadastro/reenviar-otp",
+                    {
+                        method: "POST",
+                        credentials: "same-origin",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            telefone:
+                                telefoneCadastroPendente
+                        })
+                    }
+                );
+
+            const dados =
+                await resposta.json();
+
+            if (!resposta.ok || !dados.sucesso) {
+
+                mostrarMensagemOTP(
+                    dados.mensagem ||
+                    "Não foi possível reenviar o código.",
+                    true
+                );
+
+                iniciarContagemReenvio(60);
+
+                return;
+            }
+
+            mostrarMensagemOTP(
+                dados.mensagem ||
+                "Novo código enviado para seu WhatsApp."
+            );
+
+            codigoWhatsApp.value = "";
+            codigoWhatsApp.focus();
+
+            iniciarContagemReenvio(60);
+
+        } catch (erro) {
+
+            console.error(
+                "[REENVIO OTP]",
+                erro
+            );
+
+            mostrarMensagemOTP(
+                "Erro de conexão. Tente novamente.",
+                true
+            );
+
+            btnReenviarWhatsApp.disabled = false;
+            btnReenviarWhatsApp.textContent =
+                "REENVIAR CÓDIGO";
+        }
+    }
+);
 
 document.getElementById(
     "btnCopiarTudo"
@@ -561,30 +865,17 @@ document.getElementById(
         ).textContent;
 
     const texto =
-`LUKAFILMES
-
-Usuário: ${usuario}
-Senha: ${senha}`;
+        `Usuário: ${usuario}\nSenha: ${senha}`;
 
     try {
 
-        await navigator.clipboard.writeText(
-            texto
+        await navigator.clipboard.writeText(texto);
+
+        alert(
+            "Usuário e senha copiados!"
         );
 
-        document.getElementById(
-            "btnCopiarTudo"
-        ).textContent =
-            "✅ COPIADO!";
-
-        setTimeout(() => {
-            document.getElementById(
-                "btnCopiarTudo"
-            ).textContent =
-                "📋 COPIAR USUÁRIO E SENHA";
-        }, 1800);
-
-    } catch (erro) {
+    } catch (_) {
 
         alert(
             "Não foi possível copiar automaticamente."
@@ -596,8 +887,10 @@ document.getElementById(
     "btnContinuar"
 ).addEventListener("click", () => {
 
-    window.location.href = retorno;
+    window.location.href =
+        retorno;
 });
+
 </script>
 
 </body>

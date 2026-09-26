@@ -732,6 +732,139 @@ app.get("/cadastro", (req, res) => {
     );
 });
 
+
+// ==========================================
+// LUKAFILMES — VERIFICAÇÃO WHATSAPP / OTP
+// ==========================================
+
+const OTP_WAFORGE_EXPIRA_MS = 10 * 60 * 1000;
+const OTP_WAFORGE_REENVIO_MS = 60 * 1000;
+const OTP_WAFORGE_MAX_TENTATIVAS = 5;
+
+let tursoCadastrosPendentesPreparado = false;
+
+async function prepararTursoCadastrosPendentes() {
+    if (!turso || tursoCadastrosPendentesPreparado) return;
+
+    await turso.execute(`
+        CREATE TABLE IF NOT EXISTS lukafilmes_cadastros_pendentes (
+            telefone TEXT PRIMARY KEY,
+            nome TEXT NOT NULL,
+            usuario TEXT NOT NULL,
+            senha_hash TEXT NOT NULL,
+            criado_em TEXT NOT NULL,
+            expira_em TEXT NOT NULL,
+            ultimo_envio_em TEXT NOT NULL,
+            tentativas INTEGER NOT NULL DEFAULT 0,
+            request_id TEXT
+        )
+    `);
+
+    try {
+        await turso.execute(`
+            ALTER TABLE lukafilmes_cadastros_pendentes
+            ADD COLUMN request_id TEXT
+        `);
+    } catch (_) {
+        // Coluna já existe.
+    }
+
+    tursoCadastrosPendentesPreparado = true;
+}
+
+function normalizarWhatsAppLuka(valor) {
+    let numeros = String(valor || "").replace(/\D/g, "");
+
+    if (numeros.startsWith("55") && numeros.length >= 12) {
+        return "+" + numeros;
+    }
+
+    if (numeros.length === 10 || numeros.length === 11) {
+        return "+55" + numeros;
+    }
+
+    return "";
+}
+
+async function enviarOtpWhatsAppLuka(telefone) {
+    const chave = String(process.env.WAFORGE_API_KEY || "").trim();
+
+    if (!chave) {
+        throw new Error("WAFORGE_API_KEY não configurada.");
+    }
+
+    const resposta = await fetch(
+        "https://waforge.online/api/v1/otp/send",
+        {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${chave}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                phone: telefone
+            })
+        }
+    );
+
+    let dados = {};
+    try {
+        dados = await resposta.json();
+    } catch (_) {}
+
+    console.log("[WAFORGE OTP SEND] HTTP:", resposta.status);
+    console.log("[WAFORGE OTP SEND] RESPOSTA:", JSON.stringify(dados));
+
+    if (!resposta.ok) {
+        const erro = String(
+            dados?.error ||
+            dados?.message ||
+            "Falha ao enviar código pelo WhatsApp."
+        );
+
+        throw new Error(erro);
+    }
+
+    return {
+        ...dados,
+        request_id: dados?.request_id || ""
+    };
+}
+
+async function verificarOtpWhatsAppLuka(telefone, codigo, requestId) {
+    const chave = String(process.env.WAFORGE_API_KEY || "").trim();
+
+    if (!chave) {
+        throw new Error("WAFORGE_API_KEY não configurada.");
+    }
+
+    const resposta = await fetch(
+        "https://waforge.online/api/v1/otp/verify",
+        {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${chave}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                phone: telefone,
+                code: codigo,
+                request_id: requestId
+            })
+        }
+    );
+
+    let dados = {};
+    try {
+        dados = await resposta.json();
+    } catch (_) {}
+
+    return {
+        ok: resposta.ok,
+        dados
+    };
+}
+
 // ==========================================
 // LUKAFILMES — API CADASTRO DE CLIENTE
 // ==========================================
@@ -742,7 +875,7 @@ app.post("/api/cadastro", async (req, res) => {
         const usuario = String(req.body.usuario || "").trim();
         const senha = String(req.body.senha || "");
         const telefone = String(req.body.telefone || "").trim();
-        const telefoneNumeros = telefone.replace(/\D/g, "");
+        const telefoneWhatsApp = normalizarWhatsAppLuka(telefone);
 
         if (!nome || !usuario || !senha || !telefone) {
             return res.status(400).json({
@@ -765,10 +898,10 @@ app.post("/api/cadastro", async (req, res) => {
             });
         }
 
-        if (telefoneNumeros.length < 10 || telefoneNumeros.length > 13) {
+        if (!telefoneWhatsApp) {
             return res.status(400).json({
                 sucesso: false,
-                mensagem: "Digite um número de WhatsApp válido."
+                mensagem: "Digite um número de WhatsApp válido com DDD."
             });
         }
 
@@ -795,14 +928,386 @@ app.post("/api/cadastro", async (req, res) => {
             });
         }
 
+        const telefoneExistente = usuarios.find(
+            u => normalizarWhatsAppLuka(u.telefone) === telefoneWhatsApp
+        );
+
+        if (telefoneExistente) {
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse número de WhatsApp já está cadastrado."
+            });
+        }
+
+        await prepararTursoCadastrosPendentes();
+
+        const agora = Date.now();
+        const agoraIso = new Date(agora).toISOString();
+        const expiraIso = new Date(
+            agora + OTP_WAFORGE_EXPIRA_MS
+        ).toISOString();
+
+        if (turso) {
+            const existentePendente = await turso.execute({
+                sql: `
+                    SELECT ultimo_envio_em
+                    FROM lukafilmes_cadastros_pendentes
+                    WHERE telefone = ?
+                `,
+                args: [telefoneWhatsApp]
+            });
+
+            if (existentePendente.rows.length) {
+                const ultimoEnvio = new Date(
+                    String(existentePendente.rows[0].ultimo_envio_em)
+                ).getTime();
+
+                if (
+                    Number.isFinite(ultimoEnvio) &&
+                    agora - ultimoEnvio < OTP_WAFORGE_REENVIO_MS
+                ) {
+                    const restante = Math.ceil(
+                        (OTP_WAFORGE_REENVIO_MS - (agora - ultimoEnvio)) / 1000
+                    );
+
+                    return res.status(429).json({
+                        sucesso: false,
+                        mensagem: `Aguarde ${restante} segundos para solicitar outro código.`
+                    });
+                }
+            }
+        }
+
         const senhaHash = await bcrypt.hash(senha, 12);
+
+        const resultadoOtp =
+            await enviarOtpWhatsAppLuka(telefoneWhatsApp);
+
+        const requestIdOtp =
+            String(resultadoOtp?.request_id || "").trim();
+
+        if (!requestIdOtp) {
+            throw new Error("WaForge não retornou request_id.");
+        }
+
+        if (turso) {
+            await turso.execute({
+                sql: `
+                    INSERT INTO lukafilmes_cadastros_pendentes
+                    (
+                        telefone,
+                        nome,
+                        usuario,
+                        senha_hash,
+                        criado_em,
+                        expira_em,
+                        ultimo_envio_em,
+                        tentativas,
+                        request_id
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)
+                    ON CONFLICT(telefone) DO UPDATE SET
+                        nome = excluded.nome,
+                        usuario = excluded.usuario,
+                        senha_hash = excluded.senha_hash,
+                        criado_em = excluded.criado_em,
+                        expira_em = excluded.expira_em,
+                        ultimo_envio_em = excluded.ultimo_envio_em,
+                        tentativas = 0,
+                        request_id = excluded.request_id
+                `,
+                args: [
+                    telefoneWhatsApp,
+                    nome,
+                    usuario,
+                    senhaHash,
+                    agoraIso,
+                    expiraIso,
+                    agoraIso,
+                    requestIdOtp
+                ]
+            });
+        }
+
+        console.log(
+            "[CADASTRO OTP] Código enviado para:",
+            telefoneWhatsApp
+        );
+
+        return res.json({
+            sucesso: true,
+            otp_enviado: true,
+            mensagem: "Enviamos um código de 6 dígitos para seu WhatsApp.",
+            telefone: telefoneWhatsApp
+        });
+
+    } catch (erro) {
+        console.error("[CADASTRO OTP] Erro:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível enviar o código para o WhatsApp."
+        });
+    }
+});
+
+
+app.post("/api/cadastro/reenviar-otp", async (req, res) => {
+    try {
+        const telefoneWhatsApp =
+            normalizarWhatsAppLuka(req.body.telefone);
+
+        if (!telefoneWhatsApp) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Número de WhatsApp inválido."
+            });
+        }
+
+        await prepararTursoCadastrosPendentes();
+
+        if (!turso) {
+            return res.status(503).json({
+                sucesso: false,
+                mensagem: "Banco de dados não disponível."
+            });
+        }
+
+        const resultado = await turso.execute({
+            sql: `
+                SELECT ultimo_envio_em
+                FROM lukafilmes_cadastros_pendentes
+                WHERE telefone = ?
+            `,
+            args: [telefoneWhatsApp]
+        });
+
+        if (!resultado.rows.length) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Não existe um cadastro pendente para este WhatsApp."
+            });
+        }
+
+        const ultimoEnvio = new Date(
+            String(resultado.rows[0].ultimo_envio_em)
+        ).getTime();
+
+        const agora = Date.now();
+
+        if (
+            Number.isFinite(ultimoEnvio) &&
+            agora - ultimoEnvio < OTP_WAFORGE_REENVIO_MS
+        ) {
+            const restante = Math.ceil(
+                (OTP_WAFORGE_REENVIO_MS - (agora - ultimoEnvio)) / 1000
+            );
+
+            return res.status(429).json({
+                sucesso: false,
+                mensagem: `Aguarde ${restante} segundos para solicitar outro código.`
+            });
+        }
+
+        const resultadoOtp =
+            await enviarOtpWhatsAppLuka(telefoneWhatsApp);
+
+        const requestIdOtp =
+            String(resultadoOtp?.request_id || "").trim();
+
+        if (!requestIdOtp) {
+            throw new Error("WaForge não retornou request_id.");
+        }
+
+        const agoraIso = new Date().toISOString();
+        const expiraIso = new Date(
+            agora + OTP_WAFORGE_EXPIRA_MS
+        ).toISOString();
+
+        await turso.execute({
+            sql: `
+                UPDATE lukafilmes_cadastros_pendentes
+                SET ultimo_envio_em = ?,
+                    expira_em = ?,
+                    tentativas = 0,
+                    request_id = ?
+                WHERE telefone = ?
+            `,
+            args: [
+                agoraIso,
+                expiraIso,
+                requestIdOtp,
+                telefoneWhatsApp
+            ]
+        });
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Um novo código foi enviado para seu WhatsApp."
+        });
+
+    } catch (erro) {
+        console.error("[CADASTRO OTP] Erro ao reenviar:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível reenviar o código."
+        });
+    }
+});
+
+
+app.post("/api/cadastro/verificar-otp", async (req, res) => {
+    try {
+        const telefoneWhatsApp =
+            normalizarWhatsAppLuka(req.body.telefone);
+
+        const codigo =
+            String(req.body.codigo || "").replace(/\D/g, "");
+
+        if (!telefoneWhatsApp || !/^\d{6}$/.test(codigo)) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Informe o código de 6 dígitos recebido no WhatsApp."
+            });
+        }
+
+        await prepararTursoCadastrosPendentes();
+
+        if (!turso) {
+            return res.status(503).json({
+                sucesso: false,
+                mensagem: "Banco de dados não disponível."
+            });
+        }
+
+        const pendenteResultado = await turso.execute({
+            sql: `
+                SELECT
+                    telefone,
+                    nome,
+                    usuario,
+                    senha_hash,
+                    expira_em,
+                    tentativas,
+                    request_id
+                FROM lukafilmes_cadastros_pendentes
+                WHERE telefone = ?
+            `,
+            args: [telefoneWhatsApp]
+        });
+
+        if (!pendenteResultado.rows.length) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Cadastro não encontrado ou já confirmado."
+            });
+        }
+
+        const pendente = pendenteResultado.rows[0];
+
+        if (
+            pendente.expira_em &&
+            new Date(String(pendente.expira_em)).getTime() < Date.now()
+        ) {
+            await turso.execute({
+                sql: `
+                    DELETE FROM lukafilmes_cadastros_pendentes
+                    WHERE telefone = ?
+                `,
+                args: [telefoneWhatsApp]
+            });
+
+            return res.status(410).json({
+                sucesso: false,
+                mensagem: "Esse código expirou. Solicite um novo código."
+            });
+        }
+
+        const tentativas = Number(pendente.tentativas || 0);
+
+        if (tentativas >= OTP_WAFORGE_MAX_TENTATIVAS) {
+            return res.status(429).json({
+                sucesso: false,
+                mensagem: "Limite de tentativas atingido. Solicite um novo código."
+            });
+        }
+
+        const verificacao = await verificarOtpWhatsAppLuka(
+            telefoneWhatsApp,
+            codigo,
+            String(pendente.request_id || "").trim()
+        );
+
+        if (!verificacao.ok) {
+            await turso.execute({
+                sql: `
+                    UPDATE lukafilmes_cadastros_pendentes
+                    SET tentativas = tentativas + 1
+                    WHERE telefone = ?
+                `,
+                args: [telefoneWhatsApp]
+            });
+
+            return res.status(400).json({
+                sucesso: false,
+                mensagem:
+                    verificacao.dados?.message ||
+                    verificacao.dados?.error ||
+                    "Código inválido. Confira o código recebido no WhatsApp."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const existenteUsuario = usuarios.find(
+            u =>
+                String(u.usuario || "")
+                    .trim()
+                    .toLowerCase() ===
+                String(pendente.usuario || "").trim().toLowerCase()
+        );
+
+        if (existenteUsuario) {
+            await turso.execute({
+                sql: `
+                    DELETE FROM lukafilmes_cadastros_pendentes
+                    WHERE telefone = ?
+                `,
+                args: [telefoneWhatsApp]
+            });
+
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse usuário já existe. Escolha outro."
+            });
+        }
+
+        const telefoneExistente = usuarios.find(
+            u => normalizarWhatsAppLuka(u.telefone) === telefoneWhatsApp
+        );
+
+        if (telefoneExistente) {
+            await turso.execute({
+                sql: `
+                    DELETE FROM lukafilmes_cadastros_pendentes
+                    WHERE telefone = ?
+                `,
+                args: [telefoneWhatsApp]
+            });
+
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse número de WhatsApp já está cadastrado."
+            });
+        }
 
         const novoUsuario = {
             id: proximoId(usuarios),
-            nome,
-            usuario,
-            senha: senhaHash,
-            telefone,
+            nome: String(pendente.nome),
+            usuario: String(pendente.usuario),
+            senha: String(pendente.senha_hash),
+            telefone: telefoneWhatsApp,
             status: "ativo",
             tipo: "usuario",
             validade: null,
@@ -818,16 +1323,6 @@ app.post("/api/cadastro", async (req, res) => {
 
         await salvarUsuarios(usuarios);
 
-        /*
-         * Já deixa o cliente logado depois do cadastro.
-         * O cadastro NÃO libera os filmes.
-         * A validade continua null até o pagamento ser aprovado.
-         */
-        // =====================================================
-        // MODO TESTE:
-        // mantém o ADMIN na sessão real e coloca o novo cliente
-        // somente como usuário operacional do teste.
-        // =====================================================
         if (lukaModoTesteAtivo(req)) {
 
             req.session.lukaTesteUsuario = {
@@ -838,9 +1333,6 @@ app.post("/api/cadastro", async (req, res) => {
                 teste_lukafilmes: true
             };
 
-            // Marca permanentemente o cliente como criado pelo
-            // fluxo de teste. Isso permite removê-lo com segurança
-            // quando o pagamento de teste for recusado.
             novoUsuario.teste_lukafilmes = true;
 
             await salvarUsuarios(usuarios);
@@ -857,7 +1349,7 @@ app.post("/api/cadastro", async (req, res) => {
             String(req.session.usuario.tipo || "").toLowerCase() !== "admin"
         ) {
 
-        req.session.usuario = {
+            req.session.usuario = {
                 id: novoUsuario.id,
                 usuario: novoUsuario.usuario,
                 tipo: novoUsuario.tipo,
@@ -866,9 +1358,6 @@ app.post("/api/cadastro", async (req, res) => {
             };
         }
 
-        /*
-         * Garante que a sessão foi gravada antes da resposta.
-         */
         await new Promise((resolve, reject) => {
             req.session.save(erro => {
                 if (erro) {
@@ -880,8 +1369,16 @@ app.post("/api/cadastro", async (req, res) => {
             });
         });
 
+        await turso.execute({
+            sql: `
+                DELETE FROM lukafilmes_cadastros_pendentes
+                WHERE telefone = ?
+            `,
+            args: [telefoneWhatsApp]
+        });
+
         console.log(
-            "[CADASTRO] Novo cliente:",
+            "[CADASTRO] WhatsApp confirmado. Novo cliente:",
             novoUsuario.usuario
         );
 
@@ -894,14 +1391,15 @@ app.post("/api/cadastro", async (req, res) => {
         });
 
     } catch (erro) {
-        console.error("[CADASTRO] Erro:", erro);
+        console.error("[CADASTRO OTP] Erro ao verificar:", erro);
 
         return res.status(500).json({
             sucesso: false,
-            mensagem: "Não foi possível criar sua conta."
+            mensagem: "Não foi possível confirmar o WhatsApp."
         });
     }
 });
+
 
 // ==========================================
 // LOGIN POST
