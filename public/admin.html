@@ -6158,6 +6158,126 @@ async function LUKA_TESTAR_COMO_USUARIO() {
 
 
 
+
+<!-- LUKAFILMES WHATSAPP OTP -->
+<section id="lukaWhatsappAdmin" style="margin:25px 0;padding:22px;border-radius:18px;background:#111;color:#fff;border:1px solid #292929;">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;">
+    <div>
+      <h2 style="margin:0 0 6px;font-size:22px;">📱 WhatsApp / OTP</h2>
+      <div style="font-size:14px;color:#aaa;">Conexão e envio automático dos códigos de cadastro.</div>
+    </div>
+    <div id="lukaWhatsappStatus" style="padding:8px 13px;border-radius:20px;background:#292929;color:#ccc;">
+      ⚪ Verificando...
+    </div>
+  </div>
+
+  <div style="display:flex;gap:25px;flex-wrap:wrap;margin-top:22px;">
+    <div style="width:260px;min-height:260px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:14px;">
+      <div id="lukaWhatsappQr" style="color:#111;text-align:center;padding:20px;">
+        Aguardando QR Code...
+      </div>
+    </div>
+
+    <div style="flex:1;min-width:260px;">
+      <div style="margin-bottom:15px;">
+        <strong>Conexão</strong>
+        <div id="lukaWhatsappNumero" style="margin-top:6px;color:#aaa;">Número não conectado</div>
+      </div>
+
+      <div style="margin-bottom:15px;">
+        <strong>Envios automáticos</strong>
+        <div id="lukaWhatsappEnvios" style="margin-top:6px;color:#aaa;">Nenhum envio registrado.</div>
+      </div>
+
+      <button id="lukaWhatsappReconectar" type="button"
+        style="padding:11px 16px;border:0;border-radius:10px;background:#e50914;color:#fff;font-weight:700;cursor:pointer;">
+        🔄 Reconectar WhatsApp
+      </button>
+
+      <div id="lukaWhatsappMensagem" style="margin-top:14px;color:#aaa;font-size:13px;"></div>
+    </div>
+  </div>
+
+  <div style="margin-top:22px;">
+    <strong>Últimas atividades</strong>
+    <div id="lukaWhatsappHistorico" style="margin-top:10px;color:#aaa;">
+      Nenhuma atividade registrada.
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  async function atualizarWhatsAppAdmin() {
+    const status = document.getElementById("lukaWhatsappStatus");
+    const qr = document.getElementById("lukaWhatsappQr");
+    const numero = document.getElementById("lukaWhatsappNumero");
+    const msg = document.getElementById("lukaWhatsappMensagem");
+
+    try {
+      const r = await fetch("/api/admin/whatsapp/status", {
+        credentials: "include"
+      });
+
+      if (!r.ok) throw new Error("Falha ao consultar WhatsApp");
+
+      const d = await r.json();
+
+      if (d.conectado) {
+        status.textContent = "🟢 WhatsApp conectado";
+        status.style.background = "#123d20";
+        status.style.color = "#7dff9b";
+        numero.textContent = d.numero || "WhatsApp conectado";
+        qr.innerHTML = "✅<br><br>WhatsApp conectado";
+      } else {
+        status.textContent = "🟠 Aguardando conexão";
+        status.style.background = "#3d2f12";
+        status.style.color = "#ffd66b";
+        numero.textContent = "Número não conectado";
+
+        if (d.qr) {
+          qr.innerHTML = '<img src="' + d.qr + '" style="max-width:220px;width:100%;height:auto;">';
+        } else {
+          qr.textContent = "Aguardando QR Code...";
+        }
+      }
+
+      if (d.mensagem) msg.textContent = d.mensagem;
+    } catch (e) {
+      status.textContent = "🔴 Indisponível";
+      status.style.background = "#3d1515";
+      status.style.color = "#ff8d8d";
+      msg.textContent = "Servidor WhatsApp ainda não inicializado.";
+    }
+  }
+
+  const botao = document.getElementById("lukaWhatsappReconectar");
+
+  if (botao) {
+    botao.addEventListener("click", async function () {
+      const msg = document.getElementById("lukaWhatsappMensagem");
+      msg.textContent = "Solicitando reconexão...";
+
+      try {
+        await fetch("/api/admin/whatsapp/reconectar", {
+          method: "POST",
+          credentials: "include"
+        });
+        msg.textContent = "Reconexão solicitada.";
+      } catch (e) {
+        msg.textContent = "Não foi possível solicitar a reconexão.";
+      }
+
+      setTimeout(atualizarWhatsAppAdmin, 1500);
+    });
+  }
+
+  atualizarWhatsAppAdmin();
+  setInterval(atualizarWhatsAppAdmin, 5000);
+})();
+</script>
+<!-- FIM LUKAFILMES WHATSAPP OTP -->
+
 </body>
 </html>
 

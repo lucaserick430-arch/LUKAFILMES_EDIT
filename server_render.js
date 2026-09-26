@@ -756,7 +756,8 @@ async function prepararTursoCadastrosPendentes() {
             expira_em TEXT NOT NULL,
             ultimo_envio_em TEXT NOT NULL,
             tentativas INTEGER NOT NULL DEFAULT 0,
-            request_id TEXT
+            request_id TEXT,
+            codigo_otp TEXT
         )
     `);
 
@@ -764,6 +765,15 @@ async function prepararTursoCadastrosPendentes() {
         await turso.execute(`
             ALTER TABLE lukafilmes_cadastros_pendentes
             ADD COLUMN request_id TEXT
+        `);
+    } catch (_) {
+        // Coluna já existe.
+    }
+
+    try {
+        await turso.execute(`
+            ALTER TABLE lukafilmes_cadastros_pendentes
+            ADD COLUMN codigo_otp TEXT
         `);
     } catch (_) {
         // Coluna já existe.
@@ -786,85 +796,93 @@ function normalizarWhatsAppLuka(valor) {
     return "";
 }
 
-async function enviarOtpWhatsAppLuka(telefone) {
-    const chave = String(process.env.WAFORGE_API_KEY || "").trim();
+let lukaWhatsAppSocket = null;
+let lukaWhatsAppUltimoSocketConectado = null;
+let lukaWhatsAppIniciando = false;
+const lukaWhatsAppStatus = {
+    conectado: false,
+    qr: null,
+    numero: null,
+    mensagem: "WhatsApp aguardando inicialização."
+};
 
-    if (!chave) {
-        throw new Error("WAFORGE_API_KEY não configurada.");
+async function enviarOtpWhatsAppLuka(telefone, codigo) {
+    let socket =
+        lukaWhatsAppSocket ||
+        lukaWhatsAppUltimoSocketConectado;
+
+    const inicioEspera = Date.now();
+
+    while (!socket && Date.now() - inicioEspera < 15000) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        socket =
+            lukaWhatsAppSocket ||
+            lukaWhatsAppUltimoSocketConectado;
     }
 
-    const resposta = await fetch(
-        "https://waforge.online/api/v1/otp/send",
-        {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${chave}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                phone: telefone
-            })
-        }
-    );
-
-    let dados = {};
-    try {
-        dados = await resposta.json();
-    } catch (_) {}
-
-    console.log("[WAFORGE OTP SEND] HTTP:", resposta.status);
-    console.log("[WAFORGE OTP SEND] RESPOSTA:", JSON.stringify(dados));
-
-    if (!resposta.ok) {
-        const erro = String(
-            dados?.error ||
-            dados?.message ||
-            "Falha ao enviar código pelo WhatsApp."
+    if (!socket) {
+        throw new Error(
+            "WhatsApp ainda não está disponível. Aguarde a conexão e tente novamente."
         );
-
-        throw new Error(erro);
     }
 
-    return {
-        ...dados,
-        request_id: dados?.request_id || ""
-    };
-}
+    const numero = String(telefone || "").replace(/\D/g, "");
 
-async function verificarOtpWhatsAppLuka(telefone, codigo, requestId) {
-    const chave = String(process.env.WAFORGE_API_KEY || "").trim();
-
-    if (!chave) {
-        throw new Error("WAFORGE_API_KEY não configurada.");
+    if (!numero) {
+        throw new Error("Número de WhatsApp inválido.");
     }
 
-    const resposta = await fetch(
-        "https://waforge.online/api/v1/otp/verify",
-        {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${chave}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                phone: telefone,
-                code: codigo,
-                request_id: requestId
-            })
-        }
-    );
+    let jid = numero + "@s.whatsapp.net";
 
-    let dados = {};
     try {
-        dados = await resposta.json();
-    } catch (_) {}
+        const contatos = await socket.onWhatsApp(numero);
+
+        if (
+            Array.isArray(contatos) &&
+            contatos[0]?.exists &&
+            contatos[0]?.jid
+        ) {
+            jid = contatos[0].jid;
+        }
+    } catch (erroContato) {
+        console.warn(
+            "[WHATSAPP OTP] Consulta do contato:",
+            erroContato.message
+        );
+    }
+
+    const mensagem =
+        `🔐 *LUKAFILMES*\n\n` +
+        `Olá! 👋\n\n` +
+        `Seu cadastro está quase concluído.\n\n` +
+        `✨ *CÓDIGO DE CONFIRMAÇÃO*\n\n` +
+        `👉 *${codigo}*\n\n` +
+        `⏱️ Válido por 10 minutos.\n\n` +
+        `🛡️ Não compartilhe este código com ninguém.\n\n` +
+        `Se você não solicitou este cadastro, ignore esta mensagem.\n\n` +
+        `🍿 *LUKAFILMES*`;
+
+    await socket.sendMessage(jid, { text: mensagem });
+
+    lukaWhatsAppStatus.envios =
+        Number(lukaWhatsAppStatus.envios || 0) + 1;
+
+    console.log("[WHATSAPP OTP] Código enviado para:", telefone);
 
     return {
-        ok: resposta.ok,
-        dados
+        request_id: "LOCAL-" + Date.now()
     };
 }
 
+async function verificarOtpWhatsAppLuka(telefone, codigo, codigoSalvo) {
+    return {
+        ok:
+            String(codigo || "").trim() ===
+            String(codigoSalvo || "").trim(),
+        dados: {}
+    };
+}
 // ==========================================
 // LUKAFILMES — API CADASTRO DE CLIENTE
 // ==========================================
@@ -980,15 +998,17 @@ app.post("/api/cadastro", async (req, res) => {
 
         const senhaHash = await bcrypt.hash(senha, 12);
 
+        const codigoOtp =
+            String(Math.floor(100000 + Math.random() * 900000));
+
         const resultadoOtp =
-            await enviarOtpWhatsAppLuka(telefoneWhatsApp);
+            await enviarOtpWhatsAppLuka(
+                telefoneWhatsApp,
+                codigoOtp
+            );
 
         const requestIdOtp =
             String(resultadoOtp?.request_id || "").trim();
-
-        if (!requestIdOtp) {
-            throw new Error("WaForge não retornou request_id.");
-        }
 
         if (turso) {
             await turso.execute({
@@ -1003,9 +1023,10 @@ app.post("/api/cadastro", async (req, res) => {
                         expira_em,
                         ultimo_envio_em,
                         tentativas,
-                        request_id
+                        request_id,
+                        codigo_otp
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
                     ON CONFLICT(telefone) DO UPDATE SET
                         nome = excluded.nome,
                         usuario = excluded.usuario,
@@ -1014,7 +1035,8 @@ app.post("/api/cadastro", async (req, res) => {
                         expira_em = excluded.expira_em,
                         ultimo_envio_em = excluded.ultimo_envio_em,
                         tentativas = 0,
-                        request_id = excluded.request_id
+                        request_id = excluded.request_id,
+                        codigo_otp = excluded.codigo_otp
                 `,
                 args: [
                     telefoneWhatsApp,
@@ -1024,7 +1046,8 @@ app.post("/api/cadastro", async (req, res) => {
                     agoraIso,
                     expiraIso,
                     agoraIso,
-                    requestIdOtp
+                    requestIdOtp,
+                    codigoOtp
                 ]
             });
         }
@@ -1109,15 +1132,17 @@ app.post("/api/cadastro/reenviar-otp", async (req, res) => {
             });
         }
 
+        const codigoOtp =
+            String(Math.floor(100000 + Math.random() * 900000));
+
         const resultadoOtp =
-            await enviarOtpWhatsAppLuka(telefoneWhatsApp);
+            await enviarOtpWhatsAppLuka(
+                telefoneWhatsApp,
+                codigoOtp
+            );
 
         const requestIdOtp =
             String(resultadoOtp?.request_id || "").trim();
-
-        if (!requestIdOtp) {
-            throw new Error("WaForge não retornou request_id.");
-        }
 
         const agoraIso = new Date().toISOString();
         const expiraIso = new Date(
@@ -1130,13 +1155,15 @@ app.post("/api/cadastro/reenviar-otp", async (req, res) => {
                 SET ultimo_envio_em = ?,
                     expira_em = ?,
                     tentativas = 0,
-                    request_id = ?
+                    request_id = ?,
+                    codigo_otp = ?
                 WHERE telefone = ?
             `,
             args: [
                 agoraIso,
                 expiraIso,
                 requestIdOtp,
+                codigoOtp,
                 telefoneWhatsApp
             ]
         });
@@ -1190,7 +1217,8 @@ app.post("/api/cadastro/verificar-otp", async (req, res) => {
                     senha_hash,
                     expira_em,
                     tentativas,
-                    request_id
+                    request_id,
+                    codigo_otp
                 FROM lukafilmes_cadastros_pendentes
                 WHERE telefone = ?
             `,
@@ -1236,7 +1264,7 @@ app.post("/api/cadastro/verificar-otp", async (req, res) => {
         const verificacao = await verificarOtpWhatsAppLuka(
             telefoneWhatsApp,
             codigo,
-            String(pendente.request_id || "").trim()
+            String(pendente.codigo_otp || "").trim()
         );
 
         if (!verificacao.ok) {
@@ -7891,7 +7919,9 @@ app.use(
             req.path.startsWith("/api/serie/") ||
             req.path.startsWith("/api/series") ||
             req.path === "/api/acesso-assistir" ||
-            req.path === "/api/pagamentos/criar"
+            req.path === "/api/pagamentos/criar" ||
+            req.path === "/api/admin/whatsapp/status" ||
+            req.path === "/api/admin/whatsapp/reconectar"
         ) {
             return next();
         }
@@ -8097,7 +8127,260 @@ module.exports = app
 const PORT_RENDER = process.env.PORT || 3000;
 
 if (!process.env.CLOUDFLARE_WORKERS) {
-    app.listen(PORT_RENDER, "0.0.0.0", () => {
+
+/* ============================================================
+   LUKAFILMES_WHATSAPP_ENGINE_V1
+   WhatsApp por QR Code + sessão persistente
+   ============================================================ */
+
+const fs = require("fs");
+const path = require("path");
+
+let lukaWhatsAppSocket = null;
+let lukaWhatsAppIniciando = false;
+
+const lukaWhatsAppStatus = {
+    conectado: false,
+    qr: null,
+    numero: null,
+    mensagem: "WhatsApp aguardando inicialização."
+};
+
+async function iniciarWhatsAppLuka() {
+    if (lukaWhatsAppSocket || lukaWhatsAppIniciando) return;
+
+    lukaWhatsAppIniciando = true;
+
+    try {
+        const {
+            default: makeWASocket,
+            useMultiFileAuthState
+        } = require("@whiskeysockets/baileys");
+
+        const QRCode = require("qrcode");
+
+        const pastaAuth =
+            process.env.WHATSAPP_AUTH_DIR ||
+            path.join(__dirname, ".whatsapp_auth");
+
+        fs.mkdirSync(pastaAuth, { recursive: true });
+
+        const { state, saveCreds } =
+            await useMultiFileAuthState(pastaAuth);
+
+        const socket = makeWASocket({
+            auth: state,
+            markOnlineOnConnect: false,
+            printQRInTerminal: false
+        });
+
+        lukaWhatsAppSocket = socket;
+
+        socket.ev.on("creds.update", saveCreds);
+
+        socket.ev.on("connection.update", async (update) => {
+            const { connection, qr, lastDisconnect } = update;
+
+            if (qr) {
+                try {
+                    lukaWhatsAppStatus.qr =
+                        await QRCode.toDataURL(qr);
+
+                    lukaWhatsAppStatus.conectado = false;
+                    lukaWhatsAppStatus.mensagem =
+                        "Escaneie o QR Code com o WhatsApp.";
+                } catch (erroQR) {
+                    console.error(
+                        "[WHATSAPP QR] Erro:",
+                        erroQR
+                    );
+                }
+            }
+
+            if (connection === "open") {
+                lukaWhatsAppUltimoSocketConectado = socket;
+                lukaWhatsAppSocket = socket;
+                lukaWhatsAppStatus.conectado = true;
+                lukaWhatsAppStatus.qr = null;
+                lukaWhatsAppStatus.mensagem =
+                    "WhatsApp conectado com sucesso.";
+
+                lukaWhatsAppStatus.numero =
+                    socket.user?.id
+                        ? socket.user.id.split(":")[0]
+                        : null;
+
+                console.log(
+                    "[WHATSAPP] CONECTADO:",
+                    lukaWhatsAppStatus.numero || "número não identificado"
+                );
+            }
+
+            if (connection === "close") {
+                if (lukaWhatsAppSocket === socket) {
+                    lukaWhatsAppSocket = null;
+                }
+
+                lukaWhatsAppStatus.conectado = false;
+
+                const codigo =
+                    lastDisconnect?.error?.output?.statusCode;
+
+                console.log(
+                    "[WHATSAPP] CONEXÃO FECHADA | código:",
+                    codigo ?? "não identificado"
+                );
+
+                if (codigo === 401) {
+                    lukaWhatsAppStatus.qr = null;
+                    lukaWhatsAppStatus.numero = null;
+                    lukaWhatsAppStatus.mensagem =
+                        "WhatsApp desconectado. Faça uma nova conexão.";
+
+                    console.log(
+                        "[WHATSAPP] Sessão encerrada pelo WhatsApp."
+                    );
+                } else {
+                    lukaWhatsAppStatus.mensagem =
+                        "Conexão perdida. Reconectando automaticamente...";
+
+                    console.log(
+                        "[WHATSAPP] Conexão perdida. Reconectando..."
+                    );
+
+                    setTimeout(() => {
+                        if (
+                            !lukaWhatsAppSocket &&
+                            !lukaWhatsAppIniciando
+                        ) {
+                            iniciarWhatsAppLuka().catch(erro => {
+                                console.error(
+                                    "[WHATSAPP] Erro ao reconectar:",
+                                    erro.message
+                                );
+                            });
+                        }
+                    }, 3000);
+                }
+            }
+        });
+
+    } catch (erro) {
+        lukaWhatsAppSocket = null;
+        lukaWhatsAppStatus.conectado = false;
+        lukaWhatsAppStatus.mensagem =
+            "Dependência do WhatsApp ainda não instalada no servidor.";
+
+        console.error(
+            "[WHATSAPP] Inicialização:",
+            erro.message
+        );
+    } finally {
+        lukaWhatsAppIniciando = false;
+    }
+}
+
+/* INICIALIZA WHATSAPP AUTOMATICAMENTE AO SUBIR O SERVIDOR */
+setTimeout(() => {
+    iniciarWhatsAppLuka().catch(erro => {
+        console.error("[WHATSAPP] Erro na inicialização automática:", erro.message);
+    });
+}, 2000);
+
+/* STATUS DO WHATSAPP PARA O PAINEL ADMIN */
+app.get("/api/admin/whatsapp/status", async (req, res) => {
+    try {
+        if (
+            !req.session ||
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        await iniciarWhatsAppLuka();
+
+        return res.json({
+            sucesso: true,
+            conectado: lukaWhatsAppStatus.conectado,
+            qr: lukaWhatsAppStatus.qr,
+            numero: lukaWhatsAppStatus.numero,
+            mensagem: lukaWhatsAppStatus.mensagem
+        });
+
+    } catch (erro) {
+        console.error(
+            "[WHATSAPP STATUS]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            conectado: false,
+            qr: null,
+            mensagem: "Erro ao consultar WhatsApp."
+        });
+    }
+});
+
+/* RECONEXÃO SOLICITADA PELO ADMIN */
+app.post("/api/admin/whatsapp/reconectar", async (req, res) => {
+    try {
+        if (
+            !req.session ||
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        lukaWhatsAppStatus.mensagem =
+            "Reconexão solicitada...";
+
+        if (lukaWhatsAppSocket) {
+            try {
+                lukaWhatsAppSocket.end(
+                    new Error("Reconexão solicitada pelo administrador.")
+                );
+            } catch (_) {}
+        }
+
+        lukaWhatsAppSocket = null;
+        lukaWhatsAppStatus.conectado = false;
+        lukaWhatsAppStatus.qr = null;
+
+        setTimeout(() => {
+            iniciarWhatsAppLuka().catch(() => {});
+        }, 300);
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Reconexão iniciada."
+        });
+
+    } catch (erro) {
+        console.error(
+            "[WHATSAPP RECONEXAO]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível iniciar a reconexão."
+        });
+    }
+});
+
+/* FIM LUKAFILMES_WHATSAPP_ENGINE_V1 */
+
+
+app.listen(PORT_RENDER, "0.0.0.0", () => {
         console.log(`LUKAFILMES iniciado na porta ${PORT_RENDER}`);
     });
 }
