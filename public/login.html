@@ -3102,43 +3102,17 @@ body::before {
 <!-- FIM BOTÕES DE ACESSO SOBRE O TRAILER -->
 
 
-<!-- LUKAFILMES — BOTÕES DE ENTRADA SOBRE O TRAILER -->
+<!-- LUKAFILMES — ACESSO ÚNICO -->
 <div id="luka-botoes-trailer">
-
     <div>
-        <button type="button" id="luka-btn-visitante">
-            Acessar como visitante
-        </button>
-
-        <button type="button" id="luka-btn-cliente">
-            Acessar como cliente
+        <button
+            type="button"
+            id="luka-btn-acessar"
+            onclick="window.location.href='/'"
+        >
+            ▶ ACESSAR
         </button>
     </div>
-
-    <div id="luka-formulario-cliente">
-
-        <input
-            type="text"
-            id="luka-cliente-usuario"
-            placeholder="Usuário"
-            autocomplete="username"
-        >
-
-        <input
-            type="password"
-            id="luka-cliente-senha"
-            placeholder="Senha"
-            autocomplete="current-password"
-        >
-
-        <button type="button" id="luka-cliente-entrar">
-            ENTRAR
-        </button>
-
-        <div id="luka-formulario-mensagem"></div>
-
-    </div>
-
 </div>
 
 <style id="luka-botoes-trailer-css">

@@ -7926,20 +7926,14 @@ app.use(
             return next();
         }
 
-        if (!req.session || !req.session.usuario) {
-
-            return res.redirect("/login");
-
-        }
-
-        const usuarioSessao = req.session.usuario;
-
         /*
-         * Usuário vencido continua logado e pode navegar pelo catálogo.
-         * A verificação de acesso para assistir será feita no botão
-         * principal "ASSISTIR".
+         * LUKAFILMES — ACESSO PÚBLICO
          *
-         * Admin e isento nunca dependem de validade.
+         * O catálogo e as páginas públicas não exigem mais
+         * sessão, cadastro ou login.
+         *
+         * As rotas administrativas continuam protegidas
+         * pelas próprias verificações de permissão.
          */
 
         next();
@@ -7969,16 +7963,10 @@ app.get("/paginas/minha-lista", (req, res) => {
 // ==========================================
 app.get("/", (req, res) => {
 
-    // Cliente logado ou visitante autorizado: entra na Home
-    if (req.session && (req.session.usuario || req.session.visitante)) {
-        return res.sendFile(
-            path.join(LUKAFILMES_DIR, "index.html")
-        );
-    }
-
-    // Primeiro acesso: mostra a tela original de login/entrada
+    // LUKAFILMES — HOME PÚBLICA
+    // Não exige login, cadastro ou sessão.
     return res.sendFile(
-        path.join(LUKAFILMES_DIR, "public", "login.html")
+        path.join(LUKAFILMES_DIR, "index.html")
     );
 });
 
