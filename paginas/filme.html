@@ -3759,13 +3759,13 @@ width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,25
                     ＋ Adicionar aos favoritos
                 </a>
 
-                <a
+                <button
                     class="assistir"
                     id="botaoMeusFavoritosFilme"
-                    href="/paginas/minha-lista"
+                    type="button"
                     style="text-decoration:none;">
                     ♥ Meus Favoritos
-                </a>
+                </button>
             </div>
 
 
@@ -5722,6 +5722,15 @@ document.getElementById("voltarFilmes").addEventListener(
     }
 
     atualizarBotao();
+
+    const botaoMeusFavoritos =
+        document.getElementById("botaoMeusFavoritosFilme");
+
+    if (botaoMeusFavoritos) {
+        botaoMeusFavoritos.addEventListener("click", function () {
+            window.location.href = "/paginas/minha-lista.html";
+        });
+    }
 
 })();
 </script>

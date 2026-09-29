@@ -7761,7 +7761,19 @@ app.use(
 
             req.path === "/paginas/serie" ||
 
-            req.path === "/paginas/iptv.html"
+            req.path === "/paginas/iptv.html" ||
+
+            req.path === "/paginas/categorias.html" ||
+
+            req.path === "/paginas/categorias" ||
+
+            req.path === "/paginas/continuar-assistindo.html" ||
+
+            req.path === "/paginas/continuar-assistindo" ||
+
+            req.path === "/paginas/minha-lista.html" ||
+
+            req.path === "/paginas/minha-lista"
 
         ) {
 
