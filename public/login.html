@@ -3110,9 +3110,6 @@ body::before {
             Acessar como visitante
         </button>
 
-        <button type="button" id="luka-btn-cliente">
-            Acessar como cliente
-        </button>
     </div>
 
     <div id="luka-formulario-cliente">
@@ -3192,12 +3189,6 @@ body::before {
     background:rgba(18,18,18,.88)!important;
     border:1px solid rgba(255,255,255,.30)!important;
     box-shadow:0 8px 25px rgba(0,0,0,.45)!important;
-}
-
-#luka-btn-cliente{
-    background:#e50914!important;
-    border:1px solid rgba(255,255,255,.16)!important;
-    box-shadow:0 8px 25px rgba(229,9,20,.30)!important;
 }
 
 #luka-formulario-cliente{
@@ -3305,14 +3296,6 @@ body::before {
         -webkit-backdrop-filter:blur(10px)!important;
     }
 
-    #luka-btn-cliente{
-        background:linear-gradient(135deg,#f20d19,#b20710)!important;
-        border:1px solid rgba(255,255,255,.20)!important;
-        box-shadow:
-            0 10px 30px rgba(229,9,20,.38),
-            inset 0 1px 0 rgba(255,255,255,.12)!important;
-    }
-
     #luka-botoes-trailer > div:first-child button:active{
         transform:scale(.985)!important;
         filter:brightness(.92)!important;
@@ -3369,7 +3352,6 @@ body::before {
     function iniciarBotoesLuka(){
 
         var visitante = document.getElementById("luka-btn-visitante");
-        var cliente = document.getElementById("luka-btn-cliente");
         var formulario = document.getElementById("luka-formulario-cliente");
         var usuario = document.getElementById("luka-cliente-usuario");
         var senha = document.getElementById("luka-cliente-senha");
