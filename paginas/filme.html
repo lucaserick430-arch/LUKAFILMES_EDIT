@@ -3810,19 +3810,9 @@ width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,25
         </div>
 
         <div id="filmePlayersOpcoes" class="lukafilmes-players-limpos players-ocultos">
-<button
-                type="button"
-                id="btnRedeFlixFilme"
-                class="serie-player-btn">
-                ▶ REDEFLIX
-            </button>
 
-            <button
-                type="button"
-                id="btnStreamFilme"
-                class="serie-player-btn">
-                ▶ Stream
-            </button>
+
+
 
             <button
                 type="button"
@@ -3838,12 +3828,7 @@ width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,25
                 ▶ APIPlayer
             </button>
 
-        <button
-            type="button"
-            id="btnVidemFilme"
-            class="serie-player-btn">
-            ▶ VIDEM
-        </button>
+
 
         </div>
 
@@ -7047,36 +7032,49 @@ body {
                 window.location.href
             );
         } catch (erro) {
-            console.warn("[HISTÓRICO PLAYER] Não foi possível proteger o retorno:", erro);
+            console.warn(
+                "[HISTÓRICO PLAYER] Não foi possível proteger o retorno:",
+                erro
+            );
         }
     }
-const btnRedeFlixFilme =
-        document.getElementById("btnRedeFlixFilme");
+
+    const btnEmbedMoviesFilme =
+        document.getElementById("btnEmbedMoviesFilme");
 
     const btnApiPlayerFilme =
         document.getElementById("btnApiPlayerFilme");
 
-    const btnVidemFilme =
-        document.getElementById("btnVidemFilme");
-    const filmeFrame = document.getElementById("filmeFrame");
+    const filmeFrame =
+        document.getElementById("filmeFrame");
 
-    if (!btnRedeFlixFilme || !btnApiPlayerFilme || !filmeFrame) return;
+    if (!btnEmbedMoviesFilme || !btnApiPlayerFilme || !filmeFrame) return;
 
-    const parametros = new URLSearchParams(window.location.search);
-    const idUrl = parametros.get("id");
+    const parametros =
+        new URLSearchParams(window.location.search);
 
-    let tmdbId = idUrl ? String(idUrl).trim() : "";
+    const idUrl =
+        parametros.get("id");
+
+    let tmdbId =
+        idUrl ? String(idUrl).trim() : "";
 
     try {
-        const salvo = localStorage.getItem("filmeSelecionado");
+        const salvo =
+            localStorage.getItem("filmeSelecionado");
+
         if (!tmdbId && salvo) {
             const filme = JSON.parse(salvo);
-            if (filme && filme.id) tmdbId = String(filme.id).trim();
+
+            if (filme && filme.id) {
+                tmdbId = String(filme.id).trim();
+            }
         }
     } catch (e) {}
 
     if (!tmdbId) return;
-btnRedeFlixFilme.onclick = async function () {
+
+    btnEmbedMoviesFilme.onclick = async function () {
 
         if (
             window.__lukaAutorizarPlayerFilme &&
@@ -7084,52 +7082,19 @@ btnRedeFlixFilme.onclick = async function () {
         ) {
             return;
         }
+
         protegerHistoricoPlayerFilme();
-        filmeFrame.style.setProperty("display", "block", "important");
+
+        filmeFrame.style.setProperty(
+            "display",
+            "block",
+            "important"
+        );
+
         filmeFrame.src =
-            "https://redeflixapi.store/filme/" +
+            "https://myembed.biz/filme/" +
             encodeURIComponent(tmdbId);
     };
-
-    const btnStreamFilme =
-        document.getElementById("btnStreamFilme");
-
-    const btnEmbedMoviesFilme =
-        document.getElementById("btnEmbedMoviesFilme");
-
-    if (btnStreamFilme) {
-        btnStreamFilme.onclick = async function () {
-
-            if (
-                window.__lukaAutorizarPlayerFilme &&
-                !(await window.__lukaAutorizarPlayerFilme())
-            ) {
-                return;
-            }
-        protegerHistoricoPlayerFilme();
-            filmeFrame.style.setProperty("display", "block", "important");
-            filmeFrame.src =
-                "https://mgeb.top/embed/" +
-                encodeURIComponent(tmdbId);
-        };
-    }
-
-    if (btnEmbedMoviesFilme) {
-        btnEmbedMoviesFilme.onclick = async function () {
-
-            if (
-                window.__lukaAutorizarPlayerFilme &&
-                !(await window.__lukaAutorizarPlayerFilme())
-            ) {
-                return;
-            }
-        protegerHistoricoPlayerFilme();
-            filmeFrame.style.setProperty("display", "block", "important");
-            filmeFrame.src =
-                "https://myembed.biz/filme/" +
-                encodeURIComponent(tmdbId);
-        };
-    }
 
     btnApiPlayerFilme.onclick = async function () {
 
@@ -7139,30 +7104,20 @@ btnRedeFlixFilme.onclick = async function () {
         ) {
             return;
         }
+
         protegerHistoricoPlayerFilme();
-        filmeFrame.style.setProperty("display", "block", "important");
+
+        filmeFrame.style.setProperty(
+            "display",
+            "block",
+            "important"
+        );
+
         filmeFrame.src =
             "https://apiplayer.ru/embed/movie/" +
             encodeURIComponent(tmdbId) +
             "?lang=pt";
     };
-
-    if (btnVidemFilme) {
-        btnVidemFilme.onclick = async function () {
-
-            if (
-                window.__lukaAutorizarPlayerFilme &&
-                !(await window.__lukaAutorizarPlayerFilme())
-            ) {
-                return;
-            }
-            protegerHistoricoPlayerFilme();
-            filmeFrame.style.setProperty("display", "block", "important");
-            filmeFrame.src =
-                "https://videm.xyz/embed/movie/" +
-                encodeURIComponent(tmdbId);
-        };
-    }
 
 })();
 </script>

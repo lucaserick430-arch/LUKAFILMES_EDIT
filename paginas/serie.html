@@ -2043,20 +2043,6 @@ width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,25
 
             <button
                 type="button"
-                id="btnRedeFlixSerie"
-                class="serie-player-btn">
-                ▶ RedeFlix
-            </button>
-
-            <button
-                type="button"
-                id="btnStreamSerie"
-                class="serie-player-btn">
-                ▶ Stream
-            </button>
-
-            <button
-                type="button"
                 id="btnEmbedMoviesSerie"
                 class="serie-player-btn">
                 ▶ EmbedMovies
@@ -2067,13 +2053,6 @@ width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,25
                 id="btnApiPlayerSerie"
                 class="serie-player-btn">
                 ▶ APIPlayer
-            </button>
-
-            <button
-                type="button"
-                id="btnVidemSerie"
-                class="serie-player-btn">
-                ▶ VIDEM
             </button>
 
         </div>
@@ -3571,23 +3550,8 @@ function criarTemporadaFallback() {
             "block";
 
         /*
-         * REDEFLIX — PLAYER OFICIAL DO EPISÓDIO
-         *
-         * Formato:
-         * /serie/{id_tmdb}/{temporada}/{episodio}
-         */
-
-        const redeFlixUrl =
-            "https://redeflixapi.store/serie/" +
-            encodeURIComponent(String(idSerie).trim()) +
-            "/" +
-            encodeURIComponent(String(temporadaId).trim()) +
-            "/" +
-            encodeURIComponent(String(episodioId).trim());
-
-        /*
          * NÃO CARREGA PLAYER AUTOMATICAMENTE.
-         * O usuário escolhe RedeFlix ou APIPlayer.
+         * O usuário escolhe EmbedMovies ou APIPlayer.
          */
 
         serieFrame.src = "";
@@ -3646,8 +3610,6 @@ function criarTemporadaFallback() {
          * ESCOLHA DO PLAYER
          *
          * Ordem:
-         * RedeFlix
-         * Stream
          * EmbedMovies
          * APIPlayer
          *
@@ -3655,20 +3617,11 @@ function criarTemporadaFallback() {
          * O iframe só aparece após a escolha.
          */
 
-        const btnRedeFlixSerie =
-            document.getElementById("btnRedeFlixSerie");
-
-        const btnStreamSerie =
-            document.getElementById("btnStreamSerie");
-
         const btnEmbedMoviesSerie =
             document.getElementById("btnEmbedMoviesSerie");
 
         const btnApiPlayerSerie =
             document.getElementById("btnApiPlayerSerie");
-
-        const btnVidemSerie =
-            document.getElementById("btnVidemSerie");
 
         const seriePlayerVideo =
             document.getElementById("seriePlayerVideo");
@@ -3763,38 +3716,6 @@ function criarTemporadaFallback() {
             }
         }
 
-        if (btnRedeFlixSerie) {
-
-            btnRedeFlixSerie.onclick = function () {
-
-                carregarPlayerSerie(
-                    redeFlixUrl,
-                    "RedeFlix"
-                );
-
-            };
-        }
-
-        if (btnStreamSerie) {
-
-            btnStreamSerie.onclick = function () {
-
-                const streamUrl =
-                    "https://mgeb.top/embed/" +
-                    encodeURIComponent(String(idSerie).trim()) +
-                    "/" +
-                    encodeURIComponent(String(temporadaId).trim()) +
-                    "/" +
-                    encodeURIComponent(String(episodioId).trim());
-
-                carregarPlayerSerie(
-                    streamUrl,
-                    "Stream"
-                );
-
-            };
-        }
-
         if (btnEmbedMoviesSerie) {
 
             btnEmbedMoviesSerie.onclick = function () {
@@ -3836,26 +3757,6 @@ function criarTemporadaFallback() {
             };
         }
 
-        if (btnVidemSerie) {
-
-            btnVidemSerie.onclick = function () {
-
-                const videmUrl =
-                    "https://videm.xyz/embed/tv/" +
-                    encodeURIComponent(String(idSerie).trim()) +
-                    "/" +
-                    encodeURIComponent(String(temporadaId).trim()) +
-                    "/" +
-                    encodeURIComponent(String(episodioId).trim());
-
-                carregarPlayerSerie(
-                    videmUrl,
-                    "VIDEM"
-                );
-
-            };
-        }
-
         /*
          * DESCE ATÉ O PLAYER
          */
@@ -3866,8 +3767,7 @@ function criarTemporadaFallback() {
         });
 
         console.log(
-            "[SERIES PLAYER] RedeFlix carregado:",
-            redeFlixUrl
+            "[SERIES PLAYER] Player pronto para escolha."
         );
 
     }
