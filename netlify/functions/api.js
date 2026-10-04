@@ -1,5 +1,5 @@
-﻿const serverless = require("serverless-http");
+const serverless = require("serverless-http");
 
-const app = require("../../server_netlify");
+const app = require("../../server_render");
 
 exports.handler = serverless(app);

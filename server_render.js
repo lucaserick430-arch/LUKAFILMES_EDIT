@@ -7509,7 +7509,7 @@ module.exports = app
 
 const PORT_RENDER = process.env.PORT || 3000;
 
-if (!process.env.CLOUDFLARE_WORKERS) {
+if (!process.env.CLOUDFLARE_WORKERS && !process.env.NETLIFY && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
 
 /* ============================================================
    LUKAFILMES_WHATSAPP_ENGINE_V1
@@ -7763,7 +7763,9 @@ app.post("/api/admin/whatsapp/reconectar", async (req, res) => {
 /* FIM LUKAFILMES_WHATSAPP_ENGINE_V1 */
 
 
-app.listen(PORT_RENDER, "0.0.0.0", () => {
+if (!process.env.NETLIFY && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    app.listen(PORT_RENDER, "0.0.0.0", () => {
         console.log(`LUKAFILMES iniciado na porta ${PORT_RENDER}`);
     });
+}
 }
