@@ -4499,236 +4499,6 @@ document.getElementById("voltarFilmes").addEventListener(
 
 
 
-<script src="../js/conta-storage.js"></script>
-<script id="filme-favoritos-topo-script">
-(function(){
-
-    function obterFilme(){
-        try{
-
-            const params =
-                new URLSearchParams(window.location.search);
-
-            const id =
-                params.get("id");
-
-            let filme = null;
-
-            /* PRIMEIRA FONTE: filme específico pelo ID */
-            if(id){
-
-                try{
-                    filme = JSON.parse(
-                        localStorage.getItem(
-                            "filmeSelecionadoHome_" + String(id)
-                        ) || "null"
-                    );
-                }catch(e){}
-
-            }
-
-            /*
-             * SEGUNDA FONTE: filmeSelecionado
-             *
-             * Só pode ser usado quando NÃO existe
-             * um ID específico na URL.
-             */
-            if(!filme && !id){
-
-                try{
-                    filme = JSON.parse(
-                        localStorage.getItem(
-                            "filmeSelecionado"
-                        ) || "null"
-                    );
-                }catch(e){}
-
-            }
-
-            /* TERCEIRA FONTE: dados mínimos da própria página */
-            if(!filme && id){
-
-                filme = {
-                    id: id,
-                    titulo:
-                        document.querySelector("h1")?.textContent?.trim()
-                        || "Filme",
-                    capa:
-                        document.getElementById("poster")?.src
-                        || document.querySelector("img")?.src
-                        || "",
-                    tipo: "filme"
-                };
-
-            }
-
-            if(filme){
-
-                filme.id =
-                    filme.id ||
-                    filme.tmdb_id ||
-                    id;
-
-                filme.titulo =
-                    filme.titulo ||
-                    filme.title ||
-                    document.querySelector("h1")?.textContent?.trim()
-                    || "Filme";
-
-                filme.capa =
-                    filme.capa ||
-                    document.getElementById("poster")?.src
-                    || document.querySelector("img")?.src
-                    || "";
-
-                filme.tipo = "filme";
-
-                /* Mantém as duas referências sincronizadas */
-                try{
-                    localStorage.setItem(
-                        "filmeSelecionado",
-                        JSON.stringify(filme)
-                    );
-
-                    if(filme.id){
-                        localStorage.setItem(
-                            "filmeSelecionadoHome_" + String(filme.id),
-                            JSON.stringify(filme)
-                        );
-                    }
-                }catch(e){}
-
-            }
-
-            console.log(
-                "[FAVORITOS] Filme obtido:",
-                filme
-            );
-
-            return filme;
-
-        }catch(e){
-
-            console.warn(
-                "[FAVORITOS] Erro ao obter filme:",
-                e
-            );
-
-            return null;
-        }
-    }
-
-    function obterLista(){
-        try{
-            const lista = JSON.parse(
-                localStorage.getItem("lukafilmes_minhalista") || "[]"
-            );
-            return Array.isArray(lista) ? lista : [];
-        }catch(e){
-            return [];
-        }
-    }
-
-    function salvarLista(lista){
-        localStorage.setItem(
-            "lukafilmes_minhalista",
-            JSON.stringify(lista)
-        );
-    }
-
-    function idDoFilme(filme){
-        return String(
-            filme &&
-            (
-                filme.id ||
-                filme.tmdb_id ||
-                filme.titulo ||
-                filme.title
-            )
-            || ""
-        );
-    }
-
-    function atualizarBotao(){
-
-        const botao =
-            document.getElementById("filmeAdicionarFavorito");
-
-        if(!botao) return;
-
-        const filme = obterFilme();
-        const id = idDoFilme(filme);
-
-        if(!id){
-            botao.style.display = "none";
-            return;
-        }
-
-        const lista = obterLista();
-
-        const existe = lista.some(function(item){
-            return idDoFilme(item) === id;
-        });
-
-        if(existe){
-            botao.textContent = "♥ Remover dos favoritos";
-            botao.classList.add("favorito-ativo");
-        }else{
-            botao.textContent = "＋ Adicionar aos favoritos";
-            botao.classList.remove("favorito-ativo");
-        }
-    }
-
-    const botao =
-        document.getElementById("filmeAdicionarFavorito");
-
-    if(botao){
-
-        botao.addEventListener("click", function(){
-
-            const filme = obterFilme();
-
-            if(!filme) return;
-
-            const id = idDoFilme(filme);
-
-            if(!id) return;
-
-            let lista = obterLista();
-
-            const indice = lista.findIndex(function(item){
-                return idDoFilme(item) === id;
-            });
-
-            if(indice >= 0){
-                lista.splice(indice, 1);
-            }else{
-                lista.push({
-                    ...filme,
-                    tipo: "filme"
-                });
-            }
-
-            salvarLista(lista);
-            atualizarBotao();
-        });
-    }
-
-    atualizarBotao();
-
-    const botaoMeusFavoritos =
-        document.getElementById("botaoMeusFavoritosFilme");
-
-    if (botaoMeusFavoritos) {
-        botaoMeusFavoritos.addEventListener("click", function () {
-            window.location.href = "/paginas/minha-lista.html";
-        });
-    }
-
-})();
-</script>
-
-
 <style id="lukafilmes-player-netflix-visual">
 
 /* =========================================================
@@ -6432,6 +6202,246 @@ body {
     display:none !important;
 }
 </style>
+
+
+<script id="lukafilmes-favorito-filme-corrigido">
+(function(){
+
+    function obterFilmeAtual(){
+
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        let filme = null;
+
+        if(id){
+            try{
+                filme = JSON.parse(
+                    localStorage.getItem(
+                        "filmeSelecionadoHome_" + String(id)
+                    ) || "null"
+                );
+            }catch(e){}
+        }
+
+        if(!filme){
+            try{
+                filme = JSON.parse(
+                    localStorage.getItem("filmeSelecionado") || "null"
+                );
+            }catch(e){}
+        }
+
+        if(!filme && id){
+            filme = {
+                id: id,
+                titulo:
+                    document.getElementById("titulo")?.textContent?.trim()
+                    || "Filme",
+                capa:
+                    document.getElementById("poster")?.src || "",
+                tipo: "filme",
+                media_type: "movie"
+            };
+        }
+
+        if(!filme){
+            return null;
+        }
+
+        filme.id = filme.id || filme.tmdb_id || id || "";
+        filme.titulo =
+            filme.titulo ||
+            filme.title ||
+            document.getElementById("titulo")?.textContent?.trim() ||
+            "Filme";
+
+        filme.capa =
+            filme.capa ||
+            document.getElementById("poster")?.src ||
+            "";
+
+        filme.tipo = "filme";
+        filme.media_type = "movie";
+
+        return filme;
+    }
+
+    function lerLista(){
+
+        try{
+            const lista = JSON.parse(
+                localStorage.getItem("lukafilmes_minhalista") || "[]"
+            );
+
+            return Array.isArray(lista) ? lista : [];
+
+        }catch(e){
+            return [];
+        }
+    }
+
+    function identidade(item){
+
+        return String(
+            item &&
+            (
+                item.id ||
+                item.tmdb_id ||
+                item.titulo ||
+                item.title
+            ) ||
+            ""
+        );
+    }
+
+    function atualizarBotao(){
+
+        const botao =
+            document.getElementById("filmeAdicionarFavorito");
+
+        if(!botao)
+            return;
+
+        const filme = obterFilmeAtual();
+
+        if(!filme){
+            botao.style.display = "none";
+            return;
+        }
+
+        const id = identidade(filme);
+
+        const existe =
+            lerLista().some(function(item){
+                return identidade(item) === id;
+            });
+
+        botao.textContent =
+            existe
+                ? "♥ Remover dos favoritos"
+                : "＋ Adicionar aos favoritos";
+
+        botao.classList.toggle(
+            "favorito-ativo",
+            existe
+        );
+    }
+
+    function instalar(){
+
+        const botao =
+            document.getElementById("filmeAdicionarFavorito");
+
+        if(!botao){
+            console.warn(
+                "[FAVORITOS FILME] Botão não encontrado."
+            );
+            return;
+        }
+
+        if(botao.dataset.favoritoFilmeLigado === "1"){
+            atualizarBotao();
+            return;
+        }
+
+        botao.dataset.favoritoFilmeLigado = "1";
+
+        botao.addEventListener("click", function(e){
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const filme = obterFilmeAtual();
+
+            if(!filme){
+                console.warn(
+                    "[FAVORITOS FILME] Filme não encontrado."
+                );
+                return;
+            }
+
+            let lista = lerLista();
+
+            const id = identidade(filme);
+
+            const indice =
+                lista.findIndex(function(item){
+                    return identidade(item) === id;
+                });
+
+            if(indice >= 0){
+
+                lista.splice(indice, 1);
+
+                console.log(
+                    "[FAVORITOS FILME] Removido:",
+                    filme.titulo
+                );
+
+            }else{
+
+                lista.unshift(filme);
+
+                console.log(
+                    "[FAVORITOS FILME] Adicionado:",
+                    filme.titulo
+                );
+            }
+
+            localStorage.setItem(
+                "lukafilmes_minhalista",
+                JSON.stringify(lista)
+            );
+
+            atualizarBotao();
+        });
+
+        atualizarBotao();
+    }
+
+    function iniciar(){
+
+        instalar();
+
+        const meusFavoritos =
+            document.getElementById("botaoMeusFavoritosFilme");
+
+        if(
+            meusFavoritos &&
+            meusFavoritos.dataset.favoritosLinkLigado !== "1"
+        ){
+
+            meusFavoritos.dataset.favoritosLinkLigado = "1";
+
+            meusFavoritos.addEventListener(
+                "click",
+                function(e){
+
+                    e.preventDefault();
+
+                    window.location.href =
+                        "/paginas/minha-lista.html";
+                }
+            );
+        }
+    }
+
+    if(window.LukaContaPronta){
+
+        window.LukaContaPronta.then(iniciar);
+
+    }else{
+
+        window.addEventListener(
+            "lukafilmes:conta-pronta",
+            iniciar,
+            {once:true}
+        );
+    }
+
+})();
+</script>
 
 </body>
 </html>
