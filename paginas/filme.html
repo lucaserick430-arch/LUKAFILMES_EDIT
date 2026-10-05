@@ -3832,7 +3832,38 @@ width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,25
 
         </div>
 
-        <iframe
+        
+        <div
+            id="lukafilmesAdPlayerFilme"
+            style="
+                display:none;
+                width:100%;
+                margin:22px auto;
+                padding:8px 0;
+                text-align:center;
+                overflow:hidden;
+            "
+        >
+            <div
+                style="
+                    font-size:10px;
+                    opacity:.55;
+                    margin-bottom:6px;
+                    letter-spacing:.08em;
+                "
+            >ANÚNCIO</div>
+
+            <ins
+                class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-7704016219858134"
+                data-ad-slot="7075744428"
+                data-ad-format="auto"
+                data-full-width-responsive="true">
+            </ins>
+        </div>
+
+<iframe
             id="filmeFrame"
             src=""
             allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
@@ -7048,6 +7079,29 @@ body {
     const filmeFrame =
         document.getElementById("filmeFrame");
 
+    const lukafilmesAdPlayerFilme =
+        document.getElementById("lukafilmesAdPlayerFilme");
+
+    let lukafilmesAdPlayerFilmeCarregado = false;
+
+    function mostrarAnuncioPlayerFilme() {
+        if (!lukafilmesAdPlayerFilme) return;
+
+        lukafilmesAdPlayerFilme.style.display = "block";
+
+        if (!lukafilmesAdPlayerFilmeCarregado) {
+            try {
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+                lukafilmesAdPlayerFilmeCarregado = true;
+            } catch (erro) {
+                console.warn(
+                    "[ADS PLAYER FILME] Não foi possível carregar o anúncio:",
+                    erro
+                );
+            }
+        }
+    }
+
     if (!btnEmbedMoviesFilme || !btnApiPlayerFilme || !filmeFrame) return;
 
     const parametros =
@@ -7085,6 +7139,8 @@ body {
 
         protegerHistoricoPlayerFilme();
 
+        mostrarAnuncioPlayerFilme();
+
         filmeFrame.style.setProperty(
             "display",
             "block",
@@ -7106,6 +7162,8 @@ body {
         }
 
         protegerHistoricoPlayerFilme();
+
+        mostrarAnuncioPlayerFilme();
 
         filmeFrame.style.setProperty(
             "display",

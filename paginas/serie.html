@@ -2057,6 +2057,37 @@ width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,25
 
         </div>
 
+
+        <div
+            id="lukafilmesAdPlayerSerie"
+            style="
+                display:none;
+                width:100%;
+                margin:22px auto;
+                padding:8px 0;
+                text-align:center;
+                overflow:hidden;
+            "
+        >
+            <div
+                style="
+                    font-size:10px;
+                    opacity:.55;
+                    margin-bottom:6px;
+                    letter-spacing:.08em;
+                "
+            >ANÚNCIO</div>
+
+            <ins
+                class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-7704016219858134"
+                data-ad-slot="7075744428"
+                data-ad-format="auto"
+                data-full-width-responsive="true">
+            </ins>
+        </div>
+
         <div class="player-video" id="seriePlayerVideo" style="display:none;">
 
             <iframe
@@ -3520,6 +3551,29 @@ function criarTemporadaFallback() {
         const serieFrame =
             document.getElementById("serieFrame");
 
+        const lukafilmesAdPlayerSerie =
+            document.getElementById("lukafilmesAdPlayerSerie");
+
+        let lukafilmesAdPlayerSerieCarregado = false;
+
+        function mostrarAnuncioPlayerSerie() {
+            if (!lukafilmesAdPlayerSerie) return;
+
+            lukafilmesAdPlayerSerie.style.display = "block";
+
+            if (!lukafilmesAdPlayerSerieCarregado) {
+                try {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                    lukafilmesAdPlayerSerieCarregado = true;
+                } catch (erro) {
+                    console.warn(
+                        "[ADS PLAYER SERIE] Não foi possível carregar o anúncio:",
+                        erro
+                    );
+                }
+            }
+        }
+
         if (!playerSerie || !serieFrame) {
 
             console.error(
@@ -3728,6 +3782,8 @@ function criarTemporadaFallback() {
                     "/" +
                     encodeURIComponent(String(episodioId).trim());
 
+                mostrarAnuncioPlayerSerie();
+
                 carregarPlayerSerie(
                     embedMoviesUrl,
                     "EmbedMovies"
@@ -3748,6 +3804,8 @@ function criarTemporadaFallback() {
                     "/" +
                     encodeURIComponent(String(episodioId).trim()) +
                     "?lang=pt";
+
+                mostrarAnuncioPlayerSerie();
 
                 carregarPlayerSerie(
                     apiPlayerUrl,
