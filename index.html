@@ -163,7 +163,7 @@ body{
     backdrop-filter:blur(8px);
 }
 
-.hero-title{
+.hero-title{display:none !important;}
     font-size:clamp(42px,6vw,76px) !important;
     line-height:.94 !important;
     letter-spacing:-3px !important;
@@ -1365,7 +1365,7 @@ main::after {
 <style id="luka-setas-padrao-final">
 .luka-carousel-arrow{
     position:absolute !important;
-    top:50% !important;
+    top:60% !important;
     transform:translateY(-50%) !important;
 
     width:42px !important;
@@ -4321,6 +4321,16 @@ body{
 .section{
     position:relative;
     margin-top:42px !important;
+    scroll-margin-top:88px;
+}
+
+.content{
+    position:relative;
+    z-index:1;
+}
+
+.section + .section{
+    margin-top:48px !important;
 }
 
 .section-title{
@@ -4923,6 +4933,177 @@ body{
 }
 </style>
 
+
+<style id="lukafilmes-hero-cinematic-final">
+.hero{
+    position:relative !important;
+    min-height:620px !important;
+    overflow:hidden !important;
+    isolation:isolate !important;
+    background:#050505 !important;
+}
+
+.hero-bg{
+    position:absolute !important;
+    inset:0 !important;
+    background-position:center !important;
+    background-size:cover !important;
+    transform:scale(1.04) !important;
+    filter:saturate(.95) contrast(1.05) !important;
+}
+
+.hero-overlay{
+    position:absolute !important;
+    inset:0 !important;
+    z-index:2 !important;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(4,4,6,.98) 0%,
+            rgba(4,4,6,.88) 28%,
+            rgba(4,4,6,.55) 52%,
+            rgba(4,4,6,.18) 78%,
+            rgba(4,4,6,.72) 100%
+        ),
+        linear-gradient(
+            0deg,
+            #050505 0%,
+            transparent 34%
+        ) !important;
+}
+
+.hero-cinematic-poster{
+    position:absolute !important;
+    z-index:3 !important;
+    left:auto !important;
+    right:7% !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:250px !important;
+    height:370px !important;
+    border-radius:12px !important;
+    overflow:hidden !important;
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.75),
+        0 0 0 1px rgba(255,255,255,.12) !important;
+    background:#111 !important;
+}
+
+.hero-cinematic-poster img{
+    width:100% !important;
+    height:100% !important;
+    display:block !important;
+    object-fit:cover !important;
+}
+
+.hero-content{
+    position:relative !important;
+    z-index:4 !important;
+    width:min(620px,52vw) !important;
+    margin-left:calc(7% + 300px) !important;
+    padding-top:150px !important;
+    padding-bottom:100px !important;
+    text-align:left !important;
+}
+
+.hero-badge{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:7px !important;
+    padding:7px 12px !important;
+    border-radius:999px !important;
+    background:rgba(255,255,255,.10) !important;
+    border:1px solid rgba(255,255,255,.14) !important;
+    backdrop-filter:blur(10px) !important;
+    font-size:12px !important;
+    letter-spacing:.5px !important;
+}
+
+.hero-title{
+    margin:18px 0 12px !important;
+    font-size:clamp(38px,5vw,72px) !important;
+    line-height:.98 !important;
+    font-weight:900 !important;
+    letter-spacing:-2px !important;
+    text-shadow:0 5px 25px rgba(0,0,0,.55) !important;
+}
+
+.hero-description{
+    max-width:580px !important;
+    font-size:16px !important;
+    line-height:1.65 !important;
+    color:rgba(255,255,255,.78) !important;
+}
+
+.hero-info{
+    display:flex !important;
+    align-items:center !important;
+    gap:10px !important;
+    margin:14px 0 !important;
+}
+
+.hero-info span{
+    opacity:.9 !important;
+}
+
+.hero-buttons{
+    margin-top:25px !important;
+}
+
+.hero-buttons .btn-watch{
+    border-radius:10px !important;
+    padding:13px 23px !important;
+    font-weight:800 !important;
+    box-shadow:0 12px 35px rgba(0,0,0,.35) !important;
+}
+
+@media(max-width:800px){
+    .hero{
+        min-height:590px !important;
+    }
+
+    .hero-cinematic-poster{
+        left:auto !important;
+        right:18px !important;
+        top:100px !important;
+        transform:none !important;
+        width:125px !important;
+        height:185px !important;
+        opacity:.92 !important;
+    }
+
+    .hero-overlay{
+        background:
+            linear-gradient(
+                180deg,
+                rgba(4,4,6,.30) 0%,
+                rgba(4,4,6,.70) 35%,
+                rgba(4,4,6,.98) 72%
+            ) !important;
+    }
+
+    .hero-content{
+        width:auto !important;
+        margin-left:0 !important;
+        padding:245px 22px 55px !important;
+    }
+
+    .hero-title{
+        font-size:42px !important;
+        letter-spacing:-1px !important;
+    }
+
+    .hero-description{
+        font-size:14px !important;
+        line-height:1.5 !important;
+        display:-webkit-box !important;
+        -webkit-line-clamp:3 !important;
+        -webkit-box-orient:vertical !important;
+        overflow:hidden !important;
+    }
+}
+</style>
+
 </head>
 
 <body>
@@ -5042,7 +5223,7 @@ body{
         title="Painel administrativo"
         style="display:none">⚙</button>
 
-        <div class="profile" onclick="toggleMenu()" role="button" tabindex="0" aria-label="Menu do usuário"><img loading="lazy" decoding="async" src="/favicon/file_000000006768820e93d46c5d164e8bd9.png" alt="LUKAFILMES"></div>
+        <div class="profile" onclick="toggleMenu()" role="button" tabindex="0" aria-label="Menu do usuário"></div>
     </div>
 </header>
 
@@ -5161,11 +5342,13 @@ body{
 
     <div class="hero-overlay"></div>
 
+    <div class="hero-cinematic-poster">
+        <img id="heroPoster" src="" alt="" loading="eager">
+    </div>
+
     <div class="hero-content">
 
-        <div class="hero-badge">
-            <strong>●</strong> LUKAFILMES ORIGINAL
-        </div>
+
 
         <h1 class="hero-title" id="heroTitle">
             Carregando...
@@ -5184,8 +5367,9 @@ body{
 
         <div class="hero-buttons">
             <button class="btn btn-watch" onclick="abrirDestaque()">
-                ▶ Assistir
+                ▶ Assistir grátis
             </button>
+
         </div>
 
     </div>
@@ -6587,6 +6771,26 @@ function montarHero(item){
 
     document.getElementById("heroYear").textContent =
         String(anoHero).slice(0,4) || "—";
+
+    const poster =
+        item.poster_path ||
+        item.poster ||
+        item.capa ||
+        "";
+
+    const posterEl =
+        document.getElementById("heroPoster");
+
+    if(posterEl && poster){
+
+        posterEl.src =
+            poster.startsWith("http")
+            ? poster
+            : "https://image.tmdb.org/t/p/w500" + poster;
+
+        posterEl.alt =
+            titulo(item) || "Filme em destaque";
+    }
 
     const fundo=
         item.backdrop_path ||
@@ -10673,70 +10877,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function mostrarNotificacaoTemporaria(filme){
+    // Popup temporário de novos filmes removido.
 
-        if(window.matchMedia("(max-width: 768px)").matches){
-            return;
-        }
-
-        var antigo =
-            document.getElementById("lukaNotificationToast");
-
-        if(antigo){
-            antigo.remove();
-        }
-
-        var toast = document.createElement("div");
-
-        toast.id = "lukaNotificationToast";
-        toast.className = "ativo";
-
-        var capa = filme && filme.poster
-            ? filme.poster
-            : "";
-
-        var titulo = filme && filme.titulo
-            ? filme.titulo
-            : "Novo filme disponível";
-
-        toast.innerHTML =
-            '<div class="luka-toast-conteudo">' +
-                '<img loading="lazy" decoding="async" src="' + capa.replace(/"/g,"&quot;") + '" alt="">' +
-                '<div class="luka-toast-texto">' +
-                    '<div class="luka-toast-titulo">' +
-                        titulo.replace(/</g,"&lt;").replace(/>/g,"&gt;") +
-                    '</div>' +
-                    '<div class="luka-toast-desc">' +
-                        'Novo filme disponível • Clique para assistir' +
-                    '</div>' +
-                '</div>' +
-            '</div>' +
-            '';
-
-        document.body.appendChild(toast);
-
-        toast.addEventListener("click", function(){
-            if(filme && filme.id){
-                window.location.href =
-                    "paginas/filme.html?id=" +
-                    encodeURIComponent(filme.id);
-            }
-        });
-
-        setTimeout(function(){
-
-            if(toast && toast.parentNode){
-                toast.classList.remove("ativo");
-
-                setTimeout(function(){
-                    if(toast && toast.parentNode){
-                        toast.remove();
-                    }
-                },350);
-            }
-
-        },15000);
-    }
 
     async function carregarNotificacoes(){
 
@@ -10794,7 +10936,7 @@ document.addEventListener("DOMContentLoaded", () => {
              * não abre automaticamente para não
              * atrapalhar a visão da Home.
              */
-            abrirPainel();
+            // Painel de notificações não abre automaticamente na Home.
 
         }catch(erro){
 
@@ -10837,106 +10979,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-<script id="lukafilmes-notificacao-auto-5s">
-(function(){
-    /*
-     * LUKAFILMES — NOTIFICAÇÃO AUTOMÁTICA
-     * Fecha somente a abertura automática da Home após 5 segundos.
-     * Aberturas manuais pelo sino continuam normais.
-     */
-
-    var painel = null;
-    var primeiraAbertura = true;
-    var timer = null;
-
-    function iniciar(){
-        painel = document.getElementById("lukaNotificationPanel");
-
-        if(!painel){
-            setTimeout(iniciar, 300);
-            return;
-        }
-
-        var observador = new MutationObserver(function(mudancas){
-
-            for(var i = 0; i < mudancas.length; i++){
-
-                var mudanca = mudancas[i];
-
-                if(
-                    mudanca.type === "attributes" &&
-                    mudanca.attributeName === "class" &&
-                    painel.classList.contains("ativo") &&
-                    primeiraAbertura
-                ){
-
-                    primeiraAbertura = false;
-
-                    if(timer){
-                        clearTimeout(timer);
-                    }
-
-                    timer = setTimeout(function(){
-
-                        if(
-                            painel &&
-                            painel.classList.contains("ativo")
-                        ){
-
-                            painel.classList.remove("ativo");
-                            painel.setAttribute(
-                                "aria-hidden",
-                                "true"
-                            );
-
-                            document
-                                .querySelectorAll(
-                                    '[id="lukaNotificationButton"]'
-                                )
-                                .forEach(function(botao){
-                                    botao.setAttribute(
-                                        "aria-expanded",
-                                        "false"
-                                    );
-                                });
-
-                            console.log(
-                                "[LUKAFILMES] Notificação automática fechada após 5 segundos."
-                            );
-                        }
-
-                    },5000);
-
-                    break;
-                }
-            }
-        });
-
-        observador.observe(painel,{
-            attributes:true,
-            attributeFilter:["class"]
-        });
-
-        console.log(
-            "[LUKAFILMES] Controle de notificação automática 5s ativado."
-        );
-    }
-
-    if(document.readyState === "loading"){
-        document.addEventListener(
-            "DOMContentLoaded",
-            iniciar
-        );
-    }else{
-        iniciar();
-    }
-
-})();
-</script>
+<!-- NOTIFICACAO AUTOMATICA DESATIVADA -->
 
 
 
-<script id="lukafilmes-aviso-vencimento">
+<script id="lukafilmes-aviso-vencimento-disabled">
 (function () {
     "use strict";
 
@@ -12097,94 +12144,7 @@ body::after{
 </style>
 
 
-<style id="lukafilmes-notificacao-popup-15s">
-#lukaNotificationToast{
-    position:fixed;
-    top:88px;
-    right:24px;
-    width:min(360px,calc(100vw - 48px));
-    z-index:9999999;
-    display:none;
-    padding:14px;
-    border-radius:14px;
-    background:rgba(15,15,15,.96);
-    border:1px solid rgba(255,255,255,.14);
-    box-shadow:0 12px 40px rgba(0,0,0,.55);
-    color:#fff;
-    cursor:pointer;
-    animation:lukaNotificacaoEntrada .35s ease;
-}
-
-#lukaNotificationToast.ativo{
-    display:block;
-}
-
-#lukaNotificationToast .luka-toast-conteudo{
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-
-#lukaNotificationToast img{
-    width:48px;
-    height:68px;
-    object-fit:cover;
-    border-radius:7px;
-    background:#222;
-    flex:none;
-}
-
-#lukaNotificationToast .luka-toast-texto{
-    min-width:0;
-    flex:1;
-}
-
-#lukaNotificationToast .luka-toast-titulo{
-    font-size:14px;
-    font-weight:800;
-    line-height:1.25;
-    margin-bottom:5px;
-}
-
-#lukaNotificationToast .luka-toast-desc{
-    font-size:11px;
-    color:#aaa;
-    line-height:1.3;
-}
-
-#lukaNotificationToast .luka-toast-contador{
-    position:absolute;
-    left:0;
-    bottom:0;
-    height:3px;
-    width:100%;
-    background:rgba(255,255,255,.65);
-    transform-origin:left;
-    animation:lukaNotificacao5s 5s linear forwards;
-}
-
-@keyframes lukaNotificacaoEntrada{
-    from{
-        opacity:0;
-        transform:translateY(-12px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-@keyframes lukaNotificacao5s{
-    from{width:100%}
-    to{width:0}
-}
-
-@media(max-width:768px){
-    #lukaNotificationToast{
-        display:none !important;
-    }
-}
-</style>
+<!-- CSS do popup temporário removido. -->
 
 <style id="lukafilmes-notificacao-final">
 #lukaNotificationPanel{

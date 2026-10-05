@@ -1,0 +1,1 @@
+CONFIRMADO: BAILEYS NÃO ESTÁ NO package.json

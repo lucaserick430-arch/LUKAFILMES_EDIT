@@ -1,0 +1,211 @@
+   CINEMATIC PREMIUM
+   ========================================================== */
+
+:root{
+    --luka-red:#e50914;
+    --luka-red-soft:rgba(229,9,20,.72);
+    --luka-white:#fff;
+    --luka-text:#f4f4f4;
+    --luka-muted:#a7a7a7;
+    --luka-surface:rgba(255,255,255,.055);
+    --luka-border:rgba(255,255,255,.09);
+}
+
+/* ==========================================================
+   CONTEÚDO PRINCIPAL
+   ========================================================== */
+
+.content{
+    position:relative;
+    z-index:2;
+    width:100%;
+    max-width:1800px;
+    margin:0 auto;
+    padding-left:clamp(18px,3vw,54px);
+    padding-right:clamp(18px,3vw,54px);
+}
+
+.section{
+    position:relative;
+    margin-top:clamp(30px,4vw,58px);
+}
+
+.section-title{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:0 0 18px;
+    color:#fff;
+    font-size:clamp(18px,1.5vw,25px);
+    font-weight:800;
+    letter-spacing:-.025em;
+    line-height:1.1;
+}
+
+.section-title::before{
+    content:"";
+    width:4px;
+    height:22px;
+    border-radius:999px;
+    background:linear-gradient(
+        180deg,
+        #ff3340,
+        #b00008
+    );
+    box-shadow:
+        0 0 14px rgba(229,9,20,.42);
+}
+
+.section-title::after{
+    content:"";
+    flex:1;
+    height:1px;
+    margin-left:4px;
+    background:linear-gradient(
+        90deg,
+        rgba(255,255,255,.12),
+        transparent 72%
+    );
+}
+
+/* ==========================================================
+   HERO
+   ========================================================== */
+
+.hero{
+    position:relative;
+    isolation:isolate;
+    overflow:hidden;
+}
+
+.hero::after{
+    content:"";
+    position:absolute;
+    inset:auto 0 0;
+    height:34%;
+    z-index:2;
+    pointer-events:none;
+    background:linear-gradient(
+        to bottom,
+        transparent,
+        rgba(0,0,0,.42),
+        #050505
+    );
+}
+
+.hero-content{
+    z-index:5;
+    max-width:min(700px,72vw);
+}
+
+.hero-title,
+#heroTitle{
+    text-shadow:
+        0 3px 18px rgba(0,0,0,.85),
+        0 8px 40px rgba(0,0,0,.7);
+    letter-spacing:-.035em;
+}
+
+.hero-description,
+#heroDescription{
+    color:rgba(255,255,255,.82);
+    text-shadow:0 2px 12px rgba(0,0,0,.9);
+}
+
+.hero-badge{
+    border:1px solid rgba(229,9,20,.42);
+    background:rgba(10,10,10,.56);
+    box-shadow:
+        0 8px 30px rgba(0,0,0,.25),
+        inset 0 0 20px rgba(229,9,20,.04);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+}
+
+/* ==========================================================
+   BOTÕES DO HERO
+   ========================================================== */
+
+.hero-buttons{
+    gap:10px;
+}
+
+.hero-buttons button,
+.hero-buttons a{
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        filter .22s ease,
+        background .22s ease;
+}
+
+.hero-buttons button:hover,
+.hero-buttons a:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.08);
+}
+
+.hero-buttons button:active,
+.hero-buttons a:active{
+    transform:translateY(0) scale(.98);
+}
+
+/* ==========================================================
+   CARDS
+   ========================================================== */
+
+.movie-card,
+.series-card,
+.filme-card,
+.luka-card{
+    position:relative;
+    border-radius:12px;
+    overflow:hidden;
+    background:#101010;
+    border:1px solid rgba(255,255,255,.055);
+    box-shadow:
+        0 10px 28px rgba(0,0,0,.24);
+    transition:
+        transform .25s cubic-bezier(.2,.7,.2,1),
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+.movie-card:hover,
+.series-card:hover,
+.filme-card:hover,
+.luka-card:hover{
+    transform:translateY(-5px) scale(1.018);
+    border-color:rgba(255,255,255,.15);
+    box-shadow:
+        0 18px 45px rgba(0,0,0,.45),
+        0 0 24px rgba(229,9,20,.08);
+}
+
+.movie-card img,
+.series-card img,
+.filme-card img,
+.luka-card img{
+    transition:
+        transform .45s cubic-bezier(.2,.7,.2,1),
+        filter .35s ease;
+}
+
+.movie-card:hover img,
+.series-card:hover img,
+.filme-card:hover img,
+.luka-card:hover img{
+    transform:scale(1.045);
+    filter:brightness(1.05);
+}
+
+/* ==========================================================
+   FILEIRAS HORIZONTAIS
+   ========================================================== */
+
+.movies-row,
+.series-row,
+.filmes-row,
+.luka-row{
+    scrollbar-width:none;

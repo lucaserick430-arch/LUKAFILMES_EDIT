@@ -1,0 +1,301 @@
+    scrollbar-width:none;
+}
+
+.movies-row::-webkit-scrollbar,
+.series-row::-webkit-scrollbar,
+.filmes-row::-webkit-scrollbar,
+.luka-row::-webkit-scrollbar{
+    display:none;
+}
+
+/* ==========================================================
+   LINKS "VER TODOS"
+   ========================================================== */
+
+.luka-ver-todos{
+    transition:
+        color .2s ease,
+        transform .2s ease;
+}
+
+.luka-ver-todos:hover{
+    color:#fff !important;
+    transform:translateX(3px);
+}
+
+/* ==========================================================
+   CONTINUE ASSISTINDO
+   ========================================================== */
+
+.luka-series-continuar-section{
+    position:relative;
+}
+
+.luka-series-continuar-section::before{
+    content:"";
+    position:absolute;
+    left:-10%;
+    right:-10%;
+    top:15%;
+    height:80%;
+    pointer-events:none;
+    z-index:-1;
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(229,9,20,.055),
+            transparent 65%
+        );
+}
+
+/* ==========================================================
+   MICRO DETALHES PREMIUM
+   ========================================================== */
+
+button,
+a{
+    -webkit-tap-highlight-color:transparent;
+}
+
+img{
+    backface-visibility:hidden;
+}
+
+@media (prefers-reduced-motion:reduce){
+    *,
+    *::before,
+    *::after{
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:.01ms !important;
+        scroll-behavior:auto !important;
+    }
+}
+
+/* ==========================================================
+   TABLETS
+   ========================================================== */
+
+@media (min-width:769px) and (max-width:1200px){
+
+    .content{
+        padding-left:28px;
+        padding-right:28px;
+    }
+
+    .section{
+        margin-top:40px;
+    }
+
+}
+
+/* ==========================================================
+   CELULAR
+   ========================================================== */
+
+@media (max-width:768px){
+
+    .content{
+        padding-left:14px;
+        padding-right:14px;
+    }
+
+    .section{
+        margin-top:28px;
+    }
+
+    .section-title{
+        font-size:18px;
+        margin-bottom:13px;
+    }
+
+    .section-title::before{
+        width:3px;
+        height:18px;
+    }
+
+    .section-title::after{
+        background:linear-gradient(
+            90deg,
+            rgba(255,255,255,.09),
+            transparent
+        );
+    }
+
+    .hero-content{
+        max-width:92vw;
+    }
+
+    .movie-card:hover,
+    .series-card:hover,
+    .filme-card:hover,
+    .luka-card:hover{
+        transform:none;
+        box-shadow:0 10px 28px rgba(0,0,0,.28);
+    }
+
+    .movie-card:hover img,
+    .series-card:hover img,
+    .filme-card:hover img,
+    .luka-card:hover img{
+        transform:none;
+        filter:none;
+    }
+
+}
+
+/* ==========================================================
+   TELAS GRANDES / TV
+   ========================================================== */
+
+@media (min-width:1600px){
+
+    .content{
+        max-width:1900px;
+    }
+
+    .section{
+        margin-top:62px;
+    }
+
+    .section-title{
+        font-size:26px;
+    }
+
+}
+
+/* ==========================================================
+   ACABAMENTO FINAL
+   ========================================================== */
+
+body{
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(229,9,20,.035),
+            transparent 32%
+        ),
+        #000;
+}
+
+</style>
+
+
+<style id="lukafilmes-home-v6-botao-assistir">
+.hero-buttons{
+    margin-left:0 !important;
+    padding-left:0 !important;
+    justify-content:flex-start !important;
+}
+
+.hero-buttons button,
+.hero-buttons a{
+    margin-left:0 !important;
+}
+
+@media (max-width:768px){
+    .hero-buttons{
+        margin-left:0 !important;
+        padding-left:0 !important;
+    }
+}
+</style>
+
+
+<style id="lukafilmes-carrossel-notebook-v2">
+
+/* ============================================================
+   LUKAFILMES — CARROSSEL NOTEBOOK V2
+   Cards maiores + mouse drag + setas funcionais
+   ============================================================ */
+
+@media (min-width:769px){
+
+    .luka-carousel-wrapper,
+    .carrossel-wrapper-luka{
+        position:relative !important;
+        width:100% !important;
+        overflow:visible !important;
+        isolation:isolate !important;
+    }
+
+    .luka-carousel-wrapper .row,
+    .carrossel-wrapper-luka .row,
+    .section .luka-carousel-wrapper .row,
+    .section .carrossel-wrapper-luka .row{
+        display:flex !important;
+        flex-wrap:nowrap !important;
+
+        width:100% !important;
+        max-width:none !important;
+
+        overflow-x:auto !important;
+        overflow-y:hidden !important;
+
+        gap:18px !important;
+
+        padding-top:12px !important;
+        padding-bottom:24px !important;
+
+        scroll-behavior:smooth !important;
+        scroll-snap-type:none !important;
+
+        cursor:grab !important;
+
+        scrollbar-width:none !important;
+
+        user-select:none !important;
+        -webkit-user-select:none !important;
+    }
+
+    .luka-carousel-wrapper .row::-webkit-scrollbar,
+    .carrossel-wrapper-luka .row::-webkit-scrollbar{
+        display:none !important;
+    }
+
+    .luka-carousel-wrapper .row.luka-dragging,
+    .carrossel-wrapper-luka .row.luka-dragging{
+        cursor:grabbing !important;
+        scroll-behavior:auto !important;
+    }
+
+    /* ========================================================
+       CARDS — NOTEBOOK
+       ======================================================== */
+
+    .luka-carousel-wrapper .row > .card,
+    .luka-carousel-wrapper .row > .movie-card,
+    .luka-carousel-wrapper .row > .series-card,
+    .luka-carousel-wrapper .row > .filme-card,
+    .luka-carousel-wrapper .row > .luka-card,
+    .carrossel-wrapper-luka .row > .card,
+    .carrossel-wrapper-luka .row > .movie-card,
+    .carrossel-wrapper-luka .row > .series-card,
+    .carrossel-wrapper-luka .row > .filme-card,
+    .carrossel-wrapper-luka .row > .luka-card{
+
+        flex:0 0 clamp(220px, 17vw, 280px) !important;
+
+        width:clamp(220px, 17vw, 280px) !important;
+
+        min-width:clamp(220px, 17vw, 280px) !important;
+
+        max-width:clamp(220px, 17vw, 280px) !important;
+
+        box-sizing:border-box !important;
+
+        position:relative !important;
+        z-index:1 !important;
+    }
+
+    /* ========================================================
+       SETAS
+       ======================================================== */
+
+    .luka-carousel-arrow{
+        position:absolute !important;
+
+        top:50% !important;
+
+        width:48px !important;
+        height:82px !important;

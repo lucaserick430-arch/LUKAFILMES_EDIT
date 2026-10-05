@@ -1,0 +1,4 @@
+package.json:17:    "@whiskeysockets/baileys": "^7.0.0-rc14",
+package-lock.json:14:        "@whiskeysockets/baileys": "^7.0.0-rc14",
+package-lock.json:1242:    "node_modules/@whiskeysockets/baileys": {
+package-lock.json:1244:      "resolved": "https://registry.npmjs.org/@whiskeysockets/baileys/-/baileys-7.0.0-rc14.tgz",

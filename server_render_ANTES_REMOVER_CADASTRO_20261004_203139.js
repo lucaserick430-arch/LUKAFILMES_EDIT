@@ -1,0 +1,6738 @@
+require("dotenv").config();
+﻿
+const express = require("express");
+const path = require("path");
+const LUKAFILMES_DIR = process.env.CLOUDFLARE_WORKERS ? "." : process.cwd();
+const bcrypt = require("bcryptjs");
+const session = require("express-session");
+
+const { getStore } = require("@netlify/blobs");
+
+class TursoSessionStore extends session.Store {
+    constructor() {
+        super();
+        this.cache = new Map();
+    }
+
+    async preparar() {
+        if (!turso) {
+            throw new Error("Turso não configurado para sessões.");
+        }
+
+        await turso.execute(`
+            CREATE TABLE IF NOT EXISTS lukafilmes_sessoes (
+                sid TEXT PRIMARY KEY,
+                dados TEXT NOT NULL,
+                expira_em TEXT
+            )
+        `);
+    }
+
+    get(sid, callback) {
+        (async () => {
+            try {
+                if (this.cache.has(sid)) {
+                    const sessao = this.cache.get(sid);
+                    if (
+                        sessao &&
+                        sessao.cookie &&
+                        sessao.cookie.expires &&
+                        new Date(sessao.cookie.expires) < new Date()
+                    ) {
+                        this.cache.delete(sid);
+                        return callback(null, null);
+                    }
+                    return callback(null, sessao || null);
+                }
+
+                await this.preparar();
+
+                const resultado = await turso.execute({
+                    sql: "SELECT dados, expira_em FROM lukafilmes_sessoes WHERE sid = ?",
+                    args: [sid]
+                });
+
+                if (!resultado.rows.length) {
+                    return callback(null, null);
+                }
+
+                const row = resultado.rows[0];
+
+                if (row.expira_em && new Date(String(row.expira_em)) < new Date()) {
+                    await turso.execute({
+                        sql: "DELETE FROM lukafilmes_sessoes WHERE sid = ?",
+                        args: [sid]
+                    });
+                    return callback(null, null);
+                }
+
+                const sessao = JSON.parse(String(row.dados));
+                this.cache.set(sid, sessao);
+                callback(null, sessao);
+            } catch (erro) {
+                callback(erro);
+            }
+        })();
+    }
+
+    set(sid, sess, callback) {
+        (async () => {
+            try {
+                await this.preparar();
+
+                const dados = JSON.stringify(sess);
+                const expira = sess.cookie && sess.cookie.expires
+                    ? new Date(sess.cookie.expires).toISOString()
+                    : null;
+
+                this.cache.set(sid, sess);
+
+                await turso.execute({
+                    sql: `
+                        INSERT INTO lukafilmes_sessoes (sid, dados, expira_em)
+                        VALUES (?, ?, ?)
+                        ON CONFLICT(sid) DO UPDATE SET
+                            dados = excluded.dados,
+                            expira_em = excluded.expira_em
+                    `,
+                    args: [sid, dados, expira]
+                });
+
+                callback(null);
+            } catch (erro) {
+                callback(erro);
+            }
+        })();
+    }
+
+    destroy(sid, callback) {
+        (async () => {
+            try {
+                this.cache.delete(sid);
+
+                if (turso) {
+                    await this.preparar();
+                    await turso.execute({
+                        sql: "DELETE FROM lukafilmes_sessoes WHERE sid = ?",
+                        args: [sid]
+                    });
+                }
+
+                callback(null);
+            } catch (erro) {
+                callback(erro);
+            }
+        })();
+    }
+
+    touch(sid, sess, callback) {
+        this.set(sid, sess, callback);
+    }
+}
+
+let Database = null;
+const { createClient } = require("@libsql/client/http");
+
+// ==========================================
+// CONFIGURACAO DO NOVO SISTEMA DE ACESSO
+// ==========================================
+
+const CONFIGURACAO_ACESSO_LUKAFILMES = {
+    valorMensal: 18.00,
+    diasAcesso: 30,
+    testeGratisMinutos: 30,
+
+    tipos: {
+        ADMIN: "admin",
+        CLIENTE: "usuario",
+        ISENTO: "isento",
+        TESTE: "teste"
+    },
+
+    pagamentos: {
+        PENDENTE: "pendente",
+        APROVADO: "aprovado",
+        RECUSADO: "recusado"
+    }
+};
+
+
+// ==========================================
+// PIX FIXO LUKAFILMES - COPIA E COLA
+// ==========================================
+
+function crc16PixLuka(str) {
+    let crc = 0xFFFF;
+
+    for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+
+        for (let j = 0; j < 8; j++) {
+            if (crc & 0x8000) {
+                crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+            } else {
+                crc = (crc << 1) & 0xFFFF;
+            }
+        }
+    }
+
+    return crc.toString(16).toUpperCase().padStart(4, "0");
+}
+
+function campoPixLuka(id, valor) {
+    const texto = String(valor ?? "");
+    return id + String(texto.length).padStart(2, "0") + texto;
+}
+
+function gerarPixCopiaColaLuka() {
+    const chave = String(process.env.PIX_CHAVE || "").trim();
+    const nome = String(process.env.PIX_NOME || "LUKAFILMES")
+        .trim()
+        .substring(0, 25);
+    const cidade = String(process.env.PIX_CIDADE || "CARAPICUIBA")
+        .trim()
+        .substring(0, 15);
+    const valor = Number(process.env.PIX_VALOR || 18).toFixed(2);
+
+    if (!chave) {
+        throw new Error("PIX_CHAVE não configurada no .env");
+    }
+
+    const merchantAccount =
+        campoPixLuka("00", "br.gov.bcb.pix") +
+        campoPixLuka("01", chave);
+
+    const payloadSemCRC =
+        campoPixLuka("00", "01") +
+        campoPixLuka("26", merchantAccount) +
+        campoPixLuka("52", "0000") +
+        campoPixLuka("53", "986") +
+        campoPixLuka("54", valor) +
+        campoPixLuka("58", "BR") +
+        campoPixLuka("59", nome) +
+        campoPixLuka("60", cidade) +
+        campoPixLuka("62", campoPixLuka("05", "***")) +
+        "6304";
+
+    return payloadSemCRC + crc16PixLuka(payloadSemCRC);
+}
+
+const USUARIOS_STORE = "lukafilmes-usuarios";
+const USUARIOS_KEY = "usuarios";
+
+const ambienteLocal =
+    process.env.NETLIFY_DEV === "true" ||
+    process.env.RENDER === "true" ||
+    process.env.NETLIFY_LOCAL === "true" ||
+    (
+        !process.env.NETLIFY &&
+        !process.env.AWS_LAMBDA_FUNCTION_NAME &&
+        process.env.NODE_ENV !== "production"
+    );
+console.log("[DIAGNOSTICO] ambienteLocal =", ambienteLocal);
+let bancoLocal = null;
+
+const turso = process.env.TURSO_DATABASE_URL
+  ? createClient({
+      url: process.env.TURSO_DATABASE_URL,
+      authToken: process.env.TURSO_AUTH_TOKEN
+    })
+  : null;
+
+let tursoUsuariosPreparado = false;
+
+async function prepararTursoUsuarios() {
+  if (!turso || tursoUsuariosPreparado) return;
+
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS lukafilmes_usuarios (
+      id INTEGER PRIMARY KEY,
+      dados TEXT NOT NULL
+    )
+  `);
+
+  tursoUsuariosPreparado = true;
+}
+
+async function prepararTursoPagamentos() {
+  if (!turso) return;
+
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS lukafilmes_pagamentos (
+      id INTEGER PRIMARY KEY,
+      usuario_id INTEGER,
+      usuario TEXT NOT NULL,
+      valor REAL NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pendente',
+      criado_em TEXT NOT NULL,
+      aprovado_em TEXT,
+      inicio_acesso TEXT,
+      fim_acesso TEXT,
+      observacao TEXT
+    )
+  `);
+}
+
+async function criarPagamentoLuka(dados) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const resultado = await turso.execute({
+        sql: `
+            INSERT INTO lukafilmes_pagamentos
+            (
+                id,
+                usuario_id,
+                usuario,
+                valor,
+                status,
+                criado_em,
+                aprovado_em,
+                inicio_acesso,
+                fim_acesso,
+                observacao
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        args: [
+            Number(dados.id),
+            dados.usuario_id == null ? null : Number(dados.usuario_id),
+            String(dados.usuario || ""),
+            Number(dados.valor || CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal),
+            String(dados.status || CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE),
+            String(dados.criado_em || new Date().toISOString()),
+            dados.aprovado_em || null,
+            dados.inicio_acesso || null,
+            dados.fim_acesso || null,
+            dados.observacao || null
+        ]
+    });
+
+    return resultado;
+}
+
+async function proximoIdPagamentoLuka() {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const resultado = await turso.execute(`
+        SELECT COALESCE(MAX(id), 0) + 1 AS proximo_id
+        FROM lukafilmes_pagamentos
+    `);
+
+    return Number(resultado.rows?.[0]?.proximo_id || 1);
+}
+
+async function listarPagamentosLuka(status = null) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    if (status) {
+        const resultado = await turso.execute({
+            sql: `
+                SELECT *
+                FROM lukafilmes_pagamentos
+                WHERE status = ?
+                ORDER BY id DESC
+            `,
+            args: [String(status)]
+        });
+
+        return resultado.rows || [];
+    }
+
+    const resultado = await turso.execute(`
+        SELECT *
+        FROM lukafilmes_pagamentos
+        ORDER BY id DESC
+    `);
+
+    return resultado.rows || [];
+}
+
+async function buscarPagamentoLuka(id) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const resultado = await turso.execute({
+        sql: `
+            SELECT *
+            FROM lukafilmes_pagamentos
+            WHERE id = ?
+            LIMIT 1
+        `,
+        args: [Number(id)]
+    });
+
+    return resultado.rows?.[0] || null;
+}
+
+async function atualizarPagamentoLuka(id, dados) {
+    await prepararTursoPagamentos();
+
+    if (!turso) {
+        throw new Error("Turso não configurado.");
+    }
+
+    const campos = [];
+    const args = [];
+
+    const permitidos = [
+        "status",
+        "aprovado_em",
+        "inicio_acesso",
+        "fim_acesso",
+        "observacao"
+    ];
+
+    for (const campo of permitidos) {
+        if (Object.prototype.hasOwnProperty.call(dados, campo)) {
+            campos.push(`${campo} = ?`);
+            args.push(dados[campo] == null ? null : String(dados[campo]));
+        }
+    }
+
+    if (campos.length === 0) {
+        return false;
+    }
+
+    args.push(Number(id));
+
+    await turso.execute({
+        sql: `
+            UPDATE lukafilmes_pagamentos
+            SET ${campos.join(", ")}
+            WHERE id = ?
+        `,
+        args
+    });
+
+    return true;
+}
+
+function obterBancoLocal() {
+
+    if (!Database) {
+        Database = require("better-sqlite3");
+    }
+
+    if (!bancoLocal) {
+
+        bancoLocal = new Database(
+            path.join(LUKAFILMES_DIR, "banco.db")
+        );
+    }
+
+    return bancoLocal;
+}
+
+async function carregarUsuarios() {
+  if (turso) {
+    await prepararTursoUsuarios();
+
+    const resultado = await turso.execute(
+      "SELECT dados FROM lukafilmes_usuarios WHERE id = 1"
+    );
+
+    if (resultado.rows.length > 0) {
+      try {
+        const dados = JSON.parse(resultado.rows[0].dados);
+        return Array.isArray(dados) ? dados : [];
+      } catch (erro) {
+        console.error("[TURSO] Erro ao ler usuários:", erro);
+        return [];
+      }
+    }
+
+    // Primeira execução: tenta migrar os usuários existentes do banco local.
+    try {
+      const db = obterBancoLocal();
+      const usuarios = db.prepare("SELECT * FROM usuarios").all();
+
+      if (Array.isArray(usuarios) && usuarios.length > 0) {
+        await salvarUsuarios(usuarios);
+        console.log("[TURSO] Usuários locais migrados:", usuarios.length);
+        return usuarios;
+      }
+    } catch (erro) {
+      console.error("[TURSO] Não foi possível migrar banco local:", erro);
+    }
+
+    return [];
+  }
+
+  if (ambienteLocal) {
+    const db = obterBancoLocal();
+    const usuarios = db
+      .prepare("SELECT * FROM usuarios")
+      .all();
+
+    return Array.isArray(usuarios) ? usuarios : [];
+  }
+
+  const store = getStore({
+    name: USUARIOS_STORE,
+    siteID: process.env.NETLIFY_SITE_ID,
+    token: process.env.NETLIFY_AUTH_TOKEN
+  });
+
+  const dados = await store.get(
+    USUARIOS_KEY,
+    {
+      type: "json"
+    }
+  );
+
+  if (!Array.isArray(dados)) {
+    return [];
+  }
+
+  return dados;
+}
+
+async function salvarUsuarios(usuarios) {
+  if (turso) {
+    await prepararTursoUsuarios();
+
+    await turso.execute({
+      sql: `
+        INSERT INTO lukafilmes_usuarios (id, dados)
+        VALUES (1, ?)
+        ON CONFLICT(id) DO UPDATE SET dados = excluded.dados
+      `,
+      args: [JSON.stringify(Array.isArray(usuarios) ? usuarios : [])]
+    });
+
+    return true;
+  }
+
+  if (ambienteLocal) {
+    const db = obterBancoLocal();
+
+    db.prepare("DELETE FROM usuarios").run();
+
+    const inserir = db.prepare(`
+      INSERT INTO usuarios
+      (id, usuario, senha, status, tipo, validade, criado_em, limite_conexoes, conexoes_utilizadas, revendedor_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    const inserirTodos = db.transaction((lista) => {
+      for (const u of lista) {
+        inserir.run(
+          u.id,
+          u.usuario,
+          u.senha,
+          u.status || "ativo",
+          u.tipo || "usuario",
+          u.validade || null,
+          u.criado_em || new Date().toISOString(),
+          Number(u.limite_conexoes) || 0,
+          Number(u.conexoes_utilizadas) || 0,
+          u.revendedor_id || null
+        );
+      }
+    });
+
+    inserirTodos(usuarios);
+    return true;
+  }
+
+  const store = getStore({
+    name: USUARIOS_STORE,
+    siteID: process.env.NETLIFY_SITE_ID,
+    token: process.env.NETLIFY_AUTH_TOKEN
+  });
+
+  await store.setJSON(
+    USUARIOS_KEY,
+    usuarios
+  );
+
+  return true;
+}
+
+function proximoId(usuarios) {
+
+    if (!Array.isArray(usuarios) || usuarios.length === 0) {
+        return 1;
+    }
+
+    return Math.max(
+        ...usuarios.map(
+            u => Number(u.id) || 0
+        )
+    ) + 1;
+}
+const app = express();
+
+// ==========================================
+// LUKAFILMES — PERFORMANCE
+// Compressão HTTP de HTML, CSS e JavaScript.
+// Não altera APIs nem conteúdo dinâmico.
+// ==========================================
+
+app.use((req,res,next)=>{ console.log("[TRACE ENTRADA]",req.method,req.url); next(); });
+
+const LUKA_PRESENCA_ONLINE_2026 = new Map();
+
+// Presença temporária em memória.
+// O usuário é considerado online enquanto houver atividade
+// recente na sessão. Após 45 segundos sem atividade, fica offline.
+function lukaRegistrarPresenca(req) {
+    try {
+        if (!req.session || !req.session.usuario) return;
+
+        const u = req.session.usuario;
+
+        LUKA_PRESENCA_ONLINE_2026.set(Number(u.id), {
+            id: Number(u.id),
+            usuario: u.usuario,
+            tipo: u.tipo,
+            last_seen: Date.now()
+        });
+    } catch (erro) {
+        console.error("[LUKA PRESENÇA]", erro);
+    }
+}
+
+
+const PORT = process.env.PORT || 3000;
+
+// ==========================================
+// BANCO
+// ==========================================
+
+
+
+app.use(express.json());
+
+
+app.use((req, res, next) => {
+    lukaRegistrarPresenca(req);
+    next();
+});
+
+// ==========================================
+// SESSÃO
+// ==========================================
+
+app.set("trust proxy", 1);
+
+const configuracaoSessao = {
+    secret: process.env.SESSION_SECRET || (process.env.CLOUDFLARE_WORKERS ? "LUKAFILMES-CLOUDFLARE-SESSION-SECRET-2026" : require("crypto").randomBytes(32).toString("hex")),
+
+    resave: false,
+
+    saveUninitialized: false,
+
+    cookie: {
+        httpOnly: true,
+        secure: !ambienteLocal,
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 60 * 24
+    }
+};
+
+if (!ambienteLocal && turso) {
+    configuracaoSessao.store = new TursoSessionStore();
+}
+
+prepararTursoPagamentos()
+    .then(() => console.log("[TURSO] Tabela de pagamentos preparada."))
+    .catch(erro => console.error("[TURSO PAGAMENTOS] Erro ao preparar tabela:", erro));
+
+console.log("[DIAGNOSTICO] session middleware carregado");
+
+app.use(session(configuracaoSessao));
+console.log("[DIAGNOSTICO] rota /login registrada");
+// LOGIN
+// ==========================================
+
+app.get("/login", (req, res) => {
+
+    if (req.session.usuario) {
+        return res.redirect("/");
+    }
+
+    res.sendFile(
+        path.join(LUKAFILMES_DIR, "public", "login.html")
+    );
+});
+
+
+// ==========================================
+// ENTRADA COMO VISITANTE
+// ==========================================
+app.get("/entrar-visitante", (req, res, next) => {
+    req.session.visitante = true;
+
+    req.session.save((err) => {
+        if (err) {
+            console.error("[VISITANTE] Erro ao salvar sessão:", err);
+            return next(err);
+        }
+
+        return res.redirect("/");
+    });
+});
+
+// ==========================================
+// ADMIN
+// ==========================================
+
+app.get("/admin.html", (req, res) => {
+
+    if (!req.session.usuario) {
+        return res.redirect("/login");
+    }
+
+    if (req.session.usuario.tipo !== "admin") {
+        return res.status(403).send("Acesso negado.");
+    }
+
+    res.set({
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Surrogate-Control": "no-store"
+    });
+
+    res.sendFile(
+        path.join(LUKAFILMES_DIR, "public", "admin.html"),
+        {
+            cacheControl: false
+        }
+    );
+});
+
+
+// ==========================================
+// LUKAFILMES — CADASTRO DE CLIENTE
+// ==========================================
+
+app.get("/cadastro", (req, res) => {
+    res.sendFile(
+        path.join(LUKAFILMES_DIR, "public", "cadastro.html"),
+        {
+            cacheControl: false
+        }
+    );
+});
+
+
+// ==========================================
+// LUKAFILMES — VERIFICAÇÃO WHATSAPP / OTP
+// ==========================================
+
+const OTP_WAFORGE_EXPIRA_MS = 10 * 60 * 1000;
+const OTP_WAFORGE_REENVIO_MS = 60 * 1000;
+const OTP_WAFORGE_MAX_TENTATIVAS = 5;
+
+let tursoCadastrosPendentesPreparado = false;
+
+async function prepararTursoCadastrosPendentes() {
+    if (!turso || tursoCadastrosPendentesPreparado) return;
+
+    await turso.execute(`
+        CREATE TABLE IF NOT EXISTS lukafilmes_cadastros_pendentes (
+            telefone TEXT PRIMARY KEY,
+            nome TEXT NOT NULL,
+            usuario TEXT NOT NULL,
+            senha_hash TEXT NOT NULL,
+            criado_em TEXT NOT NULL,
+            expira_em TEXT NOT NULL,
+            ultimo_envio_em TEXT NOT NULL,
+            tentativas INTEGER NOT NULL DEFAULT 0,
+            request_id TEXT,
+            codigo_otp TEXT
+        )
+    `);
+
+    try {
+        await turso.execute(`
+            ALTER TABLE lukafilmes_cadastros_pendentes
+            ADD COLUMN request_id TEXT
+        `);
+    } catch (_) {
+        // Coluna já existe.
+    }
+
+    try {
+        await turso.execute(`
+            ALTER TABLE lukafilmes_cadastros_pendentes
+            ADD COLUMN codigo_otp TEXT
+        `);
+    } catch (_) {
+        // Coluna já existe.
+    }
+
+    tursoCadastrosPendentesPreparado = true;
+}
+
+function normalizarWhatsAppLuka(valor) {
+    let numeros = String(valor || "").replace(/\D/g, "");
+
+    if (numeros.startsWith("55") && numeros.length >= 12) {
+        return "+" + numeros;
+    }
+
+    if (numeros.length === 10 || numeros.length === 11) {
+        return "+55" + numeros;
+    }
+
+    return "";
+}
+
+let lukaWhatsAppSocket = null;
+let lukaWhatsAppUltimoSocketConectado = null;
+let lukaWhatsAppIniciando = false;
+const lukaWhatsAppStatus = {
+    conectado: false,
+    qr: null,
+    numero: null,
+    mensagem: "WhatsApp aguardando inicialização."
+};
+
+async function enviarOtpWhatsAppLuka(telefone, codigo) {
+    let socket =
+        lukaWhatsAppSocket ||
+        lukaWhatsAppUltimoSocketConectado;
+
+    const inicioEspera = Date.now();
+
+    while (!socket && Date.now() - inicioEspera < 15000) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        socket =
+            lukaWhatsAppSocket ||
+            lukaWhatsAppUltimoSocketConectado;
+    }
+
+    if (!socket) {
+        throw new Error(
+            "WhatsApp ainda não está disponível. Aguarde a conexão e tente novamente."
+        );
+    }
+
+    const numero = String(telefone || "").replace(/\D/g, "");
+
+    if (!numero) {
+        throw new Error("Número de WhatsApp inválido.");
+    }
+
+    let jid = numero + "@s.whatsapp.net";
+
+    try {
+        const contatos = await socket.onWhatsApp(numero);
+
+        if (
+            Array.isArray(contatos) &&
+            contatos[0]?.exists &&
+            contatos[0]?.jid
+        ) {
+            jid = contatos[0].jid;
+        }
+    } catch (erroContato) {
+        console.warn(
+            "[WHATSAPP OTP] Consulta do contato:",
+            erroContato.message
+        );
+    }
+
+    const mensagem =
+        `🔐 *LUKAFILMES*\n\n` +
+        `Olá! 👋\n\n` +
+        `Seu cadastro está quase concluído.\n\n` +
+        `✨ *CÓDIGO DE CONFIRMAÇÃO*\n\n` +
+        `👉 *${codigo}*\n\n` +
+        `⏱️ Válido por 10 minutos.\n\n` +
+        `🛡️ Não compartilhe este código com ninguém.\n\n` +
+        `Se você não solicitou este cadastro, ignore esta mensagem.\n\n` +
+        `🍿 *LUKAFILMES*`;
+
+    await socket.sendMessage(jid, { text: mensagem });
+
+    lukaWhatsAppStatus.envios =
+        Number(lukaWhatsAppStatus.envios || 0) + 1;
+
+    console.log("[WHATSAPP OTP] Código enviado para:", telefone);
+
+    return {
+        request_id: "LOCAL-" + Date.now()
+    };
+}
+
+async function verificarOtpWhatsAppLuka(telefone, codigo, codigoSalvo) {
+    return {
+        ok:
+            String(codigo || "").trim() ===
+            String(codigoSalvo || "").trim(),
+        dados: {}
+    };
+}
+// ==========================================
+// LUKAFILMES — API CADASTRO DE CLIENTE
+// ==========================================
+
+app.post("/api/cadastro", async (req, res) => {
+    try {
+        const nome = String(req.body.nome || "").trim();
+        const usuario = String(req.body.usuario || "").trim();
+        const senha = String(req.body.senha || "");
+        const telefone = String(req.body.telefone || "").trim();
+
+        if (!nome || !usuario || !senha) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Preencha nome, usuário e senha."
+            });
+        }
+
+        if (nome.length < 2) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Informe um nome válido."
+            });
+        }
+
+        if (usuario.length < 3) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "O usuário deve ter pelo menos 3 caracteres."
+            });
+        }
+
+        if (senha.length < 6) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "A senha deve ter pelo menos 6 caracteres."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const existente = usuarios.find(
+            u =>
+                String(u.usuario || "").trim().toLowerCase() ===
+                usuario.toLowerCase()
+        );
+
+        if (existente) {
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse usuário já existe. Escolha outro."
+            });
+        }
+
+        const senhaHash = await bcrypt.hash(senha, 12);
+
+        const novoUsuario = {
+            id: proximoId(usuarios),
+            nome,
+            usuario,
+            senha: senhaHash,
+            telefone,
+            status: "ativo",
+            tipo: "usuario",
+            validade: null,
+            criado_em: new Date().toISOString()
+        };
+
+        usuarios.push(novoUsuario);
+        await salvarUsuarios(usuarios);
+
+        req.session.usuario = {
+            id: novoUsuario.id,
+            usuario: novoUsuario.usuario,
+            tipo: novoUsuario.tipo,
+            validade: novoUsuario.validade
+        };
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Cadastro realizado com sucesso.",
+            usuario: {
+                id: novoUsuario.id,
+                nome: novoUsuario.nome,
+                usuario: novoUsuario.usuario,
+                tipo: novoUsuario.tipo
+            }
+        });
+    } catch (erro) {
+        console.error("[CADASTRO] Erro:", erro);
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao criar usuário."
+        });
+    }
+});
+
+app.post("/login", async (req, res) => {
+
+    try {
+
+        const usuario =
+            String(req.body.usuario || "").trim();
+
+        const senha =
+            String(req.body.senha || "");
+
+        const controleLogin = controleLoginLuka(req, usuario);
+
+        if (controleLogin.bloqueado) {
+            return res.status(429).json({
+                sucesso: false,
+                mensagem:
+                    "Muitas tentativas. Tente novamente em " +
+                    controleLogin.minutos + " minuto(s)."
+            });
+        }
+
+        if (!usuario || !senha) {
+
+            return res.json({
+                sucesso: false,
+                mensagem: "Digite usuário e senha."
+            });
+        }
+
+                const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u =>
+                String(u.usuario || "").trim().toLowerCase() ===
+                usuario.toLowerCase()
+        );
+        if (!pessoa) {
+
+            return res.json({
+                sucesso: false,
+                mensagem: "Usuário ou senha incorretos."
+            });
+        }
+
+        if (pessoa.status !== "ativo") {
+
+            return res.json({
+                sucesso: false,
+                mensagem: "Este usuário está suspenso."
+            });
+        }
+
+        /*
+         * Usuário vencido continua podendo fazer login e navegar
+         * pelo catálogo. O bloqueio para assistir será feito
+         * somente no botão principal "ASSISTIR".
+         */
+
+        const senhaCorreta =
+            await bcrypt.compare(
+                senha,
+                pessoa.senha
+            );
+
+        if (!senhaCorreta) {
+
+            controleLogin.registro.falhas += 1;
+            tentativasLoginLuka.set(
+                controleLogin.chave,
+                controleLogin.registro
+            );
+
+            return res.json({
+                sucesso: false,
+                mensagem: "Usuário ou senha incorretos."
+            });
+        }
+
+        tentativasLoginLuka.delete(controleLogin.chave);
+
+        req.session.usuario = {
+
+            id: pessoa.id,
+
+            usuario: pessoa.usuario,
+
+            tipo: pessoa.tipo,
+
+            validade: pessoa.validade || null
+
+        };
+
+        return res.json({
+            sucesso: true,
+            destino:
+                pessoa.tipo === "admin"
+                    ? "/admin.html"
+                    : pessoa.tipo === "revendedor"
+                        ? "/revendedor.html"
+                        : "/"
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO LOGIN]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno no servidor."
+        });
+    }
+
+});
+
+// ==========================================
+// USUÁRIO LOGADO
+// ==========================================
+
+
+// ===== LUKA MODO TESTE USUARIO V1 =====
+// Mantém a sessão ADMIN intacta e permite simular um cliente
+// no mesmo navegador através de cookie separado.
+
+function lukaCookieTesteAtivo(req) {
+    const cookies = String(
+        req?.headers?.cookie || ""
+    ).split(";");
+
+    return cookies.some(parte => {
+        const [chave, ...resto] = parte.trim().split("=");
+        return (
+            chave === "luka_modo_teste" &&
+            decodeURIComponent(resto.join("=")) === "1"
+        );
+    });
+}
+
+
+function lukaUsuarioOperacional(req) {
+    if (
+        req &&
+        req.session &&
+        req.session.lukaTesteUsuario &&
+        lukaCookieTesteAtivo(req)
+    ) {
+        return req.session.lukaTesteUsuario;
+    }
+
+    return req && req.session
+        ? req.session.usuario
+        : null;
+}
+
+function lukaModoTesteAtivo(req) {
+    return !!(
+        req &&
+        req.session &&
+        req.session.lukaTesteUsuario &&
+        lukaCookieTesteAtivo(req)
+    );
+}
+
+app.get("/api/eu", (req, res) => {
+
+    const usuario = lukaUsuarioOperacional(req);
+
+    if (!usuario) {
+        return res.status(401).json({
+            logado: false
+        });
+    }
+
+    res.json({
+        logado: true,
+        usuario
+    });
+
+});
+
+// ==========================================
+// VERIFICAÇÃO DE ACESSO PARA ASSISTIR
+// ==========================================
+
+app.get("/api/debug-acesso", async (req, res) => {
+    try {
+        if (!req.session || !req.session.usuario) {
+            return res.json({
+                logado: false,
+                sessao: null
+            });
+        }
+
+        const sessao = req.session.usuario;
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        return res.json({
+            logado: true,
+            sessao: {
+                id: sessao.id,
+                usuario: sessao.usuario,
+                tipo: sessao.tipo,
+                validade: sessao.validade || null
+            },
+            pessoa: pessoa ? {
+                id: pessoa.id,
+                usuario: pessoa.usuario,
+                tipo: pessoa.tipo,
+                status: pessoa.status,
+                validade: pessoa.validade || null
+            } : null,
+            agora: new Date().toISOString()
+        });
+    } catch (erro) {
+        console.error("[DEBUG ACESSO] Erro:", erro);
+        return res.status(500).json({
+            erro: "erro_servidor"
+        });
+    }
+});
+
+
+// ==========================================
+// LUKAFILMES — STATUS DE RENOVAÇÃO
+// ==========================================
+
+app.get("/api/acesso-assistir", async (req, res) => {
+    return res.json({
+        permitido: true,
+        logado: false,
+        tipo: "publico",
+        validade: null
+    });
+});
+
+
+// ==========================================
+// CRIAR / RECUPERAR PAGAMENTO LUKAFILMES
+// ==========================================
+
+
+
+// ============================================================
+// ADMIN — LIMPAR TESTES ANTIGOS
+// ============================================================
+
+app.get("/api/admin/pagamentos", async (req, res) => {
+
+    try {
+
+        if (!adminAutorizadoLuka(req)) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const pagamentos = await listarPagamentosLuka();
+
+        return res.json({
+            sucesso: true,
+            pagamentos: Array.isArray(pagamentos) ? pagamentos : []
+        });
+
+    } catch (erro) {
+
+        console.error("[ADMIN PAGAMENTOS] Erro ao listar:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro ao carregar pagamentos.",
+            pagamentos: []
+        });
+
+    }
+
+});
+
+
+// ============================================================
+// ADMIN — APROVAR PAGAMENTO
+// ============================================================
+
+app.post("/api/admin/pagamentos/:id/aprovar", async (req, res) => {
+
+    try {
+
+        if (!adminAutorizadoLuka(req)) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id < 1) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Pagamento inválido."
+            });
+        }
+
+        const pagamento = await buscarPagamentoLuka(id);
+
+        if (!pagamento) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Pagamento não encontrado."
+            });
+        }
+
+        if (
+            String(pagamento.status || "").toLowerCase() ===
+            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Este pagamento já foi aprovado."
+            });
+        }
+
+        if (
+            String(pagamento.status || "").toLowerCase() ===
+            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.RECUSADO
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Este pagamento já foi recusado."
+            });
+        }
+
+        const usuarioId = Number(pagamento.usuario_id);
+
+        const usuarios = await carregarUsuarios();
+
+        const indice = usuarios.findIndex(
+            u => Number(u.id) === usuarioId
+        );
+
+        if (indice === -1) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Usuário do pagamento não encontrado."
+            });
+        }
+
+        const usuario = usuarios[indice];
+
+        // Se ainda houver acesso válido, soma 30 dias a partir da validade.
+        // Se estiver expirado, começa agora.
+        let inicio = Date.now();
+
+        if (usuario.validade) {
+
+            const validadeAtual =
+                new Date(usuario.validade).getTime();
+
+            if (
+                Number.isFinite(validadeAtual) &&
+                validadeAtual > Date.now()
+            ) {
+                inicio = validadeAtual;
+            }
+
+        }
+
+        const dias =
+            Number(CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso) || 30;
+
+        const novaValidade =
+            new Date(
+                inicio +
+                dias * 24 * 60 * 60 * 1000
+            ).toISOString();
+
+        usuario.validade = novaValidade;
+        usuario.status = "ativo";
+
+        await salvarUsuarios(usuarios);
+
+        const agora = new Date().toISOString();
+
+        await atualizarPagamentoLuka(id, {
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO,
+            aprovado_em: agora,
+            inicio_acesso: new Date(inicio).toISOString(),
+            fim_acesso: novaValidade,
+            observacao:
+                pagamento.renovacao === true ||
+                pagamento.tipo_pagamento === "renovacao"
+                    ? "RENOVAÇÃO aprovada pelo administrador."
+                    : "Pagamento aprovado pelo administrador."
+        });
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Pagamento aprovado e acesso liberado.",
+            pagamento_id: id,
+            usuario_id: usuarioId,
+            validade: novaValidade
+        });
+
+    } catch (erro) {
+
+        console.error("[ADMIN PAGAMENTOS] Erro ao aprovar:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao aprovar pagamento."
+        });
+
+    }
+
+});
+
+
+// ============================================================
+// ADMIN — RECUSAR PAGAMENTO
+// ============================================================
+
+app.post("/api/admin/pagamentos/:id/recusar", async (req, res) => {
+
+    try {
+
+        if (!adminAutorizadoLuka(req)) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id < 1) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Pagamento inválido."
+            });
+        }
+
+        const pagamento = await buscarPagamentoLuka(id);
+
+        if (!pagamento) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Pagamento não encontrado."
+            });
+        }
+
+        if (
+            String(pagamento.status || "").toLowerCase() ===
+            CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.APROVADO
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Não é possível recusar um pagamento já aprovado."
+            });
+        }
+
+        await atualizarPagamentoLuka(id, {
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.RECUSADO,
+            observacao:
+                "Pagamento recusado pelo administrador."
+        });
+
+        // =====================================================
+        // LIMPEZA AUTOMÁTICA DO TESTE
+        //
+        // Só remove usuários criados pelo modo de teste.
+        // Usuários reais NUNCA são removidos por esta rotina.
+        // =====================================================
+        let testeRemovido = false;
+
+        if (pagamento.usuario_id) {
+
+            const usuarios = await carregarUsuarios();
+
+            const indiceTeste = usuarios.findIndex(u =>
+                Number(u.id) === Number(pagamento.usuario_id) &&
+                (
+                    String(u.tipo || "").toLowerCase() === "teste" ||
+                    u.teste_lukafilmes === true
+                )
+            );
+
+            if (indiceTeste !== -1) {
+
+                const usuarioRemovido = usuarios[indiceTeste];
+
+                usuarios.splice(indiceTeste, 1);
+
+                await salvarUsuarios(usuarios);
+
+                testeRemovido = true;
+
+                console.log(
+                    "[LUKA TESTE] Usuário removido após recusa:",
+                    usuarioRemovido.usuario,
+                    "ID:",
+                    usuarioRemovido.id
+                );
+
+                // Se esse teste ainda estiver associado à sessão
+                // administrativa, remove somente o modo teste.
+                if (
+                    req.session &&
+                    req.session.lukaTesteUsuario &&
+                    Number(req.session.lukaTesteUsuario.id) ===
+                    Number(usuarioRemovido.id)
+                ) {
+                    delete req.session.lukaTesteUsuario;
+                }
+            }
+        }
+
+        return res.json({
+            sucesso: true,
+            mensagem: testeRemovido
+                ? "Pagamento recusado e teste removido."
+                : "Pagamento recusado.",
+            teste_removido: testeRemovido
+        });
+
+    } catch (erro) {
+
+        console.error("[ADMIN PAGAMENTOS] Erro ao recusar:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao recusar pagamento."
+        });
+
+    }
+
+});
+
+
+// ============================================================
+
+app.post("/api/pagamentos/criar", async (req, res) => {
+
+    try {
+
+        const sessao = lukaUsuarioOperacional(req);
+
+        if (!sessao) {
+            return res.status(401).json({
+                sucesso: false,
+                logado: false,
+                motivo: "nao_logado",
+                mensagem: "Faça login para continuar."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                sucesso: false,
+                logado: true,
+                motivo: "usuario_nao_encontrado",
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const tipo = String(
+            pessoa.tipo || "usuario"
+        ).toLowerCase();
+
+        const renovacaoSolicitada =
+            req.body &&
+            (
+                req.body.renovacao === true ||
+                String(req.body.renovacao).toLowerCase() === "true"
+            );
+
+        const tipoPagamentoSolicitado =
+            renovacaoSolicitada
+                ? "renovacao"
+                : "primeiro_acesso";
+
+        const statusUsuario = String(
+            pessoa.status || "ativo"
+        ).toLowerCase();
+
+        if (statusUsuario !== "ativo") {
+            return res.status(403).json({
+                sucesso: false,
+                motivo: "inativo",
+                mensagem: "Seu acesso está desativado."
+            });
+        }
+
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: false,
+                motivo: "isento",
+                tipo
+            });
+        }
+
+        const pagamentosPendentes =
+            await listarPagamentosLuka(
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE
+            );
+
+        const pagamentoExistente =
+            pagamentosPendentes.find(
+                pagamento =>
+                    Number(pagamento.usuario_id) === Number(pessoa.id) &&
+                    (
+                        renovacaoSolicitada
+                            ? (
+                                pagamento.renovacao === true ||
+                                pagamento.tipo_pagamento === "renovacao"
+                            )
+                            : (
+                                pagamento.renovacao !== true &&
+                                pagamento.tipo_pagamento !== "renovacao"
+                            )
+                    )
+            );
+
+        if (pagamentoExistente) {
+
+            let pix;
+
+            try {
+                pix = gerarPixCopiaColaLuka();
+            } catch (erroPix) {
+                console.error(
+                    "[PAGAMENTO] Erro ao gerar PIX:",
+                    erroPix
+                );
+            }
+
+            return res.json({
+                sucesso: true,
+                pagamento_necessario: true,
+                pagamento: pagamentoExistente,
+                pix: pix || null,
+                valor: Number(
+                    process.env.PIX_VALOR ||
+                    CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+                ).toFixed(2),
+                nome: process.env.PIX_NOME || "LUKAFILMES",
+                cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+            });
+        }
+
+        const idPagamento =
+            await proximoIdPagamentoLuka();
+
+        const pagamento = {
+            id: idPagamento,
+            usuario_id: Number(pessoa.id),
+            usuario: String(
+                pessoa.usuario ||
+                sessao.usuario ||
+                ""
+            ),
+            valor:
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal,
+
+            /*
+             * primeiro_acesso = fluxo normal de cadastro
+             * renovacao      = cliente já existente renovando
+             */
+            tipo_pagamento:
+                tipoPagamentoSolicitado,
+
+            renovacao:
+                renovacaoSolicitada,
+
+            status:
+                CONFIGURACAO_ACESSO_LUKAFILMES.pagamentos.PENDENTE,
+            criado_em:
+                new Date().toISOString(),
+            aprovado_em: null,
+            inicio_acesso: null,
+            fim_acesso: null,
+            observacao: null
+        };
+
+        await criarPagamentoLuka(pagamento);
+
+        let pix;
+
+        try {
+            pix = gerarPixCopiaColaLuka();
+        } catch (erroPix) {
+            console.error(
+                "[PAGAMENTO] Erro ao gerar PIX:",
+                erroPix
+            );
+        }
+
+        return res.json({
+            sucesso: true,
+            pagamento_necessario: true,
+            pagamento,
+            pix: pix || null,
+            valor: Number(
+                process.env.PIX_VALOR ||
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal
+            ).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA"
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[PAGAMENTO] Erro ao criar pagamento:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível criar o pagamento."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// PIX LUKAFILMES — COPIA E COLA
+// ==========================================
+
+app.get("/api/pix", (req, res) => {
+
+    try {
+
+        const pix = gerarPixCopiaColaLuka();
+
+        return res.json({
+            sucesso: true,
+            valor: Number(process.env.PIX_VALOR || 18).toFixed(2),
+            nome: process.env.PIX_NOME || "LUKAFILMES",
+            cidade: process.env.PIX_CIDADE || "CARAPICUIBA",
+            pix
+        });
+
+    } catch (erro) {
+
+        console.error("[PIX] Erro ao gerar Pix:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível gerar o Pix."
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// LUKAFILMES — PRESENÇA EM TEMPO REAL
+// ==========================================
+
+app.post("/api/presenca", (req, res) => {
+    if (!req.session || !req.session.usuario) {
+        return res.status(401).json({
+            sucesso: false
+        });
+    }
+
+    lukaRegistrarPresenca(req);
+
+    res.json({
+        sucesso: true,
+        online: true
+    });
+});
+
+app.get("/api/admin/presenca", async (req, res) => {
+    try {
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const agora = Date.now();
+        const usuarios = await carregarUsuarios();
+
+        const resultado = usuarios.map(u => {
+            const p = LUKA_PRESENCA_ONLINE_2026.get(Number(u.id));
+
+            const lastSeen = p
+                ? Number(p.last_seen || 0)
+                : 0;
+
+            const online =
+                lastSeen > 0 &&
+                (agora - lastSeen) <= 45000 &&
+                u.status === "ativo";
+
+            return {
+                id: u.id,
+                usuario: u.usuario,
+                nome: u.nome || "",
+                telefone: u.telefone || u.whatsapp || "",
+                whatsapp: u.whatsapp || u.telefone || "",
+                tipo: u.tipo || "usuario",
+                status: u.status,
+                validade: u.validade || null,
+                online,
+                last_seen: lastSeen
+            };
+        });
+
+        res.json({
+            sucesso: true,
+            agora,
+            usuarios: resultado,
+            online: resultado.filter(u => u.online).length,
+            usuariosOnline: resultado.filter(
+                u => u.online && u.tipo !== "teste" && u.tipo !== "revendedor"
+            ).length,
+            testesOnline: resultado.filter(
+                u => u.online && u.tipo === "teste"
+            ).length,
+            revendedoresOnline: resultado.filter(
+                u => u.online && u.tipo === "revendedor"
+            ).length
+        });
+
+    } catch (erro) {
+        console.error("[LUKA STATUS ONLINE]", erro);
+
+        res.status(500).json({
+            sucesso: false,
+            usuarios: []
+        });
+    }
+});
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+app.post("/logout", (req, res) => {
+
+    req.session.destroy(() => {
+
+        res.json({
+            sucesso: true
+        });
+
+    });
+
+});
+
+// ==========================================
+// TMDB
+// ==========================================
+
+const TMDB_BASE =
+    "https://api.themoviedb.org/3";
+
+const TMDB_IMAGE =
+    "https://image.tmdb.org/t/p/w500";
+
+// ==========================================
+// BUSCAR FILMES DO TMDB
+// ==========================================
+
+
+/* ==========================================================
+   LUKAFILMES — XTREAM VOD
+   Credenciais somente no servidor (.env)
+   ========================================================== */
+
+let cacheXtreamFilmes = null;
+let cacheXtreamExpira = 0;
+
+async function xtreamFilmes() {
+
+    const dns = String(process.env.XTREAM_DNS || '')
+        .replace(/\/+$/, '');
+
+    const username = String(
+        process.env.XTREAM_USERNAME || ''
+    ).trim();
+
+    const password = String(
+        process.env.XTREAM_PASSWORD || ''
+    ).trim();
+
+    if (!dns || !username || !password) {
+        throw new Error(
+            'XTREAM_DNS, XTREAM_USERNAME ou XTREAM_PASSWORD não configurado.'
+        );
+    }
+
+    const agora = Date.now();
+
+    if (
+        Array.isArray(cacheXtreamFilmes) &&
+        agora < cacheXtreamExpira
+    ) {
+        return cacheXtreamFilmes;
+    }
+
+    const url =
+        dns +
+        '/player_api.php?username=' +
+        encodeURIComponent(username) +
+        '&password=' +
+        encodeURIComponent(password) +
+        '&action=get_vod_streams';
+
+    const resposta = await fetch(url);
+
+    if (!resposta.ok) {
+        throw new Error(
+            'Xtream respondeu HTTP ' + resposta.status
+        );
+    }
+
+    const dados = await resposta.json();
+
+    if (!Array.isArray(dados)) {
+        throw new Error(
+            'Catálogo VOD Xtream inválido.'
+        );
+    }
+
+    cacheXtreamFilmes = dados;
+    cacheXtreamExpira = agora + (10 * 60 * 1000);
+
+    console.log(
+        '[XTREAM] Catálogo VOD carregado:',
+        dados.length,
+        'filmes'
+    );
+
+    return dados;
+}
+
+function normalizarTituloXtream(titulo) {
+    return String(titulo || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/\[[^\]]*\]/g, ' ')
+        .replace(/\([^)]*\)/g, ' ')
+        .replace(/[^a-z0-9]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+async function tmdb(endpoint) {
+
+    const token =
+        process.env.TMDB_TOKEN ||
+        globalThis.__LUKA_TMDB_TOKEN;
+
+    if (!token) {
+
+        throw new Error(
+            "TMDB_TOKEN não configurado."
+        );
+    }
+
+    const resposta =
+        await fetch(
+            TMDB_BASE + endpoint,
+            {
+                method: "GET",
+
+                headers: {
+                    Authorization:
+                        "Bearer " + token,
+
+                    accept:
+                        "application/json"
+                }
+            }
+        );
+
+    const dados =
+        await resposta.json();
+
+    if (!resposta.ok) {
+
+        console.error(
+            "[TMDB ERRO]",
+            dados
+        );
+
+        throw new Error(
+            dados.status_message ||
+            "Erro no TMDB."
+        );
+    }
+
+    return dados;
+}
+
+// ==========================================
+// GÊNEROS
+// ==========================================
+
+const generosTMDB = {
+
+    28: "Ação",
+
+    12: "Aventura",
+
+    16: "Animação",
+
+    35: "Comédia",
+
+    80: "Crime",
+
+    99: "Documentário",
+
+    18: "Drama",
+
+    10751: "Família",
+
+    14: "Fantasia",
+
+    36: "História",
+
+    27: "Terror",
+
+    10402: "Música",
+
+    9648: "Mistério",
+
+    10749: "Romance",
+
+    878: "Ficção científica",
+
+    10770: "Cinema TV",
+
+    53: "Thriller",
+
+    10752: "Guerra",
+
+    37: "Faroeste"
+
+};
+
+// ==========================================
+// CONVERTER FILME
+// ==========================================
+
+function converterFilme(filme) {
+
+    const generos =
+        Array.isArray(filme.genre_ids)
+
+            ? filme.genre_ids
+                .map(
+                    id => generosTMDB[id]
+                )
+                .filter(Boolean)
+
+            : [];
+
+    const titulo =
+        filme.title ||
+        filme.original_title ||
+        "Sem título";
+
+    const ano =
+        filme.release_date
+            ? Number(
+                filme.release_date.substring(0, 4)
+            )
+            : "";
+
+    return {
+
+        id: filme.id,
+
+        titulo,
+
+        tituloOriginal:
+            filme.original_title || "",
+
+        ano,
+
+        generos,
+
+        categoria:
+            generos.join(", "),
+
+        nota:
+            Number(
+                filme.vote_average || 0
+            ),
+
+        votos:
+            Number(
+                filme.vote_count || 0
+            ),
+
+        capa:
+            filme.poster_path
+                ? TMDB_IMAGE +
+                  filme.poster_path
+                : "",
+
+        fundo:
+            filme.backdrop_path
+                ? "https://image.tmdb.org/t/p/w1280" +
+                  filme.backdrop_path
+                : "",
+
+        sinopse:
+            filme.overview ||
+            "Sinopse não disponível."
+
+    };
+
+}
+
+// ==========================================
+// CACHE DE PESQUISAS
+// ==========================================
+
+const pesquisaCache = new Map();
+
+// LINKS DE FILMES DO SITE DE ORIGEM
+const fs = require("fs");
+const caminhoLinksFilmes = process.env.CLOUDFLARE_WORKERS ? "links_filmes.json" : require("path").join(LUKAFILMES_DIR, "links_filmes.json");
+
+let linksFilmes = {};
+
+try {
+    linksFilmes = JSON.parse(
+        fs.readFileSync(caminhoLinksFilmes, "utf8")
+    );
+
+    console.log(
+        "[LINKS FILMES] Carregados:",
+        Object.keys(linksFilmes).length
+    );
+
+} catch (erro) {
+
+    console.error(
+        "[LINKS FILMES] Erro ao carregar links_filmes.json:",
+        erro.message
+    );
+
+    linksFilmes = {};
+}
+
+const PESQUISA_CACHE_MS =
+    5 * 60 * 1000;
+
+const PESQUISA_CACHE_MAX =
+    100;
+// ==========================================
+// API DE PESQUISA
+// ==========================================
+
+app.get(
+    "/api/pesquisar",
+    async (req, res) => {
+
+        const busca =
+            String(req.query.q || "").trim();
+
+        if (!busca) {
+            return res.json({
+                resultados: []
+            });
+        }
+
+        const chavePesquisa =
+            busca.toLowerCase();
+
+        const cachePesquisa =
+            pesquisaCache.get(chavePesquisa);
+
+        if (
+            cachePesquisa &&
+            (Date.now() - cachePesquisa.tempo) < PESQUISA_CACHE_MS
+        ) {
+
+            console.log(
+                "[PESQUISA] Cache:",
+                busca
+            );
+
+            return res.json(cachePesquisa.dados);
+        }
+
+        try {
+
+            const dados =
+                await tmdb(
+                    "/search/movie" +
+                    "?query=" +
+                    encodeURIComponent(busca) +
+                    "&language=pt-BR" +
+                    "&page=1" +
+                    "&include_adult=false"
+                );
+
+            const resultados =
+                (dados.results || [])
+                    .map(converterFilme);
+
+            const resposta = {
+                pagina: dados.page || 1,
+                totalPaginas: dados.total_pages || 0,
+                totalResultados: dados.total_results || 0,
+                resultados
+            };
+
+            pesquisaCache.set(
+                chavePesquisa,
+                {
+                    tempo: Date.now(),
+                    dados: resposta
+                }
+            );
+
+            if (pesquisaCache.size > PESQUISA_CACHE_MAX) {
+
+                const primeira =
+                    pesquisaCache.keys().next().value;
+
+                pesquisaCache.delete(primeira);
+            }
+
+            console.log(
+                "[PESQUISA] TMDB:",
+                busca
+            );
+
+            return res.json(resposta);
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO PESQUISA]",
+                erro
+            );
+
+            return res.status(500).json({
+                erro: erro.message,
+                tipo: erro.name
+            });
+        }
+    }
+);
+
+// ==========================================
+
+/* ==========================================
+   DETALHES COMPLETOS DA SÉRIE
+   ========================================== */
+
+app.get('/api/serie/:id', async (req, res) => {
+
+    try {
+
+        const id = req.params.id;
+
+        if (!id) {
+            return res.status(400).json({
+                sucesso: false,
+                erro: "ID da série não informado"
+            });
+        }
+
+        const dados = await tmdb(
+            '/tv/' +
+            encodeURIComponent(id) +
+            '?language=pt-BR'
+        );
+
+        return res.json({
+            sucesso: true,
+            serie: dados
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO DETALHES SERIE]',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            erro: "Não foi possível carregar os detalhes da série."
+        });
+    }
+
+});
+
+
+// ============================================================
+// LUKAFILMES — NOTIFICAÇÕES AUTOMÁTICAS DE FILMES
+// ============================================================
+
+
+
+// ============================================================
+// LUKAFILMES — NOTIFICAÇÕES AUTOMÁTICAS
+// ROTA PÚBLICA PARA O SINO
+// ============================================================
+app.get("/api/notificacoes/novos-filmes", async (req, res) => {
+    try {
+        /*
+         * LUKAFILMES — NOTIFICAÇÕES
+         * Busca páginas recentes diferentes do TMDB
+         * para não mostrar sempre os mesmos filmes.
+         */
+        const paginas = [1, 2, 3];
+        const paginaEscolhida =
+            paginas[Math.floor(Math.random() * paginas.length)];
+
+        const dados = await tmdb(
+            "/movie/now_playing?language=pt-BR&region=BR&page=" +
+            paginaEscolhida
+        );
+
+        const resultados =
+            (dados.results || [])
+                .filter(f => f && f.id && f.title);
+
+        /*
+         * Embaralha os resultados da página escolhida.
+         */
+        resultados.sort(() => Math.random() - 0.5);
+
+        const filmes = resultados
+            .slice(0, 10)
+            .map(f => ({
+                id: Number(f.id),
+                titulo: f.title,
+                data: f.release_date || "",
+                poster: f.poster_path
+                    ? TMDB_IMAGE + f.poster_path
+                    : ""
+            }));
+
+        res.json({
+            sucesso: true,
+            filmes
+        });
+    } catch (erro) {
+        console.error("[NOTIFICACOES TMDB]", erro);
+        res.status(500).json({
+            sucesso: false,
+            filmes: []
+        });
+    }
+});
+
+// SÉRIES — TMDB
+// ==========================================
+
+
+/* ==========================================================
+   CATÁLOGO INFINITO DE SÉRIES
+   20 POR VEZ — 2020 A 2026 — ATÉ 10.000
+   ========================================================== */
+
+app.get('/api/catalogo-series', async (req, res) => {
+    try {
+
+        const paginaSolicitada = Math.max(
+            1,
+            parseInt(req.query.pagina || '1', 10)
+        );
+
+        const SERIES_POR_PAGINA = 20;
+        const MAX_SERIES = 10000;
+
+        if (
+            paginaSolicitada >
+            Math.ceil(MAX_SERIES / SERIES_POR_PAGINA)
+        ) {
+            return res.json({
+                sucesso: true,
+                series: [],
+                resultados: [],
+                pagina: paginaSolicitada,
+                proximaPagina: false,
+                acabou: true,
+                totalMaximo: MAX_SERIES
+            });
+        }
+
+        /*
+         * Cada página do nosso catálogo começa
+         * na página correspondente do TMDB.
+         *
+         * Se uma série for inválida ou bloqueada,
+         * buscamos a próxima página para completar
+         * os 20 resultados.
+         */
+
+        const vistos = new Set();
+        const seriesValidas = [];
+
+        let paginaTMDB = paginaSolicitada;
+
+        while (
+            seriesValidas.length < SERIES_POR_PAGINA &&
+            paginaTMDB <= 500
+        ) {
+
+            console.log(
+                '[SERIES INFINITAS] TMDB página:',
+                paginaTMDB
+            );
+
+            const endpoint =
+                '/discover/tv' +
+                '?language=pt-BR' +
+                '&sort_by=popularity.desc' +
+                '&first_air_date.gte=2020-01-01' +
+                '&first_air_date.lte=2026-12-31' +
+                '&include_adult=false' +
+                '&vote_count.gte=5' +
+                '&page=' + paginaTMDB;
+
+            const dados =
+                await tmdb(endpoint);
+
+            const resultados =
+                Array.isArray(dados.results)
+                    ? dados.results
+                    : [];
+
+            for (const serie of resultados) {
+
+                if (!serie || !serie.id) {
+                    continue;
+                }
+
+                /*
+                 * Hockey Psychology:
+                 * ID 310518 — removido definitivamente
+                 * do catálogo principal.
+                 */
+                if (String(serie.id) === '310518') {
+                    continue;
+                }
+
+                /*
+                 * Não aceitar séries sem pôster.
+                 */
+                if (!serie.poster_path) {
+                    continue;
+                }
+
+                /*
+                 * Não repetir série.
+                 */
+                if (vistos.has(serie.id)) {
+                    continue;
+                }
+
+                vistos.add(serie.id);
+
+                seriesValidas.push({
+                    id: serie.id,
+
+                    titulo:
+                        serie.name ||
+                        serie.original_name ||
+                        'Sem título',
+
+                    capa:
+                        TMDB_IMAGE +
+                        serie.poster_path,
+
+                    fundo:
+                        serie.backdrop_path
+                            ? 'https://image.tmdb.org/t/p/w1280' +
+                              serie.backdrop_path
+                            : '',
+
+                    nota:
+                        Number(
+                            serie.vote_average || 0
+                        ),
+
+                    votos:
+                        Number(
+                            serie.vote_count || 0
+                        ),
+
+                    ano:
+                        serie.first_air_date
+                            ? serie.first_air_date.substring(0, 4)
+                            : '',
+
+                    sinopse:
+                        serie.overview || ''
+                });
+
+                if (
+                    seriesValidas.length >=
+                    SERIES_POR_PAGINA
+                ) {
+                    break;
+                }
+            }
+
+            if (
+                resultados.length === 0 ||
+                paginaTMDB >=
+                Number(dados.total_pages || paginaTMDB)
+            ) {
+                break;
+            }
+
+            paginaTMDB++;
+        }
+
+        const series =
+            seriesValidas.slice(
+                0,
+                SERIES_POR_PAGINA
+            );
+
+        const acabou =
+            series.length === 0 ||
+            paginaTMDB >= 500;
+
+        return res.json({
+            sucesso: true,
+            series: series,
+            resultados: series,
+            pagina: paginaSolicitada,
+            proximaPagina: !acabou,
+            acabou: acabou,
+            total: series.length,
+            totalMaximo: MAX_SERIES
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO CATALOGO SERIES]',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            series: [],
+            resultados: [],
+            pagina: 1,
+            proximaPagina: false,
+            acabou: true,
+            erro:
+                'Não foi possível carregar as séries.'
+        });
+    }
+});
+
+app.get('/api/series', async (req, res) => {
+    try {
+
+        const tipo = String(req.query.tipo || 'populares');
+
+        let endpoint = '';
+
+        if (tipo === 'avaliadas') {
+
+            endpoint =
+                '/tv/top_rated?language=pt-BR&page=1';
+
+        } else if (tipo === 'lancamentos') {
+
+            endpoint =
+                '/tv/on_the_air?language=pt-BR&page=1';
+
+        } else {
+
+            endpoint =
+                '/tv/popular?language=pt-BR&page=1';
+        }
+
+        const dados = await tmdb(endpoint);
+
+        const series = Array.isArray(dados.results) ? dados.results.map(serie => ({
+                id: serie.id,
+                titulo: serie.name || serie.original_name || 'Sem título',
+                capa: serie.poster_path
+                    ? TMDB_IMAGE + serie.poster_path
+                    : '',
+                fundo: serie.backdrop_path
+                    ? 'https://image.tmdb.org/t/p/w1280' + serie.backdrop_path
+                    : '',
+                nota: serie.vote_average || 0,
+                votos: serie.vote_count || 0,
+                ano: serie.first_air_date
+                    ? serie.first_air_date.substring(0, 4)
+                    : '',
+                sinopse: serie.overview || ''
+            }))
+            : [];
+
+        return res.json({
+            sucesso: true,
+            resultados: series
+        });
+
+    } catch (erro) {
+
+        console.error('[ERRO SERIES TMDB]', erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            resultados: [],
+            erro: 'Não foi possível consultar as séries.'
+        });
+    }
+});
+
+// ==========================================
+// PESQUISAR SÉRIES — TMDB
+// ==========================================
+
+app.get('/api/pesquisar-series', async (req, res) => {
+    try {
+
+        const busca = String(req.query.q || '').trim();
+
+        if (!busca) {
+            return res.json({
+                sucesso: true,
+                resultados: []
+            });
+        }
+
+        const dados = await tmdb(
+            '/search/tv' +
+            '?query=' + encodeURIComponent(busca) +
+            '&language=pt-BR' +
+            '&page=1' +
+            '&include_adult=false'
+        );
+
+        const series = Array.isArray(dados.results) ? dados.results.map(serie => ({
+                id: serie.id,
+                titulo: serie.name || serie.original_name || 'Sem título',
+                capa: serie.poster_path
+                    ? TMDB_IMAGE + serie.poster_path
+                    : '',
+                fundo: serie.backdrop_path
+                    ? 'https://image.tmdb.org/t/p/w1280' + serie.backdrop_path
+                    : '',
+                nota: serie.vote_average || 0,
+                votos: serie.vote_count || 0,
+                ano: serie.first_air_date
+                    ? serie.first_air_date.substring(0, 4)
+                    : '',
+                sinopse: serie.overview || ''
+            }))
+            : [];
+
+        return res.json({
+            sucesso: true,
+            resultados: series
+        });
+
+    } catch (erro) {
+
+        console.error('[ERRO PESQUISA SERIES]', erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            resultados: [],
+            erro: 'Não foi possível pesquisar séries.'
+        });
+    }
+});
+// CATÁLOGO COMPLETO
+// ==========================================
+
+// ==========================================
+// CATÁLOGO COMPLETO — CACHE + PARALELISMO
+// ==========================================
+
+let catalogoCache = null;
+let catalogoAtualizando = false;
+let catalogoUltimaAtualizacao = 0;
+const CATALOGO_CACHE_MS = 10 * 60 * 1000;
+
+async function atualizarCatalogo() {
+    if (catalogoAtualizando) return catalogoCache;
+    catalogoAtualizando = true;
+
+    try {
+        console.log('[CATÁLOGO] Atualizando cache...');
+
+        const requisicoes = [];
+
+        for (let pagina = 1; pagina <= 5; pagina++) {
+            requisicoes.push(
+                tmdb('/movie/popular?language=pt-BR&page=' + pagina)
+            );
+        }
+
+        for (const ano of [2025, 2026]) {
+            for (let pagina = 1; pagina <= 5; pagina++) {
+                requisicoes.push(
+                    tmdb(
+                        '/discover/movie?language=pt-BR' +
+                        '&sort_by=popularity.desc' +
+                        '&primary_release_year=' + ano +
+                        '&page=' + pagina +
+                        '&include_adult=false'
+                    )
+                );
+            }
+        }
+
+        for (const genero of [28, 35, 27, 878, 10749]) {
+            for (let pagina = 1; pagina <= 3; pagina++) {
+                requisicoes.push(
+                    tmdb(
+                        '/discover/movie?language=pt-BR' +
+                        '&with_genres=' + genero +
+                        '&sort_by=popularity.desc' +
+                        '&page=' + pagina +
+                        '&include_adult=false'
+                    )
+                );
+            }
+        }
+
+        const respostas = await Promise.all(requisicoes);
+        const mapa = new Map();
+
+        for (const resposta of respostas) {
+            for (const filme of (resposta.results || [])) {
+                if (filme && filme.id && !mapa.has(filme.id)) {
+                    mapa.set(filme.id, filme);
+                }
+            }
+        }
+
+        const filmes = Array.from(mapa.values()).map(converterFilme);
+
+        catalogoCache = filmes;
+        catalogoUltimaAtualizacao = Date.now();
+
+        console.log('[CATÁLOGO] Cache atualizado:', filmes.length, 'filmes');
+
+        return filmes;
+
+    } catch (erro) {
+        console.error('[ERRO ATUALIZAR CATALOGO]', erro);
+        return catalogoCache;
+
+    } finally {
+        catalogoAtualizando = false;
+    }
+}
+
+
+
+/*
+ * LUKAFILMES — AÇÃO EXCLUSIVA
+ *
+ * Endpoint separado para garantir que a página de Ação
+ * nunca misture filmes de outras categorias.
+ */
+
+
+
+app.get('/api/catalogo-comedia', async (req, res) => {
+    try {
+
+        const paginaSolicitada = Math.max(
+            1,
+            Number(req.query.pagina || 1)
+        );
+
+        const FILMES_POR_PAGINA = 20;
+        const MAX_FILMES = 10000;
+
+        /*
+         * COMÉDIA = TMDB genre_id 35
+         *
+         * Cada página do nosso catálogo corresponde
+         * diretamente a uma página do TMDB.
+         *
+         * 1 -> página 1 de Ação
+         * 2 -> página 2 de Ação
+         * 3 -> página 3 de Ação
+         * ...
+         * até 500 páginas = aproximadamente 10.000 filmes.
+         */
+
+        const MAX_PAGINAS =
+            Math.ceil(
+                MAX_FILMES /
+                FILMES_POR_PAGINA
+            );
+
+        if (paginaSolicitada > MAX_PAGINAS) {
+
+            return res.json({
+                sucesso: true,
+                filmes: [],
+                total: 0,
+                pagina: paginaSolicitada,
+                acabou: true
+            });
+        }
+
+        console.log(
+            '[COMÉDIA EXCLUSIVA] Página:',
+            paginaSolicitada
+        );
+
+        const resposta = await tmdb(
+            '/discover/movie?language=pt-BR' +
+            '&sort_by=popularity.desc' +
+            '&with_genres=28' +
+            '&page=' + paginaSolicitada +
+            '&include_adult=false' +
+            '&vote_count.gte=5'
+        );
+
+        const mapa = new Map();
+
+        /*
+         * Validação FINAL usando o genre_ids original
+         * recebido diretamente do TMDB.
+         */
+        for (
+            const filme of
+            (resposta.results || [])
+        ) {
+
+            if (
+                !filme ||
+                !filme.id
+            ) {
+                continue;
+            }
+
+            if (
+                !Array.isArray(
+                    filme.genre_ids
+                )
+            ) {
+                continue;
+            }
+
+            /*
+             * O filme precisa obrigatoriamente
+             * possuir Ação.
+             */
+            if (
+                !filme.genre_ids.includes(28)
+            ) {
+                continue;
+            }
+
+            const convertido =
+                converterFilme(filme);
+
+            if (!convertido) {
+                continue;
+            }
+
+            const id =
+                String(
+                    convertido.id ||
+                    convertido.tmdb_id ||
+                    filme.id
+                );
+
+            if (!mapa.has(id)) {
+                mapa.set(
+                    id,
+                    convertido
+                );
+            }
+        }
+
+        let filmes =
+            Array.from(
+                mapa.values()
+            );
+
+        filmes =
+            filmes.slice(
+                0,
+                FILMES_POR_PAGINA
+            );
+
+        const acabou =
+            filmes.length === 0 ||
+            paginaSolicitada >= MAX_PAGINAS;
+
+        return res.json({
+            sucesso: true,
+            filmes: filmes,
+            total: filmes.length,
+            pagina: paginaSolicitada,
+            acabou: acabou
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[COMÉDIA EXCLUSIVA] Erro:',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            filmes: [],
+            total: 0,
+            mensagem:
+                'Erro ao carregar filmes de Ação.'
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+app.get('/api/catalogo-acao', async (req, res) => {
+    try {
+
+        const paginaSolicitada = Math.max(
+            1,
+            Number(req.query.pagina || 1)
+        );
+
+        const FILMES_POR_PAGINA = 20;
+        const MAX_FILMES = 10000;
+
+        /*
+         * AÇÃO = TMDB genre_id 28
+         *
+         * Cada página do nosso catálogo corresponde
+         * diretamente a uma página do TMDB.
+         *
+         * 1 -> página 1 de Ação
+         * 2 -> página 2 de Ação
+         * 3 -> página 3 de Ação
+         * ...
+         * até 500 páginas = aproximadamente 10.000 filmes.
+         */
+
+        const MAX_PAGINAS =
+            Math.ceil(
+                MAX_FILMES /
+                FILMES_POR_PAGINA
+            );
+
+        if (paginaSolicitada > MAX_PAGINAS) {
+
+            return res.json({
+                sucesso: true,
+                filmes: [],
+                total: 0,
+                pagina: paginaSolicitada,
+                acabou: true
+            });
+        }
+
+        console.log(
+            '[AÇÃO EXCLUSIVA] Página:',
+            paginaSolicitada
+        );
+
+        const resposta = await tmdb(
+            '/discover/movie?language=pt-BR' +
+            '&sort_by=popularity.desc' +
+            '&with_genres=28' +
+            '&page=' + paginaSolicitada +
+            '&include_adult=false' +
+            '&vote_count.gte=5'
+        );
+
+        const mapa = new Map();
+
+        /*
+         * Validação FINAL usando o genre_ids original
+         * recebido diretamente do TMDB.
+         */
+        for (
+            const filme of
+            (resposta.results || [])
+        ) {
+
+            if (
+                !filme ||
+                !filme.id
+            ) {
+                continue;
+            }
+
+            if (
+                !Array.isArray(
+                    filme.genre_ids
+                )
+            ) {
+                continue;
+            }
+
+            /*
+             * O filme precisa obrigatoriamente
+             * possuir Ação.
+             */
+            if (
+                !filme.genre_ids.includes(28)
+            ) {
+                continue;
+            }
+
+            const convertido =
+                converterFilme(filme);
+
+            if (!convertido) {
+                continue;
+            }
+
+            const id =
+                String(
+                    convertido.id ||
+                    convertido.tmdb_id ||
+                    filme.id
+                );
+
+            if (!mapa.has(id)) {
+                mapa.set(
+                    id,
+                    convertido
+                );
+            }
+        }
+
+        let filmes =
+            Array.from(
+                mapa.values()
+            );
+
+        filmes =
+            filmes.slice(
+                0,
+                FILMES_POR_PAGINA
+            );
+
+        const acabou =
+            filmes.length === 0 ||
+            paginaSolicitada >= MAX_PAGINAS;
+
+        return res.json({
+            sucesso: true,
+            filmes: filmes,
+            total: filmes.length,
+            pagina: paginaSolicitada,
+            acabou: acabou
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[AÇÃO EXCLUSIVA] Erro:',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            filmes: [],
+            total: 0,
+            mensagem:
+                'Erro ao carregar filmes de Ação.'
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+/*
+ * =====================================================
+ * LUKAFILMES — PESQUISA DIRETA DE FILMES
+ * =====================================================
+ *
+ * Pesquisa pelo nome diretamente no TMDB.
+ * Não altera o catálogo normal.
+ */
+app.get('/api/pesquisar-filmes', async (req, res) => {
+    try {
+
+        const termo =
+            String(req.query.q || "").trim();
+
+        const pagina =
+            Math.max(
+                1,
+                Number(req.query.pagina || 1)
+            );
+
+        const categoria =
+            String(req.query.categoria || "")
+                .trim()
+                .toLowerCase();
+
+        if (!termo) {
+            return res.json({
+                sucesso: true,
+                filmes: [],
+                total: 0,
+                pagina: 1,
+                total_paginas: 0,
+                acabou: true
+            });
+        }
+
+        const url =
+            '/search/movie?language=pt-BR' +
+            '&query=' +
+            encodeURIComponent(termo) +
+            '&page=' +
+            pagina +
+            '&include_adult=false';
+
+        console.log(
+            '[BUSCA FILMES] Termo:',
+            termo,
+            '| Página:',
+            pagina
+        );
+
+        const resposta =
+            await tmdb(url);
+
+        let resultados =
+            Array.isArray(resposta.results)
+                ? resposta.results
+                : [];
+
+        /*
+         * Mantém o filtro de categoria quando
+         * a pesquisa estiver dentro de uma categoria.
+         */
+        const mapaCategorias = {
+            acao: 28,
+            aventura: 12,
+            comedia: 35,
+            terror: 27,
+            romance: 10749,
+            fantasia: 14,
+            suspense: 53,
+            drama: 18,
+            "ficcao-cientifica": 878,
+            animacao: 16
+        };
+
+        if (
+            categoria &&
+            mapaCategorias[categoria]
+        ) {
+
+            const generoAlvo =
+                mapaCategorias[categoria];
+
+            resultados =
+                resultados.filter(filme =>
+                    Array.isArray(filme.genre_ids) &&
+                    filme.genre_ids.includes(generoAlvo)
+                );
+        }
+
+        const mapa =
+            new Map();
+
+        for (const filme of resultados) {
+
+            if (!filme || !filme.id) {
+                continue;
+            }
+
+            const convertido =
+                converterFilme(filme);
+
+            if (!convertido) {
+                continue;
+            }
+
+            const id =
+                String(
+                    convertido.id ||
+                    convertido.tmdb_id ||
+                    filme.id
+                );
+
+            if (!mapa.has(id)) {
+                mapa.set(
+                    id,
+                    convertido
+                );
+            }
+        }
+
+        const filmes =
+            Array.from(
+                mapa.values()
+            );
+
+        const totalPaginas =
+            Number(
+                resposta.total_pages || 1
+            );
+
+        return res.json({
+            sucesso: true,
+            filmes,
+            total: Number(
+                resposta.total_results || filmes.length
+            ),
+            pagina,
+            total_paginas: totalPaginas,
+            acabou:
+                pagina >= totalPaginas
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[BUSCA FILMES] Erro:',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            filmes: [],
+            total: 0,
+            mensagem:
+                'Erro ao pesquisar filmes.'
+        });
+    }
+});
+
+app.get('/api/catalogo-filmes', async (req, res) => {
+    try {
+        const paginaSolicitada = Math.max(
+            1,
+            Number(req.query.pagina || 1)
+        );
+
+        /*
+         * LUKAFILMES — FILTRO REAL POR CATEGORIA
+         *
+         * Quando o usuário entra em:
+         * /paginas/filmes.html?categoria=acao
+         *
+         * a categoria é enviada para esta API.
+         */
+        const categoriaSolicitada =
+            String(req.query.categoria || "")
+                .trim()
+                .toLowerCase();
+
+        const ANO_INICIAL = 2000;
+        const ANO_FINAL = 2026;
+
+        const FILMES_POR_PAGINA = 20;
+        const MAX_FILMES = 10000;
+
+        /*
+         * =====================================================
+         * LUKAFILMES — LANÇAMENTOS
+         * =====================================================
+         *
+         * A Home usa:
+         *
+         * /api/catalogo-filmes?pagina=N&lancamentos=1
+         *
+         * Lançamentos NÃO usam a paginação misturada por anos.
+         * Cada página é uma nova página real do TMDB.
+         *
+         * 1 -> 20 lançamentos
+         * 2 -> mais 20
+         * 3 -> mais 20
+         * 4 -> mais 20
+         * ...
+         */
+
+        const modoLancamentos =
+            String(req.query.lancamentos || "")
+                .trim() === "1";
+
+        if (modoLancamentos) {
+
+            const paginaLancamentos =
+                Math.max(
+                    1,
+                    Number(req.query.pagina || 1)
+                );
+
+            console.log(
+                '[LANÇAMENTOS] Página:',
+                paginaLancamentos
+            );
+
+            const urlLancamentos =
+                '/discover/movie?language=pt-BR' +
+                '&sort_by=popularity.desc' +
+                '&primary_release_date.gte=2025-01-01' +
+                '&primary_release_date.lte=2026-12-31' +
+                '&page=' + paginaLancamentos +
+                '&include_adult=false' +
+                '&vote_count.gte=1';
+
+            const respostaLancamentos =
+                await tmdb(urlLancamentos);
+
+            const resultados =
+                Array.isArray(respostaLancamentos.results)
+                    ? respostaLancamentos.results
+                    : [];
+
+            const mapaLancamentos =
+                new Map();
+
+            for (const filme of resultados) {
+
+                if (!filme || !filme.id) {
+                    continue;
+                }
+
+                const convertido =
+                    converterFilme(filme);
+
+                if (!convertido) {
+                    continue;
+                }
+
+                const id =
+                    String(
+                        convertido.id ||
+                        convertido.tmdb_id ||
+                        filme.id
+                    );
+
+                if (!mapaLancamentos.has(id)) {
+                    mapaLancamentos.set(
+                        id,
+                        convertido
+                    );
+                }
+            }
+
+            const filmesLancamentos =
+                Array.from(
+                    mapaLancamentos.values()
+                ).slice(
+                    0,
+                    FILMES_POR_PAGINA
+                );
+
+            const totalPaginas =
+                Number(
+                    respostaLancamentos.total_pages || 1
+                );
+
+            return res.json({
+                sucesso: true,
+                filmes: filmesLancamentos,
+                total: filmesLancamentos.length,
+                pagina: paginaLancamentos,
+                acabou:
+                    paginaLancamentos >= totalPaginas
+            });
+        }
+
+        /*
+         * =====================================================
+         * CATÁLOGO NORMAL
+         * =====================================================
+         *
+         * A partir daqui permanece exatamente a lógica
+         * normal de anos misturados.
+         */
+
+        /*
+         * Cada chamada da nossa API busca somente UMA página
+         * do TMDB.
+         *
+         * Quando a página do nosso site avança:
+         *
+         * 1 -> TMDB 2026 página 1
+         * 2 -> TMDB 2026 página 2
+         * ...
+         * depois passa para 2025,
+         * depois 2024...
+         *
+         * Assim não carregamos 10.000 filmes de uma vez.
+         */
+
+        const paginasPorAno = 500;
+
+        const totalAnos =
+            ANO_FINAL - ANO_INICIAL + 1;
+
+        const indice =
+            paginaSolicitada - 1;
+
+        /*
+         * Mistura os anos:
+         * 1 -> 2026 pág.1
+         * 2 -> 2025 pág.1
+         * ...
+         * 27 -> 2000 pág.1
+         * 28 -> 2026 pág.2
+         */
+
+        const anoOffset =
+            indice % totalAnos;
+
+        const paginaTMDB =
+            Math.floor(
+                indice / totalAnos
+            ) + 1;
+
+        const ano =
+            ANO_FINAL - anoOffset;
+
+        if (
+            paginaTMDB > paginasPorAno
+        ) {
+            return res.json({
+                sucesso: true,
+                filmes: [],
+                total: 0,
+                pagina: paginaSolicitada,
+                acabou: true
+            });
+        }
+
+        console.log(
+            '[FILMES] Carregando página:',
+            paginaSolicitada,
+            '| Ano:',
+            ano,
+            '| TMDB página:',
+            paginaTMDB
+        );
+
+        /*
+         * Consulta base do catálogo.
+         */
+        let urlTMDB =
+            '/discover/movie?language=pt-BR' +
+            '&sort_by=popularity.desc' +
+            '&primary_release_year=' + ano +
+            '&page=' + paginaTMDB +
+            '&include_adult=false' +
+            '&vote_count.gte=5';
+
+        /*
+         * Categorias do catálogo:
+         *
+         * ação             = 28
+         * comédia          = 35
+         * terror           = 27
+         * romance          = 10749
+         * fantasia         = 14
+         * ficção científica= 878
+         * animação         = 16
+         */
+        const mapaCategorias = {
+            acao: "28",
+            aventura: "12",
+            comedia: "35",
+            terror: "27",
+            romance: "10749",
+            fantasia: "14",
+            suspense: "53",
+            drama: "18",
+            "ficcao-cientifica": "878",
+            animacao: "16"
+        };
+
+        if (
+            categoriaSolicitada &&
+            mapaCategorias[categoriaSolicitada]
+        ) {
+            urlTMDB +=
+                '&with_genres=' +
+                mapaCategorias[categoriaSolicitada];
+        }
+
+        const resposta = await tmdb(urlTMDB);
+
+
+        /*
+         * LUKAFILMES — FILTRO DEFINITIVO DA CATEGORIA
+         *
+         * O TMDB recebe with_genres, mas fazemos também
+         * a validação local ANTES de converter os filmes.
+         *
+         * Isso garante que uma página de Ação nunca entregue
+         * Comédia, Terror, Romance etc. sem Ação.
+         */
+
+        let resultadosFiltrados =
+            resposta.results || [];
+
+        if (categoriaSolicitada) {
+
+            const mapaGenerosCategoria = {
+                acao: 28,
+                aventura: 12,
+                comedia: 35,
+                terror: 27,
+                romance: 10749,
+                fantasia: 14,
+                suspense: 53,
+                drama: 18,
+                "ficcao-cientifica": 878,
+                animacao: 16
+            };
+
+            const generoAlvo =
+                mapaGenerosCategoria[categoriaSolicitada];
+
+            if (generoAlvo) {
+
+                resultadosFiltrados =
+                    resultadosFiltrados.filter(filme =>
+                        Array.isArray(filme.genre_ids) &&
+                        filme.genre_ids.includes(generoAlvo)
+                    );
+            }
+        }
+
+
+        const mapa = new Map();
+
+        for (const filme of resultadosFiltrados) {
+
+            if (!filme || !filme.id) {
+                continue;
+            }
+
+            const convertido = converterFilme(filme);
+
+            if (!convertido) {
+                continue;
+            }
+
+            const id = String(
+                convertido.id ||
+                convertido.tmdb_id ||
+                filme.id
+            );
+
+            if (!mapa.has(id)) {
+                mapa.set(id, convertido);
+            }
+        }
+
+        let filmes = Array.from(mapa.values());
+
+        filmes = filmes.slice(0, FILMES_POR_PAGINA);
+
+        const quantidadeAntes =
+            ((paginaSolicitada - 1) * FILMES_POR_PAGINA);
+
+        const totalEstimado =
+            Math.min(
+                MAX_FILMES,
+                quantidadeAntes + filmes.length
+            );
+
+        const acabou =
+            filmes.length === 0 ||
+            totalEstimado >= MAX_FILMES;
+
+        return res.json({
+            sucesso: true,
+            filmes: filmes,
+            total: filmes.length,
+            totalCarregado: totalEstimado,
+            pagina: paginaSolicitada,
+            acabou: acabou,
+            ano: ano
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO CATALOGO FILMES]',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            filmes: [],
+            total: 0,
+            mensagem: 'Não foi possível carregar esta página de filmes.'
+        });
+    }
+});
+
+app.get('/api/catalogo', async (req, res) => {
+    try {
+        const agora = Date.now();
+
+        if (
+            catalogoCache &&
+            (agora - catalogoUltimaAtualizacao) < CATALOGO_CACHE_MS
+        ) {
+            return res.json({
+                sucesso: true,
+                total: catalogoCache.length,
+                filmes: catalogoCache,
+                cache: true
+            });
+        }
+
+        if (catalogoCache) {
+            res.json({
+                sucesso: true,
+                total: catalogoCache.length,
+                filmes: catalogoCache,
+                cache: true
+            });
+
+            atualizarCatalogo();
+            return;
+        }
+
+        const filmes = await atualizarCatalogo();
+
+        if (!filmes) {
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: 'Não foi possível carregar o catálogo.',
+                erro: erro && erro.message ? erro.message : String(erro)
+            });
+        }
+
+        return res.json({
+            sucesso: true,
+            total: filmes.length,
+            filmes,
+            cache: false
+        });
+
+    } catch (erro) {
+        console.error('[ERRO CATALOGO]', erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: 'Não foi possível carregar o catálogo.'
+        });
+    }
+});
+
+// ==========================================
+// DETALHES DO FILME — TMDB
+// ==========================================
+
+app.get('/api/filme/:id', async (req, res) => {
+    try {
+
+        const id = String(req.params.id || '').trim();
+
+        if (!id || !/^\d+$/.test(id)) {
+            return res.status(400).json({
+                sucesso: false,
+                encontrado: false,
+                mensagem: 'ID do filme inválido.'
+            });
+        }
+
+        const filmeTMDB = await tmdb(
+            '/movie/' + encodeURIComponent(id) +
+            '?language=pt-BR'
+        );
+
+        if (!filmeTMDB || !filmeTMDB.id) {
+            return res.status(404).json({
+                sucesso: false,
+                encontrado: false,
+                filme: null,
+                mensagem: 'Filme não encontrado no TMDB.'
+            });
+        }
+
+        const filme = converterFilme(filmeTMDB);
+
+        return res.json({
+            sucesso: true,
+            encontrado: true,
+            filme: filme
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[DETALHES FILME] ERRO:',
+            erro?.message || erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            encontrado: false,
+            filme: null,
+            mensagem: 'Não foi possível carregar os detalhes do filme.'
+        });
+    }
+});
+
+// ==========================================
+// TRAILER DO FILME — TMDB
+// ==========================================
+
+app.get('/api/filme/:id/videos', async (req, res) => {
+    try {
+
+        const id = req.params.id;
+
+        if (!id || !/^\d+$/.test(id)) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: 'ID do filme inválido.'
+            });
+        }
+
+        /*
+         * =====================================================
+         * TRAILER HERO — BUSCA ROBUSTA
+         * =====================================================
+         *
+         * Tentamos mais de um idioma porque muitos filmes
+         * possuem trailer no YouTube, mas o TMDB não devolve
+         * esse vídeo quando consultamos somente pt-BR.
+         *
+         * Ordem:
+         *
+         * 1. pt-BR
+         * 2. en-US
+         * 3. consulta geral
+         *
+         * O catálogo não é alterado.
+         */
+
+        const idiomas = [
+            'pt-BR',
+            'en-US',
+            null
+        ];
+
+        let videos = [];
+
+        for (const idioma of idiomas) {
+
+            try {
+
+                const endpoint =
+                    idioma
+                        ? '/movie/' + id + '/videos?language=' + idioma
+                        : '/movie/' + id + '/videos';
+
+                const resposta =
+                    await tmdb(endpoint);
+
+                const encontrados =
+                    Array.isArray(resposta.results)
+                        ? resposta.results
+                        : [];
+
+                videos.push(...encontrados);
+
+                /*
+                 * Se já encontramos trailers do YouTube,
+                 * não precisamos continuar procurando.
+                 */
+                const temTrailer =
+                    encontrados.some(video =>
+                        video &&
+                        video.site === 'YouTube' &&
+                        video.key &&
+                        String(video.type || '').toLowerCase() === 'trailer'
+                    );
+
+                if (temTrailer) {
+                    break;
+                }
+
+            } catch (erro) {
+
+                console.warn(
+                    '[TRAILER] Falha idioma:',
+                    idioma || 'geral',
+                    '| filme:',
+                    id
+                );
+
+            }
+        }
+
+        /*
+         * Remove vídeos duplicados.
+         */
+        const mapaVideos = new Map();
+
+        for (const video of videos) {
+
+            if (
+                video &&
+                video.site === 'YouTube' &&
+                video.key
+            ) {
+
+                mapaVideos.set(
+                    String(video.key),
+                    video
+                );
+
+            }
+        }
+
+        const youtube =
+            Array.from(mapaVideos.values());
+
+        /*
+         * Primeiro procuramos trailers.
+         */
+        const trailers =
+            youtube.filter(video =>
+                String(video.type || '').toLowerCase() === 'trailer'
+            );
+
+        /*
+         * Depois damos preferência aos oficiais.
+         */
+        const oficiais =
+            trailers.filter(video =>
+                video.official === true
+            );
+
+        /*
+         * Preferência de idioma:
+         * PT > EN > qualquer idioma.
+         */
+        const pt =
+            oficiais.filter(video =>
+                String(video.iso_639_1 || '').toLowerCase() === 'pt'
+            );
+
+        const en =
+            oficiais.filter(video =>
+                String(video.iso_639_1 || '').toLowerCase() === 'en'
+            );
+
+        const ptTrailers =
+            trailers.filter(video =>
+                String(video.iso_639_1 || '').toLowerCase() === 'pt'
+            );
+
+        const enTrailers =
+            trailers.filter(video =>
+                String(video.iso_639_1 || '').toLowerCase() === 'en'
+            );
+
+        const escolhido =
+            pt[0] ||
+            en[0] ||
+            oficiais[0] ||
+            ptTrailers[0] ||
+            enTrailers[0] ||
+            trailers[0] ||
+            youtube[0] ||
+            null;
+
+        if (!escolhido) {
+
+            console.log(
+                '[TRAILER] NÃO ENCONTRADO:',
+                id
+            );
+
+            return res.json({
+                sucesso: true,
+                encontrado: false,
+                trailer: null
+            });
+
+        }
+
+        console.log(
+            '[TRAILER] ENCONTRADO:',
+            id,
+            '|',
+            escolhido.name || '',
+            '|',
+            escolhido.key
+        );
+
+        return res.json({
+
+            sucesso: true,
+
+            encontrado: true,
+
+            trailer: {
+                id: escolhido.id,
+                nome: escolhido.name,
+                chave: escolhido.key,
+                site: escolhido.site,
+                tipo: escolhido.type,
+                oficial: escolhido.official === true,
+                idioma: escolhido.iso_639_1 || null,
+
+                url:
+                    'https://www.youtube.com/watch?v=' +
+                    escolhido.key,
+
+                embed:
+                    'https://www.youtube.com/embed/' +
+                    escolhido.key
+            }
+
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO TRAILER TMDB]',
+            erro
+        );
+
+        return res.status(500).json({
+
+            sucesso: false,
+
+            encontrado: false,
+
+            trailer: null,
+
+            mensagem:
+                'Não foi possível buscar o trailer.'
+
+        });
+
+    }
+});
+
+// ==========================================
+// FILME PARA ASSISTIR — YOUTUBE
+// ==========================================
+
+
+/* LUKAFILMES PLAY 3 YOUTUBE API */
+
+const lukafilmesYoutubeCache = new Map();
+
+app.get('/api/filme/:id/youtube', async (req, res) => {
+    try {
+        const tmdbId = String(req.params.id || '').trim();
+
+        if (!/^\d+$/.test(tmdbId)) {
+            return res.status(400).json({
+                encontrado: false,
+                erro: 'ID TMDB inválido.'
+            });
+        }
+
+        const apiKey = process.env.YOUTUBE_API_KEY;
+
+        if (!apiKey) {
+            return res.status(503).json({
+                encontrado: false,
+                erro: 'YOUTUBE_API_KEY não configurada.'
+            });
+        }
+
+        const cacheKey = tmdbId;
+        const cached = lukafilmesYoutubeCache.get(cacheKey);
+
+        if (cached && cached.expira > Date.now()) {
+            return res.json(cached.dados);
+        }
+
+        const filmeTMDB = await tmdb(
+            '/movie/' + encodeURIComponent(tmdbId) +
+            '?language=pt-BR'
+        );
+
+        if (!filmeTMDB || !filmeTMDB.id) {
+            return res.status(404).json({
+                encontrado: false,
+                erro: 'Filme não encontrado no TMDB.'
+            });
+        }
+
+        const titulo = String(
+            filmeTMDB.title ||
+            filmeTMDB.original_title ||
+            ''
+        ).trim();
+
+        const tituloOriginal = String(
+            filmeTMDB.original_title ||
+            titulo
+        ).trim();
+
+        const ano = filmeTMDB.release_date
+            ? String(filmeTMDB.release_date).slice(0, 4)
+            : '';
+
+        if (!titulo) {
+            return res.json({
+                encontrado: false,
+                erro: 'Título do filme não encontrado.'
+            });
+        }
+
+        /*
+         * PLAY 3 — YOUTUBE
+         *
+         * Faz várias buscas para aumentar a chance de encontrar
+         * conteúdo legitimamente disponível para incorporação.
+         */
+        const consultas = [
+            titulo,
+            titulo + ' ' + ano,
+            titulo + ' trailer',
+            titulo + ' official',
+            tituloOriginal
+        ].filter(Boolean);
+
+        let resultados = [];
+
+        for (const consulta of consultas) {
+
+            const params = new URLSearchParams({
+                part: 'snippet',
+                type: 'video',
+                q: consulta,
+                maxResults: '25',
+                regionCode: 'BR',
+                relevanceLanguage: 'pt',
+                videoEmbeddable: 'true',
+                videoSyndicated: 'true',
+                key: apiKey
+            });
+
+            const resposta = await fetch(
+                'https://www.googleapis.com/youtube/v3/search?' +
+                params.toString()
+            );
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+                console.error(
+                    '[PLAY 3 YOUTUBE API]',
+                    dados?.error?.message || resposta.status
+                );
+
+                return res.status(502).json({
+                    encontrado: false,
+                    erro: 'YouTube Data API não respondeu corretamente.'
+                });
+            }
+
+            if (Array.isArray(dados.items)) {
+                resultados.push(...dados.items);
+            }
+        }
+
+        const vistos = new Set();
+
+        resultados = resultados.filter(item => {
+            const id = item?.id?.videoId;
+
+            if (!id || vistos.has(id)) {
+                return false;
+            }
+
+            vistos.add(id);
+            return true;
+        });
+
+        function pontuar(item) {
+
+            const tituloVideo =
+                String(item?.snippet?.title || '');
+
+            const descricao =
+                String(item?.snippet?.description || '');
+
+            const canal =
+                String(item?.snippet?.channelTitle || '');
+
+            const texto = (
+                tituloVideo + ' ' +
+                descricao + ' ' +
+                canal
+            ).toLowerCase();
+
+            const buscaPT =
+                titulo.toLowerCase();
+
+            const buscaOriginal =
+                tituloOriginal.toLowerCase();
+
+            let pontos = 0;
+
+            if (texto.includes(buscaPT)) {
+                pontos += 60;
+            }
+
+            if (
+                tituloOriginal !== titulo &&
+                texto.includes(buscaOriginal)
+            ) {
+                pontos += 40;
+            }
+
+            if (ano && texto.includes(ano)) {
+                pontos += 20;
+            }
+
+            if (/\btrailer\b/i.test(texto)) {
+                pontos += 35;
+            }
+
+            if (/\bofficial\b/i.test(texto)) {
+                pontos += 30;
+            }
+
+            if (/\boficial\b/i.test(texto)) {
+                pontos += 30;
+            }
+
+            if (/\bteaser\b/i.test(texto)) {
+                pontos += 15;
+            }
+
+            /*
+             * Penaliza resultados que claramente não parecem
+             * relacionados ao título procurado.
+             */
+            if (
+                !texto.includes(buscaPT) &&
+                !texto.includes(buscaOriginal)
+            ) {
+                pontos -= 100;
+            }
+
+            return pontos;
+        }
+
+        resultados.sort(
+            (a, b) => pontuar(b) - pontuar(a)
+        );
+
+        const escolhido = resultados[0];
+
+        if (!escolhido?.id?.videoId) {
+
+            const vazio = {
+                encontrado: false,
+                tmdbId,
+                titulo,
+                ano,
+                erro: 'Nenhum vídeo incorporável encontrado.'
+            };
+
+            lukafilmesYoutubeCache.set(cacheKey, {
+                dados: vazio,
+                expira: Date.now() + 5 * 60 * 1000
+            });
+
+            return res.json(vazio);
+        }
+
+        const videoId =
+            escolhido.id.videoId;
+
+        const resultado = {
+            encontrado: true,
+            tmdbId,
+            titulo,
+            ano,
+            videoId,
+            tituloYouTube:
+                escolhido.snippet?.title || '',
+            canal:
+                escolhido.snippet?.channelTitle || '',
+            embedUrl:
+                'https://www.youtube-nocookie.com/embed/' +
+                encodeURIComponent(videoId) +
+                '?rel=0&modestbranding=1'
+        };
+
+        console.log(
+            '[PLAY 3 YOUTUBE] ENCONTRADO:',
+            titulo,
+            '=>',
+            videoId,
+            '|',
+            resultado.tituloYouTube
+        );
+
+        lukafilmesYoutubeCache.set(cacheKey, {
+            dados: resultado,
+            expira: Date.now() + 6 * 60 * 60 * 1000
+        });
+
+        return res.json(resultado);
+
+    } catch (erro) {
+
+        console.error(
+            '[PLAY 3 YOUTUBE] ERRO:',
+            erro?.message || erro
+        );
+
+        return res.status(500).json({
+            encontrado: false,
+            erro: 'Erro interno ao consultar o YouTube.'
+        });
+    }
+});
+app.get('/api/filme/:id/assistir', async (req, res) => {
+
+    try {
+
+        const id = req.params.id;
+
+        if (!id || !/^\d+$/.test(id)) {
+
+            return res.status(400).json({
+                sucesso: false,
+                encontrado: false,
+                mensagem: 'ID do filme inválido.'
+            });
+
+        }
+
+        /*
+         * Busca os dados do filme no TMDB.
+         * A partir deles poderemos procurar uma fonte
+         * autorizada para reprodução/incorporação.
+         */
+
+        const filme = await tmdb(
+            '/movie/' + id + '?language=pt-BR'
+        );
+
+        if (!filme || !filme.id) {
+
+            return res.json({
+                sucesso: true,
+                encontrado: false,
+                filme: null
+            });
+
+        }
+
+        return res.json({
+
+            sucesso: true,
+
+            encontrado: false,
+
+            mensagem:
+                'Nenhum filme completo autorizado foi encontrado automaticamente.',
+
+            filme: {
+                id: filme.id,
+                titulo: filme.title || '',
+                ano:
+                    filme.release_date
+                        ? filme.release_date.substring(0, 4)
+                        : '',
+                sinopse: filme.overview || ''
+            }
+
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO FILME ASSISTIR]',
+            erro
+        );
+
+        return res.status(500).json({
+
+            sucesso: false,
+
+            encontrado: false,
+
+            mensagem:
+                'Não foi possível buscar o filme.'
+
+        });
+
+    }
+
+});
+
+// ==========================================
+const linksPorIdTMDB = {
+    "157336": "https://www.megaseriehd.site/series/interestelar-2024/temporada-01/episodio-01",
+    "465086": "https://www.megaseriehd.site/series/o-grito-2020/temporada-01/episodio-01",
+    "27205": "https://www.megaseriehd.site/series/a-origem-2010/temporada-01/episodio-01",
+    "11238": "https://www.megaseriehd.site/series/aladdin-e-os-40-ladroes-1996/temporada-01/episodio-01",
+    "812": "https://www.megaseriehd.site/series/aladdin-1992/temporada-01/episodio-01",
+    "15969": "https://www.megaseriehd.site/series/aladdin-o-retorno-de-jafar-1994/temporada-01/episodio-01",
+    "24428": "https://www.megaseriehd.site/series/os-vingadores-the-avengers-2012/temporada-01/episodio-01",
+    "420817": "https://www.megaseriehd.site/series/aladdin-2019-l-/temporada-01/episodio-01",
+    "713704": "https://www.megaseriehd.site/series/a-morte-do-demonio-a-ascensao-2023/temporada-01/episodio-01",
+    "83533": "https://www.megaseriehd.site/series/avatar-fogo-e-cinzas-2025/temporada-01/episodio-01"
+};
+// LINK DE ORIGEM DO FILME
+// ==========================================
+
+
+/* ==========================================================
+   LUKAFILMES — PLAY 1 XTREAM
+   Resolve filme TMDB -> VOD Xtream
+   ========================================================== */
+
+
+app.get('/api/xtream/filme/:id', async (req, res) => {
+
+    try {
+
+        const tmdbId =
+            String(req.params.id || '').trim();
+
+        if (!/^\d+$/.test(tmdbId)) {
+            return res.status(400).json({
+                sucesso: false,
+                encontrado: false,
+                mensagem: 'ID TMDB inválido.'
+            });
+        }
+
+        const filmeTMDB =
+            await tmdb(
+                '/movie/' +
+                tmdbId +
+                '?language=pt-BR'
+            );
+
+        if (!filmeTMDB || !filmeTMDB.id) {
+            return res.status(404).json({
+                sucesso: false,
+                encontrado: false,
+                mensagem: 'Filme não encontrado no TMDB.'
+            });
+        }
+
+        const tituloTMDB =
+            normalizarTituloXtream(
+                filmeTMDB.title || ''
+            );
+
+        const anoTMDB =
+            filmeTMDB.release_date
+                ? String(filmeTMDB.release_date).substring(0, 4)
+                : '';
+
+        if (!tituloTMDB) {
+            return res.status(404).json({
+                sucesso: false,
+                encontrado: false,
+                mensagem: 'Título do filme não encontrado.'
+            });
+        }
+
+        const filmesXtream =
+            await xtreamFilmes();
+
+        let melhor = null;
+        let melhorPontuacao = 0;
+
+        for (const item of filmesXtream) {
+
+            const nomeXtream =
+                String(item.name || '').trim();
+
+            if (!nomeXtream || !item.stream_id) {
+                continue;
+            }
+
+            const tituloXtream =
+                normalizarTituloXtream(
+                    nomeXtream
+                );
+
+            if (!tituloXtream) {
+                continue;
+            }
+
+            let pontuacao = 0;
+
+            if (tituloXtream === tituloTMDB) {
+                pontuacao = 100;
+            }
+            else if (
+                tituloXtream.includes(tituloTMDB) ||
+                tituloTMDB.includes(tituloXtream)
+            ) {
+                pontuacao = 70;
+            }
+            else {
+                const palavrasTMDB =
+                    tituloTMDB.split(' ')
+                        .filter(Boolean);
+
+                const palavrasXtream =
+                    tituloXtream.split(' ')
+                        .filter(Boolean);
+
+                const comuns =
+                    palavrasTMDB.filter(
+                        palavra =>
+                            palavrasXtream.includes(
+                                palavra
+                            )
+                    ).length;
+
+                if (
+                    palavrasTMDB.length &&
+                    comuns >= Math.max(
+                        2,
+                        Math.ceil(
+                            palavrasTMDB.length * 0.7
+                        )
+                    )
+                ) {
+                    pontuacao =
+                        40 +
+                        (
+                            comuns /
+                            palavrasTMDB.length
+                        ) * 30;
+                }
+            }
+
+            const anoTexto =
+                nomeXtream.match(
+                    /\b(19|20)\d{2}\b/
+                );
+
+            const anoXtream =
+                anoTexto
+                    ? anoTexto[0]
+                    : '';
+
+            if (
+                anoTMDB &&
+                anoXtream &&
+                anoTMDB === anoXtream
+            ) {
+                pontuacao += 20;
+            }
+
+            if (pontuacao > melhorPontuacao) {
+                melhorPontuacao = pontuacao;
+                melhor = item;
+            }
+        }
+
+        if (!melhor || melhorPontuacao < 70) {
+
+            console.log(
+                '[XTREAM] Filme não encontrado:',
+                filmeTMDB.title,
+                anoTMDB
+            );
+
+            return res.status(404).json({
+                sucesso: false,
+                encontrado: false,
+                titulo: filmeTMDB.title || '',
+                ano: anoTMDB,
+                mensagem:
+                    'Filme não encontrado no catálogo Xtream.'
+            });
+        }
+
+        const dns =
+            String(process.env.XTREAM_DNS || '')
+                .replace(/\/+$/, '');
+
+        const username =
+            String(
+                process.env.XTREAM_USERNAME || ''
+            ).trim();
+
+        const password =
+            String(
+                process.env.XTREAM_PASSWORD || ''
+            ).trim();
+
+        const extensao =
+            String(
+                melhor.container_extension || 'mp4'
+            ).replace(/^\./, '');
+
+        const streamUrl =
+            dns +
+            '/movie/' +
+            encodeURIComponent(username) +
+            '/' +
+            encodeURIComponent(password) +
+            '/' +
+            encodeURIComponent(
+                String(melhor.stream_id)
+            ) +
+            '.' +
+            extensao;
+
+        console.log(
+            '[XTREAM] Filme encontrado:',
+            filmeTMDB.title,
+            '->',
+            melhor.name,
+            'stream_id:',
+            melhor.stream_id
+        );
+
+        return res.json({
+            sucesso: true,
+            encontrado: true,
+            titulo: filmeTMDB.title || '',
+            ano: anoTMDB,
+            stream_id: melhor.stream_id,
+            extensao: extensao,
+            url: streamUrl
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[XTREAM] Erro ao localizar filme:',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            encontrado: false,
+            mensagem:
+                'Não foi possível localizar o filme no Xtream.'
+        });
+    }
+});
+
+app.get('/api/filme/:id/origem', async (req, res) => {
+
+    try {
+
+        const id = req.params.id;
+
+        if (!id || !/^\d+$/.test(id)) {
+            return res.json({
+                sucesso: false,
+                encontrado: false
+            });
+        }
+
+        const dados = await tmdb(
+            '/movie/' + id + '?language=pt-BR'
+        );
+
+        const titulo = String(
+            dados.title || ''
+        ).toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+
+        let link =
+        linksPorIdTMDB[id] ||
+        null;
+
+        if (!link) {
+
+        for (const chave of Object.keys(linksFilmes)) {
+
+            const chaveNormalizada = String(chave)
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+
+            if (
+                titulo === chaveNormalizada ||
+                titulo.includes(chaveNormalizada) ||
+                chaveNormalizada.includes(titulo)
+            ) {
+                link = linksFilmes[chave];
+                break;
+            }
+        }
+    }
+    if (!link) {
+
+            return res.json({
+                sucesso: true,
+                encontrado: false
+            });
+
+        }
+
+        return res.json({
+            sucesso: true,
+            encontrado: true,
+            titulo: dados.title,
+            link
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO LINK ORIGEM]',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            encontrado: false
+        });
+    }
+});
+
+// ==========================================
+// ADMIN — LISTAR USUÁRIOS
+// ==========================================
+app.get("/api/admin/usuarios", async (req, res) => {
+    try {
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const lista = usuarios.map(u => ({
+            id: u.id,
+            usuario: u.usuario,
+            tipo: u.tipo || "usuario",
+            status: u.status || "ativo",
+            validade: u.validade || null,
+            criado_em: u.criado_em || null,
+            online: Boolean(u.online)
+        }));
+
+        return res.json({
+            sucesso: true,
+            usuarios: lista,
+            total: lista.length
+        });
+
+    } catch (erro) {
+        console.error("[ERRO LISTAR USUARIOS]", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao carregar usuários.",
+            usuarios: []
+        });
+    }
+});
+
+// ADMIN — CRIAR USUÁRIO
+// ==========================================
+
+app.post(
+    "/api/admin/usuarios",
+    async (req, res) => {
+
+        try {
+
+            if (
+                !req.session.usuario ||
+                req.session.usuario.tipo !== "admin"
+            ) {
+
+                return res.status(403).json({
+                    sucesso: false,
+                    mensagem: "Acesso negado."
+                });
+
+            }
+
+            const usuario =
+                String(req.body.usuario || "").trim();
+
+            const senha =
+                String(req.body.senha || "");
+
+            const dias =
+                Number(req.body.dias);
+
+            if (
+                !usuario ||
+                !senha ||
+                !Number.isInteger(dias) ||
+                dias < 1
+            ) {
+
+                return res.json({
+                    sucesso: false,
+                    mensagem:
+                        "Preencha usuário, senha e dias corretamente."
+                });
+
+            }
+
+            const usuarios =
+                await carregarUsuarios();
+
+            const existente =
+                usuarios.find(
+                    u =>
+                        String(u.usuario || "").toLowerCase() ===
+                        usuario.toLowerCase()
+                );
+
+            if (existente) {
+
+                return res.json({
+                    sucesso: false,
+                    mensagem:
+                        "Esse usuário já existe."
+                });
+
+            }
+
+            const senhaHash =
+                await bcrypt.hash(
+                    senha,
+                    12
+                );
+
+            const validade =
+                new Date(
+                    Date.now() +
+                    dias *
+                    24 *
+                    60 *
+                    60 *
+                    1000
+                );
+
+            const novoUsuario = {
+
+                id: proximoId(usuarios),
+
+                usuario,
+
+                senha: senhaHash,
+
+                status: "ativo",
+
+                tipo: "usuario",
+
+                validade:
+                    validade.toISOString(),
+
+                criado_em:
+                    new Date().toISOString()
+
+            };
+
+            usuarios.push(novoUsuario);
+
+            await salvarUsuarios(usuarios);
+
+            console.log(
+                "[ADMIN] Usuário criado:",
+                usuario
+            );
+
+            return res.json({
+
+                sucesso: true,
+
+                mensagem:
+                    "Usuário criado com sucesso."
+
+            });
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO CRIAR USUARIO]",
+                erro
+            );
+
+            return res.status(500).json({
+
+                sucesso: false,
+
+                mensagem:
+                    "Erro interno ao criar usuário."
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// ADMIN — CRIAR TESTE
+// ==========================================
+
+app.post("/api/admin/usuarios/teste", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+
+        }
+
+        const usuario =
+            String(req.body.usuario || "").trim();
+
+        const senha =
+            String(req.body.senha || "");
+
+        const horas =
+            Number(req.body.horas ?? req.body.dias);
+
+        const valor =
+            Number(req.body.valor || 0);
+
+        const telefone =
+            String(req.body.telefone || "").trim();
+
+        if (
+            !usuario ||
+            !senha ||
+            !Number.isInteger(horas) ||
+            horas < 1 ||
+            !Number.isFinite(valor) ||
+            valor < 0
+        ) {
+
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Preencha os dados corretamente."
+            });
+
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const existente =
+            usuarios.find(
+                u =>
+                    String(u.usuario || "").trim().toLowerCase() ===
+                    usuario.toLowerCase()
+            );
+
+        if (existente) {
+
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse usuário já existe."
+            });
+
+        }
+
+        const senhaHash =
+            await bcrypt.hash(
+                senha,
+                12
+            );
+
+        const validade =
+            new Date(
+                Date.now() +
+                horas *
+                60 *
+                60 *
+                1000
+            );
+
+        const novoTeste = {
+
+            id: proximoId(usuarios),
+
+            usuario,
+
+            senha: senhaHash,
+
+            status: "ativo",
+
+            tipo: "teste",
+
+            validade:
+                validade.toISOString(),
+
+            criado_em:
+                new Date().toISOString(),
+
+            valor,
+
+            telefone,
+
+            online: false
+
+        };
+
+        usuarios.push(novoTeste);
+
+        await salvarUsuarios(usuarios);
+
+        console.log(
+            "[ADMIN] Teste criado:",
+            usuario
+        );
+
+        return res.json({
+
+            sucesso: true,
+
+            mensagem:
+                "Teste criado com sucesso.",
+
+            usuario,
+
+            tipo: "teste",
+
+            validade:
+                validade.toISOString(),
+
+            valor,
+
+            telefone
+
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO CRIAR TESTE]",
+            erro
+        );
+
+        return res.status(500).json({
+
+            sucesso: false,
+
+            mensagem:
+                "Erro interno ao criar teste."
+
+        });
+
+    }
+
+});
+
+// ==========================================
+/*
+==========================================
+ADMIN — EXCLUIR USUÁRIO
+==========================================
+*/
+
+app.post("/api/admin/usuarios/excluir", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+
+        }
+
+        const id = Number(req.body.id);
+
+        if (!Number.isInteger(id) || id < 1) {
+
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "ID do usuário inválido."
+            });
+
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const usuario = usuarios.find(
+            u => Number(u.id) === id
+        );
+
+        if (!usuario) {
+
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Usuário não encontrado."
+            });
+
+        }
+
+        if (usuario.tipo === "admin") {
+
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "O administrador não pode ser excluído."
+            });
+
+        }
+
+        const novosUsuarios = usuarios.filter(
+            u => Number(u.id) !== id
+        );
+
+        await salvarUsuarios(novosUsuarios);
+
+        console.log(
+            "[ADMIN] Usuário excluído:",
+            usuario.usuario
+        );
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Usuário excluído com sucesso."
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO EXCLUIR USUARIO]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao excluir usuário."
+        });
+
+    }
+
+});
+
+// ==========================================
+// ADMIN — EDITAR USUÁRIO
+// ==========================================
+
+// ==========================================
+// ==========================================
+
+app.post("/api/admin/usuarios/editar", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.body.id);
+
+        const usuario =
+            String(req.body.usuario ?? "").trim();
+
+        const senha =
+            String(req.body.senha ?? "");
+
+        const tipo =
+            String(req.body.tipo ?? "usuario")
+                .trim()
+                .toLowerCase();
+
+        if (
+            !Number.isInteger(id) ||
+            id < 1
+        ) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "ID do usuário inválido."
+            });
+        }
+
+        if (!usuario) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Informe um nome de usuário."
+            });
+        }
+
+        if (!["usuario", "teste", "revendedor", "admin"].includes(tipo)) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Tipo de usuário inválido."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const existente = usuarios.find(u =>
+            String(u.usuario).toLowerCase() === usuario.toLowerCase() &&
+            Number(u.id) !== id
+        );
+
+        if (existente) {
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse nome de usuário já está sendo usado."
+            });
+        }
+
+        const indice = usuarios.findIndex(
+            u => Number(u.id) === id
+        );
+
+        if (indice === -1) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        if (senha.trim()) {
+
+            if (senha.length < 4) {
+                return res.status(400).json({
+                    sucesso: false,
+                    mensagem: "A senha precisa ter pelo menos 4 caracteres."
+                });
+            }
+
+            const senhaHash =
+                await bcrypt.hash(senha, 12);
+
+            usuarios[indice].usuario = usuario;
+            usuarios[indice].senha = senhaHash;
+            usuarios[indice].tipo = tipo;
+
+        } else {
+
+            usuarios[indice].usuario = usuario;
+            usuarios[indice].tipo = tipo;
+
+        }
+
+        await salvarUsuarios(usuarios);
+
+        if (
+            Number(req.session.usuario.id) === id
+        ) {
+
+            req.session.usuario.usuario = usuario;
+            req.session.usuario.tipo = tipo;
+
+            req.session.save(() => {});
+        }
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Usuário atualizado com sucesso.",
+            usuario: {
+                id,
+                usuario,
+                tipo
+            }
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO EDITAR USUARIO]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao editar usuário."
+        });
+
+    }
+
+});
+
+// ==========================================
+// ADMIN — SUSPENDER / ATIVAR USUÁRIO
+// ==========================================
+// ==========================================
+// ==========================================
+
+app.post("/api/admin/usuarios/status", async (req, res) => {
+    try {
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const id = Number(req.body.id);
+        const status = String(req.body.status || "").trim();
+
+        if (
+            !Number.isInteger(id) ||
+            id < 1 ||
+            !["ativo", "suspenso"].includes(status)
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Dados inválidos."
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const indice = usuarios.findIndex(
+            u => Number(u.id) === id
+        );
+
+        if (indice === -1) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        usuarios[indice].status = status;
+
+        await salvarUsuarios(usuarios);
+        return res.json({
+            sucesso: true,
+            mensagem:
+                status === "ativo"
+                    ? "Usuário ativado com sucesso."
+                    : "Usuário suspenso com sucesso."
+        });
+
+    } catch (erro) {
+        console.error("[ERRO STATUS USUARIO]", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao alterar status."
+        });
+    }
+});
+
+// ==========================================
+// ADMIN — RENOVAR USUÁRIO
+// ==========================================
+
+app.post("/api/admin/revendedores", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const usuario =
+            String(req.body.usuario || "").trim();
+
+        const senha =
+            String(req.body.senha || "");
+
+        const dias =
+            Number(req.body.dias);
+
+        const limite =
+            Number(req.body.limite_conexoes);
+
+        if (
+            !usuario ||
+            !senha ||
+            !Number.isInteger(dias) ||
+            dias < 1 ||
+            !Number.isInteger(limite) ||
+            limite < 1
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem:
+                    "Preencha usuário, senha, dias e limite corretamente."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const existente =
+            usuarios.find(
+                u =>
+                    String(u.usuario || "").toLowerCase() ===
+                    usuario.toLowerCase()
+            );
+
+        if (existente) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Esse usuário já existe."
+            });
+        }
+
+        const senhaHash =
+            await bcrypt.hash(senha, 12);
+
+        const validade =
+            new Date(
+                Date.now() +
+                dias *
+                24 *
+                60 *
+                60 *
+                1000
+            );
+
+        const novoRevendedor = {
+
+            id: proximoId(usuarios),
+
+            usuario,
+
+            senha: senhaHash,
+
+            status: "ativo",
+
+            tipo: "revendedor",
+
+            validade:
+                validade.toISOString(),
+
+            criado_em:
+                new Date().toISOString(),
+
+            limite_conexoes:
+                limite,
+
+            conexoes_utilizadas:
+                0,
+
+            revendedor_id:
+                null
+        };
+
+        usuarios.push(novoRevendedor);
+
+        await salvarUsuarios(usuarios);
+
+        console.log(
+            "[ADMIN] Revendedor criado:",
+            usuario,
+            "limite:",
+            limite
+        );
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Revendedor criado com sucesso.",
+            usuario: {
+                id: novoRevendedor.id,
+                usuario: novoRevendedor.usuario,
+                tipo: novoRevendedor.tipo,
+                limite_conexoes: novoRevendedor.limite_conexoes
+            }
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO CRIAR REVENDEDOR]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao criar revendedor."
+        });
+    }
+});
+
+
+// ==========================================
+// REVENDEDOR — CRIAR CLIENTE
+// ==========================================
+
+app.post("/api/revendedor/clientes", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso permitido somente para revendedores."
+            });
+        }
+
+        const revendedorId =
+            Number(req.session.usuario.id);
+
+        const usuario =
+            String(req.body.usuario || "").trim();
+
+        const senha =
+            String(req.body.senha || "");
+
+        const dias =
+            Number(req.body.dias);
+
+        if (
+            !usuario ||
+            !senha ||
+            !Number.isInteger(dias) ||
+            dias < 1
+        ) {
+            return res.json({
+                sucesso: false,
+                mensagem:
+                    "Preencha usuário, senha e dias corretamente."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const revendedor =
+            usuarios.find(
+                u =>
+                    Number(u.id) === revendedorId &&
+                    u.tipo === "revendedor"
+            );
+
+        if (!revendedor) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Revendedor não encontrado."
+            });
+        }
+
+        const limite =
+            Number(revendedor.limite_conexoes) || 0;
+
+        const clientes =
+            usuarios.filter(
+                u =>
+                    Number(u.revendedor_id) === revendedorId
+            );
+
+        if (limite > 0 && clientes.length >= limite) {
+            return res.json({
+                sucesso: false,
+                mensagem:
+                    "Você atingiu o limite de clientes da sua conta."
+            });
+        }
+
+        const existente =
+            usuarios.find(
+                u =>
+                    String(u.usuario || "").toLowerCase() ===
+                    usuario.toLowerCase()
+            );
+
+        if (existente) {
+            return res.json({
+                sucesso: false,
+                mensagem: "Esse usuário já existe."
+            });
+        }
+
+        const senhaHash =
+            await bcrypt.hash(senha, 12);
+
+        const validade =
+            new Date(
+                Date.now() +
+                dias *
+                24 *
+                60 *
+                60 *
+                1000
+            );
+
+        const novoCliente = {
+
+            id: proximoId(usuarios),
+
+            usuario,
+
+            senha: senhaHash,
+
+            status: "ativo",
+
+            tipo: "usuario",
+
+            validade:
+                validade.toISOString(),
+
+            criado_em:
+                new Date().toISOString(),
+
+            limite_conexoes:
+                0,
+
+            conexoes_utilizadas:
+                0,
+
+            revendedor_id:
+                revendedorId
+        };
+
+        usuarios.push(novoCliente);
+
+        await salvarUsuarios(usuarios);
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Cliente criado com sucesso."
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO REVENDEDOR CRIAR CLIENTE]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao criar cliente."
+        });
+    }
+});
+
+
+// ==========================================
+// REVENDEDOR — LISTAR CLIENTES
+// ==========================================
+
+
+app.get("/api/revendedor/clientes", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const revendedorId =
+            Number(req.session.usuario.id);
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const revendedor =
+            usuarios.find(
+                u =>
+                    Number(u.id) === revendedorId &&
+                    u.tipo === "revendedor"
+            );
+
+        if (!revendedor) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Revendedor não encontrado."
+            });
+        }
+
+        const agora = Date.now();
+
+        const clientes =
+            usuarios
+                .filter(
+                    u =>
+                        Number(u.revendedor_id) === revendedorId
+                )
+                .map(u => {
+                    const presenca =
+                        LUKA_PRESENCA_ONLINE_2026.get(Number(u.id));
+
+                    const lastSeen =
+                        presenca
+                            ? Number(presenca.last_seen || 0)
+                            : 0;
+
+                    const online =
+                        lastSeen > 0 &&
+                        (agora - lastSeen) <= 45000 &&
+                        u.status === "ativo";
+
+                    return {
+                        id: u.id,
+                        usuario: u.usuario,
+                        status: u.status,
+                        tipo: u.tipo,
+                        validade: u.validade,
+                        criado_em: u.criado_em,
+                        online,
+                        last_seen: lastSeen
+                    };
+                });
+
+        return res.json({
+            sucesso: true,
+            limite: Number(revendedor.limite_conexoes) || 0,
+            utilizados: clientes.length,
+            clientes
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO LISTAR CLIENTES REVENDEDOR]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno."
+        });
+    }
+});
+
+
+// ==========================================
+// REVENDEDOR — EU
+// ==========================================
+
+app.get("/api/revendedor/eu", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const revendedor =
+            usuarios.find(
+                u =>
+                    Number(u.id) ===
+                    Number(req.session.usuario.id)
+            );
+
+        if (!revendedor) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Revendedor não encontrado."
+            });
+        }
+
+        return res.json({
+            sucesso: true,
+            usuario: {
+                id: revendedor.id,
+                usuario: revendedor.usuario,
+                status: revendedor.status,
+                validade: revendedor.validade,
+                limite_conexoes:
+                    Number(revendedor.limite_conexoes) || 0
+            }
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO REVENDEDOR EU]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno."
+        });
+    }
+});
+
+// ==========================================
+// REVENDEDOR — EDITAR CLIENTE
+// ==========================================
+
+app.post("/api/revendedor/clientes/editar", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const revendedorId =
+            Number(req.session.usuario.id);
+
+        const id =
+            Number(req.body.id);
+
+        const usuario =
+            String(req.body.usuario || "").trim();
+
+        const senha =
+            String(req.body.senha || "");
+
+        if (!Number.isInteger(id) || id < 1) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "ID inválido."
+            });
+        }
+
+        if (!usuario) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Informe o usuário."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const indice =
+            usuarios.findIndex(
+                u =>
+                    Number(u.id) === id &&
+                    Number(u.revendedor_id) === revendedorId
+            );
+
+        if (indice === -1) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Cliente não encontrado."
+            });
+        }
+
+        const outroUsuario =
+            usuarios.find(
+                u =>
+                    String(u.usuario || "").toLowerCase() ===
+                    usuario.toLowerCase() &&
+                    Number(u.id) !== id
+            );
+
+        if (outroUsuario) {
+            return res.status(409).json({
+                sucesso: false,
+                mensagem: "Esse usuário já existe."
+            });
+        }
+
+        usuarios[indice].usuario = usuario;
+
+        if (senha.trim()) {
+
+            if (senha.length < 4) {
+                return res.status(400).json({
+                    sucesso: false,
+                    mensagem:
+                        "A senha precisa ter pelo menos 4 caracteres."
+                });
+            }
+
+            usuarios[indice].senha =
+                await bcrypt.hash(senha, 12);
+        }
+
+        await salvarUsuarios(usuarios);
+
+        console.log(
+            "[REVENDEDOR] Cliente editado:",
+            usuario
+        );
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Cliente atualizado com sucesso."
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO REVENDEDOR EDITAR]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao editar cliente."
+        });
+    }
+});
+
+
+// ==========================================
+// REVENDEDOR — SUSPENDER / ATIVAR CLIENTE
+// ==========================================
+
+app.post("/api/revendedor/clientes/status", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const revendedorId =
+            Number(req.session.usuario.id);
+
+        const id =
+            Number(req.body.id);
+
+        const status =
+            String(req.body.status || "").trim();
+
+        if (
+            !Number.isInteger(id) ||
+            id < 1 ||
+            !["ativo", "suspenso"].includes(status)
+        ) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "Dados inválidos."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const indice =
+            usuarios.findIndex(
+                u =>
+                    Number(u.id) === id &&
+                    Number(u.revendedor_id) === revendedorId
+            );
+
+        if (indice === -1) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Cliente não encontrado."
+            });
+        }
+
+        usuarios[indice].status = status;
+
+        await salvarUsuarios(usuarios);
+
+        console.log(
+            "[REVENDEDOR] Status alterado:",
+            usuarios[indice].usuario,
+            status
+        );
+
+        return res.json({
+            sucesso: true,
+            mensagem:
+                status === "ativo"
+                    ? "Cliente ativado com sucesso."
+                    : "Cliente suspenso com sucesso."
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO REVENDEDOR STATUS]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao alterar status."
+        });
+    }
+});
+
+
+// ==========================================
+// REVENDEDOR — EXCLUIR CLIENTE
+// ==========================================
+
+app.post("/api/revendedor/clientes/excluir", async (req, res) => {
+
+    try {
+
+        if (
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "revendedor"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        const revendedorId =
+            Number(req.session.usuario.id);
+
+        const id =
+            Number(req.body.id);
+
+        if (!Number.isInteger(id) || id < 1) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: "ID inválido."
+            });
+        }
+
+        const usuarios =
+            await carregarUsuarios();
+
+        const cliente =
+            usuarios.find(
+                u =>
+                    Number(u.id) === id &&
+                    Number(u.revendedor_id) === revendedorId
+            );
+
+        if (!cliente) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: "Cliente não encontrado."
+            });
+        }
+
+        const novosUsuarios =
+            usuarios.filter(
+                u => Number(u.id) !== id
+            );
+
+        await salvarUsuarios(novosUsuarios);
+
+        console.log(
+            "[REVENDEDOR] Cliente excluído:",
+            cliente.usuario
+        );
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Cliente excluído com sucesso."
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[ERRO REVENDEDOR EXCLUIR]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro interno ao excluir cliente."
+        });
+    }
+});
+
+
+// ==========================================
+// REVENDEDOR — RENOVAR CLIENTE
+// ==========================================
+
+app.get(
+    "/api/admin/usuarios",
+    async (req, res) => {
+
+        try {
+
+            if (
+                !req.session.usuario ||
+                req.session.usuario.tipo !== "admin"
+            ) {
+
+                return res.status(403).json({
+
+                    sucesso: false,
+
+                    mensagem:
+                        "Acesso negado."
+
+                });
+
+            }
+
+            const usuarios =
+                await carregarUsuarios();
+
+            const usuariosLista =
+                usuarios
+                    .map(u => ({
+                        id: u.id,
+                        usuario: u.usuario,
+                        status: u.status,
+                        tipo: u.tipo,
+                        criado_em: u.criado_em,
+                        validade: u.validade,
+                        limite_conexoes: Number(u.limite_conexoes) || 0,
+                        conexoes_utilizadas: Number(u.conexoes_utilizadas) || 0,
+                        revendedor_id: u.revendedor_id || null
+                    }))
+                    .sort(
+                        (a, b) =>
+                            Number(b.id) - Number(a.id)
+                    );
+            return res.json({
+
+                sucesso: true,
+
+                usuarios
+
+            });
+
+        } catch (erro) {
+
+            console.error(
+                "[ERRO LISTAR USUARIOS]",
+                erro
+            );
+
+            return res.status(500).json({
+
+                sucesso: false,
+
+                mensagem:
+                    "Erro ao carregar usuários."
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// STATUS
+// ==========================================
+
+app.get(
+    "/status",
+    (req, res) => {
+
+        res.json({
+
+            online: true,
+
+            servidor:
+                "LUKAFILMES",
+
+            porta:
+                PORT
+
+        });
+
+    }
+);
+
+
+// ==========================================
+// FAVICON — IDENTIDADE LUKAFILMES
+// ==========================================
+app.get("/favicon/lukafilmes.svg", (req, res) => {
+    res.sendFile(
+        require("path").join(
+            LUKAFILMES_DIR,
+            "public",
+            "favicon",
+            "lukafilmes.svg"
+        ),
+        {
+            headers: {
+                "Content-Type": "image/svg+xml",
+                "Cache-Control": "public, max-age=86400"
+            }
+        }
+    );
+});
+
+// ==========================================
+ // LUKAFILMES — ÍCONE OFICIAL ORIGINAL
+ // ==========================================
+ app.get("/favicon/file_000000006768820e93d46c5d164e8bd9.png", (req, res) => {
+     res.sendFile(
+         require("path").join(
+             LUKAFILMES_DIR,
+             "public",
+             "favicon",
+             "file_000000006768820e93d46c5d164e8bd9.png"
+         ),
+         {
+             headers: {
+                 "Content-Type": "image/png",
+                 "Cache-Control": "no-store, no-cache, must-revalidate"
+             }
+         }
+     );
+ });
+
+// ==========================================
+// PROTEÇÃO DAS PÁGINAS
+// ==========================================
+
+app.use(
+    (req, res, next) => {
+
+        console.log(
+            "[DEBUG PROTEÇÃO]",
+            "originalUrl:", req.originalUrl,
+            "url:", req.url,
+            "path:", req.path,
+            "method:", req.method
+        );
+
+        if (
+
+            req.path === "/login" ||
+            req.path === "/favicon/lukafilmes.svg" ||
+            req.path === "/favicon/lukafilmes.png" ||
+            req.path === "/favicon/file_000000006768820e93d46c5d164e8bd9.png" ||
+
+            req.path === "/admin.html" ||
+
+            req.path === "/status" ||
+
+            req.path === "/api/eu" || req.path === "/api/admin/revendedores" || req.path === "/api/revendedor/clientes" ||
+
+            req.path === "/api/pesquisar" ||
+
+            req.path === "/" ||
+
+            req.path === "/index.html" ||
+
+            req.path === "/paginas/filme.html" ||
+
+            req.path === "/paginas/filme" ||
+
+            req.path === "/paginas/filmes.html" ||
+
+            req.path === "/paginas/series.html" ||
+
+            req.path === "/paginas/series" ||
+
+            req.path === "/paginas/serie.html" ||
+
+            req.path === "/paginas/serie" ||
+
+
+            req.path === "/paginas/categorias.html" ||
+
+            req.path === "/paginas/categorias" ||
+
+            req.path === "/paginas/continuar-assistindo.html" ||
+
+            req.path === "/paginas/continuar-assistindo" ||
+
+            req.path === "/paginas/minha-lista.html" ||
+
+            req.path === "/paginas/minha-lista"
+
+        ) {
+
+            return next();
+
+        }
+
+        /*
+         * TODAS AS PÁGINAS DO SITE SÃO PROTEGIDAS.
+         *
+         * Primeiro verifica se existe sessão.
+         * Depois verifica se a validade do usuário expirou.
+         *
+         * Admin não possui expiração.
+         */
+
+
+        /*
+         * APIs de séries devem responder diretamente em JSON.
+         * Não redirecionar detalhes, temporadas e episódios para /login.
+         */
+        if (
+            req.path.startsWith("/api/serie/") ||
+            req.path.startsWith("/api/series") ||
+            req.path === "/api/acesso-assistir" ||
+            req.path === "/api/pagamentos/criar" ||
+            req.path === "/api/admin/whatsapp/status" ||
+            req.path === "/api/admin/whatsapp/reconectar"
+        ) {
+            return next();
+        }
+
+        if (!req.session || !req.session.usuario) {
+
+            return res.redirect("/login");
+
+        }
+
+        const usuarioSessao = req.session.usuario;
+
+        /*
+         * Usuário vencido continua logado e pode navegar pelo catálogo.
+         * A verificação de acesso para assistir será feita no botão
+         * principal "ASSISTIR".
+         *
+         * Admin e isento nunca dependem de validade.
+         */
+
+        next();
+
+    }
+);
+
+// ==========================================
+// ARQUIVOS DO SITE
+// ==========================================
+
+app.get("/revendedor.html", (req, res) => {
+    res.sendFile(
+        require("path").join(LUKAFILMES_DIR, "public", "revendedor.html")
+    );
+});
+
+
+app.get("/paginas/minha-lista", (req, res) => {
+    res.sendFile(
+        require("path").join(LUKAFILMES_DIR, "paginas", "minha-lista.html")
+    );
+});
+
+// ==========================================
+// LUKAFILMES — TELA INICIAL DE ACESSO
+// ==========================================
+app.get("/", (req, res) => {
+
+    // Cliente logado ou visitante autorizado: entra na Home
+    if (req.session && (req.session.usuario || req.session.visitante)) {
+        return res.sendFile(
+            path.join(LUKAFILMES_DIR, "index.html")
+        );
+    }
+
+    // Primeiro acesso: mostra a tela original de login/entrada
+    return res.sendFile(
+        path.join(LUKAFILMES_DIR, "public", "login.html")
+    );
+});
+
+app.use(
+    express.static(LUKAFILMES_DIR, {
+        maxAge: "1d",
+        etag: true,
+        lastModified: true
+    })
+);
+
+app.get("/paginas/filme",(req,res)=>{res.sendFile(require("path").join(LUKAFILMES_DIR,"paginas","filme.html"));});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.get('/api/serie/:id/temporada/:temporada', async (req, res) => {
+    try {
+
+        const id = req.params.id;
+        const temporada = req.params.temporada;
+
+        if (!id || !temporada) {
+            return res.status(400).json({
+                sucesso: false,
+                episodios: []
+            });
+        }
+
+        const dados = await tmdb(
+            '/tv/' +
+            id +
+            '/season/' +
+            temporada +
+            '?language=pt-BR'
+        );
+
+        const episodios =
+            Array.isArray(dados.episodes)
+                ? dados.episodes
+                : [];
+
+        console.log(
+            '[SERIE] Episódios:',
+            id,
+            'Temporada:',
+            temporada,
+            'Quantidade:',
+            episodios.length
+        );
+
+        return res.json({
+            sucesso: true,
+            episodios: episodios
+        });
+
+    } catch (erro) {
+
+        console.error(
+            '[ERRO EPISODIOS TMDB]',
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            episodios: []
+        });
+    }
+});
+
+
+
+
+
+
+
+// ==========================================
+// NETLIFY
+// ==========================================
+
+module.exports = app
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const PORT_RENDER = process.env.PORT || 3000;
+
+if (!process.env.CLOUDFLARE_WORKERS && !process.env.NETLIFY && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+
+/* ============================================================
+   LUKAFILMES_WHATSAPP_ENGINE_V1
+   WhatsApp por QR Code + sessão persistente
+   ============================================================ */
+
+const fs = require("fs");
+const path = require("path");
+
+let lukaWhatsAppSocket = null;
+let lukaWhatsAppIniciando = false;
+
+const lukaWhatsAppStatus = {
+    conectado: false,
+    qr: null,
+    numero: null,
+    mensagem: "WhatsApp aguardando inicialização."
+};
+
+async function iniciarWhatsAppLuka() {
+    if (lukaWhatsAppSocket || lukaWhatsAppIniciando) return;
+
+    lukaWhatsAppIniciando = true;
+
+    try {
+        const {
+            default: makeWASocket,
+            useMultiFileAuthState
+        } = require("@whiskeysockets/baileys");
+
+        const QRCode = require("qrcode");
+
+        const pastaAuth =
+            process.env.WHATSAPP_AUTH_DIR ||
+            path.join(__dirname, ".whatsapp_auth");
+
+        fs.mkdirSync(pastaAuth, { recursive: true });
+
+        const { state, saveCreds } =
+            await useMultiFileAuthState(pastaAuth);
+
+        const socket = makeWASocket({
+            auth: state,
+            markOnlineOnConnect: false,
+            printQRInTerminal: false
+        });
+
+        lukaWhatsAppSocket = socket;
+
+        socket.ev.on("creds.update", saveCreds);
+
+        socket.ev.on("connection.update", async (update) => {
+            const { connection, qr, lastDisconnect } = update;
+
+            if (qr) {
+                try {
+                    lukaWhatsAppStatus.qr =
+                        await QRCode.toDataURL(qr);
+
+                    lukaWhatsAppStatus.conectado = false;
+                    lukaWhatsAppStatus.mensagem =
+                        "Escaneie o QR Code com o WhatsApp.";
+                } catch (erroQR) {
+                    console.error(
+                        "[WHATSAPP QR] Erro:",
+                        erroQR
+                    );
+                }
+            }
+
+            if (connection === "open") {
+                lukaWhatsAppUltimoSocketConectado = socket;
+                lukaWhatsAppSocket = socket;
+                lukaWhatsAppStatus.conectado = true;
+                lukaWhatsAppStatus.qr = null;
+                lukaWhatsAppStatus.mensagem =
+                    "WhatsApp conectado com sucesso.";
+
+                lukaWhatsAppStatus.numero =
+                    socket.user?.id
+                        ? socket.user.id.split(":")[0]
+                        : null;
+
+                console.log(
+                    "[WHATSAPP] CONECTADO:",
+                    lukaWhatsAppStatus.numero || "número não identificado"
+                );
+            }
+
+            if (connection === "close") {
+                if (lukaWhatsAppSocket === socket) {
+                    lukaWhatsAppSocket = null;
+                }
+
+                lukaWhatsAppStatus.conectado = false;
+
+                const codigo =
+                    lastDisconnect?.error?.output?.statusCode;
+
+                console.log(
+                    "[WHATSAPP] CONEXÃO FECHADA | código:",
+                    codigo ?? "não identificado"
+                );
+
+                if (codigo === 401) {
+                    lukaWhatsAppStatus.qr = null;
+                    lukaWhatsAppStatus.numero = null;
+                    lukaWhatsAppStatus.mensagem =
+                        "WhatsApp desconectado. Faça uma nova conexão.";
+
+                    console.log(
+                        "[WHATSAPP] Sessão encerrada pelo WhatsApp."
+                    );
+                } else {
+                    lukaWhatsAppStatus.mensagem =
+                        "Conexão perdida. Reconectando automaticamente...";
+
+                    console.log(
+                        "[WHATSAPP] Conexão perdida. Reconectando..."
+                    );
+
+                    setTimeout(() => {
+                        if (
+                            !lukaWhatsAppSocket &&
+                            !lukaWhatsAppIniciando
+                        ) {
+                            iniciarWhatsAppLuka().catch(erro => {
+                                console.error(
+                                    "[WHATSAPP] Erro ao reconectar:",
+                                    erro.message
+                                );
+                            });
+                        }
+                    }, 3000);
+                }
+            }
+        });
+
+    } catch (erro) {
+        lukaWhatsAppSocket = null;
+        lukaWhatsAppStatus.conectado = false;
+        lukaWhatsAppStatus.mensagem =
+            "Dependência do WhatsApp ainda não instalada no servidor.";
+
+        console.error(
+            "[WHATSAPP] Inicialização:",
+            erro.message
+        );
+    } finally {
+        lukaWhatsAppIniciando = false;
+    }
+}
+
+/* INICIALIZA WHATSAPP AUTOMATICAMENTE AO SUBIR O SERVIDOR */
+setTimeout(() => {
+    iniciarWhatsAppLuka().catch(erro => {
+        console.error("[WHATSAPP] Erro na inicialização automática:", erro.message);
+    });
+}, 2000);
+
+/* STATUS DO WHATSAPP PARA O PAINEL ADMIN */
+app.get("/api/admin/whatsapp/status", async (req, res) => {
+    try {
+        if (
+            !req.session ||
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        await iniciarWhatsAppLuka();
+
+        return res.json({
+            sucesso: true,
+            conectado: lukaWhatsAppStatus.conectado,
+            qr: lukaWhatsAppStatus.qr,
+            numero: lukaWhatsAppStatus.numero,
+            mensagem: lukaWhatsAppStatus.mensagem
+        });
+
+    } catch (erro) {
+        console.error(
+            "[WHATSAPP STATUS]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            conectado: false,
+            qr: null,
+            mensagem: "Erro ao consultar WhatsApp."
+        });
+    }
+});
+
+/* RECONEXÃO SOLICITADA PELO ADMIN */
+app.post("/api/admin/whatsapp/reconectar", async (req, res) => {
+    try {
+        if (
+            !req.session ||
+            !req.session.usuario ||
+            req.session.usuario.tipo !== "admin"
+        ) {
+            return res.status(403).json({
+                sucesso: false,
+                mensagem: "Acesso negado."
+            });
+        }
+
+        lukaWhatsAppStatus.mensagem =
+            "Reconexão solicitada...";
+
+        if (lukaWhatsAppSocket) {
+            try {
+                lukaWhatsAppSocket.end(
+                    new Error("Reconexão solicitada pelo administrador.")
+                );
+            } catch (_) {}
+        }
+
+        lukaWhatsAppSocket = null;
+        lukaWhatsAppStatus.conectado = false;
+        lukaWhatsAppStatus.qr = null;
+
+        setTimeout(() => {
+            iniciarWhatsAppLuka().catch(() => {});
+        }, 300);
+
+        return res.json({
+            sucesso: true,
+            mensagem: "Reconexão iniciada."
+        });
+
+    } catch (erro) {
+        console.error(
+            "[WHATSAPP RECONEXAO]",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Não foi possível iniciar a reconexão."
+        });
+    }
+});
+
+/* FIM LUKAFILMES_WHATSAPP_ENGINE_V1 */
+
+
+if (!process.env.NETLIFY && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    app.listen(PORT_RENDER, "0.0.0.0", () => {
+        console.log(`LUKAFILMES iniciado na porta ${PORT_RENDER}`);
+    });
+}
+}

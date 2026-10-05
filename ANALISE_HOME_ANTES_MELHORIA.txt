@@ -1,0 +1,55 @@
+4933:            <span class="luka">LUKA</span><span class="filmes">FILMES</span>
+4996:<header class="header" id="header">
+5013:    <nav class="nav">
+5024:            class="lukafilmes-continuar-mobile-btn"
+5053:    <div class="lukafilmes-notificacao-menu-item">
+5066:        <a href="/admin.html" class="lukafilmes-menu-admin" style="display:none !important;">ADMIN</a>
+5075:    <div class="lukafilmes-notificacao-menu-item">
+5088:    <div class="lukafilmes-notificacao-mobile-item"></div>
+5092:        class="lukafilmes-menu-continuar"
+5099:    <div class="lukafilmes-mobile-categorias">
+5103:            class="lukafilmes-mobile-categorias-btn"
+5108:            <span class="lukafilmes-mobile-categorias-seta">▾</span>
+5111:        <div class="lukafilmes-mobile-categorias-lista">
+5130:        class="lukafilmes-menu-admin"
+5137:        class="lukafilmes-menu-sair"
+5146:<section class="hero">
+5149:        class="hero-bg"
+5162:    <div class="hero-overlay"></div>
+5164:    <div class="hero-content">
+5166:        <div class="hero-badge">
+5170:        <h1 class="hero-title" id="heroTitle">
+5174:        <div class="hero-info">
+5181:        <p class="hero-description" id="heroDescription">
+5185:        <div class="hero-buttons">
+5194:<main class="content">
+5200:    <section class="section luka-series-continuar-section">
+5201:        <div class="luka-series-titulo-linha">
+5204:            <div class="luka-series-continuar-acoes">
+5220:    <section class="section">
+5227:    <section class="section">
+5234:    <section class="section">
+5241:    <section class="section">
+5248:    <section class="section">
+5255:    <section class="section">
+5262:    <section class="section">
+5269:    <section class="section">
+5276:    <section class="section">
+5283:    <section class="section">
+5290:    <section class="section">
+5299:<footer id="lukaFooter" style="display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important; width:100% !important;">
+5426:                '<a href="/admin.html" class="lukafilmes-menu-admin">ADMIN</a>';
+5556:        <div class="luka-card-poster">
+5567:                : `<div class="luka-card-sem-capa">
+5572:            <div class="luka-card-gradient"></div>
+5582:                ? `<div class="luka-card-rating">
+5588:            <div class="luka-card-bottom">
+5590:                <div class="card-title">
+5596:                    ? `<div class="card-meta">
+8096:            '<div class="busca-home-status">🔎 Pesquisando...</div>';
+8121:                    '<div class="busca-home-status">Nenhum resultado encontrado.</div>';
+8139:                    <div class="busca-home-info">
+8140:                        <div class="busca-home-titulo">
+8143:                        <div class="busca-home-ano">
+8173:                '<div class="busca-home-status">Erro ao pesquisar.</div>';
+11506:<nav class="lukafilmes-app-bottom-nav" aria-label="Navegação principal">

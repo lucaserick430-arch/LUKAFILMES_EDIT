@@ -1,0 +1,200 @@
+33:.header{
+52:.header.scrolled{
+70:.nav{
+76:.nav a{
+84:.nav a:hover,
+85:.nav a.active{
+89:.header-right{
+122:.hero{
+134:.hero-bg{
+143:.hero-overlay{
+151:.hero-content{
+159:.hero-badge{
+166:.hero-title{
+173:.hero-description{
+179:.hero-buttons .btn,
+180:.hero-actions .btn{
+187:.hero-buttons .btn:hover,
+188:.hero-actions .btn:hover{
+197:.section{
+202:.section-title{
+208:.section-title::after{
+251:.card-title{
+256:.luka-series-continuar-section{
+357:.hero-bg{
+362:.hero-overlay{
+366:.hero-content{
+391:.heroConteudo,.hero-content{
+424:    .hero{
+491:.hero-content{
+522:.hero-buttons,
+523:.hero-actions{
+555:    .hero-content{
+576:.hero{
+582:.hero-content{
+643:.hero-buttons{
+672:.section-title{
+683:    .hero{
+687:    .hero-content{
+727:    .hero-buttons{
+742:    .hero-content{
+764:    .hero-buttons{
+784:    .hero-content{
+805:    .hero-content{
+826:    .hero-buttons{
+838:    .hero-buttons{
+1030:    .header .menu-btn{
+1050:    .header .menu-btn{
+1078:    .nav{
+1084:    .nav a:not(.continuar-header-btn){
+1089:    .header-right{
+1133:    .nav > a,
+1134:    .nav > .lukafilmes-catalogo-menu,
+1135:    .nav > .lukafilmes-continuar-mobile-btn,
+1136:    .nav .continuar-header-btn{
+1164:    .nav{
+1168:    .nav a:not(.continuar-header-btn){
+1173:    .header-right{
+1246:.section .row{
+1271:.section .row::-webkit-scrollbar{
+1275:.section .row.luka-dragging{
+1279:.section .row.luka-no-focus,
+1280:.section .row:focus,
+1281:.section .row:focus-visible{
+1481:.hero,
+1483:.hero-section,
+1484:.hero-banner,
+1485:.hero-container{
+1541:.header{
+1547:.header *,
+1548:.nav,
+1549:.nav a,
+1573:    .header{
+1579:    .nav{
+1804:    .section{
+1847:    .header{
+1853:    .header .logo,
+1854:    .header .logo a{
+1858:    .header .nav{
+1862:    .header .nav a,
+1863:    .header .nav button,
+1868:    .header .header-right{
+1872:    .header .search-btn,
+1873:    .header .menu-btn,
+1874:    .header .profile{
+1884:    .hero{
+1890:    .hero-content{
+1896:    .hero-title{
+1902:    .hero-description{
+1908:    .hero-info{
+1913:    .hero-buttons .btn{
+1925:    .content{
+1930:    .section{
+1934:    .section-title{
+1943:    .section .row{
+1950:    .section .row > .card,
+1951:    .section .row > .filme,
+1952:    .section .row > .serie,
+1953:    .section .row > a{
+1962:    .section .row .card img,
+1963:    .section .row .filme img,
+1964:    .section .row .serie img{
+2039:    .section .row::-webkit-scrollbar{
+2051:    .header{
+2057:    .header .logo,
+2058:    .header .logo a{
+2062:    .header .nav a,
+2063:    .header .nav button,
+2068:    .content{
+2073:    .hero{
+2079:    .hero-title{
+2083:    .hero-description{
+2087:    .section-title{
+2091:    .section .row{
+2095:    .section .row .card img,
+2096:    .section .row .filme img,
+2097:    .section .row .serie img{
+2496:    .hero-content{
+2515:    .hero-content h1,
+2516:    .hero-title{
+2521:    .hero-content p,
+2522:    .hero-description{
+2528:    .hero-content button,
+2529:    .hero-content a{
+2537:    .hero-content{
+2543:    .hero-content p,
+2544:    .hero-description{
+2828:.header > #lukaNotificationButton,
+3360:.hero,
+3361:.hero-section,
+3362:.hero-banner {
+3366:.hero > .hero-content,
+3367:.hero .hero-content,
+3368:.hero .hero-actions,
+3369:.hero button,
+3370:.hero a,
+3371:.hero input,
+3372:.hero [role="button"] {
+3489:.card-title {
+3503:.card-title::before,
+3504:.card-title::after {
+3517:.card-title *,
+3518:.card-title span,
+3519:.card-title strong,
+3520:.card-title b {
+3537:.luka-series-titulo-linha{
+3545:.luka-series-titulo-linha .section-title{
+3549:.luka-series-continuar-acoes{
+3600:    .luka-series-titulo-linha{
+3604:    .luka-series-continuar-acoes{
+3790:    .header{
+3807:    .nav{
+3811:    .header-right{
+3832:    .hero{
+3840:    .hero-bg{
+3846:    .hero-overlay{
+3857:    .hero-content{
+3863:    .hero-badge{
+3868:    .hero-title{
+3876:    .hero-description{
+3887:    .hero-info{
+3893:    .hero-buttons{
+3898:    .hero-buttons .btn{
+3907:    .content{
+3912:    .section{
+3916:    .section-title{
+3965:    .header{
+3973:    .hero{
+3977:    .hero-content{
+3983:    .hero-title{
+3987:    .hero-description{
+3991:    .section-title{
+4013:.lukafilmes-app-bottom-nav{
+4023:    .lukafilmes-app-bottom-nav{
+4043:    .lukafilmes-app-bottom-nav a{
+4068:    .lukafilmes-app-bottom-nav a:active{
+4072:    .lukafilmes-app-bottom-nav a.active{
+4077:    .lukafilmes-app-bottom-nav a.active::after{
+4087:    .lukafilmes-app-bottom-nav a{
+4091:    .lukafilmes-app-bottom-nav .categorias{
+4225:.header{
+4235:.header.scrolled{
+4246:.nav a{
+4252:.nav a:hover,
+4253:.nav a.active{
+4258:.hero{
+4265:.hero-overlay{
+4277:.hero-content{
+4283:.hero-badge{
+4290:.hero-title{
+4297:.hero-description{
+4303:.hero-buttons .btn,
+4304:.hero-actions .btn{
+4311:.hero-buttons .btn:hover,
+4312:.hero-actions .btn:hover{
+4321:.section{
+4326:.section-title{
+4332:.section-title::after{
+4378:.card-title{
+4383:.luka-series-continuar-section{
+4412:    .header{
