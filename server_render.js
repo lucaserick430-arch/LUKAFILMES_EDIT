@@ -1057,6 +1057,141 @@ function lukaModoTesteAtivo(req) {
     );
 }
 
+
+// ==========================================
+// LUKAFILMES — STATUS DE RENOVAÇÃO
+// ==========================================
+
+app.get("/api/renovacao-status", async (req, res) => {
+
+    try {
+
+        const sessao = lukaUsuarioOperacional(req);
+
+        if (!sessao) {
+            return res.json({
+                sucesso: true,
+                logado: false,
+                deve_notificar: false
+            });
+        }
+
+        const usuarios = await carregarUsuarios();
+
+        const pessoa = usuarios.find(
+            u => Number(u.id) === Number(sessao.id)
+        );
+
+        if (!pessoa) {
+            return res.status(404).json({
+                sucesso: false,
+                logado: true,
+                deve_notificar: false,
+                mensagem: "Usuário não encontrado."
+            });
+        }
+
+        const tipo = String(
+            pessoa.tipo || "usuario"
+        ).toLowerCase();
+
+        /*
+         * ADMIN E ISENTOS NÃO PAGAM.
+         */
+        if (
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ADMIN ||
+            tipo === CONFIGURACAO_ACESSO_LUKAFILMES.tipos.ISENTO
+        ) {
+            return res.json({
+                sucesso: true,
+                logado: true,
+                deve_notificar: false,
+                isento: true,
+                tipo
+            });
+        }
+
+        const validadeTexto =
+            pessoa.validade || null;
+
+        if (!validadeTexto) {
+            return res.json({
+                sucesso: true,
+                logado: true,
+                deve_notificar: false,
+                motivo: "sem_validade",
+                usuario: pessoa.usuario || ""
+            });
+        }
+
+        const validade =
+            new Date(validadeTexto).getTime();
+
+        const agora = Date.now();
+
+        if (!Number.isFinite(validade)) {
+            return res.json({
+                sucesso: true,
+                logado: true,
+                deve_notificar: false,
+                motivo: "validade_invalida",
+                usuario: pessoa.usuario || ""
+            });
+        }
+
+        const diferenca =
+            validade - agora;
+
+        const diasRestantes =
+            Math.ceil(
+                diferenca /
+                (24 * 60 * 60 * 1000)
+            );
+
+        /*
+         * Avisa nos últimos 10 dias.
+         * Também informa quando já expirou.
+         */
+        const deveNotificar =
+            diasRestantes <= 10;
+
+        return res.json({
+            sucesso: true,
+            logado: true,
+            deve_notificar: deveNotificar,
+            expirado: diferenca <= 0,
+            dias_restantes: Math.max(0, diasRestantes),
+            validade: validadeTexto,
+            usuario: pessoa.usuario || "",
+            valor: Number(
+                process.env.PIX_VALOR ||
+                CONFIGURACAO_ACESSO_LUKAFILMES.valorMensal ||
+                18
+            ).toFixed(2),
+            dias_renovacao:
+                Number(
+                    CONFIGURACAO_ACESSO_LUKAFILMES.diasAcesso
+                ) || 30
+        });
+
+    } catch (erro) {
+
+        console.error(
+            "[RENOVACAO STATUS] Erro:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            logado: false,
+            deve_notificar: false,
+            mensagem:
+                "Não foi possível verificar a validade."
+        });
+    }
+
+});
+
 app.get("/api/eu", (req, res) => {
 
     const usuario = lukaUsuarioOperacional(req);
@@ -1872,6 +2007,7 @@ function normalizarTituloXtream(titulo) {
 async function tmdb(endpoint) {
 
     const token =
+        process.env.TMDB_ACCESS_TOKEN ||
         process.env.TMDB_TOKEN ||
         globalThis.__LUKA_TMDB_TOKEN;
 
