@@ -6096,19 +6096,60 @@ body {
         idUrl ? String(idUrl).trim() : "";
 
     try {
-        const salvo =
-            localStorage.getItem("filmeSelecionado");
+
+        let salvo = null;
+
+        /*
+         * PRIMEIRA FONTE:
+         * filme específico pelo ID da URL.
+         */
+        if (idUrl) {
+            salvo =
+                localStorage.getItem(
+                    "filmeSelecionadoHome_" + String(idUrl).trim()
+                );
+        }
+
+        /*
+         * SEGUNDA FONTE:
+         * compatibilidade com registros antigos.
+         */
+        if (!salvo) {
+            salvo =
+                localStorage.getItem("filmeSelecionado");
+        }
 
         if (!tmdbId && salvo) {
-            const filme = JSON.parse(salvo);
 
-            if (filme && filme.id) {
-                tmdbId = String(filme.id).trim();
+            const filme =
+                JSON.parse(salvo);
+
+            if (filme) {
+
+                tmdbId =
+                    filme.id ||
+                    filme.tmdb_id ||
+                    filme.tmdbId ||
+                    "";
+
+                tmdbId =
+                    String(tmdbId).trim();
             }
         }
-    } catch (e) {}
 
-    if (!tmdbId) return;
+    } catch (e) {
+        console.warn(
+            "[FILME PLAYER] Erro ao obter ID:",
+            e
+        );
+    }
+
+    if (!tmdbId) {
+        console.warn(
+            "[FILME PLAYER] ID do filme não encontrado."
+        );
+        return;
+    }
 
     btnEmbedMoviesFilme.onclick = async function () {
 

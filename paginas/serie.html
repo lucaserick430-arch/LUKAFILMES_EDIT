@@ -2994,11 +2994,11 @@ function criarTemporadaFallback() {
 
                 const embedMoviesUrl =
                     "https://myembed.biz/serie/" +
-                    encodeURIComponent(String(idSerie).trim()) +
+                    encodeURIComponent(String(serie.id).trim()) +
                     "/" +
-                    encodeURIComponent(String(temporadaId).trim()) +
+                    encodeURIComponent(String(temporada).trim()) +
                     "/" +
-                    encodeURIComponent(String(episodioId).trim());
+                    encodeURIComponent(String(episodio).trim());
 
                 mostrarAnuncioPlayerSerie();
 
@@ -3016,11 +3016,11 @@ function criarTemporadaFallback() {
 
                 const apiPlayerUrl =
                     "https://apiplayer.ru/embed/tv/" +
-                    encodeURIComponent(String(idSerie).trim()) +
+                    encodeURIComponent(String(serie.id).trim()) +
                     "/" +
-                    encodeURIComponent(String(temporadaId).trim()) +
+                    encodeURIComponent(String(temporada).trim()) +
                     "/" +
-                    encodeURIComponent(String(episodioId).trim()) +
+                    encodeURIComponent(String(episodio).trim()) +
                     "?lang=pt";
 
                 mostrarAnuncioPlayerSerie();
