@@ -8463,7 +8463,14 @@ function logout(){
 })();
 </script>
 
-
+<script src="/js/continuar-assistindo.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    if (window.LukaContinuar) {
+        LukaContinuar.renderContinuar("continuarAssistindo");
+    }
+});
+</script>
 
 
 

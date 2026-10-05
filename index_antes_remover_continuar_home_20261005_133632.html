@@ -5200,6 +5200,12 @@ body{
 
         <a href="/paginas/categorias.html">Categorias</a>
 
+        <a
+            href="/paginas/continuar-assistindo.html"
+            class="lukafilmes-continuar-mobile-btn"
+            aria-label="Continuar Assistindo"
+        >▶ Continuar Assistindo</a>
+
 </nav>
 
     <div class="header-right">
@@ -5261,6 +5267,11 @@ body{
     </div>
 
     <div class="lukafilmes-notificacao-mobile-item"></div>
+
+    <a
+        href="/paginas/continuar-assistindo.html"
+        class="lukafilmes-menu-continuar"
+    >Continuar Assistindo</a>
 
     <a href="paginas/filmes.html">Filmes</a>
 
@@ -5375,6 +5386,12 @@ body{
             <h2 class="section-title">📺 Séries populares</h2>
 
             <div class="luka-series-continuar-acoes">
+
+                <a
+                    href="/paginas/continuar-assistindo.html"
+                    class="luka-btn-continuar luka-btn-continuar-mobile"
+                    aria-label="Continuar assistindo"
+                >▶ Continuar assistindo</a>
 
             </div>
         </div>
@@ -8463,7 +8480,14 @@ function logout(){
 })();
 </script>
 
-
+<script src="/js/continuar-assistindo.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    if (window.LukaContinuar) {
+        LukaContinuar.renderContinuar("continuarAssistindo");
+    }
+});
+</script>
 
 
 

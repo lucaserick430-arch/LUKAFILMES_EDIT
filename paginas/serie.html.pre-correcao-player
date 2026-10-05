@@ -577,7 +577,7 @@
 
         }
 
-
+    
 /* =========================================================
    LUKAFILMES — DETALHES DA SÉRIE / VISUAL STREAMING
    SOMENTE VISUAL — NÃO ALTERA A LÓGICA
@@ -1955,9 +1955,13 @@ width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,25
 
 
         <div class="sinopse-box"><div id="serieFavoritosTopo">
+    <button type="button" id="serieAdicionarFavorito">
+        ＋ Adicionar aos favoritos
+    </button>
 
-
-
+    <a href="/paginas/minha-lista" id="serieVerFavoritos">
+        ♥ Meus Favoritos
+    </a>
 </div>
 
 
@@ -2031,8 +2035,8 @@ width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,25
 
 
 
-
-
+        
+        
 
 
         <div id="redeFlixSeriesPlayers">
@@ -2147,7 +2151,7 @@ width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,25
 
         serie = JSON.parse(salvo);
 
-
+        
 
     } catch (erro) {
 
@@ -2942,39 +2946,17 @@ function criarTemporadaFallback() {
         nome
     ) {
 
-        if (!serie || !serie.id) {
-            console.error(
-                "[SERIES] ID da série não encontrado."
-            );
-            return;
-        }
 
-        const idSerie =
-            String(serie.id).trim();
-
-        const temporadaId =
-            String(temporada).trim();
-
-        const episodioId =
-            String(episodio).trim();
-
-        if (!idSerie || !temporadaId || !episodioId) {
-            console.error(
-                "[SERIES] Dados do episódio incompletos.",
-                {
-                    idSerie,
-                    temporadaId,
-                    episodioId
-                }
-            );
-            return;
-        }
-
-        const playerSerie =
-            document.getElementById("playerSerie");
-
-        const serieFrame =
-            document.getElementById("serieFrame");
+        /*
+         * ESCOLHA DO PLAYER
+         *
+         * Ordem:
+         * EmbedMovies
+         * APIPlayer
+         *
+         * Nenhum player carrega automaticamente.
+         * O iframe só aparece após a escolha.
+         */
 
         const btnEmbedMoviesSerie =
             document.getElementById("btnEmbedMoviesSerie");
@@ -2985,122 +2967,75 @@ function criarTemporadaFallback() {
         const seriePlayerVideo =
             document.getElementById("seriePlayerVideo");
 
-        const adPlayerSerie =
-            document.getElementById("lukafilmesAdPlayerSerie");
+        async function carregarPlayerSerie(url, nome) {
 
-        if (
-            !playerSerie ||
-            !serieFrame ||
-            !btnEmbedMoviesSerie ||
-            !btnApiPlayerSerie ||
-            !seriePlayerVideo
-        ) {
-            console.error(
-                "[SERIES PLAYER] Elementos do player não encontrados."
-            );
-            return;
-        }
-
-        playerSerie.style.setProperty(
-            "display",
-            "block",
-            "important"
-        );
-
-        seriePlayerVideo.style.setProperty(
-            "display",
-            "none",
-            "important"
-        );
-
-        serieFrame.src = "";
-
-        playerSerie.dataset.serieId =
-            idSerie;
-
-        playerSerie.dataset.temporada =
-            temporadaId;
-
-        playerSerie.dataset.episodio =
-            episodioId;
-
-        function mostrarAnuncioPlayerSerie() {
-
-            if (!adPlayerSerie) {
+            if (!url || !serieFrame || !seriePlayerVideo) {
                 return;
             }
 
-            adPlayerSerie.style.display = "block";
+                serieFrame.src = url;
 
-            try {
-                (window.adsbygoogle =
-                    window.adsbygoogle || []).push({});
-            } catch (erro) {
-                console.warn(
-                    "[ADS PLAYER SERIE] Não foi possível carregar o anúncio:",
-                    erro
+                seriePlayerVideo.style.setProperty(
+                    "display",
+                    "block",
+                    "important"
                 );
-            }
+
+                console.log(
+                    "[SÉRIE PLAYER] Player escolhido:",
+                    nome,
+                    url
+                );
+
+        }
+        if (btnEmbedMoviesSerie) {
+
+            btnEmbedMoviesSerie.onclick = function () {
+
+                const embedMoviesUrl =
+                    "https://myembed.biz/serie/" +
+                    encodeURIComponent(String(idSerie).trim()) +
+                    "/" +
+                    encodeURIComponent(String(temporadaId).trim()) +
+                    "/" +
+                    encodeURIComponent(String(episodioId).trim());
+
+                mostrarAnuncioPlayerSerie();
+
+                carregarPlayerSerie(
+                    embedMoviesUrl,
+                    "EmbedMovies"
+                );
+
+            };
         }
 
-        function carregarPlayerSerie(
-            url,
-            nomePlayer
-        ) {
+        if (btnApiPlayerSerie) {
 
-            if (!url) {
-                return;
-            }
+            btnApiPlayerSerie.onclick = function () {
 
-            serieFrame.src = url;
+                const apiPlayerUrl =
+                    "https://apiplayer.ru/embed/tv/" +
+                    encodeURIComponent(String(idSerie).trim()) +
+                    "/" +
+                    encodeURIComponent(String(temporadaId).trim()) +
+                    "/" +
+                    encodeURIComponent(String(episodioId).trim()) +
+                    "?lang=pt";
 
-            seriePlayerVideo.style.setProperty(
-                "display",
-                "block",
-                "important"
-            );
+                mostrarAnuncioPlayerSerie();
 
-            mostrarAnuncioPlayerSerie();
+                carregarPlayerSerie(
+                    apiPlayerUrl,
+                    "APIPlayer"
+                );
 
-            console.log(
-                "[SÉRIE PLAYER] Player escolhido:",
-                nomePlayer,
-                url
-            );
+            };
         }
 
-        btnEmbedMoviesSerie.onclick = function () {
-
-            const url =
-                "https://myembed.biz/serie/" +
-                encodeURIComponent(idSerie) +
-                "/" +
-                encodeURIComponent(temporadaId) +
-                "/" +
-                encodeURIComponent(episodioId);
-
-            carregarPlayerSerie(
-                url,
-                "EmbedMovies"
-            );
-        };
-
-        btnApiPlayerSerie.onclick = function () {
-
-            const url =
-                "https://apiplayer.ru/embed/tv/" +
-                encodeURIComponent(idSerie) +
-                "/" +
-                encodeURIComponent(temporadaId) +
-                "/" +
-                encodeURIComponent(episodioId) +
-                "?lang=pt";
-
-            carregarPlayerSerie(
-                url,
-                "APIPlayer"
-            );
-        };
+        /*
+         * DESCE ATÉ O PLAYER
+         */
 
         playerSerie.scrollIntoView({
             behavior: "smooth",
@@ -3108,13 +3043,9 @@ function criarTemporadaFallback() {
         });
 
         console.log(
-            "[SERIES PLAYER] Player pronto para escolha.",
-            {
-                serie: idSerie,
-                temporada: temporadaId,
-                episodio: episodioId
-            }
+            "[SERIES PLAYER] Player pronto para escolha."
         );
+
     }
 
 
@@ -3645,7 +3576,257 @@ document.addEventListener(
 
 
 <!-- LUKAFILMES-CONTINUAR-SERIE-RESUME -->
+<script>
+(function () {
 
+    "use strict";
+
+    /*
+     * LUKAFILMES
+     * CONTINUAR ASSISTINDO — SÉRIES
+     *
+     * A fonte oficial da retomada é:
+     * lukafilmes_continuar
+     *
+     * Não usa mais serieSelecionada para descobrir
+     * qual episódio deve ser retomado.
+     */
+
+    function obterSerieContinuar() {
+
+        try {
+
+            const salvo =
+                localStorage.getItem("lukafilmes_continuar");
+
+            if (!salvo) {
+                console.log(
+                    "[CONTINUAR SÉRIE] Nenhum histórico encontrado."
+                );
+                return null;
+            }
+
+            const lista = JSON.parse(salvo);
+
+            if (!Array.isArray(lista)) {
+                return null;
+            }
+
+            const serie =
+                lista.find(function (item) {
+
+                    return (
+                        item &&
+                        String(item.tipo || "").toLowerCase() === "serie" &&
+                        item.id != null &&
+                        item.temporada != null &&
+                        item.episodio != null
+                    );
+
+                });
+
+            if (!serie) {
+
+                console.log(
+                    "[CONTINUAR SÉRIE] Nenhuma série com episódio salvo.",
+                    lista
+                );
+
+                return null;
+            }
+
+            return serie;
+
+        } catch (erro) {
+
+            console.error(
+                "[CONTINUAR SÉRIE] Erro ao ler histórico:",
+                erro
+            );
+
+            return null;
+        }
+    }
+
+
+    function restaurarContinuarSerie() {
+
+        if (window.__lukafilmesContinuarSerieExecutado) {
+            return true;
+        }
+
+        const item =
+            obterSerieContinuar();
+
+        if (!item) {
+            return false;
+        }
+
+        if (
+            typeof window.assistirEpisodio !== "function"
+        ) {
+            return false;
+        }
+
+        const temporada =
+            String(item.temporada).trim();
+
+        const episodio =
+            String(item.episodio).trim();
+
+        if (!temporada || !episodio) {
+            return false;
+        }
+
+        window.__lukafilmesContinuarSerieExecutado = true;
+
+        console.log(
+            "[CONTINUAR SÉRIE] RETOMANDO:",
+            {
+                id: item.id,
+                titulo: item.titulo,
+                temporada: temporada,
+                episodio: episodio,
+                player: item.player || "1"
+            }
+        );
+
+        /*
+         * Mantém serieSelecionada sincronizada com o item
+         * que realmente veio do Continuar Assistindo.
+         */
+        try {
+
+            localStorage.setItem(
+                "serieSelecionada",
+                JSON.stringify(item)
+            );
+
+            localStorage.setItem(
+                "seriePlayerId",
+                String(item.id)
+            );
+
+            localStorage.setItem(
+                "seriePlayerTemporada",
+                temporada
+            );
+
+            localStorage.setItem(
+                "seriePlayerEpisodio",
+                episodio
+            );
+
+            if (item.player != null) {
+
+                localStorage.setItem(
+                    "seriePlayer",
+                    String(item.player)
+                );
+
+            }
+
+        } catch (erro) {
+
+            console.warn(
+                "[CONTINUAR SÉRIE] Não foi possível sincronizar dados:",
+                erro
+            );
+        }
+
+        /*
+         * Abre exatamente a temporada e o episódio salvos.
+         */
+        window.assistirEpisodio(
+            temporada,
+            episodio,
+            item.titulo || "Série"
+        );
+
+        /*
+         * assistirEpisodio() inicia no PLAY 1.
+         *
+         * Se o usuário estava no PLAY 2,
+         * restauramos o mesmo player.
+         */
+        const playerSalvo =
+            String(item.player || "1");
+
+        if (playerSalvo !== "1") {
+
+            let tentativasPlayer = 0;
+
+            const intervaloPlayer =
+                setInterval(function () {
+
+                    tentativasPlayer++;
+
+                    const botao =
+                        document.querySelector(
+                            '.players-serie-opcoes .serie-player-btn[data-player="' +
+                            playerSalvo +
+                            '"]'
+                        );
+
+                    if (botao) {
+
+                        botao.click();
+
+                        clearInterval(
+                            intervaloPlayer
+                        );
+
+                        console.log(
+                            "[CONTINUAR SÉRIE] Player restaurado:",
+                            playerSalvo
+                        );
+
+                        return;
+                    }
+
+                    if (tentativasPlayer >= 20) {
+
+                        clearInterval(
+                            intervaloPlayer
+                        );
+
+                        console.warn(
+                            "[CONTINUAR SÉRIE] Player não encontrado:",
+                            playerSalvo
+                        );
+
+                    }
+
+                }, 250);
+        }
+
+        return true;
+    }
+
+
+    /*
+     * Espera assistirEpisodio existir.
+     */
+    let tentativas = 0;
+
+    const intervalo =
+        setInterval(function () {
+
+            tentativas++;
+
+            if (
+                restaurarContinuarSerie() ||
+                tentativas >= 40
+            ) {
+
+                clearInterval(intervalo);
+
+            }
+
+        }, 250);
+
+})();
+</script>
 
 
 
