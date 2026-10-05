@@ -2946,17 +2946,39 @@ function criarTemporadaFallback() {
         nome
     ) {
 
+        if (!serie || !serie.id) {
+            console.error(
+                "[SERIES] ID da série não encontrado."
+            );
+            return;
+        }
 
-        /*
-         * ESCOLHA DO PLAYER
-         *
-         * Ordem:
-         * EmbedMovies
-         * APIPlayer
-         *
-         * Nenhum player carrega automaticamente.
-         * O iframe só aparece após a escolha.
-         */
+        const idSerie =
+            String(serie.id).trim();
+
+        const temporadaId =
+            String(temporada).trim();
+
+        const episodioId =
+            String(episodio).trim();
+
+        if (!idSerie || !temporadaId || !episodioId) {
+            console.error(
+                "[SERIES] Dados do episódio incompletos.",
+                {
+                    idSerie,
+                    temporadaId,
+                    episodioId
+                }
+            );
+            return;
+        }
+
+        const playerSerie =
+            document.getElementById("playerSerie");
+
+        const serieFrame =
+            document.getElementById("serieFrame");
 
         const btnEmbedMoviesSerie =
             document.getElementById("btnEmbedMoviesSerie");
@@ -2967,75 +2989,122 @@ function criarTemporadaFallback() {
         const seriePlayerVideo =
             document.getElementById("seriePlayerVideo");
 
-        async function carregarPlayerSerie(url, nome) {
+        const adPlayerSerie =
+            document.getElementById("lukafilmesAdPlayerSerie");
 
-            if (!url || !serieFrame || !seriePlayerVideo) {
+        if (
+            !playerSerie ||
+            !serieFrame ||
+            !btnEmbedMoviesSerie ||
+            !btnApiPlayerSerie ||
+            !seriePlayerVideo
+        ) {
+            console.error(
+                "[SERIES PLAYER] Elementos do player não encontrados."
+            );
+            return;
+        }
+
+        playerSerie.style.setProperty(
+            "display",
+            "block",
+            "important"
+        );
+
+        seriePlayerVideo.style.setProperty(
+            "display",
+            "none",
+            "important"
+        );
+
+        serieFrame.src = "";
+
+        playerSerie.dataset.serieId =
+            idSerie;
+
+        playerSerie.dataset.temporada =
+            temporadaId;
+
+        playerSerie.dataset.episodio =
+            episodioId;
+
+        function mostrarAnuncioPlayerSerie() {
+
+            if (!adPlayerSerie) {
                 return;
             }
 
-                serieFrame.src = url;
+            adPlayerSerie.style.display = "block";
 
-                seriePlayerVideo.style.setProperty(
-                    "display",
-                    "block",
-                    "important"
+            try {
+                (window.adsbygoogle =
+                    window.adsbygoogle || []).push({});
+            } catch (erro) {
+                console.warn(
+                    "[ADS PLAYER SERIE] Não foi possível carregar o anúncio:",
+                    erro
                 );
-
-                console.log(
-                    "[SÉRIE PLAYER] Player escolhido:",
-                    nome,
-                    url
-                );
-
-        }
-        if (btnEmbedMoviesSerie) {
-
-            btnEmbedMoviesSerie.onclick = function () {
-
-                const embedMoviesUrl =
-                    "https://myembed.biz/serie/" +
-                    encodeURIComponent(String(serie.id).trim()) +
-                    "/" +
-                    encodeURIComponent(String(temporada).trim()) +
-                    "/" +
-                    encodeURIComponent(String(episodio).trim());
-
-                mostrarAnuncioPlayerSerie();
-
-                carregarPlayerSerie(
-                    embedMoviesUrl,
-                    "EmbedMovies"
-                );
-
-            };
+            }
         }
 
-        if (btnApiPlayerSerie) {
+        function carregarPlayerSerie(
+            url,
+            nomePlayer
+        ) {
 
-            btnApiPlayerSerie.onclick = function () {
+            if (!url) {
+                return;
+            }
 
-                const apiPlayerUrl =
-                    "https://apiplayer.ru/embed/tv/" +
-                    encodeURIComponent(String(serie.id).trim()) +
-                    "/" +
-                    encodeURIComponent(String(temporada).trim()) +
-                    "/" +
-                    encodeURIComponent(String(episodio).trim()) +
-                    "?lang=pt";
+            serieFrame.src = url;
 
-                mostrarAnuncioPlayerSerie();
+            seriePlayerVideo.style.setProperty(
+                "display",
+                "block",
+                "important"
+            );
 
-                carregarPlayerSerie(
-                    apiPlayerUrl,
-                    "APIPlayer"
-                );
+            mostrarAnuncioPlayerSerie();
 
-            };
+            console.log(
+                "[SÉRIE PLAYER] Player escolhido:",
+                nomePlayer,
+                url
+            );
         }
 
-        /*
-         * DESCE ATÉ O PLAYER
-         */
+        btnEmbedMoviesSerie.onclick = function () {
+
+            const url =
+                "https://myembed.biz/serie/" +
+                encodeURIComponent(idSerie) +
+                "/" +
+                encodeURIComponent(temporadaId) +
+                "/" +
+                encodeURIComponent(episodioId);
+
+            carregarPlayerSerie(
+                url,
+                "EmbedMovies"
+            );
+        };
+
+        btnApiPlayerSerie.onclick = function () {
+
+            const url =
+                "https://apiplayer.ru/embed/tv/" +
+                encodeURIComponent(idSerie) +
+                "/" +
+                encodeURIComponent(temporadaId) +
+                "/" +
+                encodeURIComponent(episodioId) +
+                "?lang=pt";
+
+            carregarPlayerSerie(
+                url,
+                "APIPlayer"
+            );
+        };
 
         playerSerie.scrollIntoView({
             behavior: "smooth",
@@ -3043,9 +3112,13 @@ function criarTemporadaFallback() {
         });
 
         console.log(
-            "[SERIES PLAYER] Player pronto para escolha."
+            "[SERIES PLAYER] Player pronto para escolha.",
+            {
+                serie: idSerie,
+                temporada: temporadaId,
+                episodio: episodioId
+            }
         );
-
     }
 
 
